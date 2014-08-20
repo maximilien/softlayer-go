@@ -24,5 +24,5 @@
   go test ./integration/... -parallel 4 $@
 
   echo -e "\n Vetting packages for potential issues..."
-  go tool vet services data_types main common
+  go tool vet services data_types main client common
 )
