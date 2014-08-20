@@ -1,0 +1,8 @@
+{
+	"ImportPath": "github.com/maximilien/softlayer-go",
+	"GoVersion": "go1.2",
+	"Packages": [
+		"main/slgo.go"
+	],
+	"Deps": []
+}
