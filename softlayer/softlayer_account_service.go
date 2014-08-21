@@ -7,6 +7,7 @@ import (
 type SoftLayer_Account interface {
 	Service
 
+	GetAccountStatus() (datatypes.SoftLayer_Account_Status, error)
 	GetVirtualGuests() ([]datatypes.SoftLayer_Virtual_Guest, error)
 	GetNetworkStorage() ([]datatypes.SoftLayer_Network_Storage, error)
 	GetVirtualDiskImages() ([]datatypes.SoftLayer_Virtual_Disk_Image, error)

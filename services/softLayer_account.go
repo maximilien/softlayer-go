@@ -26,6 +26,25 @@ func (sla *softLayer_Account) GetName() string {
 	return NAME
 }
 
+func (sla *softLayer_Account) GetAccountStatus() (datatypes.SoftLayer_Account_Status, error) {
+	path := fmt.Sprintf("%s/%s", sla.GetName(), "getAccountStatus.json")
+	responseBytes, err := sla.client.DoRawHttpRequest(path, "GET", &bytes.Buffer{})
+	if err != nil {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Account#getAccountStatus, error message '%s'", err.Error())
+		return datatypes.SoftLayer_Account_Status{}, errors.New(errorMessage)
+	}
+
+	accountStatus := datatypes.SoftLayer_Account_Status{}
+	err = json.Unmarshal(responseBytes, &accountStatus)
+	if err != nil {
+		errorMessage := fmt.Sprintf("softlayer-go: failed to decode JSON response, err message '%s'", err.Error())
+		err := errors.New(errorMessage)
+		return datatypes.SoftLayer_Account_Status{}, err
+	}
+
+	return accountStatus, nil
+}
+
 func (sla *softLayer_Account) GetVirtualGuests() ([]datatypes.SoftLayer_Virtual_Guest, error) {
 	path := fmt.Sprintf("%s/%s", sla.GetName(), "getVirtualGuests.json")
 	responseBytes, err := sla.client.DoRawHttpRequest(path, "GET", &bytes.Buffer{})
@@ -39,7 +58,7 @@ func (sla *softLayer_Account) GetVirtualGuests() ([]datatypes.SoftLayer_Virtual_
 	if err != nil {
 		errorMessage := fmt.Sprintf("softlayer-go: failed to decode JSON response, err message '%s'", err.Error())
 		err := errors.New(errorMessage)
-		return nil, err
+		return []datatypes.SoftLayer_Virtual_Guest{}, err
 	}
 
 	return virtualGuests, nil
@@ -58,7 +77,7 @@ func (sla *softLayer_Account) GetNetworkStorage() ([]datatypes.SoftLayer_Network
 	if err != nil {
 		errorMessage := fmt.Sprintf("softlayer-go: failed to decode JSON response, err message '%s'", err.Error())
 		err := errors.New(errorMessage)
-		return nil, err
+		return []datatypes.SoftLayer_Network_Storage{}, err
 	}
 
 	return networkStorage, nil
@@ -77,7 +96,7 @@ func (sla *softLayer_Account) GetVirtualDiskImages() ([]datatypes.SoftLayer_Virt
 	if err != nil {
 		errorMessage := fmt.Sprintf("softlayer-go: failed to decode JSON response, err message '%s'", err.Error())
 		err := errors.New(errorMessage)
-		return nil, err
+		return []datatypes.SoftLayer_Virtual_Disk_Image{}, err
 	}
 
 	return virtualDiskImages, nil

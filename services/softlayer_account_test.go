@@ -40,6 +40,15 @@ var _ = Describe("SoftLayer_Account", func() {
 		})
 	})
 
+	Context("#GetAccountStatus", func() {
+		It("returns an instance of datatypes.SoftLayer_Account_Status that is Active", func() {
+			accountStatus, err := account.GetAccountStatus()
+			Expect(err).To(BeNil())
+			Expect(accountStatus.Id).ToNot(Equal(0))
+			Expect(accountStatus.Name).To(Equal("Active"))
+		})
+	})
+
 	Context("#GetVirtualGuests", func() {
 		It("returns an array of datatypes.SoftLayer_Virtual_Guest", func() {
 			virtualGuests, err := account.GetVirtualGuests()
