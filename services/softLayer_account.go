@@ -63,3 +63,22 @@ func (sla *softLayer_Account) GetNetworkStorage() ([]datatypes.SoftLayer_Network
 
 	return networkStorage, nil
 }
+
+func (sla *softLayer_Account) GetVirtualDiskImages() ([]datatypes.SoftLayer_Virtual_Disk_Image, error) {
+	path := fmt.Sprintf("%s/%s", sla.GetName(), "getVirtualDiskImages.json")
+	responseBytes, err := sla.client.DoRawHttpRequest(path, "GET", &bytes.Buffer{})
+	if err != nil {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Account#getVirtualDiskImages, error message '%s'", err.Error())
+		return []datatypes.SoftLayer_Virtual_Disk_Image{}, errors.New(errorMessage)
+	}
+
+	virtualDiskImages := []datatypes.SoftLayer_Virtual_Disk_Image{}
+	err = json.Unmarshal(responseBytes, &virtualDiskImages)
+	if err != nil {
+		errorMessage := fmt.Sprintf("softlayer-go: failed to decode JSON response, err message '%s'", err.Error())
+		err := errors.New(errorMessage)
+		return nil, err
+	}
+
+	return virtualDiskImages, nil
+}
