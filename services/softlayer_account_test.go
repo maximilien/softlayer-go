@@ -42,9 +42,15 @@ var _ = Describe("SoftLayer_Account", func() {
 
 	Context("#GetVirtualGuests", func() {
 		It("returns an array of datatypes.SoftLayer_Virtual_Guest", func() {
-			virtualGuests, err := account.GetVirtualGuests()
+			_, err := account.GetVirtualGuests()
 			Expect(err).To(BeNil())
-			Expect(virtualGuests).ToNot(BeEmpty())
+		})
+	})
+
+	Context("#GetNetworkStorage", func() {
+		It("returns an array of datatypes.SoftLayer_Network_Storage", func() {
+			_, err := account.GetNetworkStorage()
+			Expect(err).To(BeNil())
 		})
 	})
 })

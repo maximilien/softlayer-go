@@ -44,3 +44,22 @@ func (sla *softLayer_Account) GetVirtualGuests() ([]datatypes.SoftLayer_Virtual_
 
 	return virtualGuests, nil
 }
+
+func (sla *softLayer_Account) GetNetworkStorage() ([]datatypes.SoftLayer_Network_Storage, error) {
+	path := fmt.Sprintf("%s/%s", sla.GetName(), "getNetworkStorage.json")
+	responseBytes, err := sla.client.DoRawHttpRequest(path, "GET", &bytes.Buffer{})
+	if err != nil {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Account#getNetworkStorage, error message '%s'", err.Error())
+		return []datatypes.SoftLayer_Network_Storage{}, errors.New(errorMessage)
+	}
+
+	networkStorage := []datatypes.SoftLayer_Network_Storage{}
+	err = json.Unmarshal(responseBytes, &networkStorage)
+	if err != nil {
+		errorMessage := fmt.Sprintf("softlayer-go: failed to decode JSON response, err message '%s'", err.Error())
+		err := errors.New(errorMessage)
+		return nil, err
+	}
+
+	return networkStorage, nil
+}
