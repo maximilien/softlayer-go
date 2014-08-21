@@ -42,15 +42,25 @@ var _ = Describe("SoftLayer_Account", func() {
 
 	Context("#GetVirtualGuests", func() {
 		It("returns an array of datatypes.SoftLayer_Virtual_Guest", func() {
-			_, err := account.GetVirtualGuests()
+			virtualGuests, err := account.GetVirtualGuests()
 			Expect(err).To(BeNil())
+			Expect(virtualGuests).ToNot(BeNil())
 		})
 	})
 
 	Context("#GetNetworkStorage", func() {
 		It("returns an array of datatypes.SoftLayer_Network_Storage", func() {
-			_, err := account.GetNetworkStorage()
+			networkStorage, err := account.GetNetworkStorage()
 			Expect(err).To(BeNil())
+			Expect(networkStorage).ToNot(BeNil())
+		})
+	})
+
+	Context("#GetVirtualDiskImages", func() {
+		It("returns an array of datatypes.SoftLayer_Virtual_Disk_Image", func() {
+			virtualDiskImages, err := account.GetVirtualDiskImages()
+			Expect(err).To(BeNil())
+			Expect(virtualDiskImages).ToNot(BeNil())
 		})
 	})
 })
