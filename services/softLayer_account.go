@@ -9,12 +9,6 @@ import (
 
 const NAME = "SoftLayer_Account"
 
-type SoftLayer_Account interface {
-	softlayer.Service
-
-	GetVirtualGuests() ([]datatypes.SoftLayer_Virtual_Guest, error)
-}
-
 type softLayer_Account struct {
 	client softlayer.Client
 }

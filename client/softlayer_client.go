@@ -45,7 +45,11 @@ func NewSoftLayerClient(username, apiKey string) *softLayerClient {
 
 //Client interface methods
 
-func GetService(serviceName string) (softlayer.Service, error) {
+func (slc *softLayerClient) GetService(serviceName string) (softlayer.Service, error) {
+	return nil, errors.New("Implement me!")
+}
+
+func (slc *softLayerClient) GetSoftLayer_Account() (softlayer.SoftLayer_Account, error) {
 	return nil, errors.New("Implement me!")
 }
 
