@@ -7,7 +7,7 @@ import (
 
 var _ = Describe("SoftLayer Services", func() {
 	Context("SoftLayer_Account", func() {
-		It("returs an array of SoftLayer_Virtual_Guest object in JSON", func() {
+		It("returs an array of SoftLayer_Virtual_Guest objects", func() {
 			Expect(false).To(BeTrue())
 		})
 	})

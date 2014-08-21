@@ -2,11 +2,9 @@ package client
 
 import (
 	"bytes"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -54,7 +52,7 @@ func NewSoftLayerClient(username, apiKey string) *softLayerClient {
 	return slc
 }
 
-//Client interface methods
+//softlayer.Client interface methods
 
 func (slc *softLayerClient) GetService(serviceName string) (softlayer.Service, error) {
 	slService, ok := slc.softLayerServices[serviceName]
@@ -74,38 +72,10 @@ func (slc *softLayerClient) GetSoftLayer_Account() (softlayer.SoftLayer_Account,
 	return slService.(softlayer.SoftLayer_Account), nil
 }
 
-//Private methods
+//Public methods
 
-func (slc *softLayerClient) initSoftLayerServices() {
-	slc.softLayerServices["SoftLayer_Account"] = services.NewSoftLayer_Account(slc)
-}
-
-func (slc *softLayerClient) generateRequestBody(templateData interface{}) (*bytes.Buffer, error) {
-	cwd, err := os.Getwd()
-	if err != nil {
-		return nil, err
-	}
-
-	bodyTemplate := template.Must(template.ParseFiles(filepath.Join(cwd, slc.templatePath)))
-	body := new(bytes.Buffer)
-	bodyTemplate.Execute(body, templateData)
-
-	log.Printf("Generated request body %s", body)
-
-	return body, nil
-}
-
-func (slc *softLayerClient) hasErrors(body map[string]interface{}) error {
-	if errString, ok := body["error"]; !ok {
-		return nil
-	} else {
-		return errors.New(errString.(string))
-	}
-}
-
-func (slc *softLayerClient) doRawHttpRequest(path string, requestType string, requestBody *bytes.Buffer) ([]byte, error) {
+func (slc *softLayerClient) DoRawHttpRequest(path string, requestType string, requestBody *bytes.Buffer) ([]byte, error) {
 	url := fmt.Sprintf("https://%s:%s@%s/%s", slc.username, slc.apiKey, SOFTLAYER_API_URL, path)
-	log.Printf("Sending new request to softlayer: %s", url)
 
 	var lastResponse http.Response
 	switch requestType {
@@ -139,24 +109,33 @@ func (slc *softLayerClient) doRawHttpRequest(path string, requestType string, re
 	if err != nil {
 		return nil, err
 	}
-	log.Printf("Received response from SoftLayer: %s", responseBody)
 
 	return responseBody, nil
 }
 
-func (slc *softLayerClient) doHttpRequest(path string, requestType string, requestBody *bytes.Buffer) (map[string]interface{}, error) {
-	responseBody, err := slc.doRawHttpRequest(path, requestType, requestBody)
+func (slc *softLayerClient) GenerateRequestBody(templateData interface{}) (*bytes.Buffer, error) {
+	cwd, err := os.Getwd()
 	if err != nil {
-		err := errors.New(fmt.Sprintf("Failed to get proper HTTP response from SoftLayer API"))
 		return nil, err
 	}
 
-	var decodedResponse map[string]interface{}
-	err = json.Unmarshal(responseBody, &decodedResponse)
-	if err != nil {
-		err := errors.New(fmt.Sprintf("Failed to decode JSON response from SoftLayer: %s | %s", responseBody, err))
-		return nil, err
-	}
+	bodyTemplate := template.Must(template.ParseFiles(filepath.Join(cwd, slc.templatePath)))
+	body := new(bytes.Buffer)
+	bodyTemplate.Execute(body, templateData)
 
-	return decodedResponse, nil
+	return body, nil
+}
+
+func (slc *softLayerClient) HasErrors(body map[string]interface{}) error {
+	if errString, ok := body["error"]; !ok {
+		return nil
+	} else {
+		return errors.New(errString.(string))
+	}
+}
+
+//Private methods
+
+func (slc *softLayerClient) initSoftLayerServices() {
+	slc.softLayerServices["SoftLayer_Account"] = services.NewSoftLayer_Account(slc)
 }
