@@ -13,7 +13,10 @@ import (
 	"text/template"
 )
 
-const SOFTLAYER_API_URL = "api.softlayer.com/rest/v3"
+const (
+	SOFTLAYER_API_URL = "api.softlayer.com/rest/v3"
+	TEMPLATE_ROOT_PATH = "templates"
+)
 
 type softLayerClient struct {
 	httpClient *http.Client
@@ -29,7 +32,7 @@ func NewSoftLayerClient(username, apiKey string) *softLayerClient {
 	return &softLayerClient{
 		username:     username,
 		apiKey:       apiKey,
-		templatePath: pwd,
+		templatePath: filepath.Join(pwd, TEMPLATE_ROOT_PATH),
 		httpClient: &http.Client{
 			Transport: &http.Transport{
 				Proxy: http.ProxyFromEnvironment,
