@@ -11,10 +11,12 @@ import (
 	"os"
 	"path/filepath"
 	"text/template"
+
+	softlayer "github.com/maximilien/softlayer-go/softlayer"
 )
 
 const (
-	SOFTLAYER_API_URL = "api.softlayer.com/rest/v3"
+	SOFTLAYER_API_URL  = "api.softlayer.com/rest/v3"
 	TEMPLATE_ROOT_PATH = "templates"
 )
 
@@ -40,6 +42,14 @@ func NewSoftLayerClient(username, apiKey string) *softLayerClient {
 		},
 	}
 }
+
+//Client interface methods
+
+func GetService(serviceName string) (softlayer.Service, error) {
+	return nil, errors.New("Implement me!")
+}
+
+//Private methods
 
 func (slc *softLayerClient) generateRequestBody(templateData interface{}) (*bytes.Buffer, error) {
 	cwd, err := os.Getwd()

@@ -6,19 +6,19 @@ import (
 
 type SoftLayer_Virtual_Guest struct {
 	AccountId                    int
-	CreateDate                   Time
+	CreateDate                   time.Time
 	DedicatedAccountHostOnlyFlag bool
 	Domain                       string
 	FullyQualifiedDomainName     string
 	Hostname                     string
 	Id                           int
 	LastPowerStateId             int
-	LastVerifiedDate             Time
+	LastVerifiedDate             time.Time
 	MaxCpu                       int
 	MaxCpuUnits                  string
 	MaxMemory                    int
-	MetricPollDate               Time
-	ModifyDate                   Time
+	MetricPollDate               time.Time
+	ModifyDate                   time.Time
 	Notes                        string
 	PostInstallScriptUri         string
 	PrivateNetworkOnlyFlag       bool
