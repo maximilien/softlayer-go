@@ -12,6 +12,7 @@ import (
 	"path/filepath"
 	"text/template"
 
+	services "github.com/maximilien/softlayer-go/services"
 	softlayer "github.com/maximilien/softlayer-go/softlayer"
 )
 
@@ -21,39 +22,63 @@ const (
 )
 
 type softLayerClient struct {
-	httpClient *http.Client
-
 	username string
 	apiKey   string
 
 	templatePath string
+
+	httpClient *http.Client
+
+	softLayerServices map[string]softlayer.Service
 }
 
 func NewSoftLayerClient(username, apiKey string) *softLayerClient {
 	pwd, _ := os.Getwd()
-	return &softLayerClient{
-		username:     username,
-		apiKey:       apiKey,
+	slc := &softLayerClient{
+		username: username,
+		apiKey:   apiKey,
+
 		templatePath: filepath.Join(pwd, TEMPLATE_ROOT_PATH),
+
 		httpClient: &http.Client{
 			Transport: &http.Transport{
 				Proxy: http.ProxyFromEnvironment,
 			},
 		},
+
+		softLayerServices: map[string]softlayer.Service{},
 	}
+
+	slc.initSoftLayerServices()
+
+	return slc
 }
 
 //Client interface methods
 
 func (slc *softLayerClient) GetService(serviceName string) (softlayer.Service, error) {
-	return nil, errors.New("Implement me!")
+	slService, ok := slc.softLayerServices[serviceName]
+	if !ok {
+		return nil, errors.New(fmt.Sprintf("softlayer-go does not support service '%s'", serviceName))
+	}
+
+	return slService, nil
 }
 
 func (slc *softLayerClient) GetSoftLayer_Account() (softlayer.SoftLayer_Account, error) {
-	return nil, errors.New("Implement me!")
+	slService, err := slc.GetService("SoftLayer_Account")
+	if err != nil {
+		return nil, err
+	}
+
+	return slService.(softlayer.SoftLayer_Account), nil
 }
 
 //Private methods
+
+func (slc *softLayerClient) initSoftLayerServices() {
+	slc.softLayerServices["SoftLayer_Account"] = services.NewSoftLayer_Account(slc)
+}
 
 func (slc *softLayerClient) generateRequestBody(templateData interface{}) (*bytes.Buffer, error) {
 	cwd, err := os.Getwd()
