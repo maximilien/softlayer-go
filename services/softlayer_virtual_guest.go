@@ -3,8 +3,8 @@ package services
 import (
 	"errors"
 
-	softlayer "github.com/maximilien/softlayer-go/softlayer"
 	datatypes "github.com/maximilien/softlayer-go/data_types"
+	softlayer "github.com/maximilien/softlayer-go/softlayer"
 )
 
 type softLayerVirtualGuest struct {
@@ -20,7 +20,7 @@ func NewSoftLayer_Virtual_Guest(client softlayer.Client) *softLayerVirtualGuest 
 func (slvg *softLayerVirtualGuest) GetName() string {
 	return "SoftLayer_Virtual_Guest"
 }
-	
+
 func (slvg *softLayerVirtualGuest) CreateObject(template datatypes.SoftLayer_Virtual_Guest) (datatypes.SoftLayer_Virtual_Guest, error) {
 	return datatypes.SoftLayer_Virtual_Guest{}, errors.New("Implement me!")
 }

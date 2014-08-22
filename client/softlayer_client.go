@@ -72,6 +72,15 @@ func (slc *softLayerClient) GetSoftLayer_Account() (softlayer.SoftLayer_Account,
 	return slService.(softlayer.SoftLayer_Account), nil
 }
 
+func (slc *softLayerClient) GetSoftLayer_Virtual_Guest() (softlayer.SoftLayer_Virtual_Guest, error) {
+	slService, err := slc.GetService("SoftLayer_Virtual_Guest")
+	if err != nil {
+		return nil, err
+	}
+
+	return slService.(softlayer.SoftLayer_Virtual_Guest), nil
+}
+
 //Public methods
 
 func (slc *softLayerClient) DoRawHttpRequest(path string, requestType string, requestBody *bytes.Buffer) ([]byte, error) {
@@ -138,4 +147,5 @@ func (slc *softLayerClient) HasErrors(body map[string]interface{}) error {
 
 func (slc *softLayerClient) initSoftLayerServices() {
 	slc.softLayerServices["SoftLayer_Account"] = services.NewSoftLayer_Account(slc)
+	slc.softLayerServices["SoftLayer_Virtual_Guest"] = services.NewSoftLayer_Virtual_Guest(slc)
 }
