@@ -29,7 +29,7 @@ var _ = Describe("SoftLayer_Account", func() {
 		Expect(client).ToNot(BeNil())
 
 		account, err = client.GetSoftLayer_Account()
-		Expect(err).To(BeNil())
+		Expect(err).ToNot(HaveOccurred())
 		Expect(account).ToNot(BeNil())
 	})
 
@@ -43,7 +43,7 @@ var _ = Describe("SoftLayer_Account", func() {
 	Context("#GetAccountStatus", func() {
 		It("returns an instance of datatypes.SoftLayer_Account_Status that is Active", func() {
 			accountStatus, err := account.GetAccountStatus()
-			Expect(err).To(BeNil())
+			Expect(err).ToNot(HaveOccurred())
 			Expect(accountStatus.Id).ToNot(Equal(0))
 			Expect(accountStatus.Name).To(Equal("Active"))
 		})
@@ -52,7 +52,7 @@ var _ = Describe("SoftLayer_Account", func() {
 	Context("#GetVirtualGuests", func() {
 		It("returns an array of datatypes.SoftLayer_Virtual_Guest", func() {
 			virtualGuests, err := account.GetVirtualGuests()
-			Expect(err).To(BeNil())
+			Expect(err).ToNot(HaveOccurred())
 			Expect(virtualGuests).ToNot(BeNil())
 		})
 	})
@@ -60,7 +60,7 @@ var _ = Describe("SoftLayer_Account", func() {
 	Context("#GetNetworkStorage", func() {
 		It("returns an array of datatypes.SoftLayer_Network_Storage", func() {
 			networkStorage, err := account.GetNetworkStorage()
-			Expect(err).To(BeNil())
+			Expect(err).ToNot(HaveOccurred())
 			Expect(networkStorage).ToNot(BeNil())
 		})
 	})
@@ -68,7 +68,7 @@ var _ = Describe("SoftLayer_Account", func() {
 	Context("#GetVirtualDiskImages", func() {
 		It("returns an array of datatypes.SoftLayer_Virtual_Disk_Image", func() {
 			virtualDiskImages, err := account.GetVirtualDiskImages()
-			Expect(err).To(BeNil())
+			Expect(err).ToNot(HaveOccurred())
 			Expect(virtualDiskImages).ToNot(BeNil())
 		})
 	})
