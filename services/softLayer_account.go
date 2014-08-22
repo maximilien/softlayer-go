@@ -10,8 +10,6 @@ import (
 	softlayer "github.com/maximilien/softlayer-go/softlayer"
 )
 
-const NAME = "SoftLayer_Account"
-
 type softLayer_Account struct {
 	client softlayer.Client
 }
@@ -23,7 +21,7 @@ func NewSoftLayer_Account(client softlayer.Client) *softLayer_Account {
 }
 
 func (sla *softLayer_Account) GetName() string {
-	return NAME
+	return "SoftLayer_Account"
 }
 
 func (sla *softLayer_Account) GetAccountStatus() (datatypes.SoftLayer_Account_Status, error) {
