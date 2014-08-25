@@ -7,6 +7,6 @@ import (
 type SoftLayer_Virtual_Guest interface {
 	Service
 
-	CreateObject(template datatypes.SoftLayer_Virtual_Guest) (datatypes.SoftLayer_Virtual_Guest, error)
-	DeleteObject(template datatypes.SoftLayer_Virtual_Guest) (bool, error)
+	CreateObject(template datatypes.SoftLayer_Virtual_Guest_Template) (datatypes.SoftLayer_Virtual_Guest, error)
+	DeleteObject(template datatypes.SoftLayer_Virtual_Guest_Template) (bool, error)
 }

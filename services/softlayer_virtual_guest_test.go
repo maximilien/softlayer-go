@@ -17,7 +17,7 @@ var _ = Describe("SoftLayer_Virtual_Guest", func() {
 		client               softlayer.Client
 		virtualGuest         softlayer.SoftLayer_Virtual_Guest
 		err                  error
-		virtualGuestTemplate data_types.SoftLayer_Virtual_Guest
+		virtualGuestTemplate data_types.SoftLayer_Virtual_Guest_Template
 	)
 
 	BeforeEach(func() {
@@ -48,6 +48,16 @@ var _ = Describe("SoftLayer_Virtual_Guest", func() {
 			Expect(err).ToNot(HaveOccurred())
 			Expect(virtualGuest).ToNot(BeNil())
 		})
+
+		// It("generates the correct JSON body for the SoftLayer_Virtual_Guest/createObject.json POST call", func() {
+
+		// 	})
+
+		It("flags all missing required parameters for SoftLayer_Virtual_Guest/createObject.json POST call", func() {
+
+			
+			})
+
 	})
 
 	Context("#DeleteObject", func() {
