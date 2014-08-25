@@ -38,13 +38,13 @@ var _ = Describe("SoftLayerClient", func() {
 	Context("#GetService", func() {
 		It("returns a service with name specified", func() {
 			account, err := client.GetService("SoftLayer_Account")
-			Expect(err).ToNot(HaveOccured())
+			Expect(err).ToNot(HaveOccurred())
 			Expect(account).ToNot(BeNil())
 		})
 
 		It("fails when passed a bad service name", func() {
 			_, err := client.GetService("fake-service-name")
-			Expect(err).ToNot(HaveOccured())
+			Expect(err).To(HaveOccurred())
 			Expect(err.Error()).To(Equal("softlayer-go does not support service 'fake-service-name'"))
 		})
 	})
@@ -53,7 +53,7 @@ var _ = Describe("SoftLayerClient", func() {
 		It("returns a instance implemementing the SoftLayer_Account interface", func() {
 			var account softlayer.SoftLayer_Account
 			account, err := client.GetSoftLayer_Account()
-			Expect(err).ToNot(HaveOccured())
+			Expect(err).ToNot(HaveOccurred())
 			Expect(account).ToNot(BeNil())
 		})
 	})
