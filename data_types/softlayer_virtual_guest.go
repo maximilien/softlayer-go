@@ -27,6 +27,34 @@ type SoftLayer_Virtual_Guest struct {
 	Uuid                   string    `json:"uuid"`
 }
 
+type SoftLayer_Virtual_Guest_Template struct {
+	//Required
+	Hostname                     string     `json:"hostname"`
+	Domain                       string     `json:"domain"`
+	StartCpus                    int        `json:"startCpus"`
+	MaxMemory                    int        `json:"maxMemory"`
+	Datacenter                   Datacenter `json:"datacenter"`
+	HourlyBillingFlag            bool       `json:"hourlyBillingFlag"`
+	LocalDiskFlag                bool       `json:"localDiskFlag"`
+	DedicatedAccountHostOnlyFlag bool       `json:"dedicatedAccountHostOnlyFlag"`
+
+	//Conditionally required
+	OperatingSystemReferenceCode string                   `json:"operatingSystemReferenceCode"`
+	BlockDeviceTemplateGroup     BlockDeviceTemplateGroup `json:"blockDeviceTemplateGroup"`
+
+	//Optional
+	NetworkComponents              []NetworkComponents            `json:"networkComponents"`
+	PrivateNetworkOnlyFlag         bool                           `json:"privateNetworkOnlyFlag"`
+	PrimaryNetworkComponent        PrimaryNetworkComponent        `json:"primaryNetworkComponent"`
+	PrimaryBackendNetworkComponent PrimaryBackendNetworkComponent `json:"primaryBackendNetworkComponent"`
+
+	BlockDevices []BlockDevice `json:"blockDevices"`
+	UserData     []UserData    `json:"userData"`
+	SshKeys      []SshKey      `json:"sshKeys"`
+
+	PostInstallScriptUri string `json:"postInstallScriptUri"`
+}
+
 type Datacenter struct {
 	//Required
 	Name string `json:"name"`
@@ -76,32 +104,4 @@ type UserData struct {
 type SshKey struct {
 	//Required
 	Id int `json:"id"`
-}
-
-type SoftLayer_Virtual_Guest_Template struct {
-	//Required
-	Hostname                     string     `json:"hostname"`
-	Domain                       string     `json:"domain"`
-	StartCpus                    int        `json:"startCpus"`
-	MaxMemory                    int        `json:"maxMemory"`
-	Datacenter                   Datacenter `json:"datacenter"`
-	HourlyBillingFlag            bool       `json:"hourlyBillingFlag"`
-	LocalDiskFlag                bool       `json:"localDiskFlag"`
-	DedicatedAccountHostOnlyFlag bool       `json:"dedicatedAccountHostOnlyFlag"`
-
-	//Conditionally required
-	OperatingSystemReferenceCode string                   `json:"operatingSystemReferenceCode"`
-	BlockDeviceTemplateGroup     BlockDeviceTemplateGroup `json:"blockDeviceTemplateGroup"`
-
-	//Optional
-	NetworkComponents              []NetworkComponents            `json:"networkComponents"`
-	PrivateNetworkOnlyFlag         bool                           `json:"privateNetworkOnlyFlag"`
-	PrimaryNetworkComponent        PrimaryNetworkComponent        `json:"primaryNetworkComponent"`
-	PrimaryBackendNetworkComponent PrimaryBackendNetworkComponent `json:"primaryBackendNetworkComponent"`
-
-	BlockDevices []BlockDevice `json:"blockDevices"`
-	UserData     []UserData    `json:"userData"`
-	SshKeys      []SshKey      `json:"sshKeys"`
-
-	PostInstallScriptUri string `json:"postInstallScriptUri"`
 }

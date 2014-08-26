@@ -58,7 +58,7 @@ func (slvg *softLayerVirtualGuest) checkCreateObjectRequiredValues(template data
 	}
 
 	if template.Datacenter.Name == "" {
-		errorMessage += fmt.Sprintf(errorTemplate, "datacenter.name: specifies which datacenter the instance is to be provisioned in")
+		errorMessage += fmt.Sprintf(errorTemplate, "Datacenter.Name: specifies which datacenter the instance is to be provisioned in")
 	}
 
 	if errorMessage != "" {

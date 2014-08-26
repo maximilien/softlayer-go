@@ -7,7 +7,7 @@ import (
 	. "github.com/onsi/gomega"
 
 	slclient "github.com/maximilien/softlayer-go/client"
-	data_types "github.com/maximilien/softlayer-go/data_types"
+	datatypes "github.com/maximilien/softlayer-go/data_types"
 	softlayer "github.com/maximilien/softlayer-go/softlayer"
 )
 
@@ -17,7 +17,7 @@ var _ = Describe("SoftLayer_Virtual_Guest", func() {
 		client               softlayer.Client
 		virtualGuest         softlayer.SoftLayer_Virtual_Guest
 		err                  error
-		virtualGuestTemplate data_types.SoftLayer_Virtual_Guest_Template
+		virtualGuestTemplate datatypes.SoftLayer_Virtual_Guest_Template
 	)
 
 	BeforeEach(func() {
@@ -33,6 +33,8 @@ var _ = Describe("SoftLayer_Virtual_Guest", func() {
 		virtualGuest, err = client.GetSoftLayer_Virtual_Guest()
 		Expect(err).ToNot(HaveOccurred())
 		Expect(virtualGuest).ToNot(BeNil())
+
+		virtualGuestTemplate = datatypes.SoftLayer_Virtual_Guest_Template{}
 	})
 
 	Context("#GetName", func() {
@@ -49,14 +51,15 @@ var _ = Describe("SoftLayer_Virtual_Guest", func() {
 			Expect(virtualGuest).ToNot(BeNil())
 		})
 
-		// It("generates the correct JSON body for the SoftLayer_Virtual_Guest/createObject.json POST call", func() {
-
-		// 	})
-
 		It("flags all missing required parameters for SoftLayer_Virtual_Guest/createObject.json POST call", func() {
-
+			_, err := virtualGuest.CreateObject(virtualGuestTemplate)
+			Expect(err).To(HaveOccurred())
+			Expect(err.Error()).To(ContainSubstring("Hostname"))
+			Expect(err.Error()).To(ContainSubstring("Domain"))
+			Expect(err.Error()).To(ContainSubstring("StartCpus"))
+			Expect(err.Error()).To(ContainSubstring("MaxMemory"))
+			Expect(err.Error()).To(ContainSubstring("Datacenter"))
 		})
-
 	})
 
 	Context("#DeleteObject", func() {
