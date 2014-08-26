@@ -55,8 +55,7 @@ var _ = Describe("SoftLayer_Virtual_Guest", func() {
 
 		It("flags all missing required parameters for SoftLayer_Virtual_Guest/createObject.json POST call", func() {
 
-			
-			})
+		})
 
 	})
 
