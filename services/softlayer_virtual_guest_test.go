@@ -15,8 +15,9 @@ var _ = Describe("SoftLayer_Virtual_Guest", func() {
 	var (
 		username, apiKey     string
 		client               softlayer.Client
-		virtualGuest         softlayer.SoftLayer_Virtual_Guest
+		virtualGuestService  softlayer.SoftLayer_Virtual_Guest
 		err                  error
+		virtualGuest         datatypes.SoftLayer_Virtual_Guest
 		virtualGuestTemplate datatypes.SoftLayer_Virtual_Guest_Template
 	)
 
@@ -30,29 +31,30 @@ var _ = Describe("SoftLayer_Virtual_Guest", func() {
 		client = slclient.NewSoftLayerClient(username, apiKey)
 		Expect(client).ToNot(BeNil())
 
-		virtualGuest, err = client.GetSoftLayer_Virtual_Guest()
+		virtualGuestService, err = client.GetSoftLayer_Virtual_Guest()
 		Expect(err).ToNot(HaveOccurred())
-		Expect(virtualGuest).ToNot(BeNil())
+		Expect(virtualGuestService).ToNot(BeNil())
 
+		virtualGuest = datatypes.SoftLayer_Virtual_Guest{}
 		virtualGuestTemplate = datatypes.SoftLayer_Virtual_Guest_Template{}
 	})
 
 	Context("#GetName", func() {
 		It("returns the name for the service", func() {
-			name := virtualGuest.GetName()
+			name := virtualGuestService.GetName()
 			Expect(name).To(Equal("SoftLayer_Virtual_Guest"))
 		})
 	})
 
 	Context("#CreateObject", func() {
 		XIt("creates a new SoftLayer_Virtual_Guest instance", func() {
-			virtualGuest, err := virtualGuest.CreateObject(virtualGuestTemplate)
+			virtualGuest, err := virtualGuestService.CreateObject(virtualGuestTemplate)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(virtualGuest).ToNot(BeNil())
 		})
 
 		It("flags all missing required parameters for SoftLayer_Virtual_Guest/createObject.json POST call", func() {
-			_, err := virtualGuest.CreateObject(virtualGuestTemplate)
+			_, err := virtualGuestService.CreateObject(virtualGuestTemplate)
 			Expect(err).To(HaveOccurred())
 			Expect(err.Error()).To(ContainSubstring("Hostname"))
 			Expect(err.Error()).To(ContainSubstring("Domain"))
@@ -64,7 +66,7 @@ var _ = Describe("SoftLayer_Virtual_Guest", func() {
 
 	Context("#DeleteObject", func() {
 		XIt("deletes the SoftLayer_Virtual_Guest", func() {
-			deleted, err := virtualGuest.DeleteObject(virtualGuestTemplate)
+			deleted, err := virtualGuestService.DeleteObject(virtualGuest.Id)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(deleted).To(BeTrue())
 		})

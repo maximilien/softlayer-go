@@ -1,6 +1,8 @@
 package services
 
 import (
+	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
 
@@ -28,11 +30,43 @@ func (slvg *softLayerVirtualGuest) CreateObject(template datatypes.SoftLayer_Vir
 		return datatypes.SoftLayer_Virtual_Guest{}, err
 	}
 
-	return datatypes.SoftLayer_Virtual_Guest{}, errors.New("Implement me!")
+	requestBody, err := json.Marshal(template)
+	if err != nil {
+		return datatypes.SoftLayer_Virtual_Guest{}, err
+	}
+
+	data, err := slvg.client.DoRawHttpRequest("SoftLayer_Virtual_Guest/createObject", "POST", bytes.NewBuffer(requestBody))
+	if err != nil {
+		return datatypes.SoftLayer_Virtual_Guest{}, err
+	}
+
+	var decodedResponse map[string]interface{}
+	err = json.Unmarshal(data, decodedResponse)
+	if err != nil {
+		return datatypes.SoftLayer_Virtual_Guest{}, err
+	}
+
+	if err := slvg.client.HasErrors(decodedResponse); err != nil {
+		return datatypes.SoftLayer_Virtual_Guest{}, err
+	}
+
+	softLayerVirtualGuest := datatypes.SoftLayer_Virtual_Guest{}
+	err = json.Unmarshal(data, softLayerVirtualGuest)
+	if err != nil {
+		return datatypes.SoftLayer_Virtual_Guest{}, err
+	}
+
+	return softLayerVirtualGuest, errors.New("Implement me!")
 }
 
-func (slvg *softLayerVirtualGuest) DeleteObject(template datatypes.SoftLayer_Virtual_Guest_Template) (bool, error) {
-	return false, errors.New("Implement me!")
+func (slvg *softLayerVirtualGuest) DeleteObject(instanceId int) (bool, error) {
+	response, err := slvg.client.DoRawHttpRequest(fmt.Sprintf("SoftLayer_Virtual_Guest/%d.json", instanceId), "DELETE", new(bytes.Buffer))
+
+	if res := string(response[:]); res != "true" {
+		return false, errors.New(fmt.Sprintf("Failed to destroy and instance wit id '%d', got '%s' as response from the API.", instanceId, res))
+	}
+
+	return true, err
 }
 
 //Private methods
