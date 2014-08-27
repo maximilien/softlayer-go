@@ -6,16 +6,19 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
-	slclient "github.com/maximilien/softlayer-go/client"
+	slclientfakes "github.com/maximilien/softlayer-go/client/fakes"
+	common "github.com/maximilien/softlayer-go/common"
 	softlayer "github.com/maximilien/softlayer-go/softlayer"
 )
 
 var _ = Describe("SoftLayer_Account_Service", func() {
 	var (
 		username, apiKey string
-		client           softlayer.Client
-		accountService   softlayer.SoftLayer_Account_Service
-		err              error
+
+		fakeClient *slclientfakes.FakeSoftLayerClient
+
+		accountService softlayer.SoftLayer_Account_Service
+		err            error
 	)
 
 	BeforeEach(func() {
@@ -25,10 +28,10 @@ var _ = Describe("SoftLayer_Account_Service", func() {
 		apiKey = os.Getenv("SL_API_KEY")
 		Expect(apiKey).ToNot(Equal(""))
 
-		client = slclient.NewSoftLayerClient(username, apiKey)
-		Expect(client).ToNot(BeNil())
+		fakeClient = slclientfakes.NewFakeSoftLayerClient(username, apiKey)
+		Expect(fakeClient).ToNot(BeNil())
 
-		accountService, err = client.GetSoftLayer_Account_Service()
+		accountService, err = fakeClient.GetSoftLayer_Account_Service()
 		Expect(err).ToNot(HaveOccurred())
 		Expect(accountService).ToNot(BeNil())
 	})
@@ -36,11 +39,16 @@ var _ = Describe("SoftLayer_Account_Service", func() {
 	Context("#GetName", func() {
 		It("returns the name for the service", func() {
 			name := accountService.GetName()
-			Expect(name).To(Equal("SoftLayer_Account"))
+			Expect(name).To(Equal("SoftLayer_Account_Service"))
 		})
 	})
 
 	Context("#GetAccountStatus", func() {
+		BeforeEach(func() {
+			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "getAccountStatus.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
 		It("returns an instance of datatypes.SoftLayer_Account_Status that is Active", func() {
 			accountStatus, err := accountService.GetAccountStatus()
 			Expect(err).ToNot(HaveOccurred())
@@ -50,6 +58,11 @@ var _ = Describe("SoftLayer_Account_Service", func() {
 	})
 
 	Context("#GetVirtualGuests", func() {
+		BeforeEach(func() {
+			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "getVirtualGuests.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
 		It("returns an array of datatypes.SoftLayer_Virtual_Guest", func() {
 			virtualGuests, err := accountService.GetVirtualGuests()
 			Expect(err).ToNot(HaveOccurred())
@@ -58,6 +71,11 @@ var _ = Describe("SoftLayer_Account_Service", func() {
 	})
 
 	Context("#GetNetworkStorage", func() {
+		BeforeEach(func() {
+			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "getNetworkStorage.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
 		It("returns an array of datatypes.SoftLayer_Network_Storage", func() {
 			networkStorage, err := accountService.GetNetworkStorage()
 			Expect(err).ToNot(HaveOccurred())
@@ -66,6 +84,11 @@ var _ = Describe("SoftLayer_Account_Service", func() {
 	})
 
 	Context("#GetVirtualDiskImages", func() {
+		BeforeEach(func() {
+			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "getVirtualDiskImages.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
 		It("returns an array of datatypes.SoftLayer_Virtual_Disk_Image", func() {
 			virtualDiskImages, err := accountService.GetVirtualDiskImages()
 			Expect(err).ToNot(HaveOccurred())

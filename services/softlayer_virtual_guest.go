@@ -21,7 +21,7 @@ func NewSoftLayer_Virtual_Guest_Service(client softlayer.Client) *softLayer_Virt
 }
 
 func (slvgs *softLayer_Virtual_Guest_Service) GetName() string {
-	return "SoftLayer_Virtual_Guest"
+	return "SoftLayer_Virtual_Guest_Service"
 }
 
 func (slvgs *softLayer_Virtual_Guest_Service) CreateObject(template datatypes.SoftLayer_Virtual_Guest_Template) (datatypes.SoftLayer_Virtual_Guest, error) {

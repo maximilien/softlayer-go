@@ -21,7 +21,7 @@ func NewSoftLayer_Account_Service(client softlayer.Client) *softLayer_Account_Se
 }
 
 func (slas *softLayer_Account_Service) GetName() string {
-	return "SoftLayer_Account"
+	return "SoftLayer_Account_Service"
 }
 
 func (slas *softLayer_Account_Service) GetAccountStatus() (datatypes.SoftLayer_Account_Status, error) {
