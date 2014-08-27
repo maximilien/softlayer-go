@@ -60,22 +60,22 @@ func (slcf *SoftLayerClientFake) GetService(serviceName string) (softlayer.Servi
 	return slService, nil
 }
 
-func (slc *SoftLayerClientFake) GetSoftLayer_Account() (softlayer.SoftLayer_Account, error) {
+func (slc *SoftLayerClientFake) GetSoftLayer_Account_Service() (softlayer.SoftLayer_Account_Service, error) {
 	slService, err := slc.GetService("SoftLayer_Account")
 	if err != nil {
 		return nil, err
 	}
 
-	return slService.(softlayer.SoftLayer_Account), nil
+	return slService.(softlayer.SoftLayer_Account_Service), nil
 }
 
-func (slcf *SoftLayerClientFake) GetSoftLayer_Virtual_Guest() (softlayer.SoftLayer_Virtual_Guest, error) {
+func (slcf *SoftLayerClientFake) GetSoftLayer_Virtual_Guest_Service() (softlayer.SoftLayer_Virtual_Guest_Service, error) {
 	slService, err := slc.GetService("SoftLayer_Virtual_Guest")
 	if err != nil {
 		return nil, err
 	}
 
-	return slService.(softlayer.SoftLayer_Virtual_Guest), nil
+	return slService.(softlayer.SoftLayer_Virtual_Guest_Service), nil
 }
 
 //Public methods

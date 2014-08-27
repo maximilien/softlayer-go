@@ -6,8 +6,9 @@ import (
 
 type Client interface {
 	GetService(name string) (Service, error)
-	GetSoftLayer_Account() (SoftLayer_Account, error)
-	GetSoftLayer_Virtual_Guest() (SoftLayer_Virtual_Guest, error)
+
+	GetSoftLayer_Account_Service() (SoftLayer_Account_Service, error)
+	GetSoftLayer_Virtual_Guest_Service() (SoftLayer_Virtual_Guest_Service, error)
 
 	DoRawHttpRequest(path string, requestType string, requestBody *bytes.Buffer) ([]byte, error)
 	GenerateRequestBody(templateData interface{}) (*bytes.Buffer, error)

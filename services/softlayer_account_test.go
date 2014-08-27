@@ -10,11 +10,11 @@ import (
 	softlayer "github.com/maximilien/softlayer-go/softlayer"
 )
 
-var _ = Describe("SoftLayer_Account", func() {
+var _ = Describe("SoftLayer_Account_Service", func() {
 	var (
 		username, apiKey string
 		client           softlayer.Client
-		account          softlayer.SoftLayer_Account
+		accountService   softlayer.SoftLayer_Account_Service
 		err              error
 	)
 
@@ -28,21 +28,21 @@ var _ = Describe("SoftLayer_Account", func() {
 		client = slclient.NewSoftLayerClient(username, apiKey)
 		Expect(client).ToNot(BeNil())
 
-		account, err = client.GetSoftLayer_Account()
+		accountService, err = client.GetSoftLayer_Account_Service()
 		Expect(err).ToNot(HaveOccurred())
-		Expect(account).ToNot(BeNil())
+		Expect(accountService).ToNot(BeNil())
 	})
 
 	Context("#GetName", func() {
 		It("returns the name for the service", func() {
-			name := account.GetName()
+			name := accountService.GetName()
 			Expect(name).To(Equal("SoftLayer_Account"))
 		})
 	})
 
 	Context("#GetAccountStatus", func() {
 		It("returns an instance of datatypes.SoftLayer_Account_Status that is Active", func() {
-			accountStatus, err := account.GetAccountStatus()
+			accountStatus, err := accountService.GetAccountStatus()
 			Expect(err).ToNot(HaveOccurred())
 			Expect(accountStatus.Id).ToNot(Equal(0))
 			Expect(accountStatus.Name).To(Equal("Active"))
@@ -51,7 +51,7 @@ var _ = Describe("SoftLayer_Account", func() {
 
 	Context("#GetVirtualGuests", func() {
 		It("returns an array of datatypes.SoftLayer_Virtual_Guest", func() {
-			virtualGuests, err := account.GetVirtualGuests()
+			virtualGuests, err := accountService.GetVirtualGuests()
 			Expect(err).ToNot(HaveOccurred())
 			Expect(virtualGuests).ToNot(BeNil())
 		})
@@ -59,7 +59,7 @@ var _ = Describe("SoftLayer_Account", func() {
 
 	Context("#GetNetworkStorage", func() {
 		It("returns an array of datatypes.SoftLayer_Network_Storage", func() {
-			networkStorage, err := account.GetNetworkStorage()
+			networkStorage, err := accountService.GetNetworkStorage()
 			Expect(err).ToNot(HaveOccurred())
 			Expect(networkStorage).ToNot(BeNil())
 		})
@@ -67,7 +67,7 @@ var _ = Describe("SoftLayer_Account", func() {
 
 	Context("#GetVirtualDiskImages", func() {
 		It("returns an array of datatypes.SoftLayer_Virtual_Disk_Image", func() {
-			virtualDiskImages, err := account.GetVirtualDiskImages()
+			virtualDiskImages, err := accountService.GetVirtualDiskImages()
 			Expect(err).ToNot(HaveOccurred())
 			Expect(virtualDiskImages).ToNot(BeNil())
 		})

@@ -10,22 +10,22 @@ import (
 	softlayer "github.com/maximilien/softlayer-go/softlayer"
 )
 
-type softLayerVirtualGuest struct {
+type softLayer_Virtual_Guest_Service struct {
 	client softlayer.Client
 }
 
-func NewSoftLayer_Virtual_Guest(client softlayer.Client) *softLayerVirtualGuest {
-	return &softLayerVirtualGuest{
+func NewSoftLayer_Virtual_Guest_Service(client softlayer.Client) *softLayer_Virtual_Guest_Service {
+	return &softLayer_Virtual_Guest_Service{
 		client: client,
 	}
 }
 
-func (slvg *softLayerVirtualGuest) GetName() string {
+func (slvgs *softLayer_Virtual_Guest_Service) GetName() string {
 	return "SoftLayer_Virtual_Guest"
 }
 
-func (slvg *softLayerVirtualGuest) CreateObject(template datatypes.SoftLayer_Virtual_Guest_Template) (datatypes.SoftLayer_Virtual_Guest, error) {
-	err := slvg.checkCreateObjectRequiredValues(template)
+func (slvgs *softLayer_Virtual_Guest_Service) CreateObject(template datatypes.SoftLayer_Virtual_Guest_Template) (datatypes.SoftLayer_Virtual_Guest, error) {
+	err := slvgs.checkCreateObjectRequiredValues(template)
 	if err != nil {
 		return datatypes.SoftLayer_Virtual_Guest{}, err
 	}
@@ -35,7 +35,7 @@ func (slvg *softLayerVirtualGuest) CreateObject(template datatypes.SoftLayer_Vir
 		return datatypes.SoftLayer_Virtual_Guest{}, err
 	}
 
-	data, err := slvg.client.DoRawHttpRequest("SoftLayer_Virtual_Guest/createObject", "POST", bytes.NewBuffer(requestBody))
+	data, err := slvgs.client.DoRawHttpRequest("SoftLayer_Virtual_Guest/createObject", "POST", bytes.NewBuffer(requestBody))
 	if err != nil {
 		return datatypes.SoftLayer_Virtual_Guest{}, err
 	}
@@ -46,21 +46,21 @@ func (slvg *softLayerVirtualGuest) CreateObject(template datatypes.SoftLayer_Vir
 		return datatypes.SoftLayer_Virtual_Guest{}, err
 	}
 
-	if err := slvg.client.HasErrors(decodedResponse); err != nil {
+	if err := slvgs.client.HasErrors(decodedResponse); err != nil {
 		return datatypes.SoftLayer_Virtual_Guest{}, err
 	}
 
-	softLayerVirtualGuest := datatypes.SoftLayer_Virtual_Guest{}
-	err = json.Unmarshal(data, softLayerVirtualGuest)
+	softLayer_Virtual_Guest_Service := datatypes.SoftLayer_Virtual_Guest{}
+	err = json.Unmarshal(data, softLayer_Virtual_Guest_Service)
 	if err != nil {
 		return datatypes.SoftLayer_Virtual_Guest{}, err
 	}
 
-	return softLayerVirtualGuest, errors.New("Implement me!")
+	return softLayer_Virtual_Guest_Service, errors.New("Implement me!")
 }
 
-func (slvg *softLayerVirtualGuest) DeleteObject(instanceId int) (bool, error) {
-	response, err := slvg.client.DoRawHttpRequest(fmt.Sprintf("SoftLayer_Virtual_Guest/%d.json", instanceId), "DELETE", new(bytes.Buffer))
+func (slvgs *softLayer_Virtual_Guest_Service) DeleteObject(instanceId int) (bool, error) {
+	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("SoftLayer_Virtual_Guest/%d.json", instanceId), "DELETE", new(bytes.Buffer))
 
 	if res := string(response[:]); res != "true" {
 		return false, errors.New(fmt.Sprintf("Failed to destroy and instance wit id '%d', got '%s' as response from the API.", instanceId, res))
@@ -71,7 +71,7 @@ func (slvg *softLayerVirtualGuest) DeleteObject(instanceId int) (bool, error) {
 
 //Private methods
 
-func (slvg *softLayerVirtualGuest) checkCreateObjectRequiredValues(template datatypes.SoftLayer_Virtual_Guest_Template) error {
+func (slvgs *softLayer_Virtual_Guest_Service) checkCreateObjectRequiredValues(template datatypes.SoftLayer_Virtual_Guest_Template) error {
 	var err error
 	errorMessage, errorTemplate := "", "* %s is required and cannot be empty\n"
 

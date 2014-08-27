@@ -11,11 +11,11 @@ import (
 	softlayer "github.com/maximilien/softlayer-go/softlayer"
 )
 
-var _ = Describe("SoftLayer_Virtual_Guest", func() {
+var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 	var (
 		username, apiKey     string
 		client               softlayer.Client
-		virtualGuestService  softlayer.SoftLayer_Virtual_Guest
+		virtualGuestService  softlayer.SoftLayer_Virtual_Guest_Service
 		err                  error
 		virtualGuest         datatypes.SoftLayer_Virtual_Guest
 		virtualGuestTemplate datatypes.SoftLayer_Virtual_Guest_Template
@@ -31,7 +31,7 @@ var _ = Describe("SoftLayer_Virtual_Guest", func() {
 		client = slclient.NewSoftLayerClient(username, apiKey)
 		Expect(client).ToNot(BeNil())
 
-		virtualGuestService, err = client.GetSoftLayer_Virtual_Guest()
+		virtualGuestService, err = client.GetSoftLayer_Virtual_Guest_Service()
 		Expect(err).ToNot(HaveOccurred())
 		Expect(virtualGuestService).ToNot(BeNil())
 
@@ -48,9 +48,9 @@ var _ = Describe("SoftLayer_Virtual_Guest", func() {
 
 	Context("#CreateObject", func() {
 		XIt("creates a new SoftLayer_Virtual_Guest instance", func() {
-			virtualGuest, err := virtualGuestService.CreateObject(virtualGuestTemplate)
+			_, err := virtualGuestService.CreateObject(virtualGuestTemplate)
 			Expect(err).ToNot(HaveOccurred())
-			Expect(virtualGuest).ToNot(BeNil())
+			Expect(virtualGuestService).ToNot(BeNil())
 		})
 
 		It("flags all missing required parameters for SoftLayer_Virtual_Guest/createObject.json POST call", func() {
