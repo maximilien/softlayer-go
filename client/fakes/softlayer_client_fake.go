@@ -12,7 +12,7 @@ const (
 	TEMPLATE_ROOT_PATH = "templates"
 )
 
-type SoftLayerClientFake struct {
+type FakeSoftLayerClient struct {
 	Username string
 	ApiKey   string
 
@@ -29,9 +29,9 @@ type SoftLayerClientFake struct {
 	HasErrorsError error
 }
 
-func NewSoftLayerClientFake(username, apiKey string) *SoftLayerClientFake {
+func NewFakeSoftLayerClient(username, apiKey string) *FakeSoftLayerClient {
 	pwd, _ := os.Getwd()
-	return &SoftLayerClientFake{
+	return &FakeSoftLayerClient{
 		Username: username,
 		ApiKey:   apiKey,
 
@@ -51,8 +51,8 @@ func NewSoftLayerClientFake(username, apiKey string) *SoftLayerClientFake {
 
 //softlayer.Client interface methods
 
-func (slcf *SoftLayerClientFake) GetService(serviceName string) (softlayer.Service, error) {
-	slService, ok := slcf.softLayerServices[serviceName]
+func (fslc *FakeSoftLayerClient) GetService(serviceName string) (softlayer.Service, error) {
+	slService, ok := fslc.softLayerServices[serviceName]
 	if !ok {
 		return nil, errors.New(fmt.Sprintf("softlayer-go does not support service '%s'", serviceName))
 	}
@@ -60,7 +60,7 @@ func (slcf *SoftLayerClientFake) GetService(serviceName string) (softlayer.Servi
 	return slService, nil
 }
 
-func (slc *SoftLayerClientFake) GetSoftLayer_Account_Service() (softlayer.SoftLayer_Account_Service, error) {
+func (slc *FakeSoftLayerClient) GetSoftLayer_Account_Service() (softlayer.SoftLayer_Account_Service, error) {
 	slService, err := slc.GetService("SoftLayer_Account")
 	if err != nil {
 		return nil, err
@@ -69,7 +69,7 @@ func (slc *SoftLayerClientFake) GetSoftLayer_Account_Service() (softlayer.SoftLa
 	return slService.(softlayer.SoftLayer_Account_Service), nil
 }
 
-func (slcf *SoftLayerClientFake) GetSoftLayer_Virtual_Guest_Service() (softlayer.SoftLayer_Virtual_Guest_Service, error) {
+func (fslc *FakeSoftLayerClient) GetSoftLayer_Virtual_Guest_Service() (softlayer.SoftLayer_Virtual_Guest_Service, error) {
 	slService, err := slc.GetService("SoftLayer_Virtual_Guest")
 	if err != nil {
 		return nil, err
@@ -80,14 +80,14 @@ func (slcf *SoftLayerClientFake) GetSoftLayer_Virtual_Guest_Service() (softlayer
 
 //Public methods
 
-func (slcf *SoftLayerClientFake) DoRawHttpRequest(path string, requestType string, requestBody *bytes.Buffer) ([]byte, error) {
+func (fslc *FakeSoftLayerClient) DoRawHttpRequest(path string, requestType string, requestBody *bytes.Buffer) ([]byte, error) {
 	return slfc.DoRawHttpRequestResponse, slfc.DoRawHttpRequestError
 }
 
-func (slcf *SoftLayerClientFake) GenerateRequestBody(templateData interface{}) (*bytes.Buffer, error) {
-	return slcf.GenerateRequestBodyBuffer, slcf.GenerateRequestBodyError
+func (fslc *FakeSoftLayerClient) GenerateRequestBody(templateData interface{}) (*bytes.Buffer, error) {
+	return fslc.GenerateRequestBodyBuffer, fslc.GenerateRequestBodyError
 }
 
-func (slcf *SoftLayerClientFake) HasErrors(body map[string]interface{}) error {
-	return slcf.HasErrorsError
+func (fslc *FakeSoftLayerClient) HasErrors(body map[string]interface{}) error {
+	return fslc.HasErrorsError
 }
