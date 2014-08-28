@@ -37,7 +37,7 @@ var _ = Describe("SoftLayerClient", func() {
 
 	Context("#GetService", func() {
 		It("returns a service with name specified", func() {
-			accountService, err := client.GetService("SoftLayer_Account")
+			accountService, err := client.GetService("SoftLayer_Account_Service")
 			Expect(err).ToNot(HaveOccurred())
 			Expect(accountService).ToNot(BeNil())
 		})
