@@ -95,4 +95,17 @@ var _ = Describe("SoftLayer_Account_Service", func() {
 			Expect(virtualDiskImages).ToNot(BeNil())
 		})
 	})
+
+	Context("#GetSshKeys", func() {
+		BeforeEach(func() {
+			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Account_getSshKeys.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("returns an array of datatypes.SoftLayer_Ssh_Key", func() {
+			sshKeys, err := accountService.GetSshKeys()
+			Expect(err).ToNot(HaveOccurred())
+			Expect(sshKeys).ToNot(BeNil())
+		})
+	})
 })

@@ -40,7 +40,7 @@ var _ = Describe("SoftLayer Services", func() {
 		Expect(virtualGuestService).ToNot(BeNil())
 	})
 
-	Context("uses SoftLayer_Account to list current virtual: disk images, guests, and network storage", func() {
+	Context("uses SoftLayer_Account to list current virtual: disk images, guests, ssh keys, and network storage", func() {
 		It("returns an array of SoftLayer_Virtual_Guest disk images", func() {
 			virtualDiskImages, err := accountService.GetVirtualDiskImages()
 			Expect(err).ToNot(HaveOccurred())
@@ -57,6 +57,12 @@ var _ = Describe("SoftLayer Services", func() {
 			networkStorageArray, err := accountService.GetNetworkStorage()
 			Expect(err).ToNot(HaveOccurred())
 			Expect(len(networkStorageArray)).To(BeNumerically(">=", 0))
+		})
+
+		It("returns an array of SoftLayer_Ssh_Keys objects", func() {
+			sshKeys, err := accountService.GetSshKeys()
+			Expect(err).ToNot(HaveOccurred())
+			Expect(len(sshKeys)).To(BeNumerically(">=", 0))
 		})
 	})
 
