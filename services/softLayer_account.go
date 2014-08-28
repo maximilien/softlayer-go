@@ -21,7 +21,7 @@ func NewSoftLayer_Account_Service(client softlayer.Client) *softLayer_Account_Se
 }
 
 func (slas *softLayer_Account_Service) GetName() string {
-	return "SoftLayer_Account_Service"
+	return "SoftLayer_Account"
 }
 
 func (slas *softLayer_Account_Service) GetAccountStatus() (datatypes.SoftLayer_Account_Status, error) {
@@ -69,6 +69,8 @@ func (slas *softLayer_Account_Service) GetNetworkStorage() ([]datatypes.SoftLaye
 		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Account#getNetworkStorage, error message '%s'", err.Error())
 		return []datatypes.SoftLayer_Network_Storage{}, errors.New(errorMessage)
 	}
+
+	fmt.Printf("response: %s\n", string(responseBytes)) //DEBUG
 
 	networkStorage := []datatypes.SoftLayer_Network_Storage{}
 	err = json.Unmarshal(responseBytes, &networkStorage)

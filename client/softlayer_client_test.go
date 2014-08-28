@@ -37,7 +37,7 @@ var _ = Describe("SoftLayerClient", func() {
 
 	Context("#GetService", func() {
 		It("returns a service with name specified", func() {
-			accountService, err := client.GetService("SoftLayer_Account_Service")
+			accountService, err := client.GetService("SoftLayer_Account")
 			Expect(err).ToNot(HaveOccurred())
 			Expect(accountService).ToNot(BeNil())
 		})
@@ -55,6 +55,15 @@ var _ = Describe("SoftLayerClient", func() {
 			accountService, err := client.GetSoftLayer_Account_Service()
 			Expect(err).ToNot(HaveOccurred())
 			Expect(accountService).ToNot(BeNil())
+		})
+	})
+
+	Context("#GetSoftLayer_Virtual_Guest", func() {
+		It("returns a instance implemementing the SoftLayer_Virtual_Guest interface", func() {
+			var virtualGuestService softlayer.SoftLayer_Virtual_Guest_Service
+			virtualGuestService, err := client.GetSoftLayer_Virtual_Guest_Service()
+			Expect(err).ToNot(HaveOccurred())
+			Expect(virtualGuestService).ToNot(BeNil())
 		})
 	})
 })

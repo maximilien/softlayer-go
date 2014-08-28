@@ -64,7 +64,7 @@ func (slc *softLayerClient) GetService(serviceName string) (softlayer.Service, e
 }
 
 func (slc *softLayerClient) GetSoftLayer_Account_Service() (softlayer.SoftLayer_Account_Service, error) {
-	slService, err := slc.GetService("SoftLayer_Account_Service")
+	slService, err := slc.GetService("SoftLayer_Account")
 	if err != nil {
 		return nil, err
 	}
@@ -73,7 +73,7 @@ func (slc *softLayerClient) GetSoftLayer_Account_Service() (softlayer.SoftLayer_
 }
 
 func (slc *softLayerClient) GetSoftLayer_Virtual_Guest_Service() (softlayer.SoftLayer_Virtual_Guest_Service, error) {
-	slService, err := slc.GetService("SoftLayer_Virtual_Guest_Service")
+	slService, err := slc.GetService("SoftLayer_Virtual_Guest")
 	if err != nil {
 		return nil, err
 	}
@@ -146,6 +146,6 @@ func (slc *softLayerClient) HasErrors(body map[string]interface{}) error {
 //Private methods
 
 func (slc *softLayerClient) initSoftLayerServices() {
-	slc.softLayerServices["SoftLayer_Account_Service"] = services.NewSoftLayer_Account_Service(slc)
-	slc.softLayerServices["SoftLayer_Virtual_Guest_Service"] = services.NewSoftLayer_Virtual_Guest_Service(slc)
+	slc.softLayerServices["SoftLayer_Account"] = services.NewSoftLayer_Account_Service(slc)
+	slc.softLayerServices["SoftLayer_Virtual_Guest"] = services.NewSoftLayer_Virtual_Guest_Service(slc)
 }
