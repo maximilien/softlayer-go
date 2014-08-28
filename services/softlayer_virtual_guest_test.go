@@ -46,7 +46,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 	Context("#GetName", func() {
 		It("returns the name for the service", func() {
 			name := virtualGuestService.GetName()
-			Expect(name).To(Equal("SoftLayer_Virtual_Guest_Service"))
+			Expect(name).To(Equal("SoftLayer_Virtual_Guest"))
 		})
 	})
 

@@ -39,7 +39,7 @@ var _ = Describe("SoftLayer_Account_Service", func() {
 	Context("#GetName", func() {
 		It("returns the name for the service", func() {
 			name := accountService.GetName()
-			Expect(name).To(Equal("SoftLayer_Account_Service"))
+			Expect(name).To(Equal("SoftLayer_Account"))
 		})
 	})
 
