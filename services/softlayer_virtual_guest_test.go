@@ -6,17 +6,21 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
-	slclient "github.com/maximilien/softlayer-go/client"
+	slclientfakes "github.com/maximilien/softlayer-go/client/fakes"
+	common "github.com/maximilien/softlayer-go/common"
 	datatypes "github.com/maximilien/softlayer-go/data_types"
 	softlayer "github.com/maximilien/softlayer-go/softlayer"
 )
 
 var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 	var (
-		username, apiKey     string
-		client               softlayer.Client
-		virtualGuestService  softlayer.SoftLayer_Virtual_Guest_Service
-		err                  error
+		username, apiKey string
+		err              error
+
+		fakeClient *slclientfakes.FakeSoftLayerClient
+
+		virtualGuestService softlayer.SoftLayer_Virtual_Guest_Service
+
 		virtualGuest         datatypes.SoftLayer_Virtual_Guest
 		virtualGuestTemplate datatypes.SoftLayer_Virtual_Guest_Template
 	)
@@ -28,10 +32,10 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 		apiKey = os.Getenv("SL_API_KEY")
 		Expect(apiKey).ToNot(Equal(""))
 
-		client = slclient.NewSoftLayerClient(username, apiKey)
-		Expect(client).ToNot(BeNil())
+		fakeClient = slclientfakes.NewFakeSoftLayerClient(username, apiKey)
+		Expect(fakeClient).ToNot(BeNil())
 
-		virtualGuestService, err = client.GetSoftLayer_Virtual_Guest_Service()
+		virtualGuestService, err = fakeClient.GetSoftLayer_Virtual_Guest_Service()
 		Expect(err).ToNot(HaveOccurred())
 		Expect(virtualGuestService).ToNot(BeNil())
 
@@ -47,13 +51,35 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 	})
 
 	Context("#CreateObject", func() {
-		XIt("creates a new SoftLayer_Virtual_Guest instance", func() {
-			_, err := virtualGuestService.CreateObject(virtualGuestTemplate)
+		BeforeEach(func() {
+			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_createObject.json")
 			Expect(err).ToNot(HaveOccurred())
-			Expect(virtualGuestService).ToNot(BeNil())
+		})
+
+		It("creates a new SoftLayer_Virtual_Guest instance", func() {
+			virtualGuestTemplate = datatypes.SoftLayer_Virtual_Guest_Template{
+				Hostname:  "fake-hostname",
+				Domain:    "fake.domain.com",
+				StartCpus: 2,
+				MaxMemory: 1024,
+				Datacenter: datatypes.Datacenter{
+					Name: "fake-datacenter-name",
+				},
+				HourlyBillingFlag:            true,
+				LocalDiskFlag:                false,
+				DedicatedAccountHostOnlyFlag: false,
+			}
+			virtualGuest, err = virtualGuestService.CreateObject(virtualGuestTemplate)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(virtualGuest.Hostname).To(Equal("fake-hostname"))
+			Expect(virtualGuest.Domain).To(Equal("fake.domain.com"))
+			Expect(virtualGuest.StartCpus).To(Equal(2))
+			Expect(virtualGuest.MaxMemory).To(Equal(1024))
+			Expect(virtualGuest.DedicatedAccountHostOnlyFlag).To(BeFalse())
 		})
 
 		It("flags all missing required parameters for SoftLayer_Virtual_Guest/createObject.json POST call", func() {
+			virtualGuestTemplate = datatypes.SoftLayer_Virtual_Guest_Template{}
 			_, err := virtualGuestService.CreateObject(virtualGuestTemplate)
 			Expect(err).To(HaveOccurred())
 			Expect(err.Error()).To(ContainSubstring("Hostname"))
@@ -65,10 +91,22 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 	})
 
 	Context("#DeleteObject", func() {
-		XIt("deletes the SoftLayer_Virtual_Guest", func() {
+		BeforeEach(func() {
+			virtualGuest.Id = 1234567
+		})
+
+		It("sucessfully deletes the SoftLayer_Virtual_Guest instance", func() {
+			fakeClient.DoRawHttpRequestResponse = []byte("true")
 			deleted, err := virtualGuestService.DeleteObject(virtualGuest.Id)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(deleted).To(BeTrue())
+		})
+
+		It("fails to delete the SoftLayer_Virtual_Guest instance", func() {
+			fakeClient.DoRawHttpRequestResponse = []byte("false")
+			deleted, err := virtualGuestService.DeleteObject(virtualGuest.Id)
+			Expect(err).To(HaveOccurred())
+			Expect(deleted).To(BeFalse())
 		})
 	})
 })
