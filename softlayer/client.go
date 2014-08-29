@@ -13,4 +13,6 @@ type Client interface {
 	DoRawHttpRequest(path string, requestType string, requestBody *bytes.Buffer) ([]byte, error)
 	GenerateRequestBody(templateData interface{}) (*bytes.Buffer, error)
 	HasErrors(body map[string]interface{}) error
+
+	CheckForHttpResponseErrors(data []byte) error
 }
