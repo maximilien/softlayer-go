@@ -72,6 +72,16 @@ var _ = Describe("SoftLayer Services", func() {
 		})
 	})
 
+	XContext("uses SoftLayer_Account to create and then delete a an ssh key", func() {
+		It("creates the ssh key and verify it is present", func() {
+			Expect(false).To(BeTrue())
+		})
+
+		It("deletes the ssh key", func() {
+			Expect(false).To(BeTrue())
+		})
+	})
+
 	XContext("uses SoftLayer_Account to create and then delete a virtual guest instance", func() {
 		It("creates the virtual guest instance and waits for it to be active", func() {
 			Expect(false).To(BeTrue())
