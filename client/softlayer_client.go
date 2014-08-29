@@ -2,6 +2,7 @@ package client
 
 import (
 	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -141,6 +142,20 @@ func (slc *softLayerClient) HasErrors(body map[string]interface{}) error {
 	} else {
 		return errors.New(errString.(string))
 	}
+}
+
+func (slc *softLayerClient) CheckForHttpResponseErrors(data []byte) error {
+	var decodedResponse map[string]interface{}
+	err := json.Unmarshal(data, &decodedResponse)
+	if err != nil {
+		return err
+	}
+
+	if err := slc.HasErrors(decodedResponse); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 //Private methods

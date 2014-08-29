@@ -40,18 +40,18 @@ func (slvgs *softLayer_Virtual_Guest_Service) CreateObject(template datatypes.So
 		return datatypes.SoftLayer_Virtual_Guest{}, err
 	}
 
-	err = slvgs.checkForResponseErrors(data)
+	err = slvgs.client.CheckForHttpResponseErrors(data)
 	if err != nil {
 		return datatypes.SoftLayer_Virtual_Guest{}, err
 	}
 
-	softLayer_Virtual_Guest_Service := datatypes.SoftLayer_Virtual_Guest{}
-	err = json.Unmarshal(data, &softLayer_Virtual_Guest_Service)
+	softLayer_Virtual_Guest := datatypes.SoftLayer_Virtual_Guest{}
+	err = json.Unmarshal(data, &softLayer_Virtual_Guest)
 	if err != nil {
 		return datatypes.SoftLayer_Virtual_Guest{}, err
 	}
 
-	return softLayer_Virtual_Guest_Service, nil
+	return softLayer_Virtual_Guest, nil
 }
 
 func (slvgs *softLayer_Virtual_Guest_Service) DeleteObject(instanceId int) (bool, error) {
@@ -65,20 +65,6 @@ func (slvgs *softLayer_Virtual_Guest_Service) DeleteObject(instanceId int) (bool
 }
 
 //Private methods
-
-func (slvgs *softLayer_Virtual_Guest_Service) checkForResponseErrors(data []byte) error {
-	var decodedResponse map[string]interface{}
-	err := json.Unmarshal(data, &decodedResponse)
-	if err != nil {
-		return err
-	}
-
-	if err := slvgs.client.HasErrors(decodedResponse); err != nil {
-		return err
-	}
-
-	return nil
-}
 
 func (slvgs *softLayer_Virtual_Guest_Service) checkCreateObjectRequiredValues(template datatypes.SoftLayer_Virtual_Guest_Template) error {
 	var err error
