@@ -30,7 +30,7 @@ type FakeSoftLayerClient struct {
 	GenerateRequestBodyBuffer *bytes.Buffer
 	GenerateRequestBodyError  error
 
-	HasErrorsError error
+	HasErrorsError, CheckForHttpResponseError error
 }
 
 func NewFakeSoftLayerClient(username, apiKey string) *FakeSoftLayerClient {
@@ -49,7 +49,8 @@ func NewFakeSoftLayerClient(username, apiKey string) *FakeSoftLayerClient {
 		GenerateRequestBodyBuffer: new(bytes.Buffer),
 		GenerateRequestBodyError:  nil,
 
-		HasErrorsError: nil,
+		HasErrorsError:            nil,
+		CheckForHttpResponseError: nil,
 	}
 
 	fslc.initSoftLayerServices()
@@ -69,7 +70,7 @@ func (fslc *FakeSoftLayerClient) GetService(serviceName string) (softlayer.Servi
 }
 
 func (fslc *FakeSoftLayerClient) GetSoftLayer_Account_Service() (softlayer.SoftLayer_Account_Service, error) {
-	slService, err := fslc.GetService("SoftLayer_Account_Service")
+	slService, err := fslc.GetService("SoftLayer_Account")
 	if err != nil {
 		return nil, err
 	}
@@ -78,12 +79,21 @@ func (fslc *FakeSoftLayerClient) GetSoftLayer_Account_Service() (softlayer.SoftL
 }
 
 func (fslc *FakeSoftLayerClient) GetSoftLayer_Virtual_Guest_Service() (softlayer.SoftLayer_Virtual_Guest_Service, error) {
-	slService, err := fslc.GetService("SoftLayer_Virtual_Guest_Service")
+	slService, err := fslc.GetService("SoftLayer_Virtual_Guest")
 	if err != nil {
 		return nil, err
 	}
 
 	return slService.(softlayer.SoftLayer_Virtual_Guest_Service), nil
+}
+
+func (fslc *FakeSoftLayerClient) GetSoftLayer_Ssh_Key_Service() (softlayer.SoftLayer_Ssh_Key_Service, error) {
+	slService, err := fslc.GetService("SoftLayer_Ssh_Key")
+	if err != nil {
+		return nil, err
+	}
+
+	return slService.(softlayer.SoftLayer_Ssh_Key_Service), nil
 }
 
 //Public methods
@@ -100,9 +110,14 @@ func (fslc *FakeSoftLayerClient) HasErrors(body map[string]interface{}) error {
 	return fslc.HasErrorsError
 }
 
+func (fslc *FakeSoftLayerClient) CheckForHttpResponseErrors(data []byte) error {
+	return fslc.CheckForHttpResponseError
+}
+
 //Private methods
 
 func (fslc *FakeSoftLayerClient) initSoftLayerServices() {
-	fslc.SoftLayerServices["SoftLayer_Account_Service"] = services.NewSoftLayer_Account_Service(fslc)
-	fslc.SoftLayerServices["SoftLayer_Virtual_Guest_Service"] = services.NewSoftLayer_Virtual_Guest_Service(fslc)
+	fslc.SoftLayerServices["SoftLayer_Account"] = services.NewSoftLayer_Account_Service(fslc)
+	fslc.SoftLayerServices["SoftLayer_Virtual_Guest"] = services.NewSoftLayer_Virtual_Guest_Service(fslc)
+	fslc.SoftLayerServices["SoftLayer_Ssh_Key"] = services.NewSoftLayer_Ssh_Key_Service(fslc)
 }
