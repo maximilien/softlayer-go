@@ -1,13 +1,19 @@
 package services_test
 
 import (
+	"errors"
 	"os"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
 	slclient "github.com/maximilien/softlayer-go/client"
+	datatypes "github.com/maximilien/softlayer-go/data_types"
 	softlayer "github.com/maximilien/softlayer-go/softlayer"
+)
+
+const (
+	TEST_NOTES_PREFIX = "softlayer-go"
 )
 
 var _ = Describe("SoftLayer Services", func() {
@@ -94,3 +100,74 @@ var _ = Describe("SoftLayer Services", func() {
 		})
 	})
 })
+
+func findTestVirtualGuests() ([]datatypes.SoftLayer_Virtual_Guest, error) {
+	return []datatypes.SoftLayer_Virtual_Guest{}, nil
+}
+
+func findTestNetworkStorage() ([]datatypes.SoftLayer_Network_Storage, error) {
+	return []datatypes.SoftLayer_Network_Storage{}, nil
+}
+
+func findTestSshKeys() ([]datatypes.SoftLayer_Ssh_Key, error) {
+	return []datatypes.SoftLayer_Ssh_Key{}, nil
+}
+
+func getUsernameAndApiKey() (string, string, error) {
+	username := os.Getenv("SL_USERNAME")
+	if username == "" {
+		return "", "", errors.New("SL_USERNAME environment must be set")
+	}
+
+	apiKey := os.Getenv("SL_API_KEY")
+	if apiKey == "" {
+		return username, "", errors.New("SL_API_KEY environment must be set")
+	}
+
+	return username, apiKey, nil
+}
+
+func createAccountService() (softlayer.SoftLayer_Account_Service, error) {
+	username, apiKey, err := getUsernameAndApiKey()
+	if err != nil {
+		return nil, err
+	}
+
+	client := slclient.NewSoftLayerClient(username, apiKey)
+	accountService, err := client.GetSoftLayer_Account_Service()
+	if err != nil {
+		return nil, err
+	}
+
+	return accountService, nil
+}
+
+func createVirtualGuestService() (softlayer.SoftLayer_Virtual_Guest_Service, error) {
+	username, apiKey, err := getUsernameAndApiKey()
+	if err != nil {
+		return nil, err
+	}
+
+	client := slclient.NewSoftLayerClient(username, apiKey)
+	virtualGuestService, err := client.GetSoftLayer_Virtual_Guest_Service()
+	if err != nil {
+		return nil, err
+	}
+
+	return virtualGuestService, nil
+}
+
+func createSshKeyService() (softlayer.SoftLayer_Ssh_Key_Service, error) {
+	username, apiKey, err := getUsernameAndApiKey()
+	if err != nil {
+		return nil, err
+	}
+
+	client := slclient.NewSoftLayerClient(username, apiKey)
+	sshKeyService, err := client.GetSoftLayer_Ssh_Key_Service()
+	if err != nil {
+		return nil, err
+	}
+
+	return sshKeyService, nil
+}
