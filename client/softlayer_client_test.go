@@ -66,4 +66,13 @@ var _ = Describe("SoftLayerClient", func() {
 			Expect(virtualGuestService).ToNot(BeNil())
 		})
 	})
+
+	Context("#GetSoftLayer_Ssh_Key", func() {
+		It("returns a instance implemementing the SoftLayer_Ssh_Key interface", func() {
+			var sshKeyService softlayer.SoftLayer_Ssh_Key_Service
+			sshKeyService, err := client.GetSoftLayer_Ssh_Key_Service()
+			Expect(err).ToNot(HaveOccurred())
+			Expect(sshKeyService).ToNot(BeNil())
+		})
+	})
 })
