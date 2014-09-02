@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	TEST_NOTES_PREFIX = "softlayer-go"
+	TEST_NOTES_PREFIX = "TEST:softlayer-go"
 )
 
 var _ = Describe("SoftLayer Services", func() {
