@@ -46,7 +46,7 @@ var _ = Describe("SoftLayer_Ssh_Key_Service", func() {
 	Context("#GetName", func() {
 		It("returns the name for the service", func() {
 			name := sshKeyService.GetName()
-			Expect(name).To(Equal("SoftLayer_Ssh_Key"))
+			Expect(name).To(Equal("SoftLayer_Security_Ssh_Key"))
 		})
 	})
 

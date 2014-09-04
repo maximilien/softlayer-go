@@ -21,16 +21,22 @@ func NewSoftLayer_Ssh_Key_Service(client softlayer.Client) *softLayer_Ssh_Key_Se
 }
 
 func (slsks *softLayer_Ssh_Key_Service) GetName() string {
-	return "SoftLayer_Ssh_Key"
+	return "SoftLayer_Security_Ssh_Key"
 }
 
 func (slsks *softLayer_Ssh_Key_Service) CreateObject(template datatypes.SoftLayer_Ssh_Key) (datatypes.SoftLayer_Ssh_Key, error) {
-	requestBody, err := json.Marshal(template)
+	parameters := datatypes.SoftLayer_Shh_Key_Parameters{
+		Parameters: []datatypes.SoftLayer_Ssh_Key{
+			template,
+		},
+	}
+
+	requestBody, err := json.Marshal(parameters)
 	if err != nil {
 		return datatypes.SoftLayer_Ssh_Key{}, err
 	}
 
-	data, err := slsks.client.DoRawHttpRequest("SoftLayer_Ssh_Key/createObject", "POST", bytes.NewBuffer(requestBody))
+	data, err := slsks.client.DoRawHttpRequest(fmt.Sprintf("%s/createObject", slsks.GetName()), "POST", bytes.NewBuffer(requestBody))
 	if err != nil {
 		return datatypes.SoftLayer_Ssh_Key{}, err
 	}
