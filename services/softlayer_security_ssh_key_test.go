@@ -19,10 +19,10 @@ var _ = Describe("SoftLayer_Ssh_Key_Service", func() {
 
 		fakeClient *slclientfakes.FakeSoftLayerClient
 
-		sshKeyService softlayer.SoftLayer_Ssh_Key_Service
+		sshKeyService softlayer.SoftLayer_Security_Ssh_Key_Service
 
-		sshKey         datatypes.SoftLayer_Ssh_Key
-		sshKeyTemplate datatypes.SoftLayer_Ssh_Key
+		sshKey         datatypes.SoftLayer_Security_Ssh_Key
+		sshKeyTemplate datatypes.SoftLayer_Security_Ssh_Key
 	)
 
 	BeforeEach(func() {
@@ -35,12 +35,12 @@ var _ = Describe("SoftLayer_Ssh_Key_Service", func() {
 		fakeClient = slclientfakes.NewFakeSoftLayerClient(username, apiKey)
 		Expect(fakeClient).ToNot(BeNil())
 
-		sshKeyService, err = fakeClient.GetSoftLayer_Ssh_Key_Service()
+		sshKeyService, err = fakeClient.GetSoftLayer_Security_Ssh_Key_Service()
 		Expect(err).ToNot(HaveOccurred())
 		Expect(sshKeyService).ToNot(BeNil())
 
-		sshKey = datatypes.SoftLayer_Ssh_Key{}
-		sshKeyTemplate = datatypes.SoftLayer_Ssh_Key{}
+		sshKey = datatypes.SoftLayer_Security_Ssh_Key{}
+		sshKeyTemplate = datatypes.SoftLayer_Security_Ssh_Key{}
 	})
 
 	Context("#GetName", func() {
@@ -57,7 +57,7 @@ var _ = Describe("SoftLayer_Ssh_Key_Service", func() {
 		})
 
 		It("creates a new SoftLayer_Ssh_Key instance", func() {
-			sshKeyTemplate = datatypes.SoftLayer_Ssh_Key{
+			sshKeyTemplate = datatypes.SoftLayer_Security_Ssh_Key{
 				Fingerprint: "fake-fingerprint",
 				Key:         "fake-key",
 				Label:       "fake-label",

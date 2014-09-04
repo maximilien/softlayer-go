@@ -100,20 +100,20 @@ func (slas *softLayer_Account_Service) GetVirtualDiskImages() ([]datatypes.SoftL
 	return virtualDiskImages, nil
 }
 
-func (slas *softLayer_Account_Service) GetSshKeys() ([]datatypes.SoftLayer_Ssh_Key, error) {
+func (slas *softLayer_Account_Service) GetSshKeys() ([]datatypes.SoftLayer_Security_Ssh_Key, error) {
 	path := fmt.Sprintf("%s/%s", slas.GetName(), "getSshKeys.json")
 	responseBytes, err := slas.client.DoRawHttpRequest(path, "GET", &bytes.Buffer{})
 	if err != nil {
 		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Account#getSshKeys, error message '%s'", err.Error())
-		return []datatypes.SoftLayer_Ssh_Key{}, errors.New(errorMessage)
+		return []datatypes.SoftLayer_Security_Ssh_Key{}, errors.New(errorMessage)
 	}
 
-	sshKeys := []datatypes.SoftLayer_Ssh_Key{}
+	sshKeys := []datatypes.SoftLayer_Security_Ssh_Key{}
 	err = json.Unmarshal(responseBytes, &sshKeys)
 	if err != nil {
 		errorMessage := fmt.Sprintf("softlayer-go: failed to decode JSON response, err message '%s'", err.Error())
 		err := errors.New(errorMessage)
-		return []datatypes.SoftLayer_Ssh_Key{}, err
+		return []datatypes.SoftLayer_Security_Ssh_Key{}, err
 	}
 
 	return sshKeys, nil

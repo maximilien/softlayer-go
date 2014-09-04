@@ -75,13 +75,13 @@ var _ = Describe("SoftLayer Services", func() {
 			testSshKeyValue, err := ioutil.ReadFile(sshKeyPath)
 			Expect(err).ToNot(HaveOccurred())
 
-			sshKey := datatypes.SoftLayer_Ssh_Key{
+			sshKey := datatypes.SoftLayer_Security_Ssh_Key{
 				Key:   strings.Trim(string(testSshKeyValue), "\n"),
 				Label: testhelpers.TEST_LABEL_PREFIX,
 				Notes: testhelpers.TEST_NOTES_PREFIX,
 			}
 
-			sshKeyService, err := testhelpers.CreateSshKeyService()
+			sshKeyService, err := testhelpers.CreateSecuritySshKeyService()
 			Expect(err).ToNot(HaveOccurred())
 
 			//Create ssh key

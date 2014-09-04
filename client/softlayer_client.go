@@ -82,13 +82,13 @@ func (slc *softLayerClient) GetSoftLayer_Virtual_Guest_Service() (softlayer.Soft
 	return slService.(softlayer.SoftLayer_Virtual_Guest_Service), nil
 }
 
-func (slc *softLayerClient) GetSoftLayer_Ssh_Key_Service() (softlayer.SoftLayer_Ssh_Key_Service, error) {
+func (slc *softLayerClient) GetSoftLayer_Security_Ssh_Key_Service() (softlayer.SoftLayer_Security_Ssh_Key_Service, error) {
 	slService, err := slc.GetService("SoftLayer_Ssh_Key")
 	if err != nil {
 		return nil, err
 	}
 
-	return slService.(softlayer.SoftLayer_Ssh_Key_Service), nil
+	return slService.(softlayer.SoftLayer_Security_Ssh_Key_Service), nil
 }
 
 //Public methods

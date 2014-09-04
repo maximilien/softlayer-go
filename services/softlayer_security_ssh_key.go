@@ -24,32 +24,32 @@ func (slsks *softLayer_Ssh_Key_Service) GetName() string {
 	return "SoftLayer_Security_Ssh_Key"
 }
 
-func (slsks *softLayer_Ssh_Key_Service) CreateObject(template datatypes.SoftLayer_Ssh_Key) (datatypes.SoftLayer_Ssh_Key, error) {
+func (slsks *softLayer_Ssh_Key_Service) CreateObject(template datatypes.SoftLayer_Security_Ssh_Key) (datatypes.SoftLayer_Security_Ssh_Key, error) {
 	parameters := datatypes.SoftLayer_Shh_Key_Parameters{
-		Parameters: []datatypes.SoftLayer_Ssh_Key{
+		Parameters: []datatypes.SoftLayer_Security_Ssh_Key{
 			template,
 		},
 	}
 
 	requestBody, err := json.Marshal(parameters)
 	if err != nil {
-		return datatypes.SoftLayer_Ssh_Key{}, err
+		return datatypes.SoftLayer_Security_Ssh_Key{}, err
 	}
 
 	data, err := slsks.client.DoRawHttpRequest(fmt.Sprintf("%s/createObject", slsks.GetName()), "POST", bytes.NewBuffer(requestBody))
 	if err != nil {
-		return datatypes.SoftLayer_Ssh_Key{}, err
+		return datatypes.SoftLayer_Security_Ssh_Key{}, err
 	}
 
 	err = slsks.client.CheckForHttpResponseErrors(data)
 	if err != nil {
-		return datatypes.SoftLayer_Ssh_Key{}, err
+		return datatypes.SoftLayer_Security_Ssh_Key{}, err
 	}
 
-	softLayer_Ssh_Key := datatypes.SoftLayer_Ssh_Key{}
+	softLayer_Ssh_Key := datatypes.SoftLayer_Security_Ssh_Key{}
 	err = json.Unmarshal(data, &softLayer_Ssh_Key)
 	if err != nil {
-		return datatypes.SoftLayer_Ssh_Key{}, err
+		return datatypes.SoftLayer_Security_Ssh_Key{}, err
 	}
 
 	return softLayer_Ssh_Key, nil

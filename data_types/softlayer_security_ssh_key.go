@@ -5,10 +5,10 @@ import (
 )
 
 type SoftLayer_Shh_Key_Parameters struct {
-	Parameters []SoftLayer_Ssh_Key `json:"parameters"`
+	Parameters []SoftLayer_Security_Ssh_Key `json:"parameters"`
 }
 
-type SoftLayer_Ssh_Key struct {
+type SoftLayer_Security_Ssh_Key struct {
 	CreateDate  *time.Time `json:"createDate"`
 	Fingerprint string     `json:"fingerprint"`
 	Id          int        `json:"id"`

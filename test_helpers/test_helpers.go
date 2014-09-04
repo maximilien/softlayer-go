@@ -79,18 +79,18 @@ func FindTestNetworkStorage() ([]datatypes.SoftLayer_Network_Storage, error) {
 	return testNetworkStorageArray, nil
 }
 
-func FindTestSshKeys() ([]datatypes.SoftLayer_Ssh_Key, error) {
+func FindTestSshKeys() ([]datatypes.SoftLayer_Security_Ssh_Key, error) {
 	accountService, err := CreateAccountService()
 	if err != nil {
-		return []datatypes.SoftLayer_Ssh_Key{}, err
+		return []datatypes.SoftLayer_Security_Ssh_Key{}, err
 	}
 
 	sshKeys, err := accountService.GetSshKeys()
 	if err != nil {
-		return []datatypes.SoftLayer_Ssh_Key{}, err
+		return []datatypes.SoftLayer_Security_Ssh_Key{}, err
 	}
 
-	testSshKeys := []datatypes.SoftLayer_Ssh_Key{}
+	testSshKeys := []datatypes.SoftLayer_Security_Ssh_Key{}
 	for _, key := range sshKeys {
 		if strings.Contains(key.Notes, TEST_NOTES_PREFIX) {
 			testSshKeys = append(testSshKeys, key)
@@ -144,14 +144,14 @@ func CreateVirtualGuestService() (softlayer.SoftLayer_Virtual_Guest_Service, err
 	return virtualGuestService, nil
 }
 
-func CreateSshKeyService() (softlayer.SoftLayer_Ssh_Key_Service, error) {
+func CreateSecuritySshKeyService() (softlayer.SoftLayer_Security_Ssh_Key_Service, error) {
 	username, apiKey, err := GetUsernameAndApiKey()
 	if err != nil {
 		return nil, err
 	}
 
 	client := slclient.NewSoftLayerClient(username, apiKey)
-	sshKeyService, err := client.GetSoftLayer_Ssh_Key_Service()
+	sshKeyService, err := client.GetSoftLayer_Security_Ssh_Key_Service()
 	if err != nil {
 		return nil, err
 	}
@@ -165,7 +165,7 @@ func FindAndDeleteTestSshKeys() error {
 		return err
 	}
 
-	sshKeyService, err := CreateSshKeyService()
+	sshKeyService, err := CreateSecuritySshKeyService()
 	if err != nil {
 		return err
 	}
