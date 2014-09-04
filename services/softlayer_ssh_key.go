@@ -56,10 +56,10 @@ func (slsks *softLayer_Ssh_Key_Service) CreateObject(template datatypes.SoftLaye
 }
 
 func (slsks *softLayer_Ssh_Key_Service) DeleteObject(sshKeyId int) (bool, error) {
-	response, err := slsks.client.DoRawHttpRequest(fmt.Sprintf("SoftLayer_Ssh_Key/%d.json", sshKeyId), "DELETE", new(bytes.Buffer))
+	response, err := slsks.client.DoRawHttpRequest(fmt.Sprintf("%s/%d.json", slsks.GetName(), sshKeyId), "DELETE", new(bytes.Buffer))
 
 	if res := string(response[:]); res != "true" {
-		return false, errors.New(fmt.Sprintf("Failed to destroy and instance wit id '%d', got '%s' as response from the API.", sshKeyId, res))
+		return false, errors.New(fmt.Sprintf("Failed to destroy ssh key with id '%d', got '%s' as response from the API.", sshKeyId, res))
 	}
 
 	return true, err
