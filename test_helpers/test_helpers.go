@@ -2,6 +2,7 @@ package test_helpers
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	"strings"
 
@@ -12,6 +13,7 @@ import (
 
 const (
 	TEST_NOTES_PREFIX = "TEST:softlayer-go"
+	TEST_LABEL_PREFIX = "TEST:softlayer-go"
 )
 
 func FindTestVirtualGuests() ([]datatypes.SoftLayer_Virtual_Guest, error) {
@@ -155,4 +157,28 @@ func CreateSshKeyService() (softlayer.SoftLayer_Ssh_Key_Service, error) {
 	}
 
 	return sshKeyService, nil
+}
+
+func FindAndDeleteTestSshKeys() error {
+	sshKeys, err := FindTestSshKeys()
+	if err != nil {
+		return err
+	}
+
+	sshKeyService, err := CreateSshKeyService()
+	if err != nil {
+		return err
+	}
+
+	for _, sshKey := range sshKeys {
+		deleted, err := sshKeyService.DeleteObject(sshKey.Id)
+		if err != nil {
+			return err
+		}
+		if !deleted {
+			return errors.New(fmt.Sprintf("Could not delete ssh key with id: %d", sshKey.Id))
+		}
+	}
+
+	return nil
 }

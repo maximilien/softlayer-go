@@ -1,9 +1,14 @@
 package services_test
 
 import (
+	"io/ioutil"
+	"os"
+	"strings"
+
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
+	datatypes "github.com/maximilien/softlayer-go/data_types"
 	softlayer "github.com/maximilien/softlayer-go/softlayer"
 	testhelpers "github.com/maximilien/softlayer-go/test_helpers"
 )
@@ -52,13 +57,48 @@ var _ = Describe("SoftLayer Services", func() {
 		})
 	})
 
-	XContext("uses SoftLayer_Account to create and then delete a an ssh key", func() {
-		It("creates the ssh key and verify it is present", func() {
-			Expect(false).To(BeTrue())
+	Context("uses SoftLayer_Account to create and then delete a an ssh key", func() {
+		BeforeEach(func() {
+			err := testhelpers.FindAndDeleteTestSshKeys()
+			Expect(err).ToNot(HaveOccurred())
 		})
 
-		It("deletes the ssh key", func() {
-			Expect(false).To(BeTrue())
+		AfterEach(func() {
+			err := testhelpers.FindAndDeleteTestSshKeys()
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("creates the ssh key and verify it is present and then deletes it", func() {
+			sshKeyPath := os.Getenv("SOFTLAYER_GO_TEST_SSH_KEY_PATH")
+			Expect(sshKeyPath).ToNot(Equal(""), "SOFTLAYER_GO_TEST_SSH_KEY_PATH env variable is not set")
+
+			testSshKeyValue, err := ioutil.ReadFile(sshKeyPath)
+			Expect(err).ToNot(HaveOccurred())
+
+			sshKey := datatypes.SoftLayer_Ssh_Key{
+				Key:   strings.Trim(string(testSshKeyValue), "\n"),
+				Label: testhelpers.TEST_LABEL_PREFIX,
+				Notes: testhelpers.TEST_NOTES_PREFIX,
+			}
+
+			sshKeyService, err := testhelpers.CreateSshKeyService()
+			Expect(err).ToNot(HaveOccurred())
+
+			//Create ssh key
+			createdSshKey, err := sshKeyService.CreateObject(sshKey)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(createdSshKey.Key).To(Equal(sshKey.Key), "key")
+			Expect(createdSshKey.Label).To(Equal(sshKey.Label), "label")
+			Expect(createdSshKey.Notes).To(Equal(sshKey.Notes), "notes")
+			Expect(createdSshKey.CreateDate).ToNot(BeNil(), "createDate")
+			Expect(createdSshKey.Fingerprint).ToNot(Equal(""), "fingerprint")
+			Expect(createdSshKey.Id).To(BeNumerically(">", 0), "id")
+			Expect(createdSshKey.ModifyDate).To(BeNil(), "modifyDate")
+
+			//Delete ssh key
+			deleted, err := sshKeyService.DeleteObject(createdSshKey.Id)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(deleted).To(BeTrue())
 		})
 	})
 
