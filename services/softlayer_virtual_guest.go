@@ -61,13 +61,28 @@ func (slvgs *softLayer_Virtual_Guest_Service) CreateObject(template datatypes.So
 }
 
 func (slvgs *softLayer_Virtual_Guest_Service) DeleteObject(instanceId int) (bool, error) {
-	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("SoftLayer_Virtual_Guest/%d.json", instanceId), "DELETE", new(bytes.Buffer))
+	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d.json", slvgs.GetName(), instanceId), "DELETE", new(bytes.Buffer))
 
 	if res := string(response[:]); res != "true" {
-		return false, errors.New(fmt.Sprintf("Failed to destroy and instance wit id '%d', got '%s' as response from the API.", instanceId, res))
+		return false, errors.New(fmt.Sprintf("Failed to destroy and instance with id '%d', got '%s' as response from the API.", instanceId, res))
 	}
 
 	return true, err
+}
+
+func (slvgs *softLayer_Virtual_Guest_Service) GetPowerState(instanceId int) (datatypes.SoftLayer_Virtual_Guest_Power_State, error) {
+	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/getPowerState.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+	if err != nil {
+		return datatypes.SoftLayer_Virtual_Guest_Power_State{}, err
+	}
+
+	vgPowerState := datatypes.SoftLayer_Virtual_Guest_Power_State{}
+	err = json.Unmarshal(response, &vgPowerState)
+	if err != nil {
+		return datatypes.SoftLayer_Virtual_Guest_Power_State{}, err
+	}
+
+	return vgPowerState, nil
 }
 
 //Private methods

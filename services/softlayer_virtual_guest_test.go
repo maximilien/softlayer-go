@@ -109,4 +109,18 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			Expect(deleted).To(BeFalse())
 		})
 	})
+
+	Context("#GetPowerState", func() {
+		BeforeEach(func() {
+			virtualGuest.Id = 1234567
+			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_getPowerState.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("sucessfully retrieves SoftLayer_Virtual_Guest_State for RUNNING instance", func() {
+			vgPowerState, err := virtualGuestService.GetPowerState(virtualGuest.Id)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(vgPowerState.KeyName).To(Equal("RUNNING"))
+		})
+	})
 })
