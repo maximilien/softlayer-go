@@ -103,8 +103,37 @@ var _ = Describe("SoftLayer Services", func() {
 	})
 
 	XContext("uses SoftLayer_Account to create and then delete a virtual guest instance", func() {
-		It("creates the virtual guest instance and waits for it to be active", func() {
-			Expect(false).To(BeTrue())
+		BeforeEach(func() {
+			err := testhelpers.FindAndDeleteTestVirtualGuests()
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		AfterEach(func() {
+			err := testhelpers.FindAndDeleteTestVirtualGuests()
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		XIt("creates the virtual guest instance and waits for it to be active", func() {
+			virtualGuestTemplate := datatypes.SoftLayer_Virtual_Guest_Template{
+				Hostname:  "test",
+				Domain:    "softlayergo.com",
+				StartCpus: 1,
+				MaxMemory: 1024,
+				Datacenter: datatypes.Datacenter{
+					Name: "ams01",
+				},
+				HourlyBillingFlag:            true,
+				LocalDiskFlag:                true,
+				OperatingSystemReferenceCode: "UBUNTU_LATEST",
+			}
+
+			virtualGuestService, err := testhelpers.CreateVirtualGuestService()
+			Expect(err).ToNot(HaveOccurred())
+
+			_, err = virtualGuestService.CreateObject(virtualGuestTemplate)
+			Expect(err).ToNot(HaveOccurred())
+
+			//Clean up
 		})
 
 		It("deletes the virtual guest instance if it is running", func() {

@@ -182,3 +182,27 @@ func FindAndDeleteTestSshKeys() error {
 
 	return nil
 }
+
+func FindAndDeleteTestVirtualGuests() error {
+	virtualGuests, err := FindTestVirtualGuests()
+	if err != nil {
+		return err
+	}
+
+	virtualGuestService, err := CreateVirtualGuestService()
+	if err != nil {
+		return err
+	}
+
+	for _, virtualGuest := range virtualGuests {
+		deleted, err := virtualGuestService.DeleteObject(virtualGuest.Id)
+		if err != nil {
+			return err
+		}
+		if !deleted {
+			return errors.New(fmt.Sprintf("Could not delete virtual guest with id: %d", virtualGuest.Id))
+		}
+	}
+
+	return nil
+}
