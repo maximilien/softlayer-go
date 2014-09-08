@@ -14,6 +14,9 @@ import (
 const (
 	TEST_NOTES_PREFIX = "TEST:softlayer-go"
 	TEST_LABEL_PREFIX = "TEST:softlayer-go"
+
+	MAX_WAIT_RETRIES = 10
+	WAIT_TIME        = 5
 )
 
 func FindTestVirtualGuests() ([]datatypes.SoftLayer_Virtual_Guest, error) {
@@ -202,6 +205,27 @@ func FindAndDeleteTestVirtualGuests() error {
 		if !deleted {
 			return errors.New(fmt.Sprintf("Could not delete virtual guest with id: %d", virtualGuest.Id))
 		}
+	}
+
+	return nil
+}
+
+func MarkVirtualGuestAsTest(virtualGuest datatypes.SoftLayer_Virtual_Guest) error {
+	virtualGuestService, err := CreateVirtualGuestService()
+	if err != nil {
+		return err
+	}
+
+	vgTemplate := datatypes.SoftLayer_Virtual_Guest{
+		Notes: TEST_NOTES_PREFIX,
+	}
+
+	edited, err := virtualGuestService.EditObject(virtualGuest.Id, vgTemplate)
+	if err != nil {
+		return err
+	}
+	if edited == false {
+		return errors.New(fmt.Sprintf("Could not edit virtual guest with id: %d", virtualGuest.Id))
 	}
 
 	return nil

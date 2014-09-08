@@ -30,7 +30,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) CreateObject(template datatypes.So
 		return datatypes.SoftLayer_Virtual_Guest{}, err
 	}
 
-	parameters := datatypes.SoftLayer_Virtual_Guest_Template_Paramaters{
+	parameters := datatypes.SoftLayer_Virtual_Guest_Template_Parameters{
 		Parameters: []datatypes.SoftLayer_Virtual_Guest_Template{
 			template,
 		},
@@ -61,12 +61,16 @@ func (slvgs *softLayer_Virtual_Guest_Service) CreateObject(template datatypes.So
 }
 
 func (slvgs *softLayer_Virtual_Guest_Service) EditObject(instanceId int, template datatypes.SoftLayer_Virtual_Guest) (bool, error) {
-	requestBody, err := json.Marshal(template)
+	parameters := datatypes.SoftLayer_Virtual_Guest_Parameters{
+		Parameters: []datatypes.SoftLayer_Virtual_Guest{template},
+	}
+
+	requestBody, err := json.Marshal(parameters)
 	if err != nil {
 		return false, err
 	}
 
-	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/editObject.json", slvgs.GetName(), instanceId), "PUT", bytes.NewBuffer(requestBody))
+	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/editObject.json", slvgs.GetName(), instanceId), "POST", bytes.NewBuffer(requestBody))
 
 	if res := string(response[:]); res != "true" {
 		return false, errors.New(fmt.Sprintf("Failed to edit virtual guest with id: %d, got '%s' as response from the API.", instanceId, res))

@@ -143,11 +143,7 @@ var _ = Describe("SoftLayer Services", func() {
 			fmt.Printf("----> creating new virtual guest\n")
 			virtualGuest, err := virtualGuestService.CreateObject(virtualGuestTemplate)
 			Expect(err).ToNot(HaveOccurred())
-
 			fmt.Printf("----> created virtual guest: %d\n", virtualGuest.Id)
-
-			err = testhelpers.MarkVirtualGuestAsTest(virtualGuest)
-			Expect(err).ToNot(HaveOccurred(), "Could not mark virtual guest as test")
 
 			fmt.Printf("----> waiting for virtual guest: %d, until RUNNING\n", virtualGuest.Id)
 			Eventually(func() string {
@@ -157,7 +153,12 @@ var _ = Describe("SoftLayer Services", func() {
 				return vgPowerState.KeyName
 			}, TIMEOUT, POLLING_INTERVAL).Should(Equal("RUNNING"), "failed waiting for virtual guest to be RUNNING")
 
-			fmt.Printf("----> waiting for virtual guest to have not active transactions pending\n")
+			fmt.Printf("----> marking virtual guest with TEST:softlayer-go\n")
+			err = testhelpers.MarkVirtualGuestAsTest(virtualGuest)
+			Expect(err).ToNot(HaveOccurred(), "Could not mark virtual guest as test")
+			fmt.Printf("----> marked virtual guest with TEST:softlayer-go\n")
+
+			fmt.Printf("----> waiting for virtual guest to have no active transactions pending\n")
 			Eventually(func() int {
 				activeTransactions, err := virtualGuestService.GetActiveTransactions(virtualGuest.Id)
 				Expect(err).ToNot(HaveOccurred())
