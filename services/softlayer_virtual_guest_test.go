@@ -123,4 +123,42 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			Expect(vgPowerState.KeyName).To(Equal("RUNNING"))
 		})
 	})
+
+	Context("#GetActiveTransaction", func() {
+		BeforeEach(func() {
+			virtualGuest.Id = 1234567
+			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_getActiveTransaction.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("sucessfully retrieves SoftLayer_Provisioning_Version1_Transaction for virtual guest", func() {
+			activeTransaction, err := virtualGuestService.GetActiveTransaction(virtualGuest.Id)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(activeTransaction.CreateDate).ToNot(BeNil())
+			Expect(activeTransaction.ElapsedSeconds).To(BeNumerically(">", 0))
+			Expect(activeTransaction.GuestId).To(Equal(virtualGuest.Id))
+			Expect(activeTransaction.Id).To(BeNumerically(">", 0))
+		})
+	})
+
+	Context("#GetActiveTransactions", func() {
+		BeforeEach(func() {
+			virtualGuest.Id = 1234567
+			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_getActiveTransactions.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("sucessfully retrieves an array of SoftLayer_Provisioning_Version1_Transaction for virtual guest", func() {
+			activeTransactions, err := virtualGuestService.GetActiveTransactions(virtualGuest.Id)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(len(activeTransactions)).To(BeNumerically(">", 0))
+
+			for _, activeTransaction := range activeTransactions {
+				Expect(activeTransaction.CreateDate).ToNot(BeNil())
+				Expect(activeTransaction.ElapsedSeconds).To(BeNumerically(">", 0))
+				Expect(activeTransaction.GuestId).To(Equal(virtualGuest.Id))
+				Expect(activeTransaction.Id).To(BeNumerically(">", 0))
+			}
+		})
+	})
 })
