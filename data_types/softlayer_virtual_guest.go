@@ -5,26 +5,26 @@ import (
 )
 
 type SoftLayer_Virtual_Guest struct {
-	AccountId                    int        `json:"accountId"`
-	CreateDate                   *time.Time `json:"createDate"`
-	DedicatedAccountHostOnlyFlag bool       `json:"dedicatedAccountHostOnlyFlag"`
-	Domain                       string     `json:"domain"`
-	FullyQualifiedDomainName     string     `json:"fullyQualifiedDomainName"`
-	Hostname                     string     `json:"hostname"`
-	Id                           int        `json:"id"`
-	LastPowerStateId             int        `json:"lastPowerStateId"`
-	LastVerifiedDate             *time.Time `json:"lastVerifiedDate"`
-	MaxCpu                       int        `json:"maxCpu"`
-	MaxCpuUnits                  string     `json:"maxCpuUnits"`
-	MaxMemory                    int        `json:"maxMemory"`
-	MetricPollDate               *time.Time `json:"metricPollDate"`
-	ModifyDate                   *time.Time `json:"modifyDate"`
-	Notes                        string     `json:"notes"`
-	PostInstallScriptUri         string     `json:"postInstallScriptUri"`
-	PrivateNetworkOnlyFlag       bool       `json:"privateNetworkOnlyFlag"`
-	StartCpus                    int        `json:"startCpus"`
-	StatusId                     int        `json:"statusId"`
-	Uuid                         string     `json:"uuid"`
+	AccountId                    int        `json:"accountId,omitempty"`
+	CreateDate                   *time.Time `json:"createDate,omitempty"`
+	DedicatedAccountHostOnlyFlag bool       `json:"dedicatedAccountHostOnlyFlag,omitempty"`
+	Domain                       string     `json:"domain,omitempty"`
+	FullyQualifiedDomainName     string     `json:"fullyQualifiedDomainName,omitempty"`
+	Hostname                     string     `json:"hostname,omitempty"`
+	Id                           int        `json:"id,omitempty"`
+	LastPowerStateId             int        `json:"lastPowerStateId,omitempty"`
+	LastVerifiedDate             *time.Time `json:"lastVerifiedDate,omitempty"`
+	MaxCpu                       int        `json:"maxCpu,omitempty"`
+	MaxCpuUnits                  string     `json:"maxCpuUnits,omitempty"`
+	MaxMemory                    int        `json:"maxMemory,omitempty"`
+	MetricPollDate               *time.Time `json:"metricPollDate,omitempty"`
+	ModifyDate                   *time.Time `json:"modifyDate,omitempty"`
+	Notes                        string     `json:"notes,omitempty"`
+	PostInstallScriptUri         string     `json:"postInstallScriptUri,omitempty"`
+	PrivateNetworkOnlyFlag       bool       `json:"privateNetworkOnlyFlag,omitempty"`
+	StartCpus                    int        `json:"startCpus,omitempty"`
+	StatusId                     int        `json:"statusId,omitempty"`
+	Uuid                         string     `json:"uuid,omitempty"`
 }
 
 type SoftLayer_Virtual_Guest_Template_Paramaters struct {
