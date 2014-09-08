@@ -1,9 +1,11 @@
 package services_test
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"strings"
+	"time"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -102,8 +104,16 @@ var _ = Describe("SoftLayer Services", func() {
 		})
 	})
 
-	XContext("uses SoftLayer_Account to create and then delete a virtual guest instance", func() {
+	Context("uses SoftLayer_Account to create and then delete a virtual guest instance", func() {
+		var (
+			TIMEOUT          time.Duration
+			POLLING_INTERVAL time.Duration
+		)
+
 		BeforeEach(func() {
+			TIMEOUT = 5 * time.Minute
+			POLLING_INTERVAL = 10 * time.Second
+
 			err := testhelpers.FindAndDeleteTestVirtualGuests()
 			Expect(err).ToNot(HaveOccurred())
 		})
@@ -113,7 +123,7 @@ var _ = Describe("SoftLayer Services", func() {
 			Expect(err).ToNot(HaveOccurred())
 		})
 
-		XIt("creates the virtual guest instance and waits for it to be active", func() {
+		It("creates the virtual guest instance and waits for it to be active then delete it", func() {
 			virtualGuestTemplate := datatypes.SoftLayer_Virtual_Guest_Template{
 				Hostname:  "test",
 				Domain:    "softlayergo.com",
@@ -130,14 +140,35 @@ var _ = Describe("SoftLayer Services", func() {
 			virtualGuestService, err := testhelpers.CreateVirtualGuestService()
 			Expect(err).ToNot(HaveOccurred())
 
-			_, err = virtualGuestService.CreateObject(virtualGuestTemplate)
+			fmt.Printf("----> creating new virtual guest\n")
+			virtualGuest, err := virtualGuestService.CreateObject(virtualGuestTemplate)
 			Expect(err).ToNot(HaveOccurred())
 
-			//Clean up
-		})
+			fmt.Printf("----> created virtual guest: %d\n", virtualGuest.Id)
 
-		It("deletes the virtual guest instance if it is running", func() {
-			Expect(false).To(BeTrue())
+			err = testhelpers.MarkVirtualGuestAsTest(virtualGuest)
+			Expect(err).ToNot(HaveOccurred(), "Could not mark virtual guest as test")
+
+			fmt.Printf("----> waiting for virtual guest: %d, until RUNNING\n", virtualGuest.Id)
+			Eventually(func() string {
+				vgPowerState, err := virtualGuestService.GetPowerState(virtualGuest.Id)
+				Expect(err).ToNot(HaveOccurred())
+				fmt.Printf("----> virtual guest: %d, has power state: %s\n", virtualGuest.Id, vgPowerState.KeyName)
+				return vgPowerState.KeyName
+			}, TIMEOUT, POLLING_INTERVAL).Should(Equal("RUNNING"), "failed waiting for virtual guest to be RUNNING")
+
+			fmt.Printf("----> waiting for virtual guest to have not active transactions pending\n")
+			Eventually(func() int {
+				activeTransactions, err := virtualGuestService.GetActiveTransactions(virtualGuest.Id)
+				Expect(err).ToNot(HaveOccurred())
+				fmt.Printf("----> virtual guest: %d, has %d active transactions\n", virtualGuest.Id, len(activeTransactions))
+				return len(activeTransactions)
+			}, TIMEOUT, POLLING_INTERVAL).Should(Equal(0), "failed waiting for virtual guest to have no active transactions")
+
+			fmt.Printf("----> deleting virtual guest: %d\n", virtualGuest.Id)
+			deleted, err := virtualGuestService.DeleteObject(virtualGuest.Id)
+			Expect(err).ToNot(HaveOccurred(), "Error deleting virtual guest")
+			Expect(deleted).To(BeTrue())
 		})
 	})
 
