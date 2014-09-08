@@ -60,6 +60,21 @@ func (slvgs *softLayer_Virtual_Guest_Service) CreateObject(template datatypes.So
 	return softLayer_Virtual_Guest, nil
 }
 
+func (slvgs *softLayer_Virtual_Guest_Service) EditObject(instanceId int, template datatypes.SoftLayer_Virtual_Guest) (bool, error) {
+	requestBody, err := json.Marshal(template)
+	if err != nil {
+		return false, err
+	}
+
+	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/editObject.json", slvgs.GetName(), instanceId), "PUT", bytes.NewBuffer(requestBody))
+
+	if res := string(response[:]); res != "true" {
+		return false, errors.New(fmt.Sprintf("Failed to edit virtual guest with id: %d, got '%s' as response from the API.", instanceId, res))
+	}
+
+	return true, err
+}
+
 func (slvgs *softLayer_Virtual_Guest_Service) DeleteObject(instanceId int) (bool, error) {
 	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d.json", slvgs.GetName(), instanceId), "DELETE", new(bytes.Buffer))
 

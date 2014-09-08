@@ -90,6 +90,23 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 		})
 	})
 
+	Context("#EditObject", func() {
+		BeforeEach(func() {
+			virtualGuest.Id = 1234567
+			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_editObject.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("edits an existing SoftLayer_Virtual_Guest instance", func() {
+			virtualGuest := datatypes.SoftLayer_Virtual_Guest{
+				Notes: "fake-notes",
+			}
+			edited, err := virtualGuestService.EditObject(virtualGuest.Id, virtualGuest)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(edited).To(BeTrue())
+		})
+	})
+
 	Context("#DeleteObject", func() {
 		BeforeEach(func() {
 			virtualGuest.Id = 1234567
