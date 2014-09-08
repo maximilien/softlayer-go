@@ -41,18 +41,18 @@ func (slvgs *softLayer_Virtual_Guest_Service) CreateObject(template datatypes.So
 		return datatypes.SoftLayer_Virtual_Guest{}, err
 	}
 
-	data, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s.json", slvgs.GetName()), "POST", bytes.NewBuffer(requestBody))
+	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s.json", slvgs.GetName()), "POST", bytes.NewBuffer(requestBody))
 	if err != nil {
 		return datatypes.SoftLayer_Virtual_Guest{}, err
 	}
 
-	err = slvgs.client.CheckForHttpResponseErrors(data)
+	err = slvgs.client.CheckForHttpResponseErrors(response)
 	if err != nil {
 		return datatypes.SoftLayer_Virtual_Guest{}, err
 	}
 
 	softLayer_Virtual_Guest := datatypes.SoftLayer_Virtual_Guest{}
-	err = json.Unmarshal(data, &softLayer_Virtual_Guest)
+	err = json.Unmarshal(response, &softLayer_Virtual_Guest)
 	if err != nil {
 		return datatypes.SoftLayer_Virtual_Guest{}, err
 	}
