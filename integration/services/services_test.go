@@ -153,11 +153,6 @@ var _ = Describe("SoftLayer Services", func() {
 				return vgPowerState.KeyName
 			}, TIMEOUT, POLLING_INTERVAL).Should(Equal("RUNNING"), "failed waiting for virtual guest to be RUNNING")
 
-			fmt.Printf("----> marking virtual guest with TEST:softlayer-go\n")
-			err = testhelpers.MarkVirtualGuestAsTest(virtualGuest)
-			Expect(err).ToNot(HaveOccurred(), "Could not mark virtual guest as test")
-			fmt.Printf("----> marked virtual guest with TEST:softlayer-go\n")
-
 			fmt.Printf("----> waiting for virtual guest to have no active transactions pending\n")
 			Eventually(func() int {
 				activeTransactions, err := virtualGuestService.GetActiveTransactions(virtualGuest.Id)
@@ -166,10 +161,10 @@ var _ = Describe("SoftLayer Services", func() {
 				return len(activeTransactions)
 			}, TIMEOUT, POLLING_INTERVAL).Should(Equal(0), "failed waiting for virtual guest to have no active transactions")
 
-			fmt.Printf("----> deleting virtual guest: %d\n", virtualGuest.Id)
-			deleted, err := virtualGuestService.DeleteObject(virtualGuest.Id)
-			Expect(err).ToNot(HaveOccurred(), "Error deleting virtual guest")
-			Expect(deleted).To(BeTrue())
+			fmt.Printf("----> marking virtual guest with TEST:softlayer-go\n")
+			err = testhelpers.MarkVirtualGuestAsTest(virtualGuest)
+			Expect(err).ToNot(HaveOccurred(), "Could not mark virtual guest as test")
+			fmt.Printf("----> marked virtual guest with TEST:softlayer-go\n")
 		})
 	})
 
