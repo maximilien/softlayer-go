@@ -95,7 +95,7 @@ func FindTestSshKeys() ([]datatypes.SoftLayer_Security_Ssh_Key, error) {
 
 	testSshKeys := []datatypes.SoftLayer_Security_Ssh_Key{}
 	for _, key := range sshKeys {
-		if strings.Contains(key.Notes, TEST_NOTES_PREFIX) {
+		if key.Notes == TEST_NOTES_PREFIX {
 			testSshKeys = append(testSshKeys, key)
 		}
 	}
@@ -186,28 +186,32 @@ func FindAndDeleteTestSshKeys() error {
 	return nil
 }
 
-func FindAndDeleteTestVirtualGuests() error {
+func FindAndDeleteTestVirtualGuests() ([]int, error) {
 	virtualGuests, err := FindTestVirtualGuests()
 	if err != nil {
-		return err
+		return []int{}, err
 	}
 
 	virtualGuestService, err := CreateVirtualGuestService()
 	if err != nil {
-		return err
+		return []int{}, err
 	}
 
+	virtualGuestIds := []int{}
 	for _, virtualGuest := range virtualGuests {
+		virtualGuestIds = append(virtualGuestIds, virtualGuest.Id)
+
 		deleted, err := virtualGuestService.DeleteObject(virtualGuest.Id)
 		if err != nil {
-			return err
+			return []int{}, err
 		}
+
 		if !deleted {
-			return errors.New(fmt.Sprintf("Could not delete virtual guest with id: %d", virtualGuest.Id))
+			return []int{}, errors.New(fmt.Sprintf("Could not delete virtual guest with id: %d", virtualGuest.Id))
 		}
 	}
 
-	return nil
+	return virtualGuestIds, nil
 }
 
 func MarkVirtualGuestAsTest(virtualGuest datatypes.SoftLayer_Virtual_Guest) error {
