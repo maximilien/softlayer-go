@@ -67,7 +67,10 @@ var _ = Describe("SoftLayer Services", func() {
 
 	Context("uses SoftLayer_Account to create and then delete a an ssh key", func() {
 		It("creates the ssh key and verify it is present and then deletes it", func() {
-			createdSshKey := createTestSshKey()
+			sshKeyPath := os.Getenv("SOFTLAYER_GO_TEST_SSH_KEY_PATH1")
+			Expect(sshKeyPath).ToNot(Equal(""), "SOFTLAYER_GO_TEST_SSH_KEY_PATH1 env variable is not set")
+
+			createdSshKey := createTestSshKey(sshKeyPath)
 			waitForCreatedSshKeyToBePresent(createdSshKey.Id)
 
 			sshKeyService, err := testhelpers.CreateSecuritySshKeyService()
@@ -83,19 +86,30 @@ var _ = Describe("SoftLayer Services", func() {
 
 	Context("uses SoftLayer_Account to create and then delete a virtual guest instance", func() {
 		It("creates the virtual guest instance and waits for it to be active then delete it", func() {
-			_ = createVirtualGuestAndMarkItTest([]datatypes.SoftLayer_Security_Ssh_Key{})
+			virtualGuest := createVirtualGuestAndMarkItTest([]datatypes.SoftLayer_Security_Ssh_Key{})
+
+			waitForVirtualGuestToBeRunning(virtualGuest.Id)
+			waitForVirtualGuestToHaveNoActiveTransactions(virtualGuest.Id)
+
+			deleteVirtualGuest(virtualGuest.Id)
 		})
 	})
 
 	Context("uses SoftLayer_Account to create ssh key and new virtual guest with ssh key assigned", func() {
 		It("creates key, creates virtual guest and adds key to list of VG", func() {
-			sshKey := createTestSshKey()
-			waitForCreatedSshKeyToBePresent(sshKey.Id)
+			sshKeyPath := os.Getenv("SOFTLAYER_GO_TEST_SSH_KEY_PATH2")
+			Expect(sshKeyPath).ToNot(Equal(""), "SOFTLAYER_GO_TEST_SSH_KEY_PATH2 env variable is not set")
 
-			virtualGuest := createVirtualGuestAndMarkItTest([]datatypes.SoftLayer_Security_Ssh_Key{sshKey})
+			createdSshKey := createTestSshKey(sshKeyPath)
+			waitForCreatedSshKeyToBePresent(createdSshKey.Id)
+
+			virtualGuest := createVirtualGuestAndMarkItTest([]datatypes.SoftLayer_Security_Ssh_Key{createdSshKey})
 
 			waitForVirtualGuestToBeRunning(virtualGuest.Id)
 			waitForVirtualGuestToHaveNoActiveTransactions(virtualGuest.Id)
+
+			deleteVirtualGuest(virtualGuest.Id)
+			deleteSshKey(createdSshKey.Id)
 		})
 	})
 
@@ -118,10 +132,7 @@ var _ = Describe("SoftLayer Services", func() {
 	})
 })
 
-func createTestSshKey() datatypes.SoftLayer_Security_Ssh_Key {
-	sshKeyPath := os.Getenv("SOFTLAYER_GO_TEST_SSH_KEY_PATH")
-	Expect(sshKeyPath).ToNot(Equal(""), "SOFTLAYER_GO_TEST_SSH_KEY_PATH env variable is not set")
-
+func createTestSshKey(sshKeyPath string) datatypes.SoftLayer_Security_Ssh_Key {
 	testSshKeyValue, err := ioutil.ReadFile(sshKeyPath)
 	Expect(err).ToNot(HaveOccurred())
 
@@ -189,6 +200,30 @@ func createVirtualGuestAndMarkItTest(securitySshKeys []datatypes.SoftLayer_Secur
 	return virtualGuest
 }
 
+func deleteVirtualGuest(virtualGuestId int) {
+	virtualGuestService, err := testhelpers.CreateVirtualGuestService()
+	Expect(err).ToNot(HaveOccurred())
+
+	fmt.Printf("----> deleting virtual guest: %d\n", virtualGuestId)
+	deleted, err := virtualGuestService.DeleteObject(virtualGuestId)
+	Expect(err).ToNot(HaveOccurred())
+	Expect(deleted).To(BeTrue(), "could not delete virtual guest")
+
+	waitForVirtualGuestToHaveNoActiveTransactions(virtualGuestId)
+}
+
+func deleteSshKey(sshKeyId int) {
+	sshKeyService, err := testhelpers.CreateSecuritySshKeyService()
+	Expect(err).ToNot(HaveOccurred())
+
+	fmt.Printf("----> deleting ssh key: %d\n", sshKeyId)
+	deleted, err := sshKeyService.DeleteObject(sshKeyId)
+	Expect(err).ToNot(HaveOccurred())
+	Expect(deleted).To(BeTrue(), "could not delete ssh key")
+
+	waitForDeletedSshKeyToNoLongerBePresent(sshKeyId)
+}
+
 func waitForVirtualGuestToBeRunning(virtualGuestId int) {
 	virtualGuestService, err := testhelpers.CreateVirtualGuestService()
 	Expect(err).ToNot(HaveOccurred())
@@ -251,12 +286,4 @@ func waitForCreatedSshKeyToBePresent(sshKeyId int) {
 		}
 		return keyPresent
 	}, TIMEOUT, POLLING_INTERVAL).Should(BeTrue(), "created ssh key but not in the list of ssh keys")
-}
-
-func cleanUpTestResources() {
-	virtualGuestIds, err := testhelpers.FindAndDeleteTestVirtualGuests()
-	Expect(err).ToNot(HaveOccurred())
-
-	err = testhelpers.FindAndDeleteTestSshKeys()
-	Expect(err).ToNot(HaveOccurred())
 }
