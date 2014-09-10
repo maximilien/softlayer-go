@@ -134,6 +134,21 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetActiveTransactions(instanceId i
 	return activeTransactions, nil
 }
 
+func (slvgs *softLayer_Virtual_Guest_Service) GetSshKeys(instanceId int) ([]datatypes.SoftLayer_Security_Ssh_Key, error) {
+	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/getSshKeys.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+	if err != nil {
+		return []datatypes.SoftLayer_Security_Ssh_Key{}, err
+	}
+
+	sshKeys := []datatypes.SoftLayer_Security_Ssh_Key{}
+	err = json.Unmarshal(response, &sshKeys)
+	if err != nil {
+		return []datatypes.SoftLayer_Security_Ssh_Key{}, err
+	}
+
+	return sshKeys, nil
+}
+
 //Private methods
 
 func (slvgs *softLayer_Virtual_Guest_Service) checkCreateObjectRequiredValues(template datatypes.SoftLayer_Virtual_Guest_Template) error {

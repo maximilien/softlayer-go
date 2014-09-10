@@ -178,4 +178,28 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			}
 		})
 	})
+
+	Context("#GetSshKeys", func() {
+		BeforeEach(func() {
+			virtualGuest.Id = 1234567
+			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_getSshKeys.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("sucessfully retrieves an array of SoftLayer_Security_Ssh_Key for virtual guest", func() {
+			sshKeys, err := virtualGuestService.GetSshKeys(virtualGuest.Id)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(len(sshKeys)).To(BeNumerically(">", 0))
+
+			for _, sshKey := range sshKeys {
+				Expect(sshKey.CreateDate).ToNot(BeNil())
+				Expect(sshKey.Fingerprint).To(Equal("f6:c2:9d:57:2f:74:be:a1:db:71:f2:e5:8e:0f:84:7e"))
+				Expect(sshKey.Id).To(Equal(84386))
+				Expect(sshKey.Key).ToNot(Equal(""))
+				Expect(sshKey.Label).To(Equal("TEST:softlayer-go"))
+				Expect(sshKey.ModifyDate).To(BeNil())
+				Expect(sshKey.Label).To(Equal("TEST:softlayer-go"))
+			}
+		})
+	})
 })
