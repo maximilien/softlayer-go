@@ -35,8 +35,8 @@ var _ = Describe("SoftLayer Services", func() {
 		virtualGuestService, err = testhelpers.CreateVirtualGuestService()
 		Expect(err).ToNot(HaveOccurred())
 
-		TIMEOUT = 5 * time.Minute
-		POLLING_INTERVAL = 10 * time.Second
+		TIMEOUT = 15 * time.Minute
+		POLLING_INTERVAL = 15 * time.Second
 	})
 
 	Context("uses SoftLayer_Account to list current virtual: disk images, guests, ssh keys, and network storage", func() {
