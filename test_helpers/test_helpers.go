@@ -234,3 +234,12 @@ func MarkVirtualGuestAsTest(virtualGuest datatypes.SoftLayer_Virtual_Guest) erro
 
 	return nil
 }
+
+func FileExists(filePath string) bool {
+	_, err := os.Stat(filePath)
+	if err != nil {
+		return false
+	}
+
+	return !os.IsNotExist(err)
+}
