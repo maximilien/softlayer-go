@@ -35,7 +35,7 @@ var _ = Describe("SoftLayer Services", func() {
 		virtualGuestService, err = testhelpers.CreateVirtualGuestService()
 		Expect(err).ToNot(HaveOccurred())
 
-		TIMEOUT = 15 * time.Minute
+		TIMEOUT = 25 * time.Minute
 		POLLING_INTERVAL = 15 * time.Second
 	})
 

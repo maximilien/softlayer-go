@@ -202,4 +202,19 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			}
 		})
 	})
+
+	Context("#SetUserMetadata", func() {
+		BeforeEach(func() {
+			virtualGuest.Id = 1234567
+			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_setUserMetadata.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("sucessfully adds metadata strings as a dile to virtual guest's metadata disk", func() {
+			retBool, err := virtualGuestService.SetMetadata(virtualGuest.Id, "fake-metadata")
+			Expect(err).ToNot(HaveOccurred())
+
+			Expect(retBool).To(BeTrue())
+		})
+	})
 })

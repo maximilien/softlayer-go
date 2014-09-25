@@ -2,6 +2,7 @@ package services
 
 import (
 	"bytes"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -149,6 +150,29 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetSshKeys(instanceId int) ([]data
 	return sshKeys, nil
 }
 
+func (slvgs *softLayer_Virtual_Guest_Service) SetMetadata(instanceId int, metadata string) (bool, error) {
+	dataBytes := []byte(metadata)
+	base64EncodedMetadata := base64.StdEncoding.EncodeToString(dataBytes)
+
+	parameters := datatypes.SoftLayer_SetUserMetadata_Parameters{
+		Parameters : []datatypes.UserMetadata{
+			datatypes.UserMetadata(base64EncodedMetadata),
+		},
+	}
+
+	requestBody, err := json.Marshal(parameters)
+	if err != nil {
+		return false, err
+	}
+
+	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/setUserMetadata.json", slvgs.GetName(), instanceId), "POST", bytes.NewBuffer(requestBody))
+
+	if res := string(response[:]); res != "true" {
+		return false, errors.New(fmt.Sprintf("Failed to destroy and instance with id '%d', got '%s' as response from the API.", instanceId, res))
+	}
+
+	return true, err
+}
 //Private methods
 
 func (slvgs *softLayer_Virtual_Guest_Service) checkCreateObjectRequiredValues(template datatypes.SoftLayer_Virtual_Guest_Template) error {
