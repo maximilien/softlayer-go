@@ -45,7 +45,7 @@ var _ = Describe("SoftLayer_Account_Service", func() {
 
 	Context("#GetAccountStatus", func() {
 		BeforeEach(func() {
-			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Account_getAccountStatus.json")
+			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Account_Service_getAccountStatus.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -59,7 +59,7 @@ var _ = Describe("SoftLayer_Account_Service", func() {
 
 	Context("#GetVirtualGuests", func() {
 		BeforeEach(func() {
-			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Account_getVirtualGuests.json")
+			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Account_Service_getVirtualGuests.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -72,7 +72,7 @@ var _ = Describe("SoftLayer_Account_Service", func() {
 
 	Context("#GetNetworkStorage", func() {
 		BeforeEach(func() {
-			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Account_getNetworkStorage.json")
+			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Account_Service_getNetworkStorage.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -85,7 +85,7 @@ var _ = Describe("SoftLayer_Account_Service", func() {
 
 	Context("#GetVirtualDiskImages", func() {
 		BeforeEach(func() {
-			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Account_getVirtualDiskImages.json")
+			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Account_Service_getVirtualDiskImages.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -98,7 +98,7 @@ var _ = Describe("SoftLayer_Account_Service", func() {
 
 	Context("#GetSshKeys", func() {
 		BeforeEach(func() {
-			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Account_getSshKeys.json")
+			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Account_Service_getSshKeys.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
