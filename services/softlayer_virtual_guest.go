@@ -155,7 +155,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) SetMetadata(instanceId int, metada
 	base64EncodedMetadata := base64.StdEncoding.EncodeToString(dataBytes)
 
 	parameters := datatypes.SoftLayer_SetUserMetadata_Parameters{
-		Parameters : []datatypes.UserMetadata{
+		Parameters: []datatypes.UserMetadata{
 			datatypes.UserMetadata(base64EncodedMetadata),
 		},
 	}
@@ -173,6 +173,22 @@ func (slvgs *softLayer_Virtual_Guest_Service) SetMetadata(instanceId int, metada
 
 	return true, err
 }
+
+func (slvgs *softLayer_Virtual_Guest_Service) ConfigureMetadataDisk(instanceId int) (datatypes.SoftLayer_Provisioning_Version1_Transaction, error) {
+	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/configureMetadataDisk.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+	if err != nil {
+		return datatypes.SoftLayer_Provisioning_Version1_Transaction{}, err
+	}
+
+	transaction := datatypes.SoftLayer_Provisioning_Version1_Transaction{}
+	err = json.Unmarshal(response, &transaction)
+	if err != nil {
+		return datatypes.SoftLayer_Provisioning_Version1_Transaction{}, err
+	}
+
+	return transaction, nil
+}
+
 //Private methods
 
 func (slvgs *softLayer_Virtual_Guest_Service) checkCreateObjectRequiredValues(template datatypes.SoftLayer_Virtual_Guest_Template) error {

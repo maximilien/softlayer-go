@@ -217,4 +217,32 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			Expect(retBool).To(BeTrue())
 		})
 	})
+
+	Context("#ConfigureMetadataDisk", func() {
+		BeforeEach(func() {
+			virtualGuest.Id = 1234567
+			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_configureMetadataDisk.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("sucessfully configures a metadata disk for a virtual guest", func() {
+			transaction, err := virtualGuestService.ConfigureMetadataDisk(virtualGuest.Id)
+			Expect(err).ToNot(HaveOccurred())
+
+			Expect(transaction.CreateDate).ToNot(BeNil())
+			Expect(transaction.ElapsedSeconds).To(Equal(0))
+			Expect(transaction.GuestId).To(Equal(virtualGuest.Id))
+			Expect(transaction.HardwareId).To(Equal(0))
+			Expect(transaction.Id).To(Equal(12476326))
+			Expect(transaction.ModifyDate).ToNot(BeNil())
+			Expect(transaction.StatusChangeDate).ToNot(BeNil())
+
+			Expect(transaction.TransactionGroup.AverageTimeToComplete).To(Equal("1.62"))
+			Expect(transaction.TransactionGroup.Name).To(Equal("Configure Cloud Metadata Disk"))
+
+			Expect(transaction.TransactionStatus.AverageDuration).To(Equal(".32"))
+			Expect(transaction.TransactionStatus.FriendlyName).To(Equal("Configure Cloud Metadata Disk"))
+			Expect(transaction.TransactionStatus.Name).To(Equal("CLOUD_CONFIGURE_METADATA_DISK"))
+		})
+	})
 })
