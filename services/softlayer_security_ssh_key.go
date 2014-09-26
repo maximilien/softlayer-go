@@ -64,3 +64,18 @@ func (slsks *softLayer_Ssh_Key_Service) DeleteObject(sshKeyId int) (bool, error)
 
 	return true, err
 }
+
+func (slsks *softLayer_Ssh_Key_Service) GetSoftwarePasswords(sshKeyId int) ([]datatypes.SoftLayer_Software_Component_Password, error) {
+	response, err := slsks.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/getSoftwarePasswords.json", slsks.GetName(), sshKeyId), "GET", new(bytes.Buffer))
+	if err != nil {
+		return []datatypes.SoftLayer_Software_Component_Password{}, err
+	}
+
+	passwords := []datatypes.SoftLayer_Software_Component_Password{}
+	err = json.Unmarshal(response, &passwords)
+	if err != nil {
+		return []datatypes.SoftLayer_Software_Component_Password{}, err
+	}
+
+	return passwords, nil
+}
