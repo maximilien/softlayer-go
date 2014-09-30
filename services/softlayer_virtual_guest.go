@@ -155,8 +155,8 @@ func (slvgs *softLayer_Virtual_Guest_Service) SetMetadata(instanceId int, metada
 	base64EncodedMetadata := base64.StdEncoding.EncodeToString(dataBytes)
 
 	parameters := datatypes.SoftLayer_SetUserMetadata_Parameters{
-		Parameters: []datatypes.UserMetadata{
-			datatypes.UserMetadata(base64EncodedMetadata),
+		Parameters: []datatypes.UserMetadataArray{
+			datatypes.UserMetadataArray{datatypes.UserMetadata(base64EncodedMetadata)},
 		},
 	}
 
