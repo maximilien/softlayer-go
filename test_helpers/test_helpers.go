@@ -345,17 +345,21 @@ func DeleteSshKey(sshKeyId int) {
 	WaitForDeletedSshKeyToNoLongerBePresent(sshKeyId)
 }
 
-func WaitForVirtualGuestToBeRunning(virtualGuestId int) {
+func WaitForVirtualGuest(virtualGuestId int, targetState string, timeout time.Duration) {
 	virtualGuestService, err := CreateVirtualGuestService()
 	Expect(err).ToNot(HaveOccurred())
 
-	fmt.Printf("----> waiting for virtual guest: %d, until RUNNING\n", virtualGuestId)
+	fmt.Printf("----> waiting for virtual guest: %d, until %s\n", virtualGuestId, targetState)
 	Eventually(func() string {
 		vgPowerState, err := virtualGuestService.GetPowerState(virtualGuestId)
 		Expect(err).ToNot(HaveOccurred())
 		fmt.Printf("----> virtual guest: %d, has power state: %s\n", virtualGuestId, vgPowerState.KeyName)
 		return vgPowerState.KeyName
-	}, TIMEOUT, POLLING_INTERVAL).Should(Equal("RUNNING"), "failed waiting for virtual guest to be RUNNING")
+	}, timeout, POLLING_INTERVAL).Should(Equal(targetState), fmt.Sprintf("failed waiting for virtual guest to be %s", targetState))
+}
+
+func WaitForVirtualGuestToBeRunning(virtualGuestId int) {
+	WaitForVirtualGuest(virtualGuestId, "RUNNING", TIMEOUT)
 }
 
 func WaitForVirtualGuestToHaveNoActiveTransactions(virtualGuestId int) {
