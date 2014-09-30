@@ -174,6 +174,37 @@ func CreateSecuritySshKeyService() (softlayer.SoftLayer_Security_Ssh_Key_Service
 	return sshKeyService, nil
 }
 
+// TODO: need to refine and merge the CreateXXXService in test_helpers
+func CreateProductPackageService() (softlayer.SoftLayer_Product_Package_Service, error) {
+	username, apiKey, err := GetUsernameAndApiKey()
+	if err != nil {
+		return nil, err
+	}
+
+	client := slclient.NewSoftLayerClient(username, apiKey)
+	productPackageService, err := client.GetSoftLayer_Product_Package_Service()
+	if err != nil {
+		return nil, err
+	}
+
+	return productPackageService, nil
+}
+
+func CreateNetworkStorageService() (softlayer.SoftLayer_Network_Storage_Service, error) {
+	username, apiKey, err := GetUsernameAndApiKey()
+	if err != nil {
+		return nil, err
+	}
+
+	client := slclient.NewSoftLayerClient(username, apiKey)
+	networkStorageService, err := client.GetSoftLayer_Network_Storage_Service()
+	if err != nil {
+		return nil, err
+	}
+
+	return networkStorageService, nil
+}
+
 func FindAndDeleteTestSshKeys() error {
 	sshKeys, err := FindTestSshKeys()
 	if err != nil {
