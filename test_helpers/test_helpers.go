@@ -3,12 +3,21 @@ package test_helpers
 import (
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"strings"
+	"time"
+
+	. "github.com/onsi/gomega"
 
 	slclient "github.com/maximilien/softlayer-go/client"
 	datatypes "github.com/maximilien/softlayer-go/data_types"
 	softlayer "github.com/maximilien/softlayer-go/softlayer"
+)
+
+var (
+	TIMEOUT          time.Duration
+	POLLING_INTERVAL time.Duration
 )
 
 const (
@@ -242,4 +251,160 @@ func FileExists(filePath string) bool {
 	}
 
 	return !os.IsNotExist(err)
+}
+
+func CreateTestSshKey(sshKeyPath string) datatypes.SoftLayer_Security_Ssh_Key {
+	testSshKeyValue, err := ioutil.ReadFile(sshKeyPath)
+	Expect(err).ToNot(HaveOccurred())
+
+	sshKey := datatypes.SoftLayer_Security_Ssh_Key{
+		Key:         strings.Trim(string(testSshKeyValue), "\n"),
+		Fingerprint: "f6:c2:9d:57:2f:74:be:a1:db:71:f2:e5:8e:0f:84:7e",
+		Label:       TEST_LABEL_PREFIX,
+		Notes:       TEST_NOTES_PREFIX,
+	}
+
+	sshKeyService, err := CreateSecuritySshKeyService()
+	Expect(err).ToNot(HaveOccurred())
+
+	fmt.Printf("----> creating ssh key\n")
+	createdSshKey, err := sshKeyService.CreateObject(sshKey)
+	Expect(err).ToNot(HaveOccurred())
+	Expect(createdSshKey.Key).To(Equal(sshKey.Key), "key")
+	Expect(createdSshKey.Label).To(Equal(sshKey.Label), "label")
+	Expect(createdSshKey.Notes).To(Equal(sshKey.Notes), "notes")
+	Expect(createdSshKey.CreateDate).ToNot(BeNil(), "createDate")
+	Expect(createdSshKey.Fingerprint).ToNot(Equal(""), "fingerprint")
+	Expect(createdSshKey.Id).To(BeNumerically(">", 0), "id")
+	Expect(createdSshKey.ModifyDate).To(BeNil(), "modifyDate")
+	fmt.Printf("----> created ssh key: %d\n", createdSshKey.Id)
+
+	return createdSshKey
+}
+
+func CreateVirtualGuestAndMarkItTest(securitySshKeys []datatypes.SoftLayer_Security_Ssh_Key) datatypes.SoftLayer_Virtual_Guest {
+	sshKeys := make([]datatypes.SshKey, len(securitySshKeys))
+	for i, securitySshKey := range securitySshKeys {
+		sshKeys[i] = datatypes.SshKey{Id: securitySshKey.Id}
+	}
+
+	virtualGuestTemplate := datatypes.SoftLayer_Virtual_Guest_Template{
+		Hostname:  "test",
+		Domain:    "softlayergo.com",
+		StartCpus: 1,
+		MaxMemory: 1024,
+		Datacenter: datatypes.Datacenter{
+			Name: "ams01",
+		},
+		SshKeys:                      sshKeys,
+		HourlyBillingFlag:            true,
+		LocalDiskFlag:                true,
+		OperatingSystemReferenceCode: "UBUNTU_LATEST",
+	}
+
+	virtualGuestService, err := CreateVirtualGuestService()
+	Expect(err).ToNot(HaveOccurred())
+
+	fmt.Printf("----> creating new virtual guest\n")
+	virtualGuest, err := virtualGuestService.CreateObject(virtualGuestTemplate)
+	Expect(err).ToNot(HaveOccurred())
+	fmt.Printf("----> created virtual guest: %d\n", virtualGuest.Id)
+
+	WaitForVirtualGuestToBeRunning(virtualGuest.Id)
+	WaitForVirtualGuestToHaveNoActiveTransactions(virtualGuest.Id)
+
+	fmt.Printf("----> marking virtual guest with TEST:softlayer-go\n")
+	err = MarkVirtualGuestAsTest(virtualGuest)
+	Expect(err).ToNot(HaveOccurred(), "Could not mark virtual guest as test")
+	fmt.Printf("----> marked virtual guest with TEST:softlayer-go\n")
+
+	return virtualGuest
+}
+
+func DeleteVirtualGuest(virtualGuestId int) {
+	virtualGuestService, err := CreateVirtualGuestService()
+	Expect(err).ToNot(HaveOccurred())
+
+	fmt.Printf("----> deleting virtual guest: %d\n", virtualGuestId)
+	deleted, err := virtualGuestService.DeleteObject(virtualGuestId)
+	Expect(err).ToNot(HaveOccurred())
+	Expect(deleted).To(BeTrue(), "could not delete virtual guest")
+
+	WaitForVirtualGuestToHaveNoActiveTransactions(virtualGuestId)
+}
+
+func DeleteSshKey(sshKeyId int) {
+	sshKeyService, err := CreateSecuritySshKeyService()
+	Expect(err).ToNot(HaveOccurred())
+
+	fmt.Printf("----> deleting ssh key: %d\n", sshKeyId)
+	deleted, err := sshKeyService.DeleteObject(sshKeyId)
+	Expect(err).ToNot(HaveOccurred())
+	Expect(deleted).To(BeTrue(), "could not delete ssh key")
+
+	WaitForDeletedSshKeyToNoLongerBePresent(sshKeyId)
+}
+
+func WaitForVirtualGuestToBeRunning(virtualGuestId int) {
+	virtualGuestService, err := CreateVirtualGuestService()
+	Expect(err).ToNot(HaveOccurred())
+
+	fmt.Printf("----> waiting for virtual guest: %d, until RUNNING\n", virtualGuestId)
+	Eventually(func() string {
+		vgPowerState, err := virtualGuestService.GetPowerState(virtualGuestId)
+		Expect(err).ToNot(HaveOccurred())
+		fmt.Printf("----> virtual guest: %d, has power state: %s\n", virtualGuestId, vgPowerState.KeyName)
+		return vgPowerState.KeyName
+	}, TIMEOUT, POLLING_INTERVAL).Should(Equal("RUNNING"), "failed waiting for virtual guest to be RUNNING")
+}
+
+func WaitForVirtualGuestToHaveNoActiveTransactions(virtualGuestId int) {
+	virtualGuestService, err := CreateVirtualGuestService()
+	Expect(err).ToNot(HaveOccurred())
+
+	fmt.Printf("----> waiting for virtual guest to have no active transactions pending\n")
+	Eventually(func() int {
+		activeTransactions, err := virtualGuestService.GetActiveTransactions(virtualGuestId)
+		Expect(err).ToNot(HaveOccurred())
+		fmt.Printf("----> virtual guest: %d, has %d active transactions\n", virtualGuestId, len(activeTransactions))
+		return len(activeTransactions)
+	}, TIMEOUT, POLLING_INTERVAL).Should(Equal(0), "failed waiting for virtual guest to have no active transactions")
+}
+
+func WaitForDeletedSshKeyToNoLongerBePresent(sshKeyId int) {
+	accountService, err := CreateAccountService()
+	Expect(err).ToNot(HaveOccurred())
+
+	fmt.Printf("----> waiting for deleted ssh key to no longer be present\n")
+	Eventually(func() bool {
+		sshKeys, err := accountService.GetSshKeys()
+		Expect(err).ToNot(HaveOccurred())
+
+		deleted := true
+		for _, sshKey := range sshKeys {
+			if sshKey.Id == sshKeyId {
+				deleted = false
+			}
+		}
+		return deleted
+	}, TIMEOUT, POLLING_INTERVAL).Should(BeTrue(), "failed waiting for deleted ssh key to be removed from list of ssh keys")
+}
+
+func WaitForCreatedSshKeyToBePresent(sshKeyId int) {
+	accountService, err := CreateAccountService()
+	Expect(err).ToNot(HaveOccurred())
+
+	fmt.Printf("----> waiting for created ssh key to be present\n")
+	Eventually(func() bool {
+		sshKeys, err := accountService.GetSshKeys()
+		Expect(err).ToNot(HaveOccurred())
+
+		keyPresent := false
+		for _, sshKey := range sshKeys {
+			if sshKey.Id == sshKeyId {
+				keyPresent = true
+			}
+		}
+		return keyPresent
+	}, TIMEOUT, POLLING_INTERVAL).Should(BeTrue(), "created ssh key but not in the list of ssh keys")
 }

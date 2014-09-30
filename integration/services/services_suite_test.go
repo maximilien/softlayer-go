@@ -19,7 +19,7 @@ func cleanUpTestResources() {
 	Expect(err).ToNot(HaveOccurred())
 
 	for _, vgId := range virtualGuestIds {
-		waitForVirtualGuestToHaveNoActiveTransactions(vgId)
+		testhelpers.WaitForVirtualGuestToHaveNoActiveTransactions(vgId)
 	}
 
 	err = testhelpers.FindAndDeleteTestSshKeys()
