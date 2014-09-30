@@ -107,15 +107,28 @@ var _ = Describe("SoftLayer Services", func() {
 
 	FContext("add user metadata to a running instance and configures the metadata disk to verify data is added", func() {
 		It("creates new VirtualGuest and waits for it to be RUNNING", func() {
+			sshKeyPath := os.Getenv("SOFTLAYER_GO_TEST_SSH_KEY_PATH2")
+			Expect(sshKeyPath).ToNot(Equal(""), "SOFTLAYER_GO_TEST_SSH_KEY_PATH2 env variable is not set")
 
-		})
+			createdSshKey := testhelpers.CreateTestSshKey(sshKeyPath)
+			testhelpers.WaitForCreatedSshKeyToBePresent(createdSshKey.Id)
 
-		It("sets user metadata on running VirtualGuest instance", func() {
+			virtualGuest := testhelpers.CreateVirtualGuestAndMarkItTest([]datatypes.SoftLayer_Security_Ssh_Key{createdSshKey})
 
-		})
+			testhelpers.WaitForVirtualGuestToBeRunning(virtualGuest.Id)
+			testhelpers.WaitForVirtualGuestToHaveNoActiveTransactions(virtualGuest.Id)
 
-		It("configures the metadata disk on VG", func() {
+			testhelpers.SetUserDataToVirtualGuest(virtualGuest.Id, "softlayer-gp test fake metadata")
+			transaction := testhelpers.ConfigureMetadataDiskOnVirtualGuest(virtualGuest.Id)
 
+			averageTransactionDuration, err := time.ParseDuration(transaction.TransactionStatus.AverageDuration + "m")
+			Expect(err).ToNot(HaveOccurred())
+
+			testhelpers.WaitForVirtualGuest(virtualGuest.Id, "RUNNING", averageTransactionDuration)
+			testhelpers.WaitForVirtualGuestToHaveNoActiveTransactions(virtualGuest.Id)
+
+			testhelpers.DeleteVirtualGuest(virtualGuest.Id)
+			testhelpers.DeleteSshKey(createdSshKey.Id)
 		})
 
 		It("verifies that the user data set is on the metadata disk", func() {
