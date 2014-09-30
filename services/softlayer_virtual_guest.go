@@ -84,7 +84,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) DeleteObject(instanceId int) (bool
 	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d.json", slvgs.GetName(), instanceId), "DELETE", new(bytes.Buffer))
 
 	if res := string(response[:]); res != "true" {
-		return false, errors.New(fmt.Sprintf("Failed to destroy and instance with id '%d', got '%s' as response from the API.", instanceId, res))
+		return false, errors.New(fmt.Sprintf("Failed to delete instance with id '%d', got '%s' as response from the API.", instanceId, res))
 	}
 
 	return true, err
@@ -168,7 +168,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) SetMetadata(instanceId int, metada
 	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/setUserMetadata.json", slvgs.GetName(), instanceId), "POST", bytes.NewBuffer(requestBody))
 
 	if res := string(response[:]); res != "true" {
-		return false, errors.New(fmt.Sprintf("Failed to destroy and instance with id '%d', got '%s' as response from the API.", instanceId, res))
+		return false, errors.New(fmt.Sprintf("Failed to setUserMetadata for instance with id '%d', got '%s' as response from the API.", instanceId, res))
 	}
 
 	return true, err
