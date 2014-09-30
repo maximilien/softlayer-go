@@ -412,3 +412,24 @@ func WaitForCreatedSshKeyToBePresent(sshKeyId int) {
 		return keyPresent
 	}, TIMEOUT, POLLING_INTERVAL).Should(BeTrue(), "created ssh key but not in the list of ssh keys")
 }
+
+func SetUserDataToVirtualGuest(virtualGuestId int, metadata string) {
+	virtualGuestService, err := CreateVirtualGuestService()
+	Expect(err).ToNot(HaveOccurred())
+
+	success, err := virtualGuestService.SetMetadata(virtualGuestId, metadata)
+	Expect(err).ToNot(HaveOccurred())
+	Expect(success).To(BeTrue())
+	fmt.Printf(fmt.Sprintf("----> successfully set metadata: %s to virtual guest instance: %d\n", metadata, virtualGuestId))
+}
+
+func ConfigureMetadataDiskOnVirtualGuest(virtualGuestId int) datatypes.SoftLayer_Provisioning_Version1_Transaction {
+	virtualGuestService, err := CreateVirtualGuestService()
+	Expect(err).ToNot(HaveOccurred())
+
+	transaction, err := virtualGuestService.ConfigureMetadataDisk(virtualGuestId)
+	Expect(err).ToNot(HaveOccurred())
+	fmt.Printf(fmt.Sprintf("----> successfully configured metadata disk for virtual guest instance: %d\n", virtualGuestId))
+
+	return transaction
+}
