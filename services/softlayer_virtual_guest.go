@@ -61,6 +61,22 @@ func (slvgs *softLayer_Virtual_Guest_Service) CreateObject(template datatypes.So
 	return softLayer_Virtual_Guest, nil
 }
 
+func (slvgs *softLayer_Virtual_Guest_Service) GetObject(instanceId int) (datatypes.SoftLayer_Virtual_Guest, error) {
+	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/getObject.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+	if err != nil {
+		return datatypes.SoftLayer_Virtual_Guest{}, err
+	}
+
+	virtualGuest := datatypes.SoftLayer_Virtual_Guest{}
+	err = json.Unmarshal(response, &virtualGuest)
+	if err != nil {
+		return datatypes.SoftLayer_Virtual_Guest{}, err
+	}
+
+	return virtualGuest, nil
+
+}
+
 func (slvgs *softLayer_Virtual_Guest_Service) EditObject(instanceId int, template datatypes.SoftLayer_Virtual_Guest) (bool, error) {
 	parameters := datatypes.SoftLayer_Virtual_Guest_Parameters{
 		Parameters: []datatypes.SoftLayer_Virtual_Guest{template},

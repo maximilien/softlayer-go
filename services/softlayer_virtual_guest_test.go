@@ -90,6 +90,40 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 		})
 	})
 
+	Context("#GetObject", func() {
+		BeforeEach(func() {
+			virtualGuest.Id = 1234567
+			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_getObject.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("sucessfully retrieves SoftLayer_Virtual_Guest instance", func() {
+			vg, err := virtualGuestService.GetObject(virtualGuest.Id)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(vg.Id).To(Equal(virtualGuest.Id))
+			Expect(vg.AccountId).To(Equal(278444))
+			Expect(vg.CreateDate).ToNot(BeNil())
+			Expect(vg.DedicatedAccountHostOnlyFlag).To(BeFalse())
+			Expect(vg.Domain).To(Equal("softlayer.com"))
+			Expect(vg.FullyQualifiedDomainName).To(Equal("bosh-ecpi1.softlayer.com"))
+			Expect(vg.Hostname).To(Equal("bosh-ecpi1"))
+			Expect(vg.Id).To(Equal(1234567))
+			Expect(vg.LastPowerStateId).To(Equal(0))
+			Expect(vg.LastVerifiedDate).To(BeNil())
+			Expect(vg.MaxCpu).To(Equal(1))
+			Expect(vg.MaxCpuUnits).To(Equal("CORE"))
+			Expect(vg.MaxMemory).To(Equal(1024))
+			Expect(vg.MetricPollDate).To(BeNil())
+			Expect(vg.ModifyDate).ToNot(BeNil())
+			Expect(vg.StartCpus).To(Equal(1))
+			Expect(vg.StatusId).To(Equal(1001))
+			Expect(vg.Uuid).To(Equal("85d444ce-55a0-39c0-e17a-f697f223cd8a"))
+			Expect(vg.GlobalIdentifier).To(Equal("52145e01-97b6-4312-9c15-dac7f24b6c2a"))
+			Expect(vg.PrimaryBackendIpAddress).To(Equal("10.106.192.42"))
+			Expect(vg.PrimaryIpAddress).To(Equal("23.246.234.32"))
+		})
+	})
+
 	Context("#EditObject", func() {
 		BeforeEach(func() {
 			virtualGuest.Id = 1234567
