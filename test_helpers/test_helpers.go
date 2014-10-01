@@ -5,10 +5,13 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"os/exec"
 	"strings"
 	"time"
 
+	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	. "github.com/onsi/gomega/gexec"
 
 	slclient "github.com/maximilien/softlayer-go/client"
 	datatypes "github.com/maximilien/softlayer-go/data_types"
@@ -432,4 +435,37 @@ func ConfigureMetadataDiskOnVirtualGuest(virtualGuestId int) datatypes.SoftLayer
 	fmt.Printf(fmt.Sprintf("----> successfully configured metadata disk for virtual guest instance: %d\n", virtualGuestId))
 
 	return transaction
+}
+
+func RunCommand(timeout time.Duration, cmd string, args ...string) *Session {
+	command := exec.Command(cmd, args...)
+	session, err := Start(command, GinkgoWriter, GinkgoWriter)
+	Ω(err).ShouldNot(HaveOccurred())
+	session.Wait(timeout)
+	return session
+}
+
+func ScpToVirtualGuest(virtualGuestId int, sshKeyFilePath string, localFilePath string, remotePath string) {
+	virtualGuestService, err := CreateVirtualGuestService()
+	Expect(err).ToNot(HaveOccurred())
+
+	virtualGuest, err := virtualGuestService.GetObject(virtualGuestId)
+	Expect(err).ToNot(HaveOccurred())
+
+	fmt.Printf("----> sending SCP command: %s\n", fmt.Sprintf("scp -i %s %s root@%s:%s", sshKeyFilePath, localFilePath, virtualGuest.PrimaryIpAddress, remotePath))
+	session := RunCommand(TIMEOUT, "scp", "-i", sshKeyFilePath, localFilePath, fmt.Sprintf("root@%s:%s", virtualGuest.PrimaryIpAddress, remotePath))
+	Ω(session.ExitCode()).Should(Equal(0))
+}
+
+func SshExecOnVirtualGuest(virtualGuestId int, sshKeyFilePath string, remoteFilePath string, args ...string) int {
+	virtualGuestService, err := CreateVirtualGuestService()
+	Expect(err).ToNot(HaveOccurred())
+
+	virtualGuest, err := virtualGuestService.GetObject(virtualGuestId)
+	Expect(err).ToNot(HaveOccurred())
+
+	fmt.Printf("----> sending SSH command: %s\n", fmt.Sprintf("ssh -i %s root@%s '%s \"%s\"'", sshKeyFilePath, virtualGuest.PrimaryIpAddress, remoteFilePath, args[0]))
+	session := RunCommand(TIMEOUT, "ssh", "-i", sshKeyFilePath, fmt.Sprintf("root@%s", virtualGuest.PrimaryIpAddress), fmt.Sprintf("%s \"%s\"", remoteFilePath, args[0]))
+
+	return session.ExitCode()
 }

@@ -2,6 +2,7 @@ package services_test
 
 import (
 	"os"
+	"path/filepath"
 	"time"
 
 	. "github.com/onsi/ginkgo"
@@ -31,7 +32,7 @@ var _ = Describe("SoftLayer Services", func() {
 		testhelpers.POLLING_INTERVAL = 15 * time.Second
 	})
 
-	Context("uses SoftLayer_Account to list current virtual: disk images, guests, ssh keys, and network storage", func() {
+	Context("SoftLayer_VirtualGuest#<getVirtualDiskImages, getSshKeys, getVirtualGuests, getNetworkStorage>", func() {
 		It("returns an array of SoftLayer_Virtual_Guest disk images", func() {
 			virtualDiskImages, err := accountService.GetVirtualDiskImages()
 			Expect(err).ToNot(HaveOccurred())
@@ -57,7 +58,7 @@ var _ = Describe("SoftLayer Services", func() {
 		})
 	})
 
-	Context("uses SoftLayer_Account to create and then delete a an ssh key", func() {
+	Context("SoftLayer_SecuritySshKey#CreateObject and SoftLayer_SecuritySshKey#DeleteObject", func() {
 		It("creates the ssh key and verify it is present and then deletes it", func() {
 			sshKeyPath := os.Getenv("SOFTLAYER_GO_TEST_SSH_KEY_PATH1")
 			Expect(sshKeyPath).ToNot(Equal(""), "SOFTLAYER_GO_TEST_SSH_KEY_PATH1 env variable is not set")
@@ -76,7 +77,7 @@ var _ = Describe("SoftLayer Services", func() {
 		})
 	})
 
-	Context("uses SoftLayer_Account to create and then delete a virtual guest instance", func() {
+	Context("SoftLayer_VirtualGuest#CreateObject and SoftLayer_VirtualGuest#DeleteObject", func() {
 		It("creates the virtual guest instance and waits for it to be active then delete it", func() {
 			virtualGuest := testhelpers.CreateVirtualGuestAndMarkItTest([]datatypes.SoftLayer_Security_Ssh_Key{})
 
@@ -87,7 +88,7 @@ var _ = Describe("SoftLayer Services", func() {
 		})
 	})
 
-	Context("uses SoftLayer_Account to create ssh key and new virtual guest with ssh key assigned", func() {
+	Context("SoftLayer_SecuritySshKey#CreateObject and SoftLayer_VirtualGuest#CreateObject", func() {
 		It("creates key, creates virtual guest and adds key to list of VG", func() {
 			sshKeyPath := os.Getenv("SOFTLAYER_GO_TEST_SSH_KEY_PATH2")
 			Expect(sshKeyPath).ToNot(Equal(""), "SOFTLAYER_GO_TEST_SSH_KEY_PATH2 env variable is not set")
@@ -105,8 +106,8 @@ var _ = Describe("SoftLayer Services", func() {
 		})
 	})
 
-	FContext("add user metadata to a running instance and configures the metadata disk to verify data is added", func() {
-		It("creates new VirtualGuest and waits for it to be RUNNING", func() {
+	Context("SoftLayer_VirtualGuestService#setUserMetadata and SoftLayer_VirtualGuestService#configureMetadataDisk", func() {
+		It("creates ssh key, VirtualGuest, waits for it to be RUNNING, set user data, configures disk, verifies user data, and delete VG", func() {
 			sshKeyPath := os.Getenv("SOFTLAYER_GO_TEST_SSH_KEY_PATH2")
 			Expect(sshKeyPath).ToNot(Equal(""), "SOFTLAYER_GO_TEST_SSH_KEY_PATH2 env variable is not set")
 
@@ -118,7 +119,7 @@ var _ = Describe("SoftLayer Services", func() {
 			testhelpers.WaitForVirtualGuestToBeRunning(virtualGuest.Id)
 			testhelpers.WaitForVirtualGuestToHaveNoActiveTransactions(virtualGuest.Id)
 
-			testhelpers.SetUserDataToVirtualGuest(virtualGuest.Id, "softlayer-gp test fake metadata")
+			testhelpers.SetUserDataToVirtualGuest(virtualGuest.Id, "softlayer-go test fake metadata")
 			transaction := testhelpers.ConfigureMetadataDiskOnVirtualGuest(virtualGuest.Id)
 
 			averageTransactionDuration, err := time.ParseDuration(transaction.TransactionStatus.AverageDuration + "m")
@@ -127,14 +128,19 @@ var _ = Describe("SoftLayer Services", func() {
 			testhelpers.WaitForVirtualGuest(virtualGuest.Id, "RUNNING", averageTransactionDuration)
 			testhelpers.WaitForVirtualGuestToHaveNoActiveTransactions(virtualGuest.Id)
 
-			testhelpers.DeleteVirtualGuest(virtualGuest.Id)
-			testhelpers.DeleteSshKey(createdSshKey.Id)
+			sshKeyFilePath := os.Getenv("SOFTLAYER_GO_TEST_SSH_KEY_PATH2")
+			Expect(sshKeyFilePath).ToNot(Equal(""), "SOFTLAYER_GO_TEST_SSH_KEY_PATH2 env variable is not set")
+
+			workingDir, err := os.Getwd()
+			Expect(err).ToNot(HaveOccurred())
+
+			fetchUserMetadataShFilePath := filepath.Join(workingDir, "..", "scripts", "fetch_user_metadata.sh")
+			Expect(err).ToNot(HaveOccurred())
+
+			testhelpers.ScpToVirtualGuest(6396994, sshKeyFilePath, fetchUserMetadataShFilePath, "/tmp")
+			retCode := testhelpers.SshExecOnVirtualGuest(6396994, sshKeyFilePath, "/tmp/fetch_user_metadata.sh", "softlayer-gp test fake metadata")
+			Expect(retCode).To(Equal(0))
 		})
-
-		It("verifies that the user data set is on the metadata disk", func() {
-
-		})
-
 	})
 
 	XContext("uses SoftLayer_Account to create a new instance and network storage and attach them", func() {
