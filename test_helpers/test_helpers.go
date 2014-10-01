@@ -423,7 +423,7 @@ func SetUserDataToVirtualGuest(virtualGuestId int, metadata string) {
 	success, err := virtualGuestService.SetMetadata(virtualGuestId, metadata)
 	Expect(err).ToNot(HaveOccurred())
 	Expect(success).To(BeTrue())
-	fmt.Printf(fmt.Sprintf("----> successfully set metadata: %s to virtual guest instance: %d\n", metadata, virtualGuestId))
+	fmt.Printf(fmt.Sprintf("----> successfully set metadata: `%s` to virtual guest instance: %d\n", metadata, virtualGuestId))
 }
 
 func ConfigureMetadataDiskOnVirtualGuest(virtualGuestId int) datatypes.SoftLayer_Provisioning_Version1_Transaction {
