@@ -28,8 +28,8 @@ var _ = Describe("SoftLayer Services", func() {
 		virtualGuestService, err = testhelpers.CreateVirtualGuestService()
 		Expect(err).ToNot(HaveOccurred())
 
-		testhelpers.TIMEOUT = 25 * time.Minute
-		testhelpers.POLLING_INTERVAL = 15 * time.Second
+		testhelpers.TIMEOUT = 35 * time.Minute
+		testhelpers.POLLING_INTERVAL = 10 * time.Second
 	})
 
 	Context("SoftLayer_VirtualGuest#<getVirtualDiskImages, getSshKeys, getVirtualGuests, getNetworkStorage>", func() {
