@@ -1,6 +1,7 @@
 package services_test
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"time"
@@ -106,7 +107,7 @@ var _ = Describe("SoftLayer Services", func() {
 		})
 	})
 
-	Context("SoftLayer_VirtualGuestService#setUserMetadata and SoftLayer_VirtualGuestService#configureMetadataDisk", func() {
+	FContext("SoftLayer_VirtualGuestService#setUserMetadata and SoftLayer_VirtualGuestService#configureMetadataDisk", func() {
 		It("creates ssh key, VirtualGuest, waits for it to be RUNNING, set user data, configures disk, verifies user data, and delete VG", func() {
 			sshKeyPath := os.Getenv("SOFTLAYER_GO_TEST_SSH_KEY_PATH2")
 			Expect(sshKeyPath).ToNot(Equal(""), "SOFTLAYER_GO_TEST_SSH_KEY_PATH2 env variable is not set")
@@ -119,27 +120,27 @@ var _ = Describe("SoftLayer Services", func() {
 			testhelpers.WaitForVirtualGuestToBeRunning(virtualGuest.Id)
 			testhelpers.WaitForVirtualGuestToHaveNoActiveTransactions(virtualGuest.Id)
 
-			testhelpers.SetUserDataToVirtualGuest(virtualGuest.Id, "softlayer-go test fake metadata")
-			transaction := testhelpers.ConfigureMetadataDiskOnVirtualGuest(virtualGuest.Id)
-
+			startTime := time.Now()
+			userMetadata := "softlayer-go test fake metadata"
+			transaction := testhelpers.SetUserMetadataAndConfigureDisk(virtualGuest.Id, userMetadata)
 			averageTransactionDuration, err := time.ParseDuration(transaction.TransactionStatus.AverageDuration + "m")
-			Expect(err).ToNot(HaveOccurred())
+			Ω(err).ShouldNot(HaveOccurred())
 
 			testhelpers.WaitForVirtualGuest(virtualGuest.Id, "RUNNING", averageTransactionDuration)
 			testhelpers.WaitForVirtualGuestToHaveNoActiveTransactions(virtualGuest.Id)
+			fmt.Printf("====> Set Metadata and configured disk on instance: %d in %d time\n", virtualGuest.Id, time.Since(startTime))
 
-			sshKeyFilePath := os.Getenv("SOFTLAYER_GO_TEST_SSH_KEY_PATH2")
-			Expect(sshKeyFilePath).ToNot(Equal(""), "SOFTLAYER_GO_TEST_SSH_KEY_PATH2 env variable is not set")
+			testUserMetadata(userMetadata)
 
-			workingDir, err := os.Getwd()
-			Expect(err).ToNot(HaveOccurred())
+			startTime = time.Now()
+			userMetadata = "softlayer-go test MODIFIED fake metadata"
+			testhelpers.SetUserMetadataAndConfigureDisk(virtualGuest.Id, userMetadata)
 
-			fetchUserMetadataShFilePath := filepath.Join(workingDir, "..", "scripts", "fetch_user_metadata.sh")
-			Expect(err).ToNot(HaveOccurred())
+			testhelpers.WaitForVirtualGuest(virtualGuest.Id, "RUNNING", averageTransactionDuration)
+			testhelpers.WaitForVirtualGuestToHaveNoActiveTransactions(virtualGuest.Id)
+			fmt.Printf("====> Set Metadata and configured disk on instance: %d in %d time\n", virtualGuest.Id, time.Since(startTime))
 
-			testhelpers.ScpToVirtualGuest(6396994, sshKeyFilePath, fetchUserMetadataShFilePath, "/tmp")
-			retCode := testhelpers.SshExecOnVirtualGuest(6396994, sshKeyFilePath, "/tmp/fetch_user_metadata.sh", "softlayer-gp test fake metadata")
-			Expect(retCode).To(Equal(0))
+			testUserMetadata(userMetadata)
 		})
 	})
 
@@ -161,3 +162,18 @@ var _ = Describe("SoftLayer Services", func() {
 		})
 	})
 })
+
+func testUserMetadata(userMetadata string) {
+	sshKeyFilePath := os.Getenv("SOFTLAYER_GO_TEST_SSH_KEY_PATH2")
+	Expect(sshKeyFilePath).ToNot(Equal(""), "SOFTLAYER_GO_TEST_SSH_KEY_PATH2 env variable is not set")
+
+	workingDir, err := os.Getwd()
+	Expect(err).ToNot(HaveOccurred())
+
+	fetchUserMetadataShFilePath := filepath.Join(workingDir, "..", "scripts", "fetch_user_metadata.sh")
+	Expect(err).ToNot(HaveOccurred())
+
+	testhelpers.ScpToVirtualGuest(6396994, sshKeyFilePath, fetchUserMetadataShFilePath, "/tmp")
+	retCode := testhelpers.SshExecOnVirtualGuest(6396994, sshKeyFilePath, "/tmp/fetch_user_metadata.sh", userMetadata)
+	Expect(retCode).To(Equal(0))
+}

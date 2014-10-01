@@ -437,6 +437,14 @@ func ConfigureMetadataDiskOnVirtualGuest(virtualGuestId int) datatypes.SoftLayer
 	return transaction
 }
 
+func SetUserMetadataAndConfigureDisk(virtualGuestId int, userMetadata string) datatypes.SoftLayer_Provisioning_Version1_Transaction {
+	SetUserDataToVirtualGuest(virtualGuestId, userMetadata)
+	transaction := ConfigureMetadataDiskOnVirtualGuest(virtualGuestId)
+	Expect(transaction.Id).ToNot(Equal(0))
+
+	return transaction
+}
+
 func RunCommand(timeout time.Duration, cmd string, args ...string) *Session {
 	command := exec.Command(cmd, args...)
 	session, err := Start(command, GinkgoWriter, GinkgoWriter)
