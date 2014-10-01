@@ -29,6 +29,11 @@ type SoftLayer_Virtual_Guest struct {
 	StartCpus                    int        `json:"startCpus,omitempty"`
 	StatusId                     int        `json:"statusId,omitempty"`
 	Uuid                         string     `json:"uuid,omitempty"`
+
+	GlobalIdentifier        string `json:"globalIdentifier,omitempty"`
+	ManagedResourceFlag     bool   `json:"managedResourceFlag,omitempty"`
+	PrimaryBackendIpAddress string `json:"primaryBackendIpAddress,omitempty"`
+	PrimaryIpAddress        string `json:"primaryIpAddress,omitempty"`
 }
 
 type SoftLayer_Virtual_Guest_Template_Parameters struct {
