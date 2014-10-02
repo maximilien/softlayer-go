@@ -100,7 +100,7 @@ type PrimaryBackendNetworkComponent struct {
 
 type DiskImage struct {
 	//Required
-	capacity int `json:"capacity,omitempty"`
+	Capacity int `json:"capacity,omitempty"`
 }
 
 type BlockDevice struct {
