@@ -3,6 +3,12 @@
 (
   set -e
 
+  base=$( cd "$( dirname "$( dirname "$0" )")" && pwd )
+  base_gopath=$( cd $base/../../../.. && pwd )
+ 
+  export GOPATH=$base/Godeps/_workspace:$base_gopath GOBIN=$base_gopath/gobin
+  export PATH=$PATH:$GOBIN
+
   function printStatus {
       if [ $? -eq 0 ]; then
           echo -e "\nSWEET SUITE SUCCESS"
