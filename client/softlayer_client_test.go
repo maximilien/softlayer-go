@@ -75,4 +75,40 @@ var _ = Describe("SoftLayerClient", func() {
 			Expect(sshKeyService).ToNot(BeNil())
 		})
 	})
+
+	Context("#GetSoftLayer_Network_Storage", func() {
+		It("returns a instance implemementing the SoftLayer_Network_Storage interface", func() {
+			var networkStorageService softlayer.SoftLayer_Network_Storage_Service
+			networkStorageService, err := client.GetSoftLayer_Network_Storage_Service()
+			Expect(err).ToNot(HaveOccurred())
+			Expect(networkStorageService).ToNot(BeNil())
+		})
+	})
+
+	Context("#GetSoftLayer_Product_Order", func() {
+		It("returns a instance implemementing the SoftLayer_Product_Order interface", func() {
+			var productOrderService softlayer.SoftLayer_Product_Order_Service
+			productOrderService, err := client.GetSoftLayer_Product_Order_Service()
+			Expect(err).ToNot(HaveOccurred())
+			Expect(productOrderService).ToNot(BeNil())
+		})
+	})
+
+	Context("#GetSoftLayer_Product_Package", func() {
+		It("returns a instance implemementing the SoftLayer_Product_Package interface", func() {
+			var productPackageService softlayer.SoftLayer_Product_Package_Service
+			productPackageService, err := client.GetSoftLayer_Product_Package_Service()
+			Expect(err).ToNot(HaveOccurred())
+			Expect(productPackageService).ToNot(BeNil())
+		})
+	})
+
+	Context("#GetSoftLayer_Billing_Item_Cancellation_Request", func() {
+		It("returns a instance implemementing the SoftLayer_Billing_Item_Cancellation_Request interface", func() {
+			var billingItemCancellationRequestService softlayer.SoftLayer_Billing_Item_Cancellation_Request_Service
+			billingItemCancellationRequestService, err := client.GetSoftLayer_Billing_Item_Cancellation_Request_Service()
+			Expect(err).ToNot(HaveOccurred())
+			Expect(billingItemCancellationRequestService).ToNot(BeNil())
+		})
+	})
 })

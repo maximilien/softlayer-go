@@ -11,8 +11,13 @@ type Client interface {
 	GetSoftLayer_Virtual_Guest_Service() (SoftLayer_Virtual_Guest_Service, error)
 	GetSoftLayer_Virtual_Disk_Image_Service() (SoftLayer_Virtual_Disk_Image_Service, error)
 	GetSoftLayer_Security_Ssh_Key_Service() (SoftLayer_Security_Ssh_Key_Service, error)
+	GetSoftLayer_Product_Package_Service() (SoftLayer_Product_Package_Service, error)
+	GetSoftLayer_Product_Order_Service() (SoftLayer_Product_Order_Service, error)
+	GetSoftLayer_Network_Storage_Service() (SoftLayer_Network_Storage_Service, error)
+	GetSoftLayer_Billing_Item_Cancellation_Request_Service() (SoftLayer_Billing_Item_Cancellation_Request_Service, error)
 
 	DoRawHttpRequest(path string, requestType string, requestBody *bytes.Buffer) ([]byte, error)
+	DoRawHttpRequestWithObjectMask(path string, masks []string, requestType string, requestBody *bytes.Buffer) ([]byte, error)
 	GenerateRequestBody(templateData interface{}) (*bytes.Buffer, error)
 	HasErrors(body map[string]interface{}) error
 

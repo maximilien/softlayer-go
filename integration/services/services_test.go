@@ -18,8 +18,10 @@ var _ = Describe("SoftLayer Services", func() {
 	var (
 		err error
 
-		accountService      softlayer.SoftLayer_Account_Service
-		virtualGuestService softlayer.SoftLayer_Virtual_Guest_Service
+		accountService        softlayer.SoftLayer_Account_Service
+		virtualGuestService   softlayer.SoftLayer_Virtual_Guest_Service
+		productPackageService softlayer.SoftLayer_Product_Package_Service
+		networkStorageService softlayer.SoftLayer_Network_Storage_Service
 	)
 
 	BeforeEach(func() {
@@ -27,6 +29,12 @@ var _ = Describe("SoftLayer Services", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		virtualGuestService, err = testhelpers.CreateVirtualGuestService()
+		Expect(err).ToNot(HaveOccurred())
+
+		productPackageService, err = testhelpers.CreateProductPackageService()
+		Expect(err).ToNot(HaveOccurred())
+
+		networkStorageService, err = testhelpers.CreateNetworkStorageService()
 		Expect(err).ToNot(HaveOccurred())
 
 		testhelpers.TIMEOUT = 35 * time.Minute
@@ -52,10 +60,24 @@ var _ = Describe("SoftLayer Services", func() {
 			Expect(len(networkStorageArray)).To(BeNumerically(">=", 0))
 		})
 
+		It("returns an array of iSCSI network storage", func() {
+			networkStorageArray, err := accountService.GetIscsiNetworkStorage()
+			Expect(err).ToNot(HaveOccurred())
+			Expect(len(networkStorageArray)).To(BeNumerically(">=", 0))
+		})
+
 		It("returns an array of SoftLayer_Ssh_Keys objects", func() {
 			sshKeys, err := accountService.GetSshKeys()
 			Expect(err).ToNot(HaveOccurred())
 			Expect(len(sshKeys)).To(BeNumerically(">=", 0))
+		})
+	})
+
+	Context("uses SoftLayer_ProductPackage to list item prices", func() {
+		It("returns an array of SoftLayer_Item_Price under a specific package", func() {
+			itemPrices, err := productPackageService.GetItemPrices(0)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(len(itemPrices)).To(BeNumerically(">=", 0))
 		})
 	})
 
@@ -144,23 +166,18 @@ var _ = Describe("SoftLayer Services", func() {
 		})
 	})
 
-	XContext("uses SoftLayer_Account to create a new instance and network storage and attach them", func() {
-		It("creates the virtual guest instance and waits for it to be active", func() {
-			Expect(false).To(BeTrue())
-		})
+	Context("uses SoftLayer_Network_Storage to manage iSCSI volume", func() {
+		It("creates an iSCSI volume and then deletes it", func() {
+			iscsiStorage, err := networkStorageService.CreateIscsiVolume(20, "138124")
 
-		It("creates the disk storage and attaches it to the instance", func() {
-			Expect(false).To(BeTrue())
-		})
+			Expect(err).ToNot(HaveOccurred())
+			Expect(iscsiStorage.Id).ToNot(Equal(0))
 
-		It("deletes the virtual guest instance if it is running", func() {
-			Expect(false).To(BeTrue())
-		})
-
-		It("detaches and deletes the network storage if available", func() {
-			Expect(false).To(BeTrue())
+			networkStorageService.DeleteIscsiVolume(iscsiStorage.Id, true)
+			waitForIscsiStorageToBeDeleted(iscsiStorage.Id)
 		})
 	})
+
 })
 
 func testUserMetadata(userMetadata string) {
@@ -176,4 +193,23 @@ func testUserMetadata(userMetadata string) {
 	testhelpers.ScpToVirtualGuest(6396994, sshKeyFilePath, fetchUserMetadataShFilePath, "/tmp")
 	retCode := testhelpers.SshExecOnVirtualGuest(6396994, sshKeyFilePath, "/tmp/fetch_user_metadata.sh", userMetadata)
 	Expect(retCode).To(Equal(0))
+}
+
+func waitForIscsiStorageToBeDeleted(storageId int) {
+	accountService, err := testhelpers.CreateAccountService()
+	Expect(err).ToNot(HaveOccurred())
+
+	fmt.Printf("----> waiting for created iSCSI volume to be deleted\n")
+	Eventually(func() bool {
+		storages, err := accountService.GetIscsiNetworkStorage()
+		Expect(err).ToNot(HaveOccurred())
+
+		deletedFlag := false
+		for _, storage := range storages {
+			if storage.Id == storageId && storage.BillingItem == nil {
+				deletedFlag = true
+			}
+		}
+		return deletedFlag
+	}, TIMEOUT, POLLING_INTERVAL).Should(BeTrue(), "created iSCSI volume but not deleted successfully")
 }

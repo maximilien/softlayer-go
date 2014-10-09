@@ -1,0 +1,10 @@
+[
+	{
+		"id": 123,
+		"item": {
+			"id": 456,
+			"capacity": "20",
+			"description": "20GB iSCSI SAN Disk"
+		}
+	}
+]
