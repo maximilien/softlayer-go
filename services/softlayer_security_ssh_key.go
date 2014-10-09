@@ -10,21 +10,21 @@ import (
 	softlayer "github.com/maximilien/softlayer-go/softlayer"
 )
 
-type softLayer_Ssh_Key_Service struct {
+type softLayer_Security_Ssh_Key_Service struct {
 	client softlayer.Client
 }
 
-func NewSoftLayer_Ssh_Key_Service(client softlayer.Client) *softLayer_Ssh_Key_Service {
-	return &softLayer_Ssh_Key_Service{
+func NewSoftLayer_Security_Ssh_Key_Service(client softlayer.Client) *softLayer_Security_Ssh_Key_Service {
+	return &softLayer_Security_Ssh_Key_Service{
 		client: client,
 	}
 }
 
-func (slsks *softLayer_Ssh_Key_Service) GetName() string {
+func (slssks *softLayer_Security_Ssh_Key_Service) GetName() string {
 	return "SoftLayer_Security_Ssh_Key"
 }
 
-func (slsks *softLayer_Ssh_Key_Service) CreateObject(template datatypes.SoftLayer_Security_Ssh_Key) (datatypes.SoftLayer_Security_Ssh_Key, error) {
+func (slssks *softLayer_Security_Ssh_Key_Service) CreateObject(template datatypes.SoftLayer_Security_Ssh_Key) (datatypes.SoftLayer_Security_Ssh_Key, error) {
 	parameters := datatypes.SoftLayer_Shh_Key_Parameters{
 		Parameters: []datatypes.SoftLayer_Security_Ssh_Key{
 			template,
@@ -36,12 +36,12 @@ func (slsks *softLayer_Ssh_Key_Service) CreateObject(template datatypes.SoftLaye
 		return datatypes.SoftLayer_Security_Ssh_Key{}, err
 	}
 
-	data, err := slsks.client.DoRawHttpRequest(fmt.Sprintf("%s/createObject", slsks.GetName()), "POST", bytes.NewBuffer(requestBody))
+	data, err := slssks.client.DoRawHttpRequest(fmt.Sprintf("%s/createObject", slssks.GetName()), "POST", bytes.NewBuffer(requestBody))
 	if err != nil {
 		return datatypes.SoftLayer_Security_Ssh_Key{}, err
 	}
 
-	err = slsks.client.CheckForHttpResponseErrors(data)
+	err = slssks.client.CheckForHttpResponseErrors(data)
 	if err != nil {
 		return datatypes.SoftLayer_Security_Ssh_Key{}, err
 	}
@@ -55,8 +55,8 @@ func (slsks *softLayer_Ssh_Key_Service) CreateObject(template datatypes.SoftLaye
 	return softLayer_Ssh_Key, nil
 }
 
-func (slsks *softLayer_Ssh_Key_Service) DeleteObject(sshKeyId int) (bool, error) {
-	response, err := slsks.client.DoRawHttpRequest(fmt.Sprintf("%s/%d.json", slsks.GetName(), sshKeyId), "DELETE", new(bytes.Buffer))
+func (slssks *softLayer_Security_Ssh_Key_Service) DeleteObject(sshKeyId int) (bool, error) {
+	response, err := slssks.client.DoRawHttpRequest(fmt.Sprintf("%s/%d.json", slssks.GetName(), sshKeyId), "DELETE", new(bytes.Buffer))
 
 	if res := string(response[:]); res != "true" {
 		return false, errors.New(fmt.Sprintf("Failed to destroy ssh key with id '%d', got '%s' as response from the API.", sshKeyId, res))
@@ -65,8 +65,8 @@ func (slsks *softLayer_Ssh_Key_Service) DeleteObject(sshKeyId int) (bool, error)
 	return true, err
 }
 
-func (slsks *softLayer_Ssh_Key_Service) GetSoftwarePasswords(sshKeyId int) ([]datatypes.SoftLayer_Software_Component_Password, error) {
-	response, err := slsks.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/getSoftwarePasswords.json", slsks.GetName(), sshKeyId), "GET", new(bytes.Buffer))
+func (slssks *softLayer_Security_Ssh_Key_Service) GetSoftwarePasswords(sshKeyId int) ([]datatypes.SoftLayer_Software_Component_Password, error) {
+	response, err := slssks.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/getSoftwarePasswords.json", slssks.GetName(), sshKeyId), "GET", new(bytes.Buffer))
 	if err != nil {
 		return []datatypes.SoftLayer_Software_Component_Password{}, err
 	}
