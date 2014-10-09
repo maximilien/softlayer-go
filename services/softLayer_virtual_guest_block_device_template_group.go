@@ -80,6 +80,16 @@ func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) Get
 }
 
 func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) GetStatus(id int) (datatypes.SoftLayer_Virtual_Guest_Block_Device_Template_Group_Status, error) {
-	//TODO: complete me!
-	return datatypes.SoftLayer_Virtual_Guest_Block_Device_Template_Group_Status{}, nil
+	response, err := slvgbdtg.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/getStatus.json", slvgbdtg.GetName(), id), "GET", new(bytes.Buffer))
+	if err != nil {
+		return datatypes.SoftLayer_Virtual_Guest_Block_Device_Template_Group_Status{}, err
+	}
+
+	status := datatypes.SoftLayer_Virtual_Guest_Block_Device_Template_Group_Status{}
+	err = json.Unmarshal(response, &status)
+	if err != nil {
+		return datatypes.SoftLayer_Virtual_Guest_Block_Device_Template_Group_Status{}, err
+	}
+
+	return status, nil
 }
