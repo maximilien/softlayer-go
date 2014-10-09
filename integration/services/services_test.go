@@ -3,7 +3,6 @@ package services_test
 import (
 	"fmt"
 	"os"
-	"path/filepath"
 	"time"
 
 	. "github.com/onsi/ginkgo"
@@ -41,7 +40,7 @@ var _ = Describe("SoftLayer Services", func() {
 		testhelpers.POLLING_INTERVAL = 10 * time.Second
 	})
 
-	Context("SoftLayer_VirtualGuest#<getVirtualDiskImages, getSshKeys, getVirtualGuests, getNetworkStorage>", func() {
+	Context("SoftLayer_Account#<getVirtualDiskImages, getSshKeys, getVirtualGuests, getNetworkStorage>", func() {
 		It("returns an array of SoftLayer_Virtual_Guest disk images", func() {
 			virtualDiskImages, err := accountService.GetVirtualDiskImages()
 			Expect(err).ToNot(HaveOccurred())
@@ -66,10 +65,16 @@ var _ = Describe("SoftLayer Services", func() {
 			Expect(len(networkStorageArray)).To(BeNumerically(">=", 0))
 		})
 
-		It("returns an array of SoftLayer_Ssh_Keys objects", func() {
+		It("returns an array of SoftLayer_Security_Ssh_Keys objects", func() {
 			sshKeys, err := accountService.GetSshKeys()
 			Expect(err).ToNot(HaveOccurred())
 			Expect(len(sshKeys)).To(BeNumerically(">=", 0))
+		})
+
+		It("returns an array of SoftLayer_Virtual_Guest_Block_Device_Template_Group objects", func() {
+			groups, err := accountService.GetBlockDeviceTemplateGroups()
+			Expect(err).ToNot(HaveOccurred())
+			Expect(len(groups)).To(BeNumerically(">=", 0))
 		})
 	})
 
@@ -129,7 +134,7 @@ var _ = Describe("SoftLayer Services", func() {
 		})
 	})
 
-	FContext("SoftLayer_VirtualGuestService#setUserMetadata and SoftLayer_VirtualGuestService#configureMetadataDisk", func() {
+	Context("SoftLayer_VirtualGuestService#setUserMetadata and SoftLayer_VirtualGuestService#configureMetadataDisk", func() {
 		It("creates ssh key, VirtualGuest, waits for it to be RUNNING, set user data, configures disk, verifies user data, and delete VG", func() {
 			sshKeyPath := os.Getenv("SOFTLAYER_GO_TEST_SSH_KEY_PATH2")
 			Expect(sshKeyPath).ToNot(Equal(""), "SOFTLAYER_GO_TEST_SSH_KEY_PATH2 env variable is not set")
