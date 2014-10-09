@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -507,4 +508,35 @@ func SshExecOnVirtualGuest(virtualGuestId int, sshKeyFilePath string, remoteFile
 	session := RunCommand(TIMEOUT, "ssh", "-i", sshKeyFilePath, fmt.Sprintf("root@%s", virtualGuest.PrimaryIpAddress), fmt.Sprintf("%s \"%s\"", remoteFilePath, args[0]))
 
 	return session.ExitCode()
+}
+
+func TestUserMetadata(userMetadata, sshKeyFilePath string) {
+	workingDir, err := os.Getwd()
+	Expect(err).ToNot(HaveOccurred())
+
+	fetchUserMetadataShFilePath := filepath.Join(workingDir, "..", "scripts", "fetch_user_metadata.sh")
+	Expect(err).ToNot(HaveOccurred())
+
+	ScpToVirtualGuest(6396994, sshKeyFilePath, fetchUserMetadataShFilePath, "/tmp")
+	retCode := SshExecOnVirtualGuest(6396994, sshKeyFilePath, "/tmp/fetch_user_metadata.sh", userMetadata)
+	Expect(retCode).To(Equal(0))
+}
+
+func WaitForIscsiStorageToBeDeleted(storageId int) {
+	accountService, err := CreateAccountService()
+	Expect(err).ToNot(HaveOccurred())
+
+	fmt.Printf("----> waiting for created iSCSI volume to be deleted\n")
+	Eventually(func() bool {
+		storages, err := accountService.GetIscsiNetworkStorage()
+		Expect(err).ToNot(HaveOccurred())
+
+		deletedFlag := false
+		for _, storage := range storages {
+			if storage.Id == storageId && storage.BillingItem == nil {
+				deletedFlag = true
+			}
+		}
+		return deletedFlag
+	}, TIMEOUT, POLLING_INTERVAL).Should(BeTrue(), "created iSCSI volume but not deleted successfully")
 }

@@ -152,7 +152,10 @@ var _ = Describe("SoftLayer Services", func() {
 			testhelpers.WaitForVirtualGuestToHaveNoActiveTransactions(virtualGuest.Id)
 			fmt.Printf("====> Set Metadata and configured disk on instance: %d in %d time\n", virtualGuest.Id, time.Since(startTime))
 
-			testUserMetadata(userMetadata)
+			sshKeyFilePath := os.Getenv("SOFTLAYER_GO_TEST_SSH_KEY_PATH2")
+			Expect(sshKeyFilePath).ToNot(Equal(""), "SOFTLAYER_GO_TEST_SSH_KEY_PATH2 env variable is not set")
+
+			testhelpers.TestUserMetadata(userMetadata, sshKeyFilePath)
 
 			startTime = time.Now()
 			userMetadata = "softlayer-go test MODIFIED fake metadata"
@@ -162,7 +165,7 @@ var _ = Describe("SoftLayer Services", func() {
 			testhelpers.WaitForVirtualGuestToHaveNoActiveTransactions(virtualGuest.Id)
 			fmt.Printf("====> Set Metadata and configured disk on instance: %d in %d time\n", virtualGuest.Id, time.Since(startTime))
 
-			testUserMetadata(userMetadata)
+			testhelpers.TestUserMetadata(userMetadata, sshKeyFilePath)
 		})
 	})
 
@@ -174,42 +177,8 @@ var _ = Describe("SoftLayer Services", func() {
 			Expect(iscsiStorage.Id).ToNot(Equal(0))
 
 			networkStorageService.DeleteIscsiVolume(iscsiStorage.Id, true)
-			waitForIscsiStorageToBeDeleted(iscsiStorage.Id)
+			testhelpers.WaitForIscsiStorageToBeDeleted(iscsiStorage.Id)
 		})
 	})
 
 })
-
-func testUserMetadata(userMetadata string) {
-	sshKeyFilePath := os.Getenv("SOFTLAYER_GO_TEST_SSH_KEY_PATH2")
-	Expect(sshKeyFilePath).ToNot(Equal(""), "SOFTLAYER_GO_TEST_SSH_KEY_PATH2 env variable is not set")
-
-	workingDir, err := os.Getwd()
-	Expect(err).ToNot(HaveOccurred())
-
-	fetchUserMetadataShFilePath := filepath.Join(workingDir, "..", "scripts", "fetch_user_metadata.sh")
-	Expect(err).ToNot(HaveOccurred())
-
-	testhelpers.ScpToVirtualGuest(6396994, sshKeyFilePath, fetchUserMetadataShFilePath, "/tmp")
-	retCode := testhelpers.SshExecOnVirtualGuest(6396994, sshKeyFilePath, "/tmp/fetch_user_metadata.sh", userMetadata)
-	Expect(retCode).To(Equal(0))
-}
-
-func waitForIscsiStorageToBeDeleted(storageId int) {
-	accountService, err := testhelpers.CreateAccountService()
-	Expect(err).ToNot(HaveOccurred())
-
-	fmt.Printf("----> waiting for created iSCSI volume to be deleted\n")
-	Eventually(func() bool {
-		storages, err := accountService.GetIscsiNetworkStorage()
-		Expect(err).ToNot(HaveOccurred())
-
-		deletedFlag := false
-		for _, storage := range storages {
-			if storage.Id == storageId && storage.BillingItem == nil {
-				deletedFlag = true
-			}
-		}
-		return deletedFlag
-	}, TIMEOUT, POLLING_INTERVAL).Should(BeTrue(), "created iSCSI volume but not deleted successfully")
-}
