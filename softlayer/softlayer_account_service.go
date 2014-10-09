@@ -12,4 +12,5 @@ type SoftLayer_Account_Service interface {
 	GetNetworkStorage() ([]datatypes.SoftLayer_Network_Storage, error)
 	GetVirtualDiskImages() ([]datatypes.SoftLayer_Virtual_Disk_Image, error)
 	GetSshKeys() ([]datatypes.SoftLayer_Security_Ssh_Key, error)
+	GetBlockDeviceTemplateGroups() ([]datatypes.SoftLayer_Virtual_Guest_Block_Device_Template_Group, error)
 }
