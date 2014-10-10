@@ -116,6 +116,52 @@ var _ = Describe("SoftLayer Services", func() {
 		})
 	})
 
+	Context("SoftLayer_VirtualGuest#CreateObject, SoftLayer_VirtualGuest#rebootSoft, wait for reboot to complete, and SoftLayer_VirtualGuest#DeleteObject", func() {
+		It("creates the virtual guest instance, wait for active, SOFT reboots it, wait for RUNNING, then delete it", func() {
+			virtualGuest := testhelpers.CreateVirtualGuestAndMarkItTest([]datatypes.SoftLayer_Security_Ssh_Key{})
+
+			testhelpers.WaitForVirtualGuestToBeRunning(virtualGuest.Id)
+			testhelpers.WaitForVirtualGuestToHaveNoActiveTransactions(virtualGuest.Id)
+
+			virtualGuestService, err := testhelpers.CreateVirtualGuestService()
+			Expect(err).ToNot(HaveOccurred())
+
+			fmt.Printf("----> will attempt to SOFT reboot virtual guest `%d`\n", virtualGuest.Id)
+			rebooted, err := virtualGuestService.RebootSoft(virtualGuest.Id)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(rebooted).To(BeTrue())
+			fmt.Printf("----> successfully SOFT rebooted virtual guest `%d`\n", virtualGuest.Id)
+
+			testhelpers.WaitForVirtualGuestToBeRunning(virtualGuest.Id)
+			testhelpers.WaitForVirtualGuestToHaveNoActiveTransactions(virtualGuest.Id)
+
+			testhelpers.DeleteVirtualGuest(virtualGuest.Id)
+		})
+	})
+
+	Context("SoftLayer_VirtualGuest#CreateObject, SoftLayer_VirtualGuest#rebootHard, wait for reboot to complete, and SoftLayer_VirtualGuest#DeleteObject", func() {
+		It("creates the virtual guest instance, wait for active, HARD reboots it, wait for RUNNING, then delete it", func() {
+			virtualGuest := testhelpers.CreateVirtualGuestAndMarkItTest([]datatypes.SoftLayer_Security_Ssh_Key{})
+
+			testhelpers.WaitForVirtualGuestToBeRunning(virtualGuest.Id)
+			testhelpers.WaitForVirtualGuestToHaveNoActiveTransactions(virtualGuest.Id)
+
+			virtualGuestService, err := testhelpers.CreateVirtualGuestService()
+			Expect(err).ToNot(HaveOccurred())
+
+			fmt.Printf("----> will attempt to HARD reboot virtual guest `%d`\n", virtualGuest.Id)
+			rebooted, err := virtualGuestService.RebootHard(virtualGuest.Id)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(rebooted).To(BeTrue())
+			fmt.Printf("----> successfully HARD rebooted virtual guest `%d`\n", virtualGuest.Id)
+
+			testhelpers.WaitForVirtualGuestToBeRunning(virtualGuest.Id)
+			testhelpers.WaitForVirtualGuestToHaveNoActiveTransactions(virtualGuest.Id)
+
+			testhelpers.DeleteVirtualGuest(virtualGuest.Id)
+		})
+	})
+
 	Context("SoftLayer_SecuritySshKey#CreateObject and SoftLayer_VirtualGuest#CreateObject", func() {
 		It("creates key, creates virtual guest and adds key to list of VG", func() {
 			sshKeyPath := os.Getenv("SOFTLAYER_GO_TEST_SSH_KEY_PATH2")
