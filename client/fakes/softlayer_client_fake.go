@@ -24,8 +24,10 @@ type FakeSoftLayerClient struct {
 
 	SoftLayerServices map[string]softlayer.Service
 
-	DoRawHttpRequestResponse []byte
-	DoRawHttpRequestError    error
+	DoRawHttpRequestResponse       []byte
+	DoRawHttpRequestResponses      [][]byte
+	DoRawHttpRequestResponsesIndex int
+	DoRawHttpRequestError          error
 
 	GenerateRequestBodyBuffer *bytes.Buffer
 	GenerateRequestBodyError  error
@@ -43,8 +45,10 @@ func NewFakeSoftLayerClient(username, apiKey string) *FakeSoftLayerClient {
 
 		SoftLayerServices: map[string]softlayer.Service{},
 
-		DoRawHttpRequestResponse: []byte{},
-		DoRawHttpRequestError:    nil,
+		DoRawHttpRequestResponse:       nil,
+		DoRawHttpRequestResponses:      [][]byte{},
+		DoRawHttpRequestResponsesIndex: 0,
+		DoRawHttpRequestError:          nil,
 
 		GenerateRequestBodyBuffer: new(bytes.Buffer),
 		GenerateRequestBodyError:  nil,
@@ -152,11 +156,21 @@ func (fslc *FakeSoftLayerClient) GetSoftLayer_Virtual_Guest_Block_Device_Templat
 
 //Public methods
 func (fslc *FakeSoftLayerClient) DoRawHttpRequestWithObjectMask(path string, masks []string, requestType string, requestBody *bytes.Buffer) ([]byte, error) {
-	return fslc.DoRawHttpRequestResponse, fslc.DoRawHttpRequestError
+	if fslc.DoRawHttpRequestResponse != nil {
+		return fslc.DoRawHttpRequestResponse, fslc.DoRawHttpRequestError
+	} else {
+		fslc.DoRawHttpRequestResponsesIndex = fslc.DoRawHttpRequestResponsesIndex + 1
+		return fslc.DoRawHttpRequestResponses[fslc.DoRawHttpRequestResponsesIndex-1], fslc.DoRawHttpRequestError
+	}
 }
 
 func (fslc *FakeSoftLayerClient) DoRawHttpRequest(path string, requestType string, requestBody *bytes.Buffer) ([]byte, error) {
-	return fslc.DoRawHttpRequestResponse, fslc.DoRawHttpRequestError
+	if fslc.DoRawHttpRequestResponse != nil {
+		return fslc.DoRawHttpRequestResponse, fslc.DoRawHttpRequestError
+	} else {
+		fslc.DoRawHttpRequestResponsesIndex = fslc.DoRawHttpRequestResponsesIndex + 1
+		return fslc.DoRawHttpRequestResponses[fslc.DoRawHttpRequestResponsesIndex-1], fslc.DoRawHttpRequestError
+	}
 }
 
 func (fslc *FakeSoftLayerClient) GenerateRequestBody(templateData interface{}) (*bytes.Buffer, error) {
