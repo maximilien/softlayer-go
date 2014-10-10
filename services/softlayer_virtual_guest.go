@@ -165,6 +165,26 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetSshKeys(instanceId int) ([]data
 	return sshKeys, nil
 }
 
+func (slvgs *softLayer_Virtual_Guest_Service) RebootSoft(instanceId int) (bool, error) {
+	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/rebootSoft.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+
+	if res := string(response[:]); res != "true" {
+		return false, errors.New(fmt.Sprintf("Failed to soft reboot instance with id '%d', got '%s' as response from the API.", instanceId, res))
+	}
+
+	return true, err
+}
+
+func (slvgs *softLayer_Virtual_Guest_Service) RebootHard(instanceId int) (bool, error) {
+	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/rebootHard.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+
+	if res := string(response[:]); res != "true" {
+		return false, errors.New(fmt.Sprintf("Failed to hard reboot instance with id '%d', got '%s' as response from the API.", instanceId, res))
+	}
+
+	return true, err
+}
+
 func (slvgs *softLayer_Virtual_Guest_Service) SetMetadata(instanceId int, metadata string) (bool, error) {
 	dataBytes := []byte(metadata)
 	base64EncodedMetadata := base64.StdEncoding.EncodeToString(dataBytes)

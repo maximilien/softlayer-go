@@ -237,6 +237,50 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 		})
 	})
 
+	Context("#RebootSoft", func() {
+		BeforeEach(func() {
+			virtualGuest.Id = 1234567
+		})
+
+		It("sucessfully soft reboots virtual guest instnace", func() {
+			fakeClient.DoRawHttpRequestResponse = []byte("true")
+
+			rebooted, err := virtualGuestService.RebootSoft(virtualGuest.Id)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(rebooted).To(BeTrue())
+		})
+
+		It("fails to soft reboot virtual guest instnace", func() {
+			fakeClient.DoRawHttpRequestResponse = []byte("false")
+
+			rebooted, err := virtualGuestService.RebootSoft(virtualGuest.Id)
+			Expect(err).To(HaveOccurred())
+			Expect(rebooted).To(BeFalse())
+		})
+	})
+
+	Context("#RebootHard", func() {
+		BeforeEach(func() {
+			virtualGuest.Id = 1234567
+		})
+
+		It("sucessfully hard reboot virtual guest instnace", func() {
+			fakeClient.DoRawHttpRequestResponse = []byte("true")
+
+			rebooted, err := virtualGuestService.RebootHard(virtualGuest.Id)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(rebooted).To(BeTrue())
+		})
+
+		It("fails to hard reboot virtual guest instnace", func() {
+			fakeClient.DoRawHttpRequestResponse = []byte("false")
+
+			rebooted, err := virtualGuestService.RebootHard(virtualGuest.Id)
+			Expect(err).To(HaveOccurred())
+			Expect(rebooted).To(BeFalse())
+		})
+	})
+
 	Context("#SetUserMetadata", func() {
 		BeforeEach(func() {
 			virtualGuest.Id = 1234567

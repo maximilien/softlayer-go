@@ -19,6 +19,9 @@ type SoftLayer_Virtual_Guest_Service interface {
 	GetActiveTransaction(instanceId int) (datatypes.SoftLayer_Provisioning_Version1_Transaction, error)
 	GetActiveTransactions(instanceId int) ([]datatypes.SoftLayer_Provisioning_Version1_Transaction, error)
 
+	RebootSoft(instanceId int) (bool, error)
+	RebootHard(instanceId int) (bool, error)
+
 	SetMetadata(instanceId int, metadata string) (bool, error)
 
 	ConfigureMetadataDisk(instanceId int) (datatypes.SoftLayer_Provisioning_Version1_Transaction, error)
