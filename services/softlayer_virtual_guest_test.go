@@ -284,7 +284,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 	Context("#SetUserMetadata", func() {
 		BeforeEach(func() {
 			virtualGuest.Id = 1234567
-			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_setUserMetadata.json")
+			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_setMetadata.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
