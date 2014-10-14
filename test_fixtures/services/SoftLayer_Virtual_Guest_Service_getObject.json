@@ -21,5 +21,13 @@
 	"primaryIpAddress": "23.246.234.32",
 	"location": {
 		"id": 1234567
+	},
+	"operatingSystem": {
+		"passwords": [
+			{
+				"username": "test_username",
+				"password": "test_password"
+			}
+		]
 	}
 }

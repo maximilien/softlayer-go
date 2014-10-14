@@ -91,6 +91,8 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetObject(instanceId int) (datatyp
 		"primaryIpAddress",
 
 		"location.id",
+		"operatingSystem.passwords.password",
+		"operatingSystem.passwords.username",
 	}
 
 	response, err := slvgs.client.DoRawHttpRequestWithObjectMask(fmt.Sprintf("%s/%d/getObject.json", slvgs.GetName(), instanceId), objectMask, "GET", new(bytes.Buffer))

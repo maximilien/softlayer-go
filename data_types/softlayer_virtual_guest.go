@@ -36,6 +36,17 @@ type SoftLayer_Virtual_Guest struct {
 	PrimaryIpAddress        string `json:"primaryIpAddress,omitempty"`
 
 	Location *SoftLayer_Location `json:"location"`
+
+	OperatingSystem *SoftLayer_Operating_System `json:"operatingSystem"`
+}
+
+type SoftLayer_Operating_System struct {
+	Passwords []SoftLayer_Password `json:"passwords"`
+}
+
+type SoftLayer_Password struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
 }
 
 type SoftLayer_Virtual_Guest_Template_Parameters struct {
