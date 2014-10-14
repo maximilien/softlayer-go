@@ -87,6 +87,7 @@ func (slas *softLayer_Account_Service) GetIscsiNetworkStorage() ([]datatypes.Sof
 	objectMasks := []string{
 		"username",
 		"accountId",
+		"capacityGb",
 		"id",
 		"billingItem.id",
 		"billingItem.orderItem.order.id",

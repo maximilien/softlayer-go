@@ -7,6 +7,7 @@ import (
 	. "github.com/onsi/gomega"
 
 	slclientfakes "github.com/maximilien/softlayer-go/client/fakes"
+	common "github.com/maximilien/softlayer-go/common"
 	softlayer "github.com/maximilien/softlayer-go/softlayer"
 )
 
@@ -41,4 +42,21 @@ var _ = Describe("SoftLayer_Network_Storage", func() {
 			Expect(name).To(Equal("SoftLayer_Network_Storage"))
 		})
 	})
+
+	Context("#GetIscsiVolume", func() {
+		BeforeEach(func() {
+			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Network_Storage_Service_getIscsiVolume.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("returns the iSCSI volume object based on volume id", func() {
+			volume, err := networkStorageService.GetIscsiVolume(1)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(volume.Id).To(Equal(1))
+			Expect(volume.Username).To(Equal("test_username"))
+			Expect(volume.Password).To(Equal("test_password"))
+			Expect(volume.CapacityGb).To(Equal(20))
+		})
+	})
+
 })

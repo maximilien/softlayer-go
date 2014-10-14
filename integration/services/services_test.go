@@ -221,15 +221,19 @@ var _ = Describe("SoftLayer Services", func() {
 	})
 
 	Context("uses SoftLayer_Network_Storage to manage iSCSI volume", func() {
-		It("creates an iSCSI volume and then deletes it", func() {
+		It("creates an iSCSI volume and get it based on volume ID, then delete it", func() {
 			iscsiStorage, err := networkStorageService.CreateIscsiVolume(20, "138124")
-
 			Expect(err).ToNot(HaveOccurred())
 			Expect(iscsiStorage.Id).ToNot(Equal(0))
+
+			iscsiVolume, err := networkStorageService.GetIscsiVolume(iscsiStorage.Id)
+
+			Expect(err).ToNot(HaveOccurred())
+			Expect(iscsiVolume.Id).To(Equal(iscsiStorage.Id))
+			Expect(iscsiVolume.CapacityGb).To(Equal(iscsiStorage.CapacityGb))
 
 			networkStorageService.DeleteIscsiVolume(iscsiStorage.Id, true)
 			testhelpers.WaitForIscsiStorageToBeDeleted(iscsiStorage.Id)
 		})
 	})
-
 })

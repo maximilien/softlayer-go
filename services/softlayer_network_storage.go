@@ -1,6 +1,8 @@
 package services
 
 import (
+	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"time"
@@ -95,6 +97,21 @@ func (slns *softLayer_Network_Storage_Service) DeleteIscsiVolume(volumeId int, i
 	}
 
 	return nil
+}
+
+func (slns *softLayer_Network_Storage_Service) GetIscsiVolume(volumeId int) (datatypes.SoftLayer_Network_Storage, error) {
+	response, err := slns.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/getObject.json", slns.GetName(), volumeId), "GET", new(bytes.Buffer))
+	if err != nil {
+		return datatypes.SoftLayer_Network_Storage{}, err
+	}
+
+	volume := datatypes.SoftLayer_Network_Storage{}
+	err = json.Unmarshal(response, &volume)
+	if err != nil {
+		return datatypes.SoftLayer_Network_Storage{}, err
+	}
+
+	return volume, nil
 }
 
 // Private methods
