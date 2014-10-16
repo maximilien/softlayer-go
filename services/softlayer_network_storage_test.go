@@ -56,6 +56,7 @@ var _ = Describe("SoftLayer_Network_Storage", func() {
 			Expect(volume.Username).To(Equal("test_username"))
 			Expect(volume.Password).To(Equal("test_password"))
 			Expect(volume.CapacityGb).To(Equal(20))
+			Expect(volume.ServiceResourceBackendIpAddress).To(Equal("1.1.1.1"))
 		})
 	})
 

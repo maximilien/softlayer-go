@@ -2,5 +2,6 @@
 	"id": 1,
 	"username": "test_username",
 	"password": "test_password",
-	"capacityGb": 20
+	"capacityGb": 20,
+	"serviceResourceBackendIpAddress": "1.1.1.1"
 }

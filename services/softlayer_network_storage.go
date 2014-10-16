@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strconv"
+	"strings"
 	"time"
 
 	datatypes "github.com/maximilien/softlayer-go/data_types"
@@ -32,12 +34,17 @@ func (slns *softLayer_Network_Storage_Service) GetName() string {
 }
 
 func (slns *softLayer_Network_Storage_Service) CreateIscsiVolume(size int, location string) (datatypes.SoftLayer_Network_Storage, error) {
+	iscsiVolumeItemId, err := slns.getIscsiVolumeItemIdBasedOnSize(size)
+	if err != nil {
+		return datatypes.SoftLayer_Network_Storage{}, err
+	}
+
 	order := datatypes.SoftLayer_Product_Order{
-		Location:    "138124", //TODO: now using default dal05 data center, need to use the location string passed in
+		Location:    location,
 		ComplexType: "SoftLayer_Container_Product_Order",
 		Prices: []datatypes.SoftLayer_Item_Price{
 			datatypes.SoftLayer_Item_Price{
-				Id: 30587, //TODO: now using default 20GB volume, need to use product_package service to query the iSCSI item id based on the disk size
+				Id: iscsiVolumeItemId,
 			},
 		},
 		PackageId: NETWORK_STORAGE_PACKAGE_ID,
@@ -129,4 +136,38 @@ func (slns *softLayer_Network_Storage_Service) findIscsiVolumeIdByOrderId(orderI
 	}
 
 	return datatypes.SoftLayer_Network_Storage{}, errors.New(fmt.Sprintf("Can not find an iSCSI volume with order id %d", orderId))
+}
+
+func (slns *softLayer_Network_Storage_Service) getIscsiVolumeItemIdBasedOnSize(size int) (int, error) {
+	productPackageService, err := slns.client.GetSoftLayer_Product_Package_Service()
+	if err != nil {
+		return 0, err
+	}
+
+	itemPrices, err := productPackageService.GetItemPrices(NETWORK_STORAGE_PACKAGE_ID)
+	if err != nil {
+		return 0, err
+	}
+
+	var currentItemId, currentVolumeCapacity int
+
+	for _, itemPrice := range itemPrices {
+		if strings.Contains(itemPrice.Item.Description, "iSCSI SAN Storage") {
+
+			capacity, _ := strconv.Atoi(itemPrice.Item.Capacity)
+
+			if capacity >= size {
+				if currentItemId == 0 || currentVolumeCapacity >= capacity {
+					currentItemId = itemPrice.Id
+					currentVolumeCapacity = capacity
+				}
+			}
+		}
+	}
+
+	if currentItemId == 0 {
+		return 0, errors.New(fmt.Sprintf("No proper iSCSI volume for size %d", size))
+	}
+
+	return currentItemId, nil
 }

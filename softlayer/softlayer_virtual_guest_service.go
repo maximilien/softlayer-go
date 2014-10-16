@@ -25,4 +25,7 @@ type SoftLayer_Virtual_Guest_Service interface {
 	SetMetadata(instanceId int, metadata string) (bool, error)
 
 	ConfigureMetadataDisk(instanceId int) (datatypes.SoftLayer_Provisioning_Version1_Transaction, error)
+
+	AttachIscsiVolume(instanceId int, volumeId int) (string, error)
+	DetachIscsiVolume(instanceId int, volumeId int) error
 }

@@ -6,9 +6,15 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strings"
 
 	datatypes "github.com/maximilien/softlayer-go/data_types"
 	softlayer "github.com/maximilien/softlayer-go/softlayer"
+	utils "github.com/maximilien/softlayer-go/utils"
+)
+
+const (
+	ROOT_USER_NAME = "root"
 )
 
 type softLayer_Virtual_Guest_Service struct {
@@ -257,7 +263,133 @@ func (slvgs *softLayer_Virtual_Guest_Service) ConfigureMetadataDisk(instanceId i
 	return transaction, nil
 }
 
+func (slvgs *softLayer_Virtual_Guest_Service) AttachIscsiVolume(instanceId int, volumeId int) (string, error) {
+
+	virtualGuest, err := slvgs.GetObject(instanceId)
+	if err != nil {
+		return "", err
+	}
+
+	networkStorageService, err := slvgs.client.GetSoftLayer_Network_Storage_Service()
+	if err != nil {
+		return "", err
+	}
+
+	volume, err := networkStorageService.GetIscsiVolume(volumeId)
+	if err != nil {
+		return "", err
+	}
+
+	deviceName, err := slvgs.attachVolumeBasedOnShellScript(virtualGuest, volume)
+	if err != nil {
+		return "", err
+	}
+
+	return deviceName, nil
+}
+
+func (slvgs *softLayer_Virtual_Guest_Service) DetachIscsiVolume(instanceId int, volumeId int) error {
+	virtualGuest, err := slvgs.GetObject(instanceId)
+	if err != nil {
+		return err
+	}
+
+	networkStorageService, err := slvgs.client.GetSoftLayer_Network_Storage_Service()
+	if err != nil {
+		return err
+	}
+	volume, err := networkStorageService.GetIscsiVolume(volumeId)
+	if err != nil {
+		return err
+	}
+
+	return slvgs.detachVolumeBasedOnShellScript(virtualGuest, volume)
+}
+
 //Private methods
+
+func (slvgs *softLayer_Virtual_Guest_Service) attachVolumeBasedOnShellScript(virtualGuest datatypes.SoftLayer_Virtual_Guest, volume datatypes.SoftLayer_Network_Storage) (string, error) {
+	command := fmt.Sprintf(`
+		export PATH=/etc/init.d:$PATH
+		cp /etc/iscsi/iscsid.conf{,.save}
+		sed '/^node.startup/s/^.*/node.startup = automatic/' -i /etc/iscsi/iscsid.conf
+		sed '/^#node.session.auth.authmethod/s/#//' -i /etc/iscsi/iscsid.conf
+		sed '/^#node.session.auth.username / {s/#//; s/ username/ %s/}' -i /etc/iscsi/iscsid.conf
+		sed '/^#node.session.auth.password / {s/#//; s/ password/ %s/}' -i /etc/iscsi/iscsid.conf
+		sed '/^#discovery.sendtargets.auth.username / {s/#//; s/ username/ %s/}' -i /etc/iscsi/iscsid.conf
+		sed '/^#discovery.sendtargets.auth.password / {s/#//; s/ password/ %s/}' -i /etc/iscsi/iscsid.conf
+		open-iscsi restart
+		rm -r /etc/iscsi/send_targets
+		open-iscsi stop
+		open-iscsi start
+		iscsiadm -m discovery -t sendtargets -p %s
+		open-iscsi restart`,
+		volume.Username,
+		volume.Password,
+		volume.Username,
+		volume.Password,
+		volume.ServiceResourceBackendIpAddress,
+	)
+
+	client, err := utils.GetSshClient(ROOT_USER_NAME, slvgs.getRootPassword(virtualGuest), virtualGuest.PrimaryIpAddress)
+	if err != nil {
+		return "", err
+	}
+	defer client.Close()
+
+	_, err = client.ExecCommand(command)
+	if err != nil {
+		return "", err
+	}
+
+	_, deviceName, err := slvgs.findIscsiDeviceNameBasedOnShellScript(virtualGuest, volume, client)
+	if err != nil {
+		return "", err
+	}
+
+	return deviceName, nil
+}
+
+func (slvgs *softLayer_Virtual_Guest_Service) detachVolumeBasedOnShellScript(virtualGuest datatypes.SoftLayer_Virtual_Guest, volume datatypes.SoftLayer_Network_Storage) error {
+	client, err := utils.GetSshClient(ROOT_USER_NAME, slvgs.getRootPassword(virtualGuest), virtualGuest.PrimaryIpAddress)
+	if err != nil {
+		return err
+	}
+	defer client.Close()
+
+	targetName, _, err := slvgs.findIscsiDeviceNameBasedOnShellScript(virtualGuest, volume, client)
+	command := fmt.Sprintf(`
+		iscsiadm -m node -T %s -u
+		iscsiadm -m node -o delete -T %s`,
+		targetName,
+		targetName,
+	)
+
+	_, err = client.ExecCommand(command)
+
+	return err
+}
+
+func (slvgs *softLayer_Virtual_Guest_Service) findIscsiDeviceNameBasedOnShellScript(virtualGuest datatypes.SoftLayer_Virtual_Guest, volume datatypes.SoftLayer_Network_Storage, client utils.SshClient) (targetName string, deviceName string, err error) {
+	command := `
+		sleep 1
+		iscsiadm -m session -P3 | sed -n  "/Target:/s/Target: //p; /Attached scsi disk /{ s/Attached scsi disk //; s/State:.*//p}"`
+
+	output, err := client.ExecCommand(command)
+	if err != nil {
+		return "", "", err
+	}
+
+	lines := strings.Split(strings.Trim(output, "\n"), "\n")
+
+	for i := 0; i < len(lines); i += 2 {
+		if strings.Contains(lines[i], strings.ToLower(volume.Username)) {
+			return strings.Trim(lines[i], "\t"), strings.Trim(lines[i+1], "\t"), nil
+		}
+	}
+
+	return "", "", errors.New(fmt.Sprintf("Can not find matched iSCSI device for user name: %s", volume.Username))
+}
 
 func (slvgs *softLayer_Virtual_Guest_Service) checkCreateObjectRequiredValues(template datatypes.SoftLayer_Virtual_Guest_Template) error {
 	var err error
@@ -288,4 +420,16 @@ func (slvgs *softLayer_Virtual_Guest_Service) checkCreateObjectRequiredValues(te
 	}
 
 	return err
+}
+
+func (slvgs *softLayer_Virtual_Guest_Service) getRootPassword(virtualGuest datatypes.SoftLayer_Virtual_Guest) string {
+	passwords := virtualGuest.OperatingSystem.Passwords
+
+	for _, password := range passwords {
+		if password.Username == ROOT_USER_NAME {
+			return password.Password
+		}
+	}
+
+	return ""
 }
