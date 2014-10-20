@@ -62,7 +62,38 @@ func (slvgs *softLayer_Virtual_Guest_Service) CreateObject(template datatypes.So
 }
 
 func (slvgs *softLayer_Virtual_Guest_Service) GetObject(instanceId int) (datatypes.SoftLayer_Virtual_Guest, error) {
-	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/getObject.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+
+	objectMask := []string{
+		"accountId",
+		"createDate",
+		"dedicatedAccountHostOnlyFlag",
+		"domain",
+		"fullyQualifiedDomainName",
+		"hostname",
+		"id",
+		"lastPowerStateId",
+		"lastVerifiedDate",
+		"maxCpu",
+		"maxCpuUnits",
+		"maxMemory",
+		"metricPollDate",
+		"modifyDate",
+		"notes",
+		"postInstallScriptUri",
+		"privateNetworkOnlyFlag",
+		"startCpus",
+		"statusId",
+		"uuid",
+
+		"globalIdentifier",
+		"managedResourceFlag",
+		"primaryBackendIpAddress",
+		"primaryIpAddress",
+
+		"location.id",
+	}
+
+	response, err := slvgs.client.DoRawHttpRequestWithObjectMask(fmt.Sprintf("%s/%d/getObject.json", slvgs.GetName(), instanceId), objectMask, "GET", new(bytes.Buffer))
 	if err != nil {
 		return datatypes.SoftLayer_Virtual_Guest{}, err
 	}

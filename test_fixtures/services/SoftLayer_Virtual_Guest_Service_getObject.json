@@ -18,5 +18,8 @@
 	"uuid": "85d444ce-55a0-39c0-e17a-f697f223cd8a",
 	"globalIdentifier": "52145e01-97b6-4312-9c15-dac7f24b6c2a",
 	"primaryBackendIpAddress": "10.106.192.42",
-	"primaryIpAddress": "23.246.234.32"
+	"primaryIpAddress": "23.246.234.32",
+	"location": {
+		"id": 1234567
+	}
 }
