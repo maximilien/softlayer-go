@@ -34,6 +34,8 @@ type SoftLayer_Virtual_Guest struct {
 	ManagedResourceFlag     bool   `json:"managedResourceFlag,omitempty"`
 	PrimaryBackendIpAddress string `json:"primaryBackendIpAddress,omitempty"`
 	PrimaryIpAddress        string `json:"primaryIpAddress,omitempty"`
+
+	Location *SoftLayer_Location `json:"location"`
 }
 
 type SoftLayer_Virtual_Guest_Template_Parameters struct {
