@@ -331,7 +331,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) attachVolumeBasedOnShellScript(vir
 		volume.ServiceResourceBackendIpAddress,
 	)
 
-	client, err := utils.GetSshClient(ROOT_USER_NAME, slvgs.getRootPassword(virtualGuest), virtualGuest.PrimaryIpAddress)
+	client, err := utils.CreateSshClient(ROOT_USER_NAME, slvgs.getRootPassword(virtualGuest), virtualGuest.PrimaryIpAddress)
 	if err != nil {
 		return "", err
 	}
@@ -351,7 +351,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) attachVolumeBasedOnShellScript(vir
 }
 
 func (slvgs *softLayer_Virtual_Guest_Service) detachVolumeBasedOnShellScript(virtualGuest datatypes.SoftLayer_Virtual_Guest, volume datatypes.SoftLayer_Network_Storage) error {
-	client, err := utils.GetSshClient(ROOT_USER_NAME, slvgs.getRootPassword(virtualGuest), virtualGuest.PrimaryIpAddress)
+	client, err := utils.CreateSshClient(ROOT_USER_NAME, slvgs.getRootPassword(virtualGuest), virtualGuest.PrimaryIpAddress)
 	if err != nil {
 		return err
 	}

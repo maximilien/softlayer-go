@@ -13,7 +13,7 @@ type softlayerSshClient struct {
 	client *ssh.Client
 }
 
-func GetSshClient(username string, password string, ip string) (*softlayerSshClient, error) {
+func CreateSshClient(username string, password string, ip string) (*softlayerSshClient, error) {
 	config := &ssh.ClientConfig{
 		User: username,
 		Auth: []ssh.AuthMethod{
@@ -32,6 +32,7 @@ func (sshClient *softlayerSshClient) Close() error {
 func (sshClient *softlayerSshClient) ExecCommand(command string) (string, error) {
 	session, err := sshClient.client.NewSession()
 	if err != nil {
+		return "", err
 	}
 	defer session.Close()
 
