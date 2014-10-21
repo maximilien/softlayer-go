@@ -220,16 +220,34 @@ var _ = Describe("SoftLayer Services", func() {
 		})
 	})
 
-	Context("uses SoftLayer_Network_Storage to manage iSCSI volume", func() {
-		It("creates an iSCSI volume and then deletes it", func() {
-			iscsiStorage, err := networkStorageService.CreateIscsiVolume(20, "138124")
+	Context("uses SoftLayer_Network_Storage & SoftLayer_Virtual_Guest to manage iSCSI volume", func() {
+		It("create a virutal guest and an iSCSI volume, then attaches the iSCSI volume to virtual guest and detaches it, finally delete them.", func() {
+			virtualGuest := testhelpers.CreateVirtualGuestAndMarkItTest([]datatypes.SoftLayer_Security_Ssh_Key{})
 
+			testhelpers.WaitForVirtualGuestToBeRunning(virtualGuest.Id)
+			testhelpers.WaitForVirtualGuestToHaveNoActiveTransactions(virtualGuest.Id)
+
+			iscsiStorage, err := networkStorageService.CreateIscsiVolume(20, "138124")
 			Expect(err).ToNot(HaveOccurred())
 			Expect(iscsiStorage.Id).ToNot(Equal(0))
 
+			iscsiVolume, err := networkStorageService.GetIscsiVolume(iscsiStorage.Id)
+
+			Expect(err).ToNot(HaveOccurred())
+			Expect(iscsiVolume.Id).To(Equal(iscsiStorage.Id))
+			Expect(iscsiVolume.CapacityGb).To(Equal(iscsiStorage.CapacityGb))
+
+			device, err := virtualGuestService.AttachIscsiVolume(virtualGuest.Id, iscsiStorage.Id)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(device).To(Equal("sda"))
+
+			err = virtualGuestService.DetachIscsiVolume(virtualGuest.Id, iscsiStorage.Id)
+			Expect(err).ToNot(HaveOccurred())
+
 			networkStorageService.DeleteIscsiVolume(iscsiStorage.Id, true)
 			testhelpers.WaitForIscsiStorageToBeDeleted(iscsiStorage.Id)
+
+			testhelpers.DeleteVirtualGuest(virtualGuest.Id)
 		})
 	})
-
 })

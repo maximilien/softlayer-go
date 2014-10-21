@@ -122,6 +122,9 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			Expect(vg.PrimaryBackendIpAddress).To(Equal("10.106.192.42"))
 			Expect(vg.PrimaryIpAddress).To(Equal("23.246.234.32"))
 			Expect(vg.Location.Id).To(Equal(1234567))
+			Expect(len(vg.OperatingSystem.Passwords)).To(BeNumerically(">=", 1))
+			Expect(vg.OperatingSystem.Passwords[0].Password).To(Equal("test_password"))
+			Expect(vg.OperatingSystem.Passwords[0].Username).To(Equal("test_username"))
 		})
 	})
 
