@@ -159,6 +159,20 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetPowerState(instanceId int) (dat
 	return vgPowerState, nil
 }
 
+func (slvgs *softLayer_Virtual_Guest_Service) GetPrimaryIpAddress(instanceId int) (string, error) {
+	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/getPrimaryIpAddress.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+	if err != nil {
+		return "", err
+	}
+
+	vgPrimaryIpAddress := strings.TrimSpace(string(response))
+	if vgPrimaryIpAddress == "" {
+		return "", errors.New(fmt.Sprintf("Failed to get primary IP address for instance with id '%d', got '%s' as response from the API.", instanceId, response))
+	}
+
+	return vgPrimaryIpAddress, nil
+}
+
 func (slvgs *softLayer_Virtual_Guest_Service) GetActiveTransaction(instanceId int) (datatypes.SoftLayer_Provisioning_Version1_Transaction, error) {
 	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/getActiveTransaction.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
 	if err != nil {

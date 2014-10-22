@@ -179,6 +179,20 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 		})
 	})
 
+	Context("#GetPrimaryIpAddress", func() {
+		BeforeEach(func() {
+			virtualGuest.Id = 1234567
+			fakeClient.DoRawHttpRequestResponse = []byte("159.99.99.99")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("sucessfully retrieves SoftLayer virtual guest's primary IP address instance", func() {
+			vgPrimaryIpAddress, err := virtualGuestService.GetPrimaryIpAddress(virtualGuest.Id)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(vgPrimaryIpAddress).To(Equal("159.99.99.99"))
+		})
+	})
+
 	Context("#GetActiveTransaction", func() {
 		BeforeEach(func() {
 			virtualGuest.Id = 1234567
