@@ -105,12 +105,15 @@ var _ = Describe("SoftLayer Services", func() {
 		})
 	})
 
-	Context("SoftLayer_VirtualGuest#CreateObject and SoftLayer_VirtualGuest#DeleteObject", func() {
-		It("creates the virtual guest instance and waits for it to be active then delete it", func() {
+	Context("SoftLayer_VirtualGuest#CreateObject, SoftLayer_VirtualGuest#GetVirtualGuestPrimaryIpAddress, and SoftLayer_VirtualGuest#DeleteObject", func() {
+		It("creates the virtual guest instance and waits for it to be active, get it's IP address, and then delete it", func() {
 			virtualGuest := testhelpers.CreateVirtualGuestAndMarkItTest([]datatypes.SoftLayer_Security_Ssh_Key{})
 
 			testhelpers.WaitForVirtualGuestToBeRunning(virtualGuest.Id)
 			testhelpers.WaitForVirtualGuestToHaveNoActiveTransactions(virtualGuest.Id)
+
+			ipAddress := testhelpers.GetVirtualGuestPrimaryIpAddress(virtualGuest.Id)
+			Expect(ipAddress).ToNot(Equal(""))
 
 			testhelpers.DeleteVirtualGuest(virtualGuest.Id)
 		})

@@ -540,3 +540,13 @@ func WaitForIscsiStorageToBeDeleted(storageId int) {
 		return deletedFlag
 	}, TIMEOUT, POLLING_INTERVAL).Should(BeTrue(), "created iSCSI volume but not deleted successfully")
 }
+
+func GetVirtualGuestPrimaryIpAddress(virtualGuestId int) string {
+	virtualGuestService, err := CreateVirtualGuestService()
+	Expect(err).ToNot(HaveOccurred())
+
+	vgIpAddress, err := virtualGuestService.GetPrimaryIpAddress(virtualGuestId)
+	Expect(err).ToNot(HaveOccurred())
+
+	return vgIpAddress
+}
