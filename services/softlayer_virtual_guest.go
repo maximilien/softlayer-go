@@ -320,6 +320,21 @@ func (slvgs *softLayer_Virtual_Guest_Service) DetachIscsiVolume(instanceId int, 
 	return slvgs.detachVolumeBasedOnShellScript(virtualGuest, volume)
 }
 
+func (slvgs *softLayer_Virtual_Guest_Service) GetUserData(instanceId int) ([]datatypes.SoftLayer_Virtual_Guest_Attribute, error) {
+	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/getUserData.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+	if err != nil {
+		return []datatypes.SoftLayer_Virtual_Guest_Attribute{}, err
+	}
+
+	attributes := []datatypes.SoftLayer_Virtual_Guest_Attribute{}
+	err = json.Unmarshal(response, &attributes)
+	if err != nil {
+		return []datatypes.SoftLayer_Virtual_Guest_Attribute{}, err
+	}
+
+	return attributes, nil
+}
+
 //Private methods
 
 func (slvgs *softLayer_Virtual_Guest_Service) attachVolumeBasedOnShellScript(virtualGuest datatypes.SoftLayer_Virtual_Guest, volume datatypes.SoftLayer_Network_Storage) (string, error) {

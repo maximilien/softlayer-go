@@ -14,6 +14,8 @@ type SoftLayer_Virtual_Guest_Service interface {
 
 	GetPowerState(instanceId int) (datatypes.SoftLayer_Virtual_Guest_Power_State, error)
 
+	GetUserData(instanceId int) ([]datatypes.SoftLayer_Virtual_Guest_Attribute, error)
+
 	GetSshKeys(instanceId int) ([]datatypes.SoftLayer_Security_Ssh_Key, error)
 
 	GetActiveTransaction(instanceId int) (datatypes.SoftLayer_Provisioning_Version1_Transaction, error)

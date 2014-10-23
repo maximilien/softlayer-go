@@ -314,6 +314,29 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 		})
 	})
 
+	Context("#GetUserData", func() {
+		BeforeEach(func() {
+			virtualGuest.Id = 1234567
+			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_getUserData.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("sucessfully returns user data for the virtual guest", func() {
+			attributes, err := virtualGuestService.GetUserData(virtualGuest.Id)
+			Expect(err).ToNot(HaveOccurred())
+
+			Expect(len(attributes)).To(BeNumerically("==", 2))
+
+			Expect(attributes[0].Value).To(Equal("V2hvJ3Mgc21hcnRlcj8gRG1pdHJ5aSBvciBkci5tYXguLi4gIHRoZSBkb2MsIGFueSBkYXkgOik="))
+			Expect(attributes[0].Type.Name).To(Equal("User Data"))
+			Expect(attributes[0].Type.Keyname).To(Equal("USER_DATA"))
+
+			Expect(attributes[1].Value).To(Equal("ZmFrZS1iYXNlNjQtZGF0YQo="))
+			Expect(attributes[1].Type.Name).To(Equal("Fake Data"))
+			Expect(attributes[1].Type.Keyname).To(Equal("FAKE_DATA"))
+		})
+	})
+
 	Context("#ConfigureMetadataDisk", func() {
 		BeforeEach(func() {
 			virtualGuest.Id = 1234567
