@@ -283,7 +283,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			virtualGuest.Id = 1234567
 		})
 
-		It("sucessfully soft reboots virtual guest instnace", func() {
+		It("sucessfully soft reboots virtual guest instance", func() {
 			fakeClient.DoRawHttpRequestResponse = []byte("true")
 
 			rebooted, err := virtualGuestService.RebootSoft(virtualGuest.Id)
@@ -291,7 +291,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			Expect(rebooted).To(BeTrue())
 		})
 
-		It("fails to soft reboot virtual guest instnace", func() {
+		It("fails to soft reboot virtual guest instance", func() {
 			fakeClient.DoRawHttpRequestResponse = []byte("false")
 
 			rebooted, err := virtualGuestService.RebootSoft(virtualGuest.Id)
@@ -305,7 +305,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			virtualGuest.Id = 1234567
 		})
 
-		It("sucessfully hard reboot virtual guest instnace", func() {
+		It("sucessfully hard reboot virtual guest instance", func() {
 			fakeClient.DoRawHttpRequestResponse = []byte("true")
 
 			rebooted, err := virtualGuestService.RebootHard(virtualGuest.Id)
@@ -313,7 +313,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			Expect(rebooted).To(BeTrue())
 		})
 
-		It("fails to hard reboot virtual guest instnace", func() {
+		It("fails to hard reboot virtual guest instance", func() {
 			fakeClient.DoRawHttpRequestResponse = []byte("false")
 
 			rebooted, err := virtualGuestService.RebootHard(virtualGuest.Id)
