@@ -45,7 +45,7 @@ func NewFakeSoftLayerClient(username, apiKey string) *FakeSoftLayerClient {
 
 		SoftLayerServices: map[string]softlayer.Service{},
 
-		DoRawHttpRequestResponse:       []byte{},
+		DoRawHttpRequestResponse:       nil,
 		DoRawHttpRequestResponses:      [][]byte{},
 		DoRawHttpRequestResponsesIndex: 0,
 		DoRawHttpRequestError:          nil,
@@ -156,7 +156,11 @@ func (fslc *FakeSoftLayerClient) GetSoftLayer_Virtual_Guest_Block_Device_Templat
 
 //Public methods
 func (fslc *FakeSoftLayerClient) DoRawHttpRequestWithObjectMask(path string, masks []string, requestType string, requestBody *bytes.Buffer) ([]byte, error) {
-	if fslc.DoRawHttpRequestError != nil || fslc.DoRawHttpRequestResponse != nil {
+	if fslc.DoRawHttpRequestError != nil {
+		return []byte{}, fslc.DoRawHttpRequestError
+	}
+
+	if fslc.DoRawHttpRequestResponse != nil {
 		return fslc.DoRawHttpRequestResponse, fslc.DoRawHttpRequestError
 	} else {
 		fslc.DoRawHttpRequestResponsesIndex = fslc.DoRawHttpRequestResponsesIndex + 1
@@ -165,7 +169,11 @@ func (fslc *FakeSoftLayerClient) DoRawHttpRequestWithObjectMask(path string, mas
 }
 
 func (fslc *FakeSoftLayerClient) DoRawHttpRequest(path string, requestType string, requestBody *bytes.Buffer) ([]byte, error) {
-	if fslc.DoRawHttpRequestError != nil || fslc.DoRawHttpRequestResponse != nil {
+	if fslc.DoRawHttpRequestError != nil {
+		return []byte{}, fslc.DoRawHttpRequestError
+	}
+
+	if fslc.DoRawHttpRequestResponse != nil {
 		return fslc.DoRawHttpRequestResponse, fslc.DoRawHttpRequestError
 	} else {
 		fslc.DoRawHttpRequestResponsesIndex = fslc.DoRawHttpRequestResponsesIndex + 1
