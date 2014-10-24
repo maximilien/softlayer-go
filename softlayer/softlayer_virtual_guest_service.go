@@ -25,6 +25,11 @@ type SoftLayer_Virtual_Guest_Service interface {
 
 	GetPrimaryIpAddress(instanceId int) (string, error)
 
+	PowerCycle(instanceId int) (bool, error)
+	PowerOff(instanceId int) (bool, error)
+	PowerOffSoft(instanceId int) (bool, error)
+	PowerOn(instanceId int) (bool, error)
+
 	RebootDefault(instanceId int) (bool, error)
 	RebootSoft(instanceId int) (bool, error)
 	RebootHard(instanceId int) (bool, error)

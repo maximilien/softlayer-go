@@ -256,6 +256,94 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 		})
 	})
 
+	Context("#PowerCycle", func() {
+		BeforeEach(func() {
+			virtualGuest.Id = 1234567
+		})
+
+		It("sucessfully power cycle virtual guest instance", func() {
+			fakeClient.DoRawHttpRequestResponse = []byte("true")
+
+			rebooted, err := virtualGuestService.PowerCycle(virtualGuest.Id)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(rebooted).To(BeTrue())
+		})
+
+		It("fails to power cycle virtual guest instance", func() {
+			fakeClient.DoRawHttpRequestResponse = []byte("false")
+
+			rebooted, err := virtualGuestService.PowerCycle(virtualGuest.Id)
+			Expect(err).To(HaveOccurred())
+			Expect(rebooted).To(BeFalse())
+		})
+	})
+
+	Context("#PowerOff", func() {
+		BeforeEach(func() {
+			virtualGuest.Id = 1234567
+		})
+
+		It("sucessfully power off virtual guest instance", func() {
+			fakeClient.DoRawHttpRequestResponse = []byte("true")
+
+			rebooted, err := virtualGuestService.PowerOff(virtualGuest.Id)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(rebooted).To(BeTrue())
+		})
+
+		It("fails to power off virtual guest instance", func() {
+			fakeClient.DoRawHttpRequestResponse = []byte("false")
+
+			rebooted, err := virtualGuestService.PowerOff(virtualGuest.Id)
+			Expect(err).To(HaveOccurred())
+			Expect(rebooted).To(BeFalse())
+		})
+	})
+
+	Context("#PowerOffSoft", func() {
+		BeforeEach(func() {
+			virtualGuest.Id = 1234567
+		})
+
+		It("sucessfully power off soft virtual guest instance", func() {
+			fakeClient.DoRawHttpRequestResponse = []byte("true")
+
+			rebooted, err := virtualGuestService.PowerOffSoft(virtualGuest.Id)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(rebooted).To(BeTrue())
+		})
+
+		It("fails to power off soft virtual guest instance", func() {
+			fakeClient.DoRawHttpRequestResponse = []byte("false")
+
+			rebooted, err := virtualGuestService.PowerOffSoft(virtualGuest.Id)
+			Expect(err).To(HaveOccurred())
+			Expect(rebooted).To(BeFalse())
+		})
+	})
+
+	Context("#PowerOn", func() {
+		BeforeEach(func() {
+			virtualGuest.Id = 1234567
+		})
+
+		It("sucessfully power on virtual guest instance", func() {
+			fakeClient.DoRawHttpRequestResponse = []byte("true")
+
+			rebooted, err := virtualGuestService.PowerOn(virtualGuest.Id)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(rebooted).To(BeTrue())
+		})
+
+		It("fails to power on virtual guest instance", func() {
+			fakeClient.DoRawHttpRequestResponse = []byte("false")
+
+			rebooted, err := virtualGuestService.PowerOn(virtualGuest.Id)
+			Expect(err).To(HaveOccurred())
+			Expect(rebooted).To(BeFalse())
+		})
+	})
+
 	Context("#RebootDefault", func() {
 		BeforeEach(func() {
 			virtualGuest.Id = 1234567

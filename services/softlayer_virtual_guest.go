@@ -218,6 +218,46 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetSshKeys(instanceId int) ([]data
 	return sshKeys, nil
 }
 
+func (slvgs *softLayer_Virtual_Guest_Service) PowerCycle(instanceId int) (bool, error) {
+	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/powerCycle.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+
+	if res := string(response[:]); res != "true" {
+		return false, errors.New(fmt.Sprintf("Failed to power cycle instance with id '%d', got '%s' as response from the API.", instanceId, res))
+	}
+
+	return true, err
+}
+
+func (slvgs *softLayer_Virtual_Guest_Service) PowerOff(instanceId int) (bool, error) {
+	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/powerOff.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+
+	if res := string(response[:]); res != "true" {
+		return false, errors.New(fmt.Sprintf("Failed to power off instance with id '%d', got '%s' as response from the API.", instanceId, res))
+	}
+
+	return true, err
+}
+
+func (slvgs *softLayer_Virtual_Guest_Service) PowerOffSoft(instanceId int) (bool, error) {
+	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/powerOffSoft.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+
+	if res := string(response[:]); res != "true" {
+		return false, errors.New(fmt.Sprintf("Failed to power off soft instance with id '%d', got '%s' as response from the API.", instanceId, res))
+	}
+
+	return true, err
+}
+
+func (slvgs *softLayer_Virtual_Guest_Service) PowerOn(instanceId int) (bool, error) {
+	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/powerOn.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+
+	if res := string(response[:]); res != "true" {
+		return false, errors.New(fmt.Sprintf("Failed to power on instance with id '%d', got '%s' as response from the API.", instanceId, res))
+	}
+
+	return true, err
+}
+
 func (slvgs *softLayer_Virtual_Guest_Service) RebootDefault(instanceId int) (bool, error) {
 	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/rebootDefault.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
 
