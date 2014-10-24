@@ -256,6 +256,28 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 		})
 	})
 
+	Context("#RebootDefault", func() {
+		BeforeEach(func() {
+			virtualGuest.Id = 1234567
+		})
+
+		It("sucessfully default reboots virtual guest instance", func() {
+			fakeClient.DoRawHttpRequestResponse = []byte("true")
+
+			rebooted, err := virtualGuestService.RebootDefault(virtualGuest.Id)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(rebooted).To(BeTrue())
+		})
+
+		It("fails to default reboot virtual guest instance", func() {
+			fakeClient.DoRawHttpRequestResponse = []byte("false")
+
+			rebooted, err := virtualGuestService.RebootDefault(virtualGuest.Id)
+			Expect(err).To(HaveOccurred())
+			Expect(rebooted).To(BeFalse())
+		})
+	})
+
 	Context("#RebootSoft", func() {
 		BeforeEach(func() {
 			virtualGuest.Id = 1234567
