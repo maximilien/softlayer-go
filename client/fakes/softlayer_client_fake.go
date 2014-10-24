@@ -165,7 +165,7 @@ func (fslc *FakeSoftLayerClient) DoRawHttpRequestWithObjectMask(path string, mas
 }
 
 func (fslc *FakeSoftLayerClient) DoRawHttpRequest(path string, requestType string, requestBody *bytes.Buffer) ([]byte, error) {
-	if fslc.DoRawHttpRequestResponse != nil {
+	if fslc.DoRawHttpRequestError != nil || fslc.DoRawHttpRequestResponse != nil {
 		return fslc.DoRawHttpRequestResponse, fslc.DoRawHttpRequestError
 	} else {
 		fslc.DoRawHttpRequestResponsesIndex = fslc.DoRawHttpRequestResponsesIndex + 1
