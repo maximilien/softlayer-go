@@ -335,6 +335,25 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetUserData(instanceId int) ([]dat
 	return attributes, nil
 }
 
+func (slvgs *softLayer_Virtual_Guest_Service) IsPingable(instanceId int) (bool, error) {
+	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/isPingable.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+	if err != nil {
+		return false, err
+	}
+
+	res := string(response)
+
+	if res == "true" {
+		return true, nil
+	}
+
+	if res == "false" {
+		return false, nil
+	}
+
+	return false, errors.New(fmt.Sprintf("Failed to checking that virtual guest is pingable for instance with id '%d', got '%s' as response from the API.", instanceId, res))
+}
+
 //Private methods
 
 func (slvgs *softLayer_Virtual_Guest_Service) attachVolumeBasedOnShellScript(virtualGuest datatypes.SoftLayer_Virtual_Guest, volume datatypes.SoftLayer_Network_Storage) (string, error) {
