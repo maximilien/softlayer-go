@@ -114,7 +114,7 @@ func (slas *softLayer_Account_Service) GetVirtualDiskImages() ([]datatypes.SoftL
 	path := fmt.Sprintf("%s/%s", slas.GetName(), "getVirtualDiskImages.json")
 	responseBytes, err := slas.client.DoRawHttpRequest(path, "GET", &bytes.Buffer{})
 	if err != nil {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Account#getVirtualDiskImages, error message '%s'", err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could get SoftLayer_Account#getVirtualDiskImages, error message '%s'", err.Error())
 		return []datatypes.SoftLayer_Virtual_Disk_Image{}, errors.New(errorMessage)
 	}
 
