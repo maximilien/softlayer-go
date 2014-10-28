@@ -64,7 +64,7 @@ type SoftLayer_Virtual_Guest_Template struct {
 	LocalDiskFlag     bool       `json:"localDiskFlag"`
 
 	//Conditionally required
-	OperatingSystemReferenceCode string                    `json:"operatingSystemReferenceCode"`
+	OperatingSystemReferenceCode string                    `json:"operatingSystemReferenceCode,omitempty"`
 	BlockDeviceTemplateGroup     *BlockDeviceTemplateGroup `json:"blockDeviceTemplateGroup,omitempty"`
 
 	//Optional
