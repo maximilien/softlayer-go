@@ -134,4 +134,18 @@ var _ = Describe("SoftLayer_Account_Service", func() {
 			Expect(groups).ToNot(BeNil())
 		})
 	})
+
+	Context("#GetDatacentersWithSubnetAllocations", func() {
+		BeforeEach(func() {
+			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Account_Service_getDatacentersWithSubnetAllocations.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("returns an array of datatypes.SoftLayer_Virtual_Location", func() {
+			locations, err := accountService.GetBlockDeviceTemplateGroups()
+			Expect(err).ToNot(HaveOccurred())
+			Expect(locations).ToNot(BeNil())
+			Expect(len(locations)).To(BeNumerically(">", 0))
+		})
+	})
 })

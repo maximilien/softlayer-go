@@ -166,3 +166,7 @@ func (slas *softLayer_Account_Service) GetBlockDeviceTemplateGroups() ([]datatyp
 
 	return vgbdtGroups, nil
 }
+
+func (slas *softLayer_Account_Service) GetDatacentersWithSubnetAllocations() ([]datatypes.SoftLayer_Location, error) {
+	return []datatypes.SoftLayer_Location{}, nil
+}
