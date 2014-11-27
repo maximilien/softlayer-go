@@ -111,4 +111,13 @@ var _ = Describe("SoftLayerClient", func() {
 			Expect(billingItemCancellationRequestService).ToNot(BeNil())
 		})
 	})
+
+	Context("#GetSoftLayer_Hardware", func() {
+		It("returns an instance implemementing the SoftLayer_Hardware_Service interface", func() {
+			var hardwareService softlayer.SoftLayer_Hardware_Service
+			hardwareService, err := client.GetSoftLayer_Hardware_Service()
+			Expect(err).ToNot(HaveOccurred())
+			Expect(hardwareService).ToNot(BeNil())
+		})
+	})
 })
