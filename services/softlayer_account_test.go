@@ -148,4 +148,18 @@ var _ = Describe("SoftLayer_Account_Service", func() {
 			Expect(len(locations)).To(BeNumerically(">", 0))
 		})
 	})
+
+	Context("#GetHardware", func() {
+		BeforeEach(func() {
+			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Account_Service_getHardware.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("returns an array of datatypes.SoftLayer_Hardware", func() {
+			hardwares, err := accountService.GetHardware()
+			Expect(err).ToNot(HaveOccurred())
+			Expect(hardwares).ToNot(BeNil())
+			Expect(len(hardwares)).To(BeNumerically(">", 0))
+		})
+	})
 })
