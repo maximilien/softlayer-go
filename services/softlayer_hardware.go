@@ -55,7 +55,21 @@ func (slhs *softLayer_Hardware_Service) CreateObject(template datatypes.SoftLaye
 }
 
 func (slhs *softLayer_Hardware_Service) GetObject(id string) (datatypes.SoftLayer_Hardware, error) {
-	response, err := slhs.client.DoRawHttpRequest(fmt.Sprintf("%s/%s.json", slhs.GetName(), id), "GET", new(bytes.Buffer))
+
+	objectMask := []string{
+		"bareMetalInstanceFlag",
+		"domain",
+		"hostname",
+		"id",
+		"hardwareStatusId",
+		"provisionDate",
+		"globalIdentifier",
+		"primaryIpAddress",
+		"operatingSystem.passwords.password",
+		"operatingSystem.passwords.username",
+	}
+
+	response, err := slhs.client.DoRawHttpRequestWithObjectMask(fmt.Sprintf("%s/%s.json", slhs.GetName(), id), objectMask, "GET", new(bytes.Buffer))
 	if err != nil {
 		return datatypes.SoftLayer_Hardware{}, err
 	}

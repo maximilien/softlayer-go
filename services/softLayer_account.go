@@ -170,3 +170,23 @@ func (slas *softLayer_Account_Service) GetBlockDeviceTemplateGroups() ([]datatyp
 func (slas *softLayer_Account_Service) GetDatacentersWithSubnetAllocations() ([]datatypes.SoftLayer_Location, error) {
 	return []datatypes.SoftLayer_Location{}, nil
 }
+
+func (slas *softLayer_Account_Service) GetHardware() ([]datatypes.SoftLayer_Hardware, error) {
+	path := fmt.Sprintf("%s/%s", slas.GetName(), "getHardware.json")
+	responseBytes, err := slas.client.DoRawHttpRequest(path, "GET", &bytes.Buffer{})
+	if err != nil {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Account#getHardware, error message '%s'", err.Error())
+		return []datatypes.SoftLayer_Hardware{}, errors.New(errorMessage)
+	}
+
+	hardwares := []datatypes.SoftLayer_Hardware{}
+	err = json.Unmarshal(responseBytes, &hardwares)
+
+	if err != nil {
+		errorMessage := fmt.Sprintf("softlayer-go: failed to decode JSON response, err message '%s'", err.Error())
+		err := errors.New(errorMessage)
+		return []datatypes.SoftLayer_Hardware{}, err
+	}
+
+	return hardwares, nil
+}
