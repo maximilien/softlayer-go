@@ -220,6 +220,9 @@ var _ = Describe("SoftLayer Services", func() {
 			fmt.Printf("====> Set Metadata and configured disk on instance: %d in %d time\n", virtualGuest.Id, time.Since(startTime))
 
 			testhelpers.TestUserMetadata(userMetadata, sshKeyFilePath)
+
+			testhelpers.DeleteVirtualGuest(virtualGuest.Id)
+			testhelpers.DeleteSshKey(createdSshKey.Id)
 		})
 	})
 
