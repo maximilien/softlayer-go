@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/http/httputil"
 	"os"
 	"path/filepath"
 	"text/template"
@@ -226,35 +227,33 @@ func (slc *softLayerClient) initSoftLayerServices() {
 }
 
 func (slc *softLayerClient) makeHttpRequest(url string, requestType string, requestBody *bytes.Buffer) ([]byte, error) {
-	var lastResponse http.Response
-	switch requestType {
-	case "POST", "DELETE":
-		req, err := http.NewRequest(requestType, url, requestBody)
-
-		if err != nil {
-			return nil, err
-		}
-		resp, err := slc.httpClient.Do(req)
-
-		if err != nil {
-			return nil, err
-		} else {
-			lastResponse = *resp
-		}
-	case "GET":
-		resp, err := http.Get(url)
-
-		if err != nil {
-			return nil, err
-		} else {
-			lastResponse = *resp
-		}
-	default:
-		return nil, errors.New(fmt.Sprintf("Undefined request type '%s', only GET/POST/DELETE are available!", requestType))
+	req, err := http.NewRequest(requestType, url, requestBody)
+	if err != nil {
+		return nil, err
 	}
 
-	responseBody, err := ioutil.ReadAll(lastResponse.Body)
-	lastResponse.Body.Close()
+	bs, err := httputil.DumpRequest(req, true)
+	if err != nil {
+		return nil, err
+	}
+
+	fmt.Fprintf(os.Stderr, "\n---\n[softlayer-go] Request:\n%s\n", string(bs))
+
+	resp, err := slc.httpClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	defer resp.Body.Close()
+
+	bs, err = httputil.DumpResponse(resp, true)
+	if err != nil {
+		return nil, err
+	}
+
+	fmt.Fprintf(os.Stderr, "[softlayer-go] Response:\n%s\n", string(bs))
+
+	responseBody, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
