@@ -509,6 +509,12 @@ func (slvgs *softLayer_Virtual_Guest_Service) checkCreateObjectRequiredValues(te
 		errorMessage += fmt.Sprintf(errorTemplate, "MaxMemory: the amount of memory to allocate in megabytes")
 	}
 
+	for _, device := range template.BlockDevices {
+		if device.DiskImage.Capacity <= 0 {
+			errorMessage += fmt.Sprintf("Disk size must be positive number, the size of block device %s is set to be %dGB.", device.Device, device.DiskImage.Capacity)
+		}
+	}
+
 	if template.Datacenter.Name == "" {
 		errorMessage += fmt.Sprintf(errorTemplate, "Datacenter.Name: specifies which datacenter the instance is to be provisioned in")
 	}
