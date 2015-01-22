@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	datatypes "github.com/maximilien/softlayer-go/data_types"
 	softlayer "github.com/maximilien/softlayer-go/softlayer"
@@ -402,6 +403,46 @@ func (slvgs *softLayer_Virtual_Guest_Service) IsPingable(instanceId int) (bool, 
 	}
 
 	return false, errors.New(fmt.Sprintf("Failed to checking that virtual guest is pingable for instance with id '%d', got '%s' as response from the API.", instanceId, res))
+}
+
+func (slvgs *softLayer_Virtual_Guest_Service) AttachEphemeralDisk(instanceId int, diskSize int) error {
+	service, err := slvgs.client.GetSoftLayer_Product_Order_Service()
+	if err != nil {
+		return err
+	}
+
+	order := datatypes.SoftLayer_Product_Order{
+		VirtualGuests: []datatypes.VirtualGuest{
+			datatypes.VirtualGuest{
+				Id: instanceId,
+			},
+		},
+		Prices: []datatypes.SoftLayer_Item_Price{
+			datatypes.SoftLayer_Item_Price{
+				Id: 29190, // ToDO: now we just attach a 25G local disk, need to query local disk size according to the diskSize parameter
+				Categories: []datatypes.Category{
+					datatypes.Category{
+						CategoryCode: "guest_disk1",
+					},
+				},
+			},
+		},
+		ComplexType: "SoftLayer_Container_Product_Order_Virtual_Guest_Upgrade",
+		Properties: []datatypes.Property{
+			datatypes.Property{
+				Name:  "MAINTENANCE_WINDOW",
+				Value: time.Now().UTC().Format(time.RFC3339Nano),
+			},
+			datatypes.Property{
+				Name:  "NOTE_GENERAL",
+				Value: "addingdisks",
+			},
+		},
+	}
+
+	_, err = service.PlaceOrder(order)
+
+	return err
 }
 
 //Private methods

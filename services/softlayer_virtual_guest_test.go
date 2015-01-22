@@ -166,6 +166,18 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 		})
 	})
 
+	Context("#AttachEphemeralDisk", func() {
+		BeforeEach(func() {
+			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Product_Order_placeOrder.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("can attach a local disk without error", func() {
+			err := virtualGuestService.AttachEphemeralDisk(123, 25)
+			Expect(err).ToNot(HaveOccurred())
+		})
+	})
+
 	Context("#GetPowerState", func() {
 		BeforeEach(func() {
 			virtualGuest.Id = 1234567

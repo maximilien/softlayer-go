@@ -40,4 +40,6 @@ type SoftLayer_Virtual_Guest_Service interface {
 
 	AttachIscsiVolume(instanceId int, volumeId int) (string, error)
 	DetachIscsiVolume(instanceId int, volumeId int) error
+
+	AttachEphemeralDisk(instanceId int, diskSize int) error
 }
