@@ -9,12 +9,6 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-type NeverExits struct{}
-
-func (e NeverExits) ExitCode() int {
-	return -1
-}
-
 var _ = Describe("ExitMatcher", func() {
 	var command *exec.Cmd
 	var session *Session
@@ -26,23 +20,13 @@ var _ = Describe("ExitMatcher", func() {
 		Ω(err).ShouldNot(HaveOccurred())
 	})
 
-	Describe("when passed something that is an Exiter", func() {
-		It("should act normally", func() {
-			failures := InterceptGomegaFailures(func() {
-				Ω(NeverExits{}).Should(Exit())
-			})
-
-			Ω(failures[0]).Should(ContainSubstring("Expected process to exit.  It did not."))
-		})
-	})
-
-	Describe("when passed something that is not an Exiter", func() {
+	Describe("when passed something that is not a session", func() {
 		It("should error", func() {
-			failures := InterceptGomegaFailures(func() {
+			failures := interceptFailures(func() {
 				Ω("aardvark").Should(Exit())
 			})
 
-			Ω(failures[0]).Should(ContainSubstring("Exit must be passed a gexec.Exiter"))
+			Ω(failures[0]).Should(ContainSubstring("Exit must be passed a gexit session"))
 		})
 	})
 
@@ -50,7 +34,7 @@ var _ = Describe("ExitMatcher", func() {
 		It("should say the right things when it fails", func() {
 			Ω(session).ShouldNot(Exit())
 
-			failures := InterceptGomegaFailures(func() {
+			failures := interceptFailures(func() {
 				Ω(session).Should(Exit())
 			})
 
@@ -60,7 +44,7 @@ var _ = Describe("ExitMatcher", func() {
 
 			Ω(session).Should(Exit())
 
-			failures = InterceptGomegaFailures(func() {
+			failures = interceptFailures(func() {
 				Ω(session).ShouldNot(Exit())
 			})
 
@@ -73,7 +57,7 @@ var _ = Describe("ExitMatcher", func() {
 			Ω(session).ShouldNot(Exit(0))
 			Ω(session).ShouldNot(Exit(1))
 
-			failures := InterceptGomegaFailures(func() {
+			failures := interceptFailures(func() {
 				Ω(session).Should(Exit(0))
 			})
 
@@ -83,7 +67,7 @@ var _ = Describe("ExitMatcher", func() {
 
 			Ω(session).Should(Exit(0))
 
-			failures = InterceptGomegaFailures(func() {
+			failures = interceptFailures(func() {
 				Ω(session).Should(Exit(1))
 			})
 
@@ -91,7 +75,7 @@ var _ = Describe("ExitMatcher", func() {
 
 			Ω(session).ShouldNot(Exit(1))
 
-			failures = InterceptGomegaFailures(func() {
+			failures = interceptFailures(func() {
 				Ω(session).ShouldNot(Exit(0))
 			})
 
@@ -103,7 +87,7 @@ var _ = Describe("ExitMatcher", func() {
 		It("should bail out early once the process exits", func() {
 			t := time.Now()
 
-			failures := InterceptGomegaFailures(func() {
+			failures := interceptFailures(func() {
 				Eventually(session).Should(Exit(1))
 			})
 			Ω(time.Since(t)).Should(BeNumerically("<=", 500*time.Millisecond))

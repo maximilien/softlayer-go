@@ -9,7 +9,7 @@ import (
 
 type ReceiveMatcher struct {
 	Arg           interface{}
-	receivedValue reflect.Value
+	receivedValue interface{}
 	channelClosed bool
 }
 
@@ -57,15 +57,15 @@ func (matcher *ReceiveMatcher) Match(actual interface{}) (success bool, err erro
 	matcher.channelClosed = closed
 
 	if closed {
-		return false, nil
+		return false, fmt.Errorf("ReceiveMatcher was given a closed channel:\n%s", format.Object(actual, 1))
 	}
 
 	if hasSubMatcher {
 		if didReceive {
-			matcher.receivedValue = value
-			return subMatcher.Match(matcher.receivedValue.Interface())
+			matcher.receivedValue = value.Interface()
+			return subMatcher.Match(matcher.receivedValue)
 		} else {
-			return false, nil
+			return false, fmt.Errorf("When passed a matcher, ReceiveMatcher's channel *must* receive something.")
 		}
 	}
 
@@ -84,36 +84,20 @@ func (matcher *ReceiveMatcher) Match(actual interface{}) (success bool, err erro
 func (matcher *ReceiveMatcher) FailureMessage(actual interface{}) (message string) {
 	subMatcher, hasSubMatcher := (matcher.Arg).(omegaMatcher)
 
-	closedAddendum := ""
-	if matcher.channelClosed {
-		closedAddendum = " The channel is closed."
-	}
-
 	if hasSubMatcher {
-		if matcher.receivedValue.IsValid() {
-			return subMatcher.FailureMessage(matcher.receivedValue.Interface())
-		}
-		return "When passed a matcher, ReceiveMatcher's channel *must* receive something."
+		return subMatcher.FailureMessage(matcher.receivedValue)
 	} else {
-		return format.Message(actual, "to receive something."+closedAddendum)
+		return format.Message(actual, "to receive something")
 	}
 }
 
 func (matcher *ReceiveMatcher) NegatedFailureMessage(actual interface{}) (message string) {
 	subMatcher, hasSubMatcher := (matcher.Arg).(omegaMatcher)
 
-	closedAddendum := ""
-	if matcher.channelClosed {
-		closedAddendum = " The channel is closed."
-	}
-
 	if hasSubMatcher {
-		if matcher.receivedValue.IsValid() {
-			return subMatcher.NegatedFailureMessage(matcher.receivedValue.Interface())
-		}
-		return "When passed a matcher, ReceiveMatcher's channel *must* receive something."
+		return subMatcher.NegatedFailureMessage(matcher.receivedValue)
 	} else {
-		return format.Message(actual, "not to receive anything."+closedAddendum)
+		return format.Message(actual, "not to receive anything")
 	}
 }
 

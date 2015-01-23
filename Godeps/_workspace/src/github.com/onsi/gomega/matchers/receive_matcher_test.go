@@ -1,11 +1,10 @@
 package matchers_test
 
 import (
-	"time"
-
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	. "github.com/onsi/gomega/matchers"
+	"time"
 )
 
 type kungFuActor interface {
@@ -175,11 +174,11 @@ var _ = Describe("ReceiveMatcher", func() {
 		})
 
 		Context("if nothing is received", func() {
-			It("should fail", func() {
+			It("should error", func() {
 				channel := make(chan int, 1)
 				success, err := (&ReceiveMatcher{Arg: Equal(1)}).Match(channel)
 				Ω(success).Should(BeFalse())
-				Ω(err).ShouldNot(HaveOccurred())
+				Ω(err).Should(HaveOccurred())
 			})
 		})
 	})
@@ -193,16 +192,21 @@ var _ = Describe("ReceiveMatcher", func() {
 				close(channel)
 
 				Ω(channel).Should(Receive())
-				Ω(channel).ShouldNot(Receive())
+
+				success, err := (&ReceiveMatcher{}).Match(channel)
+				Ω(success).Should(BeFalse())
+				Ω(err).Should(HaveOccurred())
 			})
 		})
 
 		Context("for an unbuffered channel", func() {
-			It("should always fail", func() {
+			It("should error", func() {
 				channel := make(chan bool)
 				close(channel)
 
-				Ω(channel).ShouldNot(Receive())
+				success, err := (&ReceiveMatcher{}).Match(channel)
+				Ω(success).Should(BeFalse())
+				Ω(err).Should(HaveOccurred())
 			})
 		})
 	})
@@ -238,30 +242,13 @@ var _ = Describe("ReceiveMatcher", func() {
 		})
 	})
 
-	Describe("when used with eventually and a custom matcher", func() {
-		It("should return the matcher's error when a failing value is received on the channel, instead of the must receive something failure", func() {
-			failures := InterceptGomegaFailures(func() {
-				c := make(chan string, 0)
-				Eventually(c, 0.01).Should(Receive(Equal("hello")))
-			})
-			Ω(failures[0]).Should(ContainSubstring("When passed a matcher, ReceiveMatcher's channel *must* receive something."))
-
-			failures = InterceptGomegaFailures(func() {
-				c := make(chan string, 1)
-				c <- "hi"
-				Eventually(c, 0.01).Should(Receive(Equal("hello")))
-			})
-			Ω(failures[0]).Should(ContainSubstring("<string>: hello"))
-		})
-	})
-
 	Describe("Bailing early", func() {
 		It("should bail early when passed a closed channel", func() {
 			c := make(chan bool)
 			close(c)
 
 			t := time.Now()
-			failures := InterceptGomegaFailures(func() {
+			failures := interceptFailures(func() {
 				Eventually(c).Should(Receive())
 			})
 			Ω(time.Since(t)).Should(BeNumerically("<", 500*time.Millisecond))
@@ -270,7 +257,7 @@ var _ = Describe("ReceiveMatcher", func() {
 
 		It("should bail early when passed a non-channel", func() {
 			t := time.Now()
-			failures := InterceptGomegaFailures(func() {
+			failures := interceptFailures(func() {
 				Eventually(3).Should(Receive())
 			})
 			Ω(time.Since(t)).Should(BeNumerically("<", 500*time.Millisecond))

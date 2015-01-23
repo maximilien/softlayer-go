@@ -6,9 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
-	"path"
 	"path/filepath"
-	"runtime"
 )
 
 var tmpDir string
@@ -36,10 +34,7 @@ func BuildIn(gopath string, packagePath string, args ...string) (compiledPath st
 		return "", errors.New("$GOPATH not provided when building " + packagePath)
 	}
 
-	executable := filepath.Join(tmpDir, path.Base(packagePath))
-	if runtime.GOOS == "windows" {
-		executable = executable + ".exe"
-	}
+	executable := filepath.Join(tmpDir, filepath.Base(packagePath))
 
 	cmdArgs := append([]string{"build"}, args...)
 	cmdArgs = append(cmdArgs, "-o", executable, packagePath)

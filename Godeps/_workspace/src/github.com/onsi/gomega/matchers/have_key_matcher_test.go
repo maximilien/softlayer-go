@@ -52,7 +52,7 @@ var _ = Describe("HaveKey", func() {
 		})
 
 		It("should fail if the matcher ever fails", func() {
-			actual := map[int]string{1: "a", 3: "b", 2: "c"}
+			actual := map[interface{}]string{"foo": "a", 3: "b", "bar": "c"}
 			success, err := (&HaveKeyMatcher{Key: ContainSubstring("ar")}).Match(actual)
 			Ω(success).Should(BeFalse())
 			Ω(err).Should(HaveOccurred())
