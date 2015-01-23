@@ -12,7 +12,8 @@
   }
 
   trap printStatus EXIT
-  export GOPATH=$(godep path):$GOPATH
+
+  #export GOPATH=$(godep path):$GOPATH
 
   echo -e "\n Cleaning build artifacts..."
   go clean
@@ -21,7 +22,7 @@
   go fmt ./...
 
   echo -e "\n Unit Testing packages:"
-  ginkgo -r -p --noisyPendings --skipPackage=integration_test,services_test client services
+  ginkgo -r -p --noisyPendings --skipPackage=integration client services
 
   echo -e "\n Vetting packages for potential issues..."
   go tool vet services data_types main client common test_helpers integration
