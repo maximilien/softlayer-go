@@ -532,4 +532,22 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			Expect(transaction.TransactionStatus.Name).To(Equal("CLOUD_CONFIGURE_METADATA_DISK"))
 		})
 	})
+
+	Context("#GetUpgradeItemPrices", func() {
+		BeforeEach(func() {
+			virtualGuest.Id = 1234567
+			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_getUpgradeItemPrices.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("sucessfully get the upgrade item prices for a virtual guest", func() {
+			itemPrices, err := virtualGuestService.GetUpgradeItemPrices(virtualGuest.Id)
+			Expect(err).ToNot(HaveOccurred())
+
+			Expect(len(itemPrices)).To(Equal(1))
+			Expect(itemPrices[0].Id).To(Equal(12345))
+			Expect(itemPrices[0].Categories[0].CategoryCode).To(Equal("guest_disk1"))
+		})
+	})
+
 })

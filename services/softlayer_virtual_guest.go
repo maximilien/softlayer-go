@@ -445,6 +445,21 @@ func (slvgs *softLayer_Virtual_Guest_Service) AttachEphemeralDisk(instanceId int
 	return err
 }
 
+func (slvgs *softLayer_Virtual_Guest_Service) GetUpgradeItemPrices(instanceId int) ([]datatypes.SoftLayer_Item_Price, error) {
+	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/getUpgradeItemPrices.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+	if err != nil {
+		return []datatypes.SoftLayer_Item_Price{}, err
+	}
+
+	itemPrices := []datatypes.SoftLayer_Item_Price{}
+	err = json.Unmarshal(response, &itemPrices)
+	if err != nil {
+		return []datatypes.SoftLayer_Item_Price{}, err
+	}
+
+	return itemPrices, nil
+}
+
 //Private methods
 
 func (slvgs *softLayer_Virtual_Guest_Service) attachVolumeBasedOnShellScript(virtualGuest datatypes.SoftLayer_Virtual_Guest, volume datatypes.SoftLayer_Network_Storage) (string, error) {
