@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
 
@@ -15,7 +16,8 @@ import (
 )
 
 const (
-	ROOT_USER_NAME = "root"
+	ROOT_USER_NAME               = "root"
+	EPHEMERAL_DISK_CATEGORY_CODE = "guest_disk1"
 )
 
 type softLayer_Virtual_Guest_Service struct {
@@ -406,6 +408,11 @@ func (slvgs *softLayer_Virtual_Guest_Service) IsPingable(instanceId int) (bool, 
 }
 
 func (slvgs *softLayer_Virtual_Guest_Service) AttachEphemeralDisk(instanceId int, diskSize int) error {
+	diskItemPrice, err := slvgs.findUpgradeItemPriceForEphemeralDisk(instanceId, diskSize)
+	if err != nil {
+		return err
+	}
+
 	service, err := slvgs.client.GetSoftLayer_Product_Order_Service()
 	if err != nil {
 		return err
@@ -419,10 +426,10 @@ func (slvgs *softLayer_Virtual_Guest_Service) AttachEphemeralDisk(instanceId int
 		},
 		Prices: []datatypes.SoftLayer_Item_Price{
 			datatypes.SoftLayer_Item_Price{
-				Id: 29190, // ToDO: now we just attach a 25G local disk, need to query local disk size according to the diskSize parameter
+				Id: diskItemPrice.Id,
 				Categories: []datatypes.Category{
 					datatypes.Category{
-						CategoryCode: "guest_disk1",
+						CategoryCode: EPHEMERAL_DISK_CATEGORY_CODE,
 					},
 				},
 			},
@@ -431,7 +438,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) AttachEphemeralDisk(instanceId int
 		Properties: []datatypes.Property{
 			datatypes.Property{
 				Name:  "MAINTENANCE_WINDOW",
-				Value: time.Now().UTC().Format(time.RFC3339Nano),
+				Value: time.Now().UTC().Format(time.RFC3339),
 			},
 			datatypes.Property{
 				Name:  "NOTE_GENERAL",
@@ -443,6 +450,21 @@ func (slvgs *softLayer_Virtual_Guest_Service) AttachEphemeralDisk(instanceId int
 	_, err = service.PlaceOrder(order)
 
 	return err
+}
+
+func (slvgs *softLayer_Virtual_Guest_Service) GetUpgradeItemPrices(instanceId int) ([]datatypes.SoftLayer_Item_Price, error) {
+	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/getUpgradeItemPrices.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+	if err != nil {
+		return []datatypes.SoftLayer_Item_Price{}, err
+	}
+
+	itemPrices := []datatypes.SoftLayer_Item_Price{}
+	err = json.Unmarshal(response, &itemPrices)
+	if err != nil {
+		return []datatypes.SoftLayer_Item_Price{}, err
+	}
+
+	return itemPrices, nil
 }
 
 //Private methods
@@ -577,4 +599,47 @@ func (slvgs *softLayer_Virtual_Guest_Service) getRootPassword(virtualGuest datat
 	}
 
 	return ""
+}
+
+func (slvgs *softLayer_Virtual_Guest_Service) findUpgradeItemPriceForEphemeralDisk(instanceId int, ephemeralDiskSize int) (datatypes.SoftLayer_Item_Price, error) {
+	if ephemeralDiskSize <= 0 {
+		return datatypes.SoftLayer_Item_Price{}, errors.New(fmt.Sprintf("Ephemeral disk size can not be negative: %d", ephemeralDiskSize))
+	}
+
+	itemPrices, err := slvgs.GetUpgradeItemPrices(instanceId)
+	if err != nil {
+		return datatypes.SoftLayer_Item_Price{}, nil
+	}
+
+	var currentDiskCapacity int
+	var currentItemPrice datatypes.SoftLayer_Item_Price
+
+	for _, itemPrice := range itemPrices {
+
+		flag := false
+		for _, category := range itemPrice.Categories {
+			if category.CategoryCode == EPHEMERAL_DISK_CATEGORY_CODE {
+				flag = true
+				break
+			}
+		}
+
+		if flag && strings.Contains(itemPrice.Item.Description, "(LOCAL)") {
+
+			capacity, _ := strconv.Atoi(itemPrice.Item.Capacity)
+
+			if capacity >= ephemeralDiskSize {
+				if currentItemPrice.Id == 0 || currentDiskCapacity >= capacity {
+					currentItemPrice = itemPrice
+					currentDiskCapacity = capacity
+				}
+			}
+		}
+	}
+
+	if currentItemPrice.Id == 0 {
+		return datatypes.SoftLayer_Item_Price{}, errors.New(fmt.Sprintf("No proper local disk for size %d", ephemeralDiskSize))
+	}
+
+	return currentItemPrice, nil
 }

@@ -172,10 +172,24 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			Expect(err).ToNot(HaveOccurred())
 		})
 
+		It("reports error when providing a wrong disk size", func() {
+			err := virtualGuestService.AttachEphemeralDisk(123, -1)
+			Expect(err).To(HaveOccurred())
+			Expect(err.Error()).To(Equal("Ephemeral disk size can not be negative: -1"))
+		})
+
 		It("can attach a local disk without error", func() {
 			err := virtualGuestService.AttachEphemeralDisk(123, 25)
 			Expect(err).ToNot(HaveOccurred())
 		})
+
+		It("reports error when providing a disk size that exceeds the biggest capacity disk SL can provide", func() {
+			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_getUpgradeItemPrices.json")
+			err := virtualGuestService.AttachEphemeralDisk(123, 26)
+			Expect(err).To(HaveOccurred())
+			Expect(err.Error()).To(Equal("No proper local disk for size 26"))
+		})
+
 	})
 
 	Context("#GetPowerState", func() {
@@ -532,4 +546,22 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			Expect(transaction.TransactionStatus.Name).To(Equal("CLOUD_CONFIGURE_METADATA_DISK"))
 		})
 	})
+
+	Context("#GetUpgradeItemPrices", func() {
+		BeforeEach(func() {
+			virtualGuest.Id = 1234567
+			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_getUpgradeItemPrices.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("sucessfully get the upgrade item prices for a virtual guest", func() {
+			itemPrices, err := virtualGuestService.GetUpgradeItemPrices(virtualGuest.Id)
+			Expect(err).ToNot(HaveOccurred())
+
+			Expect(len(itemPrices)).To(Equal(1))
+			Expect(itemPrices[0].Id).To(Equal(12345))
+			Expect(itemPrices[0].Categories[0].CategoryCode).To(Equal("guest_disk1"))
+		})
+	})
+
 })

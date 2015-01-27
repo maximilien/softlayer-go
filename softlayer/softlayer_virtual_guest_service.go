@@ -42,4 +42,6 @@ type SoftLayer_Virtual_Guest_Service interface {
 	DetachIscsiVolume(instanceId int, volumeId int) error
 
 	AttachEphemeralDisk(instanceId int, diskSize int) error
+
+	GetUpgradeItemPrices(instanceId int) ([]datatypes.SoftLayer_Item_Price, error)
 }
