@@ -35,7 +35,8 @@ type SoftLayer_Virtual_Guest struct {
 	PrimaryBackendIpAddress string `json:"primaryBackendIpAddress,omitempty"`
 	PrimaryIpAddress        string `json:"primaryIpAddress,omitempty"`
 
-	Location *SoftLayer_Location `json:"location"`
+	Location   *SoftLayer_Location `json:"location"`
+	Datacenter *SoftLayer_Location `json:"datacenter"`
 
 	OperatingSystem *SoftLayer_Operating_System `json:"operatingSystem"`
 }
