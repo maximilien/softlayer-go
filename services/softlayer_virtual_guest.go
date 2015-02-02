@@ -100,6 +100,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetObject(instanceId int) (datatyp
 		"primaryIpAddress",
 
 		"location.id",
+		"datacenter.id",
 		"operatingSystem.passwords.password",
 		"operatingSystem.passwords.username",
 	}

@@ -11,7 +11,7 @@ type SoftLayer_Product_Order_Parameters struct {
 type SoftLayer_Product_Order struct {
 	ComplexType   string                 `json:"complexType"`
 	Location      string                 `json:"location,omitempty"`
-	PackageId     int                    `json:"packageId,omitempty"`
+	PackageId     int                    `json:"packageId"`
 	Prices        []SoftLayer_Item_Price `json:"prices,omitempty"`
 	VirtualGuests []VirtualGuest         `json:"virtualGuests,omitempty"`
 	Properties    []Property             `json:"properties,omitempty"`
