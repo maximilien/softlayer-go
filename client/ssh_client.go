@@ -1,4 +1,4 @@
-package utils
+package client
 
 import (
 	"code.google.com/p/go.crypto/ssh"
@@ -13,7 +13,7 @@ type softlayerSshClient struct {
 	client *ssh.Client
 }
 
-func GetSshClient(username string, password string, ip string) (*softlayerSshClient, error) {
+func getSshClient(username string, password string, ip string) (*softlayerSshClient, error) {
 	config := &ssh.ClientConfig{
 		User: username,
 		Auth: []ssh.AuthMethod{
