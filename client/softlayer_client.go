@@ -260,13 +260,3 @@ func (slc *softLayerClient) makeHttpRequest(url string, requestType string, requ
 
 	return responseBody, nil
 }
-
-func (slc *softLayerClient) ExecShellCommand(username string, password string, ip string, command string) (string, error) {
-	sshClient, err := getSshClient(username, password, ip)
-	if err != nil {
-		return "", err
-	}
-	defer sshClient.Close()
-
-	return sshClient.ExecCommand(command)
-}

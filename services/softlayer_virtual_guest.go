@@ -12,6 +12,7 @@ import (
 
 	datatypes "github.com/maximilien/softlayer-go/data_types"
 	softlayer "github.com/maximilien/softlayer-go/softlayer"
+	utils "github.com/maximilien/softlayer-go/utils"
 )
 
 const (
@@ -492,12 +493,18 @@ func (slvgs *softLayer_Virtual_Guest_Service) attachVolumeBasedOnShellScript(vir
 		volume.ServiceResourceBackendIpAddress,
 	)
 
-	_, err := slvgs.client.ExecShellCommand(ROOT_USER_NAME, slvgs.getRootPassword(virtualGuest), virtualGuest.PrimaryIpAddress, command)
+	client, err := utils.GetSshClient(ROOT_USER_NAME, slvgs.getRootPassword(virtualGuest), virtualGuest.PrimaryIpAddress)
+	if err != nil {
+		return "", err
+	}
+	defer client.Close()
+
+	_, err = client.ExecCommand(command)
 	if err != nil {
 		return "", err
 	}
 
-	_, deviceName, err := slvgs.findIscsiDeviceNameBasedOnShellScript(virtualGuest, volume)
+	_, deviceName, err := slvgs.findIscsiDeviceNameBasedOnShellScript(virtualGuest, volume, client)
 	if err != nil {
 		return "", err
 	}
@@ -506,7 +513,13 @@ func (slvgs *softLayer_Virtual_Guest_Service) attachVolumeBasedOnShellScript(vir
 }
 
 func (slvgs *softLayer_Virtual_Guest_Service) detachVolumeBasedOnShellScript(virtualGuest datatypes.SoftLayer_Virtual_Guest, volume datatypes.SoftLayer_Network_Storage) error {
-	targetName, _, err := slvgs.findIscsiDeviceNameBasedOnShellScript(virtualGuest, volume)
+	client, err := utils.GetSshClient(ROOT_USER_NAME, slvgs.getRootPassword(virtualGuest), virtualGuest.PrimaryIpAddress)
+	if err != nil {
+		return err
+	}
+	defer client.Close()
+
+	targetName, _, err := slvgs.findIscsiDeviceNameBasedOnShellScript(virtualGuest, volume, client)
 	command := fmt.Sprintf(`
 		iscsiadm -m node -T %s -u
 		iscsiadm -m node -o delete -T %s`,
@@ -514,20 +527,17 @@ func (slvgs *softLayer_Virtual_Guest_Service) detachVolumeBasedOnShellScript(vir
 		targetName,
 	)
 
-	_, err = slvgs.client.ExecShellCommand(ROOT_USER_NAME, slvgs.getRootPassword(virtualGuest), virtualGuest.PrimaryIpAddress, command)
-	if err != nil {
-		return err
-	}
+	_, err = client.ExecCommand(command)
 
 	return err
 }
 
-func (slvgs *softLayer_Virtual_Guest_Service) findIscsiDeviceNameBasedOnShellScript(virtualGuest datatypes.SoftLayer_Virtual_Guest, volume datatypes.SoftLayer_Network_Storage) (targetName string, deviceName string, err error) {
+func (slvgs *softLayer_Virtual_Guest_Service) findIscsiDeviceNameBasedOnShellScript(virtualGuest datatypes.SoftLayer_Virtual_Guest, volume datatypes.SoftLayer_Network_Storage, client utils.SshClient) (targetName string, deviceName string, err error) {
 	command := `
 		sleep 1
 		iscsiadm -m session -P3 | sed -n  "/Target:/s/Target: //p; /Attached scsi disk /{ s/Attached scsi disk //; s/State:.*//p}"`
 
-	output, err := slvgs.client.ExecShellCommand(ROOT_USER_NAME, slvgs.getRootPassword(virtualGuest), virtualGuest.PrimaryIpAddress, command)
+	output, err := client.ExecCommand(command)
 	if err != nil {
 		return "", "", err
 	}

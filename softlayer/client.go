@@ -24,5 +24,4 @@ type Client interface {
 	HasErrors(body map[string]interface{}) error
 
 	CheckForHttpResponseErrors(data []byte) error
-	ExecShellCommand(username string, password string, ip string, command string) (string, error)
 }

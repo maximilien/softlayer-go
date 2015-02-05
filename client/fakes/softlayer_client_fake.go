@@ -22,8 +22,6 @@ type FakeSoftLayerClient struct {
 
 	TemplatePath string
 
-	ExecShellCommandResult string
-
 	SoftLayerServices map[string]softlayer.Service
 
 	DoRawHttpRequestResponse       []byte
@@ -34,7 +32,7 @@ type FakeSoftLayerClient struct {
 	GenerateRequestBodyBuffer *bytes.Buffer
 	GenerateRequestBodyError  error
 
-	HasErrorsError, CheckForHttpResponseError, ExecShellCommandError error
+	HasErrorsError, CheckForHttpResponseError error
 }
 
 func NewFakeSoftLayerClient(username, apiKey string) *FakeSoftLayerClient {
@@ -202,10 +200,6 @@ func (fslc *FakeSoftLayerClient) HasErrors(body map[string]interface{}) error {
 
 func (fslc *FakeSoftLayerClient) CheckForHttpResponseErrors(data []byte) error {
 	return fslc.CheckForHttpResponseError
-}
-
-func (fslc *FakeSoftLayerClient) ExecShellCommand(username string, password string, ip string, command string) (string, error) {
-	return fslc.ExecShellCommandResult, fslc.ExecShellCommandError
 }
 
 //Private methods
