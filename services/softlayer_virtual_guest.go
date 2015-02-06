@@ -490,6 +490,21 @@ func (slvgs *softLayer_Virtual_Guest_Service) SetTags(instanceId int, tags []str
 	return true, nil
 }
 
+func (slvgs *softLayer_Virtual_Guest_Service) GetTagReferences(instanceId int) ([]datatypes.SoftLayer_Tag_Reference, error) {
+	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/getTagReferences.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+	if err != nil {
+		return []datatypes.SoftLayer_Tag_Reference{}, err
+	}
+
+	tagReferences := []datatypes.SoftLayer_Tag_Reference{}
+	err = json.Unmarshal(response, &tagReferences)
+	if err != nil {
+		return []datatypes.SoftLayer_Tag_Reference{}, err
+	}
+
+	return tagReferences, nil
+}
+
 //Private methods
 
 func (slvgs *softLayer_Virtual_Guest_Service) attachVolumeBasedOnShellScript(virtualGuest datatypes.SoftLayer_Virtual_Guest, volume datatypes.SoftLayer_Network_Storage) (string, error) {

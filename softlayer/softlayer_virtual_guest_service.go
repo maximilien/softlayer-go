@@ -46,4 +46,6 @@ type SoftLayer_Virtual_Guest_Service interface {
 	GetUpgradeItemPrices(instanceId int) ([]datatypes.SoftLayer_Item_Price, error)
 
 	SetTags(instanceId int, tags []string) (bool, error)
+
+	GetTagReferences(instanceId int) ([]datatypes.SoftLayer_Tag_Reference, error)
 }

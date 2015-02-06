@@ -579,4 +579,25 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			Expect(tagsWasSet).To(BeTrue())
 		})
 	})
+
+	Context("#GetReferenceTags", func() {
+		BeforeEach(func() {
+			virtualGuest.Id = 1234567
+			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_getReferenceTags.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("gets the reference tags: tag0, tag1, tag2 from the virtual guest instance", func() {
+			tagReferences, err := virtualGuestService.GetTagReferences(virtualGuest.Id)
+
+			Expect(err).ToNot(HaveOccurred())
+			Expect(len(tagReferences)).To(Equal(3))
+
+			Expect(tagReferences[0].EmpRecordId).To(BeNil())
+			Expect(tagReferences[0].Id).To(Equal(1855150))
+			//TODO: add more tests for the rest
+			Expect(tagReferences[0].Tag.Name).To(Equal("tag1"))
+		})
+	})
+
 })
