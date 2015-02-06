@@ -564,4 +564,19 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 		})
 	})
 
+	Context("#SetTags", func() {
+		BeforeEach(func() {
+			virtualGuest.Id = 1234567
+			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_setTags.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("sets tags: tag0, tag1, tag2 to virtual guest instance", func() {
+			tags := []string{"tag0", "tag1", "tag2"}
+			tagsWasSet, err := virtualGuestService.SetTags(virtualGuest.Id, tags)
+
+			Expect(err).ToNot(HaveOccurred())
+			Expect(tagsWasSet).To(BeTrue())
+		})
+	})
 })

@@ -44,4 +44,6 @@ type SoftLayer_Virtual_Guest_Service interface {
 	AttachEphemeralDisk(instanceId int, diskSize int) error
 
 	GetUpgradeItemPrices(instanceId int) ([]datatypes.SoftLayer_Item_Price, error)
+
+	SetTags(instanceId int, tags []string) (bool, error)
 }

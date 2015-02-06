@@ -468,6 +468,28 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetUpgradeItemPrices(instanceId in
 	return itemPrices, nil
 }
 
+func (slvgs *softLayer_Virtual_Guest_Service) SetTags(instanceId int, tags []string) (bool, error) {
+	setTagsParameters := datatypes.SoftLayer_Virtual_Guest_SetTags_Parameters{
+		Parameters: tags,
+	}
+
+	requestBody, err := json.Marshal(setTagsParameters)
+	if err != nil {
+		return false, err
+	}
+
+	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/setTags.json", slvgs.GetName(), instanceId), "POST", bytes.NewBuffer(requestBody))
+	if err != nil {
+		return false, err
+	}
+
+	if res := string(response[:]); res != "true" {
+		return false, errors.New(fmt.Sprintf("Failed to setTags for instance with id '%d', got '%s' as response from the API.", instanceId, res))
+	}
+
+	return true, nil
+}
+
 //Private methods
 
 func (slvgs *softLayer_Virtual_Guest_Service) attachVolumeBasedOnShellScript(virtualGuest datatypes.SoftLayer_Virtual_Guest, volume datatypes.SoftLayer_Network_Storage) (string, error) {

@@ -132,3 +132,7 @@ type SshKey struct {
 	//Required
 	Id int `json:"id,omitempty"`
 }
+
+type SoftLayer_Virtual_Guest_SetTags_Parameters struct {
+	Parameters []string `json:"parameters"`
+}
