@@ -587,17 +587,90 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			Expect(err).ToNot(HaveOccurred())
 		})
 
+		itVerifiesATagReference := func(tagReference1 datatypes.SoftLayer_Tag_Reference, tagReference2 datatypes.SoftLayer_Tag_Reference) {
+			Expect(tagReference1.EmpRecordId).To(Equal(tagReference2.EmpRecordId))
+			Expect(tagReference1.Id).To(Equal(tagReference2.Id))
+			Expect(tagReference1.ResourceTableId).To(Equal(tagReference2.ResourceTableId))
+
+			Expect(tagReference1.Tag.AccountId).To(Equal(tagReference2.Tag.AccountId))
+			Expect(tagReference1.Tag.Id).To(Equal(tagReference2.Tag.Id))
+			Expect(tagReference1.Tag.Internal).To(Equal(tagReference2.Tag.Internal))
+			Expect(tagReference1.Tag.Name).To(Equal(tagReference2.Tag.Name))
+
+			Expect(tagReference1.TagId).To(Equal(tagReference2.TagId))
+
+			Expect(tagReference1.TagType.Description).To(Equal(tagReference2.TagType.Description))
+			Expect(tagReference1.TagType.KeyName).To(Equal(tagReference2.TagType.KeyName))
+
+			Expect(tagReference1.TagTypeId).To(Equal(tagReference2.TagTypeId))
+			Expect(tagReference1.UsrRecordId).To(Equal(tagReference2.UsrRecordId))
+		}
+
 		It("gets the reference tags: tag0, tag1, tag2 from the virtual guest instance", func() {
 			tagReferences, err := virtualGuestService.GetTagReferences(virtualGuest.Id)
 
 			Expect(err).ToNot(HaveOccurred())
 			Expect(len(tagReferences)).To(Equal(3))
 
-			Expect(tagReferences[0].EmpRecordId).To(BeNil())
-			Expect(tagReferences[0].Id).To(Equal(1855150))
-			//TODO: add more tests for the rest
-			Expect(tagReferences[0].Tag.Name).To(Equal("tag1"))
+			expectedTagReferences := []datatypes.SoftLayer_Tag_Reference{
+				datatypes.SoftLayer_Tag_Reference{
+					EmpRecordId:     nil,
+					Id:              1855150,
+					ResourceTableId: 7967498,
+					Tag: datatypes.TagReference{
+						AccountId: 278444,
+						Id:        91128,
+						Internal:  0,
+						Name:      "tag1",
+					},
+					TagId: 91128,
+					TagType: datatypes.TagType{
+						Description: "CCI",
+						KeyName:     "GUEST",
+					},
+					TagTypeId:   2,
+					UsrRecordId: 239954,
+				},
+				datatypes.SoftLayer_Tag_Reference{
+					EmpRecordId:     nil,
+					Id:              1855152,
+					ResourceTableId: 7967498,
+					Tag: datatypes.TagReference{
+						AccountId: 278444,
+						Id:        91130,
+						Internal:  0,
+						Name:      "tag2",
+					},
+					TagId: 91130,
+					TagType: datatypes.TagType{
+						Description: "CCI",
+						KeyName:     "GUEST",
+					},
+					TagTypeId:   2,
+					UsrRecordId: 239954,
+				},
+				datatypes.SoftLayer_Tag_Reference{
+					EmpRecordId:     nil,
+					Id:              1855154,
+					ResourceTableId: 7967498,
+					Tag: datatypes.TagReference{
+						AccountId: 278444,
+						Id:        91132,
+						Internal:  0,
+						Name:      "tag3",
+					},
+					TagId: 91132,
+					TagType: datatypes.TagType{
+						Description: "CCI",
+						KeyName:     "GUEST",
+					},
+					TagTypeId:   2,
+					UsrRecordId: 239954,
+				},
+			}
+			for i, expectedTagReference := range expectedTagReferences {
+				itVerifiesATagReference(tagReferences[i], expectedTagReference)
+			}
 		})
 	})
-
 })
