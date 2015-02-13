@@ -38,9 +38,6 @@ type SoftLayer_Virtual_Guest_Service interface {
 
 	ConfigureMetadataDisk(instanceId int) (datatypes.SoftLayer_Provisioning_Version1_Transaction, error)
 
-	AttachIscsiVolume(instanceId int, volumeId int) (string, error)
-	DetachIscsiVolume(instanceId int, volumeId int) error
-
 	AttachEphemeralDisk(instanceId int, diskSize int) error
 
 	GetUpgradeItemPrices(instanceId int) ([]datatypes.SoftLayer_Item_Price, error)
