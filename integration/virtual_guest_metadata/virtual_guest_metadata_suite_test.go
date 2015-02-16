@@ -1,4 +1,4 @@
-package services_test
+package virtual_guest_lifecycle_test
 
 import (
 	"testing"
@@ -11,7 +11,7 @@ import (
 
 func TestServices(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Integration: Services Suite")
+	RunSpecs(t, "Integration: Network Storage Lifecycle Suite")
 }
 
 func cleanUpTestResources() {
