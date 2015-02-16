@@ -19,6 +19,7 @@ import (
 const (
 	SOFTLAYER_API_URL  = "api.softlayer.com/rest/v3"
 	TEMPLATE_ROOT_PATH = "templates"
+	SL_GO_NON_VERBOSE  = "SL_GO_NON_VERBOSE"
 )
 
 type softLayerClient struct {
@@ -30,6 +31,8 @@ type softLayerClient struct {
 	httpClient *http.Client
 
 	softLayerServices map[string]softlayer.Service
+
+	nonVerbose bool
 }
 
 func NewSoftLayerClient(username, apiKey string) *softLayerClient {
@@ -45,6 +48,8 @@ func NewSoftLayerClient(username, apiKey string) *softLayerClient {
 				Proxy: http.ProxyFromEnvironment,
 			},
 		},
+
+		nonVerbose: checkNonVerbose(),
 
 		softLayerServices: map[string]softlayer.Service{},
 	}
@@ -237,7 +242,9 @@ func (slc *softLayerClient) makeHttpRequest(url string, requestType string, requ
 		return nil, err
 	}
 
-	fmt.Fprintf(os.Stderr, "\n---\n[softlayer-go] Request:\n%s\n", string(bs))
+	if !slc.nonVerbose {
+		fmt.Fprintf(os.Stderr, "\n---\n[softlayer-go] Request:\n%s\n", string(bs))
+	}
 
 	resp, err := slc.httpClient.Do(req)
 	if err != nil {
@@ -251,7 +258,9 @@ func (slc *softLayerClient) makeHttpRequest(url string, requestType string, requ
 		return nil, err
 	}
 
-	fmt.Fprintf(os.Stderr, "[softlayer-go] Response:\n%s\n", string(bs))
+	if !slc.nonVerbose {
+		fmt.Fprintf(os.Stderr, "[softlayer-go] Response:\n%s\n", string(bs))
+	}
 
 	responseBody, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
@@ -259,4 +268,22 @@ func (slc *softLayerClient) makeHttpRequest(url string, requestType string, requ
 	}
 
 	return responseBody, nil
+}
+
+//Private helper methods
+
+func checkNonVerbose() bool {
+	slGoNonVerbose := os.Getenv(SL_GO_NON_VERBOSE)
+	switch slGoNonVerbose {
+	case "yes":
+		return true
+	case "YES":
+		return true
+	case "true":
+		return true
+	case "TRUE":
+		return true
+	}
+
+	return false
 }
