@@ -43,6 +43,13 @@ var _ = Describe("SoftLayer_Network_Storage", func() {
 		})
 	})
 
+	Context("#CreateIscsiVolume", func() {
+		It("fails with error if the volume size is negative", func() {
+			_, err := networkStorageService.CreateIscsiVolume(-1, "fake-location")
+			Expect(err).To(HaveOccurred())
+		})
+	})
+
 	Context("#GetIscsiVolume", func() {
 		BeforeEach(func() {
 			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Network_Storage_Service_getIscsiVolume.json")

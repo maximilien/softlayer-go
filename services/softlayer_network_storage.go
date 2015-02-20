@@ -34,6 +34,10 @@ func (slns *softLayer_Network_Storage_Service) GetName() string {
 }
 
 func (slns *softLayer_Network_Storage_Service) CreateIscsiVolume(size int, location string) (datatypes.SoftLayer_Network_Storage, error) {
+	if size < 0 {
+		return datatypes.SoftLayer_Network_Storage{}, errors.New("Cannot create negative sized volumes")
+	}
+
 	iscsiVolumeItemId, err := slns.getIscsiVolumeItemIdBasedOnSize(size)
 	if err != nil {
 		return datatypes.SoftLayer_Network_Storage{}, err
