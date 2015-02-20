@@ -146,4 +146,43 @@ var _ = Describe("SoftLayer Virtual Guest Lifecycle", func() {
 		})
 	})
 
+	FContext("SoftLayer_VirtualGuest#CreateObject, SoftLayer_VirtualGuest#setTags, and SoftLayer_VirtualGuest#DeleteObject", func() {
+		It("creates the virtual guest instance, wait for active, wait for RUNNING, set some tags, verify that tags are added, then delete it", func() {
+			virtualGuest := testhelpers.CreateVirtualGuestAndMarkItTest([]datatypes.SoftLayer_Security_Ssh_Key{})
+
+			testhelpers.WaitForVirtualGuestToBeRunning(virtualGuest.Id)
+			testhelpers.WaitForVirtualGuestToHaveNoActiveTransactions(virtualGuest.Id)
+
+			virtualGuestService, err := testhelpers.CreateVirtualGuestService()
+			Expect(err).ToNot(HaveOccurred())
+
+			fmt.Printf("----> will attempt to set tags to the virtual guest `%d`\n", virtualGuest.Id)
+			tags := []string{"tag0", "tag1", "tag2"}
+			tagsWasSet, err := virtualGuestService.SetTags(virtualGuest.Id, tags)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(tagsWasSet).To(BeTrue())
+
+			fmt.Printf("----> verifying that tags were set the tags virtual guest `%d`\n", virtualGuest.Id)
+			tagReferences, err := virtualGuestService.GetTagReferences(virtualGuest.Id)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(len(tagReferences)).To(Equal(3))
+
+			fmt.Printf("----> verify that each tag was set to virtual guest: `%d`\n", virtualGuest.Id)
+			found := false
+			for _, tag := range tags {
+				for _, tagReference := range tagReferences {
+					if tag == tagReference.Tag.Name {
+						found = true
+						break
+					}
+				}
+				Expect(found).To(BeTrue())
+				found = false
+			}
+
+			fmt.Printf("----> successfully set the tags and verified tags were set in virtual guest `%d`\n", virtualGuest.Id)
+
+			testhelpers.DeleteVirtualGuest(virtualGuest.Id)
+		})
+	})
 })

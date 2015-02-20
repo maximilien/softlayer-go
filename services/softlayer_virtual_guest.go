@@ -424,8 +424,16 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetUpgradeItemPrices(instanceId in
 }
 
 func (slvgs *softLayer_Virtual_Guest_Service) SetTags(instanceId int, tags []string) (bool, error) {
+	var tagStringBuffer bytes.Buffer
+	for i, tag := range tags {
+		tagStringBuffer.WriteString(tag)
+		if i != len(tags)-1 {
+			tagStringBuffer.WriteString(", ")
+		}
+	}
+
 	setTagsParameters := datatypes.SoftLayer_Virtual_Guest_SetTags_Parameters{
-		Parameters: tags,
+		Parameters: []string{tagStringBuffer.String()},
 	}
 
 	requestBody, err := json.Marshal(setTagsParameters)
