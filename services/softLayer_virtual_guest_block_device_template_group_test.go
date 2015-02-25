@@ -154,4 +154,29 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			Expect(status.Name).To(Equal("Active"))
 		})
 	})
+
+	Context("#GetStorageLocations", func() {
+		BeforeEach(func() {
+			vgbdtGroup.Id = 1234567
+			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service_getStorageLocations.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("sucessfully retrieves SoftLayer_Locations for the Virtual_Guest_Block_Device_Template_Group instance status", func() {
+			locations, err := vgbdtgService.GetStorageLocations(vgbdtGroup.Id)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(len(locations)).To(Equal(18))
+
+			found := false
+			for _, location := range locations {
+				if location.LongName == "Paris 1" {
+					Expect(location.Id).To(Equal(449500))
+					Expect(location.Name).To(Equal("par01"))
+					found = true
+					break
+				}
+			}
+			Expect(found).To(BeTrue())
+		})
+	})
 })

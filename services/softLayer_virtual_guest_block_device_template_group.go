@@ -93,3 +93,18 @@ func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) Get
 
 	return status, nil
 }
+
+func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) GetStorageLocations(id int) ([]datatypes.SoftLayer_Location, error) {
+	response, err := slvgbdtg.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/getStorageLocations.json", slvgbdtg.GetName(), id), "GET", new(bytes.Buffer))
+	if err != nil {
+		return []datatypes.SoftLayer_Location{}, err
+	}
+
+	locations := []datatypes.SoftLayer_Location{}
+	err = json.Unmarshal(response, &locations)
+	if err != nil {
+		return []datatypes.SoftLayer_Location{}, err
+	}
+
+	return locations, nil
+}
