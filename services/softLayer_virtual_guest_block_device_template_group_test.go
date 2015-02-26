@@ -195,4 +195,36 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			Expect(imageType.Name).To(Equal("System"))
 		})
 	})
+
+	Context("#CreateFromExternalSource", func() {
+		var configuration datatypes.SoftLayer_Container_Virtual_Guest_Block_Device_Template_Configuration
+
+		BeforeEach(func() {
+			configuration = datatypes.SoftLayer_Container_Virtual_Guest_Block_Device_Template_Configuration{
+				Name: "fake-configuration-name",
+				Note: "fake-configuration-note",
+				OperatingSystemReferenceCode: "fake-operating-system-reference-code",
+				Uri: "swift://FakeObjectStorageAccountName>@fake-clusterName/fake-containerName/fake-fileName.vhd",
+			}
+			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service_createFromExternalSource.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("sucessfully retrieves the image type for the instance", func() {
+			vgbdtGroup, err := vgbdtgService.CreateFromExternalSource(configuration)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(vgbdtGroup.AccountId).To(Equal(278444))
+			Expect(vgbdtGroup.CreateDate).ToNot(BeNil())
+			Expect(vgbdtGroup.Id).To(Equal(211582))
+			Expect(vgbdtGroup.Name).To(Equal(" ubuntu-10.04-bosh-2168-IEM-itcs104-dea-stemcell"))
+			Expect(vgbdtGroup.Note).To(Equal("fake-note"))
+			Expect(*vgbdtGroup.ParentId).To(Equal(211578))
+			Expect(vgbdtGroup.PublicFlag).To(Equal(0))
+			Expect(vgbdtGroup.StatusId).To(Equal(1))
+			Expect(vgbdtGroup.Summary).To(Equal("fake-summary"))
+			Expect(vgbdtGroup.TransactionId).To(BeNil())
+			Expect(vgbdtGroup.UserRecordId).To(Equal(180816))
+			Expect(vgbdtGroup.GlobalIdentifier).To(Equal("fake-global-identifier"))
+		})
+	})
 })

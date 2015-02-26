@@ -123,3 +123,27 @@ func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) Get
 
 	return locations, nil
 }
+
+func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) CreateFromExternalSource(configuration datatypes.SoftLayer_Container_Virtual_Guest_Block_Device_Template_Configuration) (datatypes.SoftLayer_Virtual_Guest_Block_Device_Template_Group, error) {
+	parameters := datatypes.SoftLayer_Container_Virtual_Guest_Block_Device_Template_Configuration_Parameters{
+		Parameters: []datatypes.SoftLayer_Container_Virtual_Guest_Block_Device_Template_Configuration{configuration},
+	}
+
+	requestBody, err := json.Marshal(parameters)
+	if err != nil {
+		return datatypes.SoftLayer_Virtual_Guest_Block_Device_Template_Group{}, err
+	}
+
+	response, err := slvgbdtg.client.DoRawHttpRequest(fmt.Sprintf("%s/CreateFromExternalSource.json", slvgbdtg.GetName()), "POST", bytes.NewBuffer(requestBody))
+	if err != nil {
+		return datatypes.SoftLayer_Virtual_Guest_Block_Device_Template_Group{}, err
+	}
+
+	vgbdtGroup := datatypes.SoftLayer_Virtual_Guest_Block_Device_Template_Group{}
+	err = json.Unmarshal(response, &vgbdtGroup)
+	if err != nil {
+		return datatypes.SoftLayer_Virtual_Guest_Block_Device_Template_Group{}, err
+	}
+
+	return vgbdtGroup, err
+}
