@@ -162,7 +162,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			Expect(err).ToNot(HaveOccurred())
 		})
 
-		It("sucessfully retrieves SoftLayer_Locations for the Virtual_Guest_Block_Device_Template_Group instance status", func() {
+		It("sucessfully retrieves SoftLayer_Locations for the Virtual_Guest_Block_Device_Template_Group instance", func() {
 			locations, err := vgbdtgService.GetStorageLocations(vgbdtGroup.Id)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(len(locations)).To(Equal(18))
@@ -177,6 +177,22 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 				}
 			}
 			Expect(found).To(BeTrue())
+		})
+	})
+
+	Context("#GetImageType", func() {
+		BeforeEach(func() {
+			vgbdtGroup.Id = 1234567
+			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service_getImageType.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("sucessfully retrieves the image type for the instance", func() {
+			imageType, err := vgbdtgService.GetImageType(vgbdtGroup.Id)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(imageType.Description).To(Equal("a disk that may be replaced on upgrade"))
+			Expect(imageType.KeyName).To(Equal("SYSTEM"))
+			Expect(imageType.Name).To(Equal("System"))
 		})
 	})
 })

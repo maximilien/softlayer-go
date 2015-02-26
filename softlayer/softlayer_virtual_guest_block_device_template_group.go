@@ -15,4 +15,6 @@ type SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service interface {
 	GetStatus(id int) (datatypes.SoftLayer_Virtual_Guest_Block_Device_Template_Group_Status, error)
 
 	GetStorageLocations(id int) ([]datatypes.SoftLayer_Location, error)
+
+	GetImageType(id int) (datatypes.SoftLayer_Image_Type, error)
 }
