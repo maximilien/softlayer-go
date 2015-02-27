@@ -210,7 +210,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			Expect(err).ToNot(HaveOccurred())
 		})
 
-		It("sucessfully retrieves the image type for the instance", func() {
+		It("sucessfully creates a virtual guest device templte group from a configuration from an external VHD image", func() {
 			vgbdtGroup, err := vgbdtgService.CreateFromExternalSource(configuration)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(vgbdtGroup.AccountId).To(Equal(278444))
