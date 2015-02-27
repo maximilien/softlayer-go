@@ -227,4 +227,25 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			Expect(vgbdtGroup.GlobalIdentifier).To(Equal("fake-global-identifier"))
 		})
 	})
+
+	Context("#CopyToExternalSource", func() {
+		var configuration datatypes.SoftLayer_Container_Virtual_Guest_Block_Device_Template_Configuration
+
+		BeforeEach(func() {
+			configuration = datatypes.SoftLayer_Container_Virtual_Guest_Block_Device_Template_Configuration{
+				Name: "fake-configuration-name",
+				Note: "fake-configuration-note",
+				OperatingSystemReferenceCode: "fake-operating-system-reference-code",
+				Uri: "swift://FakeObjectStorageAccountName>@fake-clusterName/fake-containerName/fake-fileName.vhd",
+			}
+			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service_copyToExternalSource.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("successfully copies the virtual guest device template group to an external source", func() {
+			copied, err := vgbdtgService.CopyToExternalSource(configuration)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(copied).To(BeTrue())
+		})
+	})
 })
