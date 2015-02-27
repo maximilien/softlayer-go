@@ -169,3 +169,9 @@ func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) Cop
 
 	return true, nil
 }
+
+func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) GetImageTypeKeyName(id int) (string, error) {
+	response, err := slvgbdtg.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/GetImageTypeKeyName.json", slvgbdtg.GetName(), id), "GET", new(bytes.Buffer))
+
+	return string(response), err
+}

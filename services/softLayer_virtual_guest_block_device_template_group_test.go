@@ -196,6 +196,20 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 		})
 	})
 
+	Context("#GetImageTypeKeyName", func() {
+		BeforeEach(func() {
+			vgbdtGroup.Id = 1234567
+			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service_getImageTypeKeyName.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("sucessfully retrieves the image type key name for the instance", func() {
+			imageTypeKeyName, err := vgbdtgService.GetImageTypeKeyName(vgbdtGroup.Id)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(imageTypeKeyName).To(Equal("SYSTEM"))
+		})
+	})
+
 	Context("#CreateFromExternalSource", func() {
 		var configuration datatypes.SoftLayer_Container_Virtual_Guest_Block_Device_Template_Configuration
 
