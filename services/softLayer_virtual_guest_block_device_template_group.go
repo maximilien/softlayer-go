@@ -39,14 +39,19 @@ func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) Get
 	return vgbdtGroup, nil
 }
 
-func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) DeleteObject(id int) (bool, error) {
+func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) DeleteObject(id int) (datatypes.SoftLayer_Provisioning_Version1_Transaction, error) {
 	response, err := slvgbdtg.client.DoRawHttpRequest(fmt.Sprintf("%s/%d.json", slvgbdtg.GetName(), id), "DELETE", new(bytes.Buffer))
-
-	if res := string(response[:]); res != "true" {
-		return false, errors.New(fmt.Sprintf("Failed to delete instance with id '%d', got '%s' as response from the API.", id, res))
+	if err != nil {
+		return datatypes.SoftLayer_Provisioning_Version1_Transaction{}, err
 	}
 
-	return true, err
+	transaction := datatypes.SoftLayer_Provisioning_Version1_Transaction{}
+	err = json.Unmarshal(response, &transaction)
+	if err != nil {
+		return datatypes.SoftLayer_Provisioning_Version1_Transaction{}, err
+	}
+
+	return transaction, nil
 }
 
 func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) GetDatacenters(id int) ([]datatypes.SoftLayer_Location, error) {

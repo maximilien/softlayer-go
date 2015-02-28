@@ -76,20 +76,27 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 	Context("#DeleteObject", func() {
 		BeforeEach(func() {
 			vgbdtGroup.Id = 1234567
+			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service_deleteObject.json")
+			Expect(err).ToNot(HaveOccurred())
 		})
 
 		It("sucessfully deletes the SoftLayer_Virtual_Guest_Block_Device_Template_Group instance", func() {
-			fakeClient.DoRawHttpRequestResponse = []byte("true")
-			deleted, err := vgbdtgService.DeleteObject(vgbdtGroup.Id)
+			transaction, err := vgbdtgService.DeleteObject(vgbdtGroup.Id)
 			Expect(err).ToNot(HaveOccurred())
-			Expect(deleted).To(BeTrue())
-		})
 
-		It("fails to delete the SoftLayer_Virtual_Guest_Block_Device_Template_Group instance", func() {
-			fakeClient.DoRawHttpRequestResponse = []byte("false")
-			deleted, err := vgbdtgService.DeleteObject(vgbdtGroup.Id)
-			Expect(err).To(HaveOccurred())
-			Expect(deleted).To(BeFalse())
+			Expect(transaction.CreateDate).ToNot(BeNil())
+			Expect(transaction.ElapsedSeconds).To(Equal(1))
+			Expect(transaction.GuestId).To(Equal(1234567))
+			Expect(transaction.HardwareId).To(Equal(0))
+			Expect(transaction.Id).To(Equal(11878004))
+			Expect(transaction.ModifyDate).ToNot(BeNil())
+			Expect(transaction.StatusChangeDate).ToNot(BeNil())
+
+			Expect(transaction.TransactionGroup).To(Equal(datatypes.TransactionGroup{}))
+
+			Expect(transaction.TransactionStatus.AverageDuration).To(Equal(".42"))
+			Expect(transaction.TransactionStatus.FriendlyName).To(Equal("Cloud Reclaim Prep"))
+			Expect(transaction.TransactionStatus.Name).To(Equal("CLOUD_RECLAIM_PREP"))
 		})
 	})
 

@@ -7,7 +7,7 @@ import (
 type SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service interface {
 	Service
 
-	DeleteObject(id int) (bool, error)
+	DeleteObject(id int) (datatypes.SoftLayer_Provisioning_Version1_Transaction, error)
 
 	GetObject(id int) (datatypes.SoftLayer_Virtual_Guest_Block_Device_Template_Group, error)
 	GetDatacenters(id int) ([]datatypes.SoftLayer_Location, error)
