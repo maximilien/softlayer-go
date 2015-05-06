@@ -673,4 +673,36 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			}
 		})
 	})
+
+	Context("#AttachDiskImage", func() {
+		BeforeEach(func() {
+			virtualGuest.Id = 1234567
+			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_attachDiskImage.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("attaches disk image with ID `1234567` to virtual guest instance", func() {
+			imageId := 1234567
+			transaction, err := virtualGuestService.AttachDiskImage(virtualGuest.Id, imageId)
+
+			Expect(err).ToNot(HaveOccurred())
+			Expect(transaction).ToNot(Equal(datatypes.SoftLayer_Provisioning_Version1_Transaction{}))
+		})
+	})
+
+	Context("#DetachDiskImage", func() {
+		BeforeEach(func() {
+			virtualGuest.Id = 1234567
+			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_detachDiskImage.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("detaches disk image with ID `1234567` to virtual guest instance", func() {
+			imageId := 1234567
+			transaction, err := virtualGuestService.DetachDiskImage(virtualGuest.Id, imageId)
+
+			Expect(err).ToNot(HaveOccurred())
+			Expect(transaction).ToNot(Equal(datatypes.SoftLayer_Provisioning_Version1_Transaction{}))
+		})
+	})
 })

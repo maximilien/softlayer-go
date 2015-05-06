@@ -7,12 +7,14 @@ import (
 type SoftLayer_Virtual_Guest_Service interface {
 	Service
 
+	AttachDiskImage(instanceId int, imageId int) (datatypes.SoftLayer_Provisioning_Version1_Transaction, error)
 	AttachEphemeralDisk(instanceId int, diskSize int) error
 
 	ConfigureMetadataDisk(instanceId int) (datatypes.SoftLayer_Provisioning_Version1_Transaction, error)
 	CreateObject(template datatypes.SoftLayer_Virtual_Guest_Template) (datatypes.SoftLayer_Virtual_Guest, error)
 
 	DeleteObject(instanceId int) (bool, error)
+	DetachDiskImage(instanceId int, imageId int) (datatypes.SoftLayer_Provisioning_Version1_Transaction, error)
 
 	EditObject(instanceId int, template datatypes.SoftLayer_Virtual_Guest) (bool, error)
 

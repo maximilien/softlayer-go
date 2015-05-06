@@ -468,6 +468,58 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetTagReferences(instanceId int) (
 	return tagReferences, nil
 }
 
+func (slvgs *softLayer_Virtual_Guest_Service) AttachDiskImage(instanceId int, imageId int) (datatypes.SoftLayer_Provisioning_Version1_Transaction, error) {
+	parameters := datatypes.SoftLayer_Virtual_GuestInitParameters{
+		Parameters: datatypes.SoftLayer_Virtual_GuestInitParameter{
+			ImageId: imageId,
+		},
+	}
+
+	requestBody, err := json.Marshal(parameters)
+	if err != nil {
+		return datatypes.SoftLayer_Provisioning_Version1_Transaction{}, err
+	}
+
+	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/attachDiskImage.json", slvgs.GetName(), instanceId), "POST", bytes.NewBuffer(requestBody))
+	if err != nil {
+		return datatypes.SoftLayer_Provisioning_Version1_Transaction{}, err
+	}
+
+	transaction := datatypes.SoftLayer_Provisioning_Version1_Transaction{}
+	err = json.Unmarshal(response, &transaction)
+	if err != nil {
+		return datatypes.SoftLayer_Provisioning_Version1_Transaction{}, err
+	}
+
+	return transaction, nil
+}
+
+func (slvgs *softLayer_Virtual_Guest_Service) DetachDiskImage(instanceId int, imageId int) (datatypes.SoftLayer_Provisioning_Version1_Transaction, error) {
+	parameters := datatypes.SoftLayer_Virtual_GuestInitParameters{
+		Parameters: datatypes.SoftLayer_Virtual_GuestInitParameter{
+			ImageId: imageId,
+		},
+	}
+
+	requestBody, err := json.Marshal(parameters)
+	if err != nil {
+		return datatypes.SoftLayer_Provisioning_Version1_Transaction{}, err
+	}
+
+	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/detachDiskImage.json", slvgs.GetName(), instanceId), "POST", bytes.NewBuffer(requestBody))
+	if err != nil {
+		return datatypes.SoftLayer_Provisioning_Version1_Transaction{}, err
+	}
+
+	transaction := datatypes.SoftLayer_Provisioning_Version1_Transaction{}
+	err = json.Unmarshal(response, &transaction)
+	if err != nil {
+		return datatypes.SoftLayer_Provisioning_Version1_Transaction{}, err
+	}
+
+	return transaction, nil
+}
+
 //Private methods
 func (slvgs *softLayer_Virtual_Guest_Service) checkCreateObjectRequiredValues(template datatypes.SoftLayer_Virtual_Guest_Template) error {
 	var err error
