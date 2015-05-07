@@ -705,4 +705,64 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			Expect(transaction).ToNot(Equal(datatypes.SoftLayer_Provisioning_Version1_Transaction{}))
 		})
 	})
+
+	Context("#ActivatePrivatePort", func() {
+		BeforeEach(func() {
+			virtualGuest.Id = 1234567
+			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_activatePrivatePort.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("activates private port for virtual guest instance", func() {
+			activated, err := virtualGuestService.ActivatePrivatePort(virtualGuest.Id)
+
+			Expect(err).ToNot(HaveOccurred())
+			Expect(activated).To(BeTrue())
+		})
+	})
+
+	Context("#ActivatePublicPort", func() {
+		BeforeEach(func() {
+			virtualGuest.Id = 1234567
+			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_activatePublicPort.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("activates public port for virtual guest instance", func() {
+			activated, err := virtualGuestService.ActivatePublicPort(virtualGuest.Id)
+
+			Expect(err).ToNot(HaveOccurred())
+			Expect(activated).To(BeTrue())
+		})
+	})
+
+	Context("#ShutdownPrivatePort", func() {
+		BeforeEach(func() {
+			virtualGuest.Id = 1234567
+			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_shutdownPrivatePort.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("shutdown private port for virtual guest instance", func() {
+			shutdowned, err := virtualGuestService.ShutdownPrivatePort(virtualGuest.Id)
+
+			Expect(err).ToNot(HaveOccurred())
+			Expect(shutdowned).To(BeTrue())
+		})
+	})
+
+	Context("#ShutdownPublicPort", func() {
+		BeforeEach(func() {
+			virtualGuest.Id = 1234567
+			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_shutdownPublicPort.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("shutdown public port for virtual guest instance", func() {
+			shutdowned, err := virtualGuestService.ShutdownPublicPort(virtualGuest.Id)
+
+			Expect(err).ToNot(HaveOccurred())
+			Expect(shutdowned).To(BeTrue())
+		})
+	})
 })

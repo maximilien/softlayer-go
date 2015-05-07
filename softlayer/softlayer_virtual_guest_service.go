@@ -7,6 +7,8 @@ import (
 type SoftLayer_Virtual_Guest_Service interface {
 	Service
 
+	ActivatePrivatePort(instanceId int) (bool, error)
+	ActivatePublicPort(instanceId int) (bool, error)
 	AttachDiskImage(instanceId int, imageId int) (datatypes.SoftLayer_Provisioning_Version1_Transaction, error)
 	AttachEphemeralDisk(instanceId int, diskSize int) error
 
@@ -41,4 +43,6 @@ type SoftLayer_Virtual_Guest_Service interface {
 
 	SetMetadata(instanceId int, metadata string) (bool, error)
 	SetTags(instanceId int, tags []string) (bool, error)
+	ShutdownPrivatePort(instanceId int) (bool, error)
+	ShutdownPublicPort(instanceId int) (bool, error)
 }
