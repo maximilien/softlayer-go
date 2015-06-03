@@ -1,20 +1,17 @@
-[{
-	"accountId": 278444,
-	"modifyDate": "2014-08-24T18:54:44-08:00",
-	"id": 1234567,
-	"name": "fake-vlan0",
-	"networkVrfId": 0,
-	"note": "fake note 0",
-	"primarySubnetId": 0,
-	"vlanNumber": 0
-},
-{
-	"accountId": 278444,
-	"modifyDate": "2014-08-24T18:54:44-08:00",
-	"id": 1234567,
-	"name": "fake-vlan1",
-	"networkVrfId": 1,
-	"note": "fake note 1",
-	"primarySubnetId": 1,
-	"vlanNumber": 1
-}]
+[
+    {
+        "accountId": 278444,
+        "id": 293731,
+        "modifyDate": "2013-11-19T08:33:52-08:00",
+        "name": "AMS CLMS Pub",
+        "primarySubnetId": 517311,
+        "vlanNumber": 809
+    },
+    {
+        "accountId": 278444,
+        "id": 400972,
+        "modifyDate": "2014-04-23T01:10:02-08:00",
+        "primarySubnetId": 551006,
+        "vlanNumber": 1483
+    }
+]
