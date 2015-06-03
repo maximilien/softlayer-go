@@ -1,0 +1,20 @@
+[{
+	"accountId": 278444,
+	"modifyDate": "2014-08-24T18:54:44-08:00",
+	"id": 1234567,
+	"name": "fake-vlan0",
+	"networkVrfId": 0,
+	"note": "fake note 0",
+	"primarySubnetId": 0,
+	"vlanNumber": 0
+},
+{
+	"accountId": 278444,
+	"modifyDate": "2014-08-24T18:54:44-08:00",
+	"id": 1234567,
+	"name": "fake-vlan1",
+	"networkVrfId": 1,
+	"note": "fake note 1",
+	"primarySubnetId": 1,
+	"vlanNumber": 1
+}]

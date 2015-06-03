@@ -758,11 +758,34 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			Expect(err).ToNot(HaveOccurred())
 		})
 
-		It("shutdown public port for virtual guest instance", func() {
+		It("shuts down public port for virtual guest instance", func() {
 			shutdowned, err := virtualGuestService.ShutdownPublicPort(virtualGuest.Id)
 
 			Expect(err).ToNot(HaveOccurred())
 			Expect(shutdowned).To(BeTrue())
+		})
+	})
+
+	Context("#GetNetworkVlans", func() {
+		BeforeEach(func() {
+			virtualGuest.Id = 1234567
+			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_getNetworkVlans.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("gets network vlans for virtual guest", func() {
+			networkVlans, err := virtualGuestService.GetNetworkVlans(virtualGuest.Id)
+
+			Expect(err).ToNot(HaveOccurred())
+			Expect(len(networkVlans)).To(Equal(2))
+			Expect(networkVlans[0].AccountId).To(Equal(278444))
+			Expect(networkVlans[0].Id).To(Equal(1234567))
+			Expect(networkVlans[0].ModifyDate).ToNot(BeNil())
+			Expect(networkVlans[0].Name).To(Equal("fake-vlan0"))
+			Expect(networkVlans[0].NetworkVrfId).To(Equal(0))
+			Expect(networkVlans[0].Note).To(Equal("fake note 0"))
+			Expect(networkVlans[0].PrimarySubnetId).To(Equal(0))
+			Expect(networkVlans[0].VlanNumber).To(Equal(0))
 		})
 	})
 })

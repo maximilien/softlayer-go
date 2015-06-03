@@ -596,6 +596,21 @@ func (slvgs *softLayer_Virtual_Guest_Service) ShutdownPublicPort(instanceId int)
 	return false, errors.New(fmt.Sprintf("Failed to shutdown public port for virtual guest is pingable for instance with id '%d', got '%s' as response from the API.", instanceId, res))
 }
 
+func (slvgs *softLayer_Virtual_Guest_Service) GetNetworkVlans(instanceId int) ([]datatypes.SoftLayer_Network_Vlan, error) {
+	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/getNetworkVlans.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+	if err != nil {
+		return []datatypes.SoftLayer_Network_Vlan{}, err
+	}
+
+	networkVlans := []datatypes.SoftLayer_Network_Vlan{}
+	err = json.Unmarshal(response, &networkVlans)
+	if err != nil {
+		return []datatypes.SoftLayer_Network_Vlan{}, err
+	}
+
+	return networkVlans, nil
+}
+
 //Private methods
 func (slvgs *softLayer_Virtual_Guest_Service) checkCreateObjectRequiredValues(template datatypes.SoftLayer_Virtual_Guest_Template) error {
 	var err error

@@ -24,6 +24,7 @@ type SoftLayer_Virtual_Guest_Service interface {
 
 	GetActiveTransaction(instanceId int) (datatypes.SoftLayer_Provisioning_Version1_Transaction, error)
 	GetActiveTransactions(instanceId int) ([]datatypes.SoftLayer_Provisioning_Version1_Transaction, error)
+	GetNetworkVlans(instanceId int) ([]datatypes.SoftLayer_Network_Vlan, error)
 	GetObject(instanceId int) (datatypes.SoftLayer_Virtual_Guest, error)
 	GetPrimaryIpAddress(instanceId int) (string, error)
 	GetPowerState(instanceId int) (datatypes.SoftLayer_Virtual_Guest_Power_State, error)
