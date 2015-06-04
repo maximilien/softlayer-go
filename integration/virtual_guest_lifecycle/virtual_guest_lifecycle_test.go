@@ -77,6 +77,18 @@ var _ = Describe("SoftLayer Virtual Guest Lifecycle", func() {
 
 			testhelpers.DeleteVirtualGuest(virtualGuest.Id)
 		})
+
+		It("creates the virtual guest instance and waits for it to be active, get it's network VLANS, and then delete it", func() {
+			virtualGuest := testhelpers.CreateVirtualGuestAndMarkItTest([]datatypes.SoftLayer_Security_Ssh_Key{})
+
+			testhelpers.WaitForVirtualGuestToBeRunning(virtualGuest.Id)
+
+			networkVlans, err := virtualGuestService.GetNetworkVlans(virtualGuest.Id)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(len(networkVlans)).To(BeNumerically(">", 0))
+
+			testhelpers.DeleteVirtualGuest(virtualGuest.Id)
+		})
 	})
 
 	Context("SoftLayer_VirtualGuest#CreateObject, SoftLayer_VirtualGuest#rebootSoft, wait for reboot to complete, and SoftLayer_VirtualGuest#DeleteObject", func() {
