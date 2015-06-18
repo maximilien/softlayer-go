@@ -788,4 +788,19 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			Expect(networkVlans[0].VlanNumber).To(Equal(809))
 		})
 	})
+
+	Context("#CheckHostDiskAvailability", func() {
+		BeforeEach(func() {
+			virtualGuest.Id = 1234567
+			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_checkHostDiskAvailability.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("checks for host disk availability", func() {
+			available, err := virtualGuestService.CheckHostDiskAvailability(virtualGuest.Id, 10*1024)
+
+			Expect(err).ToNot(HaveOccurred())
+			Expect(available).To(BeTrue())
+		})
+	})
 })

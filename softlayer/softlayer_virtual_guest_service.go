@@ -12,6 +12,7 @@ type SoftLayer_Virtual_Guest_Service interface {
 	AttachDiskImage(instanceId int, imageId int) (datatypes.SoftLayer_Provisioning_Version1_Transaction, error)
 	AttachEphemeralDisk(instanceId int, diskSize int) error
 
+	CheckHostDiskAvailability(instanceId int, diskCapacity int) (bool, error)
 	ConfigureMetadataDisk(instanceId int) (datatypes.SoftLayer_Provisioning_Version1_Transaction, error)
 	CreateObject(template datatypes.SoftLayer_Virtual_Guest_Template) (datatypes.SoftLayer_Virtual_Guest, error)
 
