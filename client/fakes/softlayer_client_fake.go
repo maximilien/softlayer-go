@@ -24,6 +24,8 @@ type FakeSoftLayerClient struct {
 
 	SoftLayerServices map[string]softlayer.Service
 
+	DoRawHttpRequestResponseCount int
+
 	DoRawHttpRequestResponse       []byte
 	DoRawHttpRequestResponses      [][]byte
 	DoRawHttpRequestResponsesIndex int
@@ -44,6 +46,8 @@ func NewFakeSoftLayerClient(username, apiKey string) *FakeSoftLayerClient {
 		TemplatePath: filepath.Join(pwd, TEMPLATE_ROOT_PATH),
 
 		SoftLayerServices: map[string]softlayer.Service{},
+
+		DoRawHttpRequestResponseCount: 0,
 
 		DoRawHttpRequestResponse:       nil,
 		DoRawHttpRequestResponses:      [][]byte{},
@@ -165,6 +169,8 @@ func (fslc *FakeSoftLayerClient) GetSoftLayer_Hardware_Service() (softlayer.Soft
 
 //Public methods
 func (fslc *FakeSoftLayerClient) DoRawHttpRequestWithObjectMask(path string, masks []string, requestType string, requestBody *bytes.Buffer) ([]byte, error) {
+	fslc.DoRawHttpRequestResponseCount += 1
+
 	if fslc.DoRawHttpRequestError != nil {
 		return []byte{}, fslc.DoRawHttpRequestError
 	}
@@ -178,6 +184,8 @@ func (fslc *FakeSoftLayerClient) DoRawHttpRequestWithObjectMask(path string, mas
 }
 
 func (fslc *FakeSoftLayerClient) DoRawHttpRequest(path string, requestType string, requestBody *bytes.Buffer) ([]byte, error) {
+	fslc.DoRawHttpRequestResponseCount += 1
+
 	if fslc.DoRawHttpRequestError != nil {
 		return []byte{}, fslc.DoRawHttpRequestError
 	}
