@@ -4,7 +4,7 @@ go:
 before_install:
 - export SL_USERNAME=fake-username
 - export SL_API_KEY=fake-api-key
-- go get code.google.com/p/go.tools/cmd/vet
+- go get golang.org/x/tools/cmd/vet
 - go get github.com/tools/godep
 - go get github.com/onsi/ginkgo/...
 - go get github.com/onsi/gomega/...

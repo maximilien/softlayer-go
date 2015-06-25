@@ -2,7 +2,6 @@ package virtual_guest_lifecycle_test
 
 import (
 	"fmt"
-	"os"
 	"time"
 
 	. "github.com/onsi/ginkgo"
@@ -48,10 +47,7 @@ var _ = Describe("SoftLayer Virtual Guest Lifecycle", func() {
 
 	Context("SoftLayer_SecuritySshKey#CreateObject and SoftLayer_SecuritySshKey#DeleteObject", func() {
 		It("creates the ssh key and verify it is present and then deletes it", func() {
-			sshKeyPath := os.Getenv("SOFTLAYER_GO_TEST_SSH_KEY_PATH1")
-			Expect(sshKeyPath).ToNot(Equal(""), "SOFTLAYER_GO_TEST_SSH_KEY_PATH1 env variable is not set")
-
-			createdSshKey := testhelpers.CreateTestSshKey(sshKeyPath)
+			createdSshKey, _ := testhelpers.CreateTestSshKey()
 			testhelpers.WaitForCreatedSshKeyToBePresent(createdSshKey.Id)
 
 			sshKeyService, err := testhelpers.CreateSecuritySshKeyService()
@@ -155,13 +151,10 @@ var _ = Describe("SoftLayer Virtual Guest Lifecycle", func() {
 
 	Context("SoftLayer_SecuritySshKey#CreateObject and SoftLayer_VirtualGuest#CreateObject", func() {
 		It("creates key, creates virtual guest and adds key to list of VG", func() {
-			sshKeyPath := os.Getenv("SOFTLAYER_GO_TEST_SSH_KEY_PATH2")
-			Expect(sshKeyPath).ToNot(Equal(""), "SOFTLAYER_GO_TEST_SSH_KEY_PATH2 env variable is not set")
-
 			err = testhelpers.FindAndDeleteTestSshKeys()
 			Expect(err).ToNot(HaveOccurred())
 
-			createdSshKey := testhelpers.CreateTestSshKey(sshKeyPath)
+			createdSshKey, _ := testhelpers.CreateTestSshKey()
 			testhelpers.WaitForCreatedSshKeyToBePresent(createdSshKey.Id)
 
 			virtualGuest := testhelpers.CreateVirtualGuestAndMarkItTest([]datatypes.SoftLayer_Security_Ssh_Key{createdSshKey})
@@ -174,7 +167,7 @@ var _ = Describe("SoftLayer Virtual Guest Lifecycle", func() {
 		})
 	})
 
-	FContext("SoftLayer_VirtualGuest#CreateObject, SoftLayer_VirtualGuest#setTags, and SoftLayer_VirtualGuest#DeleteObject", func() {
+	Context("SoftLayer_VirtualGuest#CreateObject, SoftLayer_VirtualGuest#setTags, and SoftLayer_VirtualGuest#DeleteObject", func() {
 		It("creates the virtual guest instance, wait for active, wait for RUNNING, set some tags, verify that tags are added, then delete it", func() {
 			virtualGuest := testhelpers.CreateVirtualGuestAndMarkItTest([]datatypes.SoftLayer_Security_Ssh_Key{})
 

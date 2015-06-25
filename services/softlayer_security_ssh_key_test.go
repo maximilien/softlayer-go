@@ -72,6 +72,41 @@ var _ = Describe("SoftLayer_Ssh_Key_Service", func() {
 		})
 	})
 
+	Context("#GetObject", func() {
+		BeforeEach(func() {
+			sshKey.Id = 1337
+			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Security_Ssh_Key_Service_getObject.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("gets an SSH key", func() {
+			key, err := sshKeyService.GetObject(sshKey.Id)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(key.Id).To(Equal(1337))
+			Expect(key.Fingerprint).To(Equal("e9:56:6d:b1:f3:8b:f1:2a:dd:a3:24:73:4f:d3:1b:3c"))
+			Expect(key.Key).To(Equal("ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAA/DczU7Wj4hgAgy14LfjOvVKtDBOfwFgHFwsXQ7Efp0pQRBOIwWoQfQ3hHMWw1X5Q7Mhwl9Gbat9V7tu985Hf5h9BOrq9D/ZIFQ1yhsvt6klZYoHHbM5kHFUegx9lgn3mHcfLNcvahDHpQAFXCPknc1VNpn0VP0RPhqZ8pubP7r9/Uczmit1ipy43SGzlxM46cyyqNPgDDRJepDla6coJJGuWVZMZaTXc3fNNFTSIi1ODDQgXxaYWcz5ThcQ1CT/MLSzAz7IDNNjAr5W40ZUmxxHzA5nPmLcKKqqXrxbnCyw+SrVjhIsKSoz41caYdSz2Bpw00ZxzVO9dCnHsEw=="))
+			Expect(key.Label).To(Equal("packer-53ead4c1-df11-9023-1173-eef40a291b7e"))
+			Expect(key.Notes).To(Equal("My test key"))
+		})
+	})
+
+	Context("#EditObject", func() {
+		BeforeEach(func() {
+			sshKey.Id = 1338
+			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Security_Ssh_Key_Service_editObject.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("edits an existing SSH key", func() {
+			edited := datatypes.SoftLayer_Security_Ssh_Key{
+				Label: "edited-label",
+			}
+			result, err := sshKeyService.EditObject(sshKey.Id, edited)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(result).To(BeTrue())
+		})
+	})
+
 	Context("#DeleteObject", func() {
 		BeforeEach(func() {
 			sshKey.Id = 1234567
