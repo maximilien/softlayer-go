@@ -67,7 +67,6 @@ func (slssks *softLayer_Security_Ssh_Key_Service) GetObject(sshKeyId int) (datat
 	}
 
 	response, err := slssks.client.DoRawHttpRequestWithObjectMask(fmt.Sprintf("%s/%d/getObject.json", slssks.GetName(), sshKeyId), objectMask, "GET", new(bytes.Buffer))
-
 	if err != nil {
 		return datatypes.SoftLayer_Security_Ssh_Key{}, err
 	}
@@ -77,6 +76,7 @@ func (slssks *softLayer_Security_Ssh_Key_Service) GetObject(sshKeyId int) (datat
 	if err != nil {
 		return datatypes.SoftLayer_Security_Ssh_Key{}, err
 	}
+
 	return sshKey, nil
 }
 
