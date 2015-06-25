@@ -54,4 +54,4 @@ if err != nil {
 //Use the virtualGuest or other services...
 ```
 
-**NOTE**: this client is created to support the [bosh-softlayer-cpi](https://github.com/maximilien/bosh-softlayer-cpi) project and only implements the portion of the SL APIs needed to complete the implementation of the BOSH CPI. You are welcome to use it in your own projects and as you do if you find areas where have not implemented yet but that you need, please submit Pull Requests or engage with us in discussions.
+**NOTE**: this client is created to support the [bosh-softlayer-cpi](https://github.com/maximilien/bosh-softlayer-cpi) project and only implements the portion of the SL APIs needed to complete the implementation of the BOSH CPI. You are welcome to use it in your own projects and as you do if you find areas we have not yet implemented but that you need, please submit [Pull Requests](https://help.github.com/articles/using-pull-requests/) or engage with us in discussions.
