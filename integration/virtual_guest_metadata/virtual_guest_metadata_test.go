@@ -2,7 +2,6 @@ package virtual_guest_lifecycle_test
 
 import (
 	"fmt"
-	"os"
 	"time"
 
 	. "github.com/onsi/ginkgo"
@@ -34,13 +33,10 @@ var _ = Describe("SoftLayer Virtual Guest Lifecycle", func() {
 
 	Context("SoftLayer_VirtualGuestService#setUserMetadata and SoftLayer_VirtualGuestService#configureMetadataDisk", func() {
 		It("creates ssh key, VirtualGuest, waits for it to be RUNNING, set user data, configures disk, verifies user data, and delete VG", func() {
-			sshKeyPath := os.Getenv("SOFTLAYER_GO_TEST_SSH_KEY_PATH2")
-			Expect(sshKeyPath).ToNot(Equal(""), "SOFTLAYER_GO_TEST_SSH_KEY_PATH2 env variable is not set")
-
 			err = testhelpers.FindAndDeleteTestSshKeys()
 			Expect(err).ToNot(HaveOccurred())
 
-			createdSshKey := testhelpers.CreateTestSshKey(sshKeyPath)
+			createdSshKey, publicKeyValue := testhelpers.CreateTestSshKey()
 			testhelpers.WaitForCreatedSshKeyToBePresent(createdSshKey.Id)
 
 			virtualGuest := testhelpers.CreateVirtualGuestAndMarkItTest([]datatypes.SoftLayer_Security_Ssh_Key{createdSshKey})
@@ -58,10 +54,7 @@ var _ = Describe("SoftLayer Virtual Guest Lifecycle", func() {
 			testhelpers.WaitForVirtualGuestToHaveNoActiveTransactions(virtualGuest.Id)
 			fmt.Printf("====> Set Metadata and configured disk on instance: %d in %d time\n", virtualGuest.Id, time.Since(startTime))
 
-			sshKeyFilePath := os.Getenv("SOFTLAYER_GO_TEST_SSH_KEY_PATH2")
-			Expect(sshKeyFilePath).ToNot(Equal(""), "SOFTLAYER_GO_TEST_SSH_KEY_PATH2 env variable is not set")
-
-			testhelpers.TestUserMetadata(userMetadata, sshKeyFilePath)
+			testhelpers.TestUserMetadata(userMetadata, publicKeyValue)
 
 			startTime = time.Now()
 			userMetadata = "softlayer-go test MODIFIED fake metadata"
@@ -71,7 +64,7 @@ var _ = Describe("SoftLayer Virtual Guest Lifecycle", func() {
 			testhelpers.WaitForVirtualGuestToHaveNoActiveTransactions(virtualGuest.Id)
 			fmt.Printf("====> Set Metadata and configured disk on instance: %d in %d time\n", virtualGuest.Id, time.Since(startTime))
 
-			testhelpers.TestUserMetadata(userMetadata, sshKeyFilePath)
+			testhelpers.TestUserMetadata(userMetadata, publicKeyValue)
 
 			testhelpers.DeleteVirtualGuest(virtualGuest.Id)
 			testhelpers.DeleteSshKey(createdSshKey.Id)

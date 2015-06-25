@@ -1,6 +1,10 @@
 package test_helpers
 
 import (
+	"crypto/rand"
+	"crypto/rsa"
+	"crypto/x509"
+	"encoding/pem"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -288,33 +292,114 @@ func FileExists(filePath string) bool {
 	return !os.IsNotExist(err)
 }
 
-func CreateTestSshKey(sshKeyPath string) datatypes.SoftLayer_Security_Ssh_Key {
-	testSshKeyValue, err := ioutil.ReadFile(sshKeyPath)
+func generateSshKeyUsingGo() (string, string, error) {
+	privateKey, err := rsa.GenerateKey(rand.Reader, 2014)
+	if err != nil {
+		return "", "", err
+	}
+
+	fmt.Printf("----> creating ssh private key using Golang\n")
+	privateKeyDer := x509.MarshalPKCS1PrivateKey(privateKey)
+	privateKeyBlock := pem.Block{
+		Type:    "RSA PRIVATE KEY",
+		Headers: nil,
+		Bytes:   privateKeyDer,
+	}
+	privateKeyPem := string(pem.EncodeToMemory(&privateKeyBlock))
+
+	fmt.Printf("----> creating ssh public key using Golang\n")
+	publicKey := privateKey.PublicKey
+	publicKeyDer, err := x509.MarshalPKIXPublicKey(&publicKey)
+	if err != nil {
+		return "", "", err
+	}
+
+	publicKeyBlock := pem.Block{
+		Type:    "PUBLIC KEY",
+		Headers: nil,
+		Bytes:   publicKeyDer,
+	}
+
+	publicKeyPem := string(pem.EncodeToMemory(&publicKeyBlock))
+
+	return privateKeyPem, publicKeyPem, nil
+}
+
+func generateSshKeyUsingSshKeyGen() (string, string, error) {
+	tmpDir, err := ioutil.TempDir("", "generateSshKeyUsingSshKeyGen")
+	if err != nil {
+		return "", "", err
+	}
+
+	rsaKeyFileName := filepath.Join(tmpDir, "ssh_key_file.rsa")
+	rsaKeyFileNamePub := rsaKeyFileName + ".pub"
+
+	sshKeyGen, err := exec.LookPath("ssh-keygen")
+	if err != nil {
+		return "", "", err
+	}
+
+	out, err := exec.Command(sshKeyGen,
+		"-f", rsaKeyFileName,
+		"-t", "rsa", "-N", "").Output()
+
+	//DEBUG
+	fmt.Println("========= output ")
+	fmt.Println(string(out))
+	//END DEBUG
+
+	if err != nil {
+		return "", "", err
+	}
+
+	privateKey, err := ioutil.ReadFile(rsaKeyFileName)
+	if err != nil {
+		return "", "", err
+	}
+
+	publicKey, err := ioutil.ReadFile(rsaKeyFileNamePub)
+	if err != nil {
+		return "", "", err
+	}
+
+	err = os.RemoveAll(tmpDir)
+	if err != nil {
+		return "", "", err
+	}
+
+	return string(privateKey), string(publicKey), nil
+}
+
+func GenerateSshKey() (string, string, error) {
+	return generateSshKeyUsingSshKeyGen()
+}
+
+func CreateTestSshKey() (datatypes.SoftLayer_Security_Ssh_Key, string) {
+	_, testSshKeyValue, err := GenerateSshKey()
 	Expect(err).ToNot(HaveOccurred())
 
 	sshKey := datatypes.SoftLayer_Security_Ssh_Key{
-		Key:         strings.Trim(string(testSshKeyValue), "\n"),
-		Fingerprint: "f6:c2:9d:57:2f:74:be:a1:db:71:f2:e5:8e:0f:84:7e",
-		Label:       TEST_LABEL_PREFIX,
-		Notes:       TEST_NOTES_PREFIX,
+		Key:   strings.Trim(string(testSshKeyValue), "\n"),
+		Label: TEST_LABEL_PREFIX,
+		Notes: TEST_NOTES_PREFIX,
 	}
 
 	sshKeyService, err := CreateSecuritySshKeyService()
 	Expect(err).ToNot(HaveOccurred())
 
-	fmt.Printf("----> creating ssh key\n")
+	fmt.Printf("----> creating ssh key in SL\n")
 	createdSshKey, err := sshKeyService.CreateObject(sshKey)
 	Expect(err).ToNot(HaveOccurred())
+
 	Expect(createdSshKey.Key).To(Equal(sshKey.Key), "key")
 	Expect(createdSshKey.Label).To(Equal(sshKey.Label), "label")
 	Expect(createdSshKey.Notes).To(Equal(sshKey.Notes), "notes")
 	Expect(createdSshKey.CreateDate).ToNot(BeNil(), "createDate")
-	Expect(createdSshKey.Fingerprint).ToNot(Equal(""), "fingerprint")
 	Expect(createdSshKey.Id).To(BeNumerically(">", 0), "id")
 	Expect(createdSshKey.ModifyDate).To(BeNil(), "modifyDate")
-	fmt.Printf("----> created ssh key: %d\n", createdSshKey.Id)
+	fmt.Printf("----> created ssh key: %d\n in SL", createdSshKey.Id)
 
-	return createdSshKey
+	return createdSshKey, string(testSshKeyValue)
 }
 
 func CreateVirtualGuestAndMarkItTest(securitySshKeys []datatypes.SoftLayer_Security_Ssh_Key) datatypes.SoftLayer_Virtual_Guest {
@@ -510,8 +595,13 @@ func SshExecOnVirtualGuest(virtualGuestId int, sshKeyFilePath string, remoteFile
 	return session.ExitCode()
 }
 
-func TestUserMetadata(userMetadata, sshKeyFilePath string) {
+func TestUserMetadata(userMetadata, sshKeyValue string) {
 	workingDir, err := os.Getwd()
+	Expect(err).ToNot(HaveOccurred())
+
+	sshKeyFilePath := filepath.Join(workingDir, "sshTemp")
+	err = ioutil.WriteFile(sshKeyFilePath, []byte(sshKeyValue), 600)
+	defer os.Remove(sshKeyFilePath)
 	Expect(err).ToNot(HaveOccurred())
 
 	fetchUserMetadataShFilePath := filepath.Join(workingDir, "..", "scripts", "fetch_user_metadata.sh")
