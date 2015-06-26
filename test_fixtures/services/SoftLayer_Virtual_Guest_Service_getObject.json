@@ -20,7 +20,14 @@
 	"primaryBackendIpAddress": "10.106.192.42",
 	"primaryIpAddress": "23.246.234.32",
 	"location": {
-		"id": 1234567
+		"id": 1234567,
+		"name": "R5",
+		"longName": "Room 5"
+	},
+	"datacenter": {
+		"id": 456,
+		"name": "bej2",
+		"longName": "Beijing 2"
 	},
 	"operatingSystem": {
 		"passwords": [
