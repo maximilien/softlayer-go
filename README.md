@@ -77,7 +77,7 @@ $ export SL_USERNAME=your-username@your-org.com
 $ export SL_API_KEY=your-softlayer-api-key
 $ ./bin/build
 $ ./bin/test-unit
-$ .bin/test-integration
+$ ./bin/test-integration
 ```
 
 NOTE: if you get any dependency errors, then use `go get path/to/dependency` to get it, e.g., `go get github.com/onsi/ginkgo` and `go get github.com/onsi/gomega`
