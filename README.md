@@ -91,7 +91,7 @@ The [SoftLayer](http://www.softlayer.com) (SL) Golang client and associated test
 
 ```
 $ export SL_USERNAME=your-username@your-org.com
-$ export SL_API_KE?=your-softlayer-api-key
+$ export SL_API_KEY=your-softlayer-api-key
 ```
 
 You should run the tests to make sure all is well, do this with: `$ ./bin/test-unit` and `$ ./bin/test-integration` in your cloned repository. Please note that the `$ ./bin/test-integration` will spin up real SoftLayer virtual guests (VMs) and associated resources and will also delete them. This integration test may take up to 30 minutes (usually shorter)
@@ -121,7 +121,7 @@ SWEET SUITE SUCCESS
 ## Developing *
 ---------------
 
-1. Run `go get code.google.com/p/go.tools/cmd/vet`
+1. Run `go get golang.org/x/tools/cmd/vet`
 2. Run `go get github.com/xxx ...` to install test dependencies (as you see errors)
 1. Write a [Ginkgo](https://github.com/onsi/ginkgo) test.
 1. Run `bin/test` and watch the test fail.
