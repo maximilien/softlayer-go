@@ -57,4 +57,19 @@ var _ = Describe("SoftLayer_Product_Package", func() {
 			Expect(itemPrices[0].Item.Id).To(Equal(456))
 		})
 	})
+
+	Context("#GetItemPricesBySize", func() {
+		BeforeEach(func() {
+			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Product_Package_getItemPrices.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("returns an array of datatypes.SoftLayer_Item_Price", func() {
+			itemPrices, err := productPackageService.GetItemPricesBySize(222, 20)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(len(itemPrices)).To(Equal(1))
+			Expect(itemPrices[0].Id).To(Equal(123))
+			Expect(itemPrices[0].Item.Id).To(Equal(456))
+		})
+	})
 })

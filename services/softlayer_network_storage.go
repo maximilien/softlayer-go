@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"time"
+	"strconv"
 
 	datatypes "github.com/maximilien/softlayer-go/data_types"
 	softlayer "github.com/maximilien/softlayer-go/softlayer"
@@ -14,8 +15,8 @@ import (
 const (
 	NETWORK_PERFORMANCE_STORAGE_PACKAGE_ID	   = 222
 	BLOCK_ITEM_PRICE_ID = 40678 // file or block item price id
-	CREATE_ISCSI_VOLUME_MAX_RETRY_TIME = 3
-	CREATE_ISCSI_VOLUME_CHECK_INTERVAL = 20 // seconds
+	CREATE_ISCSI_VOLUME_MAX_RETRY_TIME = 12
+	CREATE_ISCSI_VOLUME_CHECK_INTERVAL = 5 // seconds
 )
 
 type softLayer_Network_Storage_Service struct {
@@ -72,7 +73,7 @@ func (slns *softLayer_Network_Storage_Service) CreateIscsiVolume(size int, locat
 	var iscsiStorage datatypes.SoftLayer_Network_Storage
 
 	for i := 0; i < CREATE_ISCSI_VOLUME_MAX_RETRY_TIME; i++ {
-		iscsiStorage, err = slns.findIscsiVolumeIdByOrderId(receipt.OrderId)
+		iscsiStorage, err = slns.findIscsiVolumeId(receipt.OrderId)
 		if err == nil {
 			break
 		} else if i == CREATE_ISCSI_VOLUME_MAX_RETRY_TIME-1 {
@@ -86,8 +87,9 @@ func (slns *softLayer_Network_Storage_Service) CreateIscsiVolume(size int, locat
 }
 
 func (slns *softLayer_Network_Storage_Service) DeleteIscsiVolume(volumeId int, immediateCancellationFlag bool) error {
+	ObjectFilter := string(`{"iscsiNetworkStorage":{"id":{"operation":`+strconv.Itoa(volumeId)+`}}}`)
 	accountService, _ := slns.client.GetSoftLayer_Account_Service()
-	iscsiStorages, _ := accountService.GetIscsiNetworkStorage()
+	iscsiStorages, _ := accountService.GetIscsiNetworkStorageWithFilter(ObjectFilter)
 
 	var accountId, billingItemId int
 
@@ -136,16 +138,14 @@ func (slns *softLayer_Network_Storage_Service) GetIscsiVolume(volumeId int) (dat
 
 // Private methods
 
-func (slns *softLayer_Network_Storage_Service) findIscsiVolumeIdByOrderId(orderId int) (datatypes.SoftLayer_Network_Storage, error) {
+func (slns *softLayer_Network_Storage_Service) findIscsiVolumeId(orderId int) (datatypes.SoftLayer_Network_Storage, error) {
+	ObjectFilter := string(`{"iscsiNetworkStorage":{"billingItem":{"orderItem":{"order":{"id":{"operation":`+strconv.Itoa(orderId)+`}}}}}}`)
 	accountService, _ := slns.client.GetSoftLayer_Account_Service()
-	iscsiStorages, _ := accountService.GetIscsiNetworkStorage()
 
-	for i := 0; i < len(iscsiStorages); i++ {
-		storage := iscsiStorages[i]
+	iscsiStorages, _ := accountService.GetIscsiNetworkStorageWithFilter(ObjectFilter)
 
-		if storage.BillingItem != nil && storage.BillingItem.OrderItem.Order.Id == orderId {
-			return storage, nil
-		}
+	if len(iscsiStorages) == 1 {
+		return iscsiStorages[0], nil
 	}
 
 	return datatypes.SoftLayer_Network_Storage{}, errors.New(fmt.Sprintf("Can not find an performance storage (iSCSI volume) with order id %d", orderId))
