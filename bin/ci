@@ -19,6 +19,8 @@
 
   pwd
 
+  ls -alt
+
   trap printStatus EXIT
   
   echo -e "\n Cleaning build artifacts..."
@@ -26,6 +28,8 @@
 
   echo -e "\n Formatting packages..."
   go fmt ./...
+
+  pwd
 
   echo -e "\n Unit Testing packages:"
   go test softlayer-go/client/... softlayer-go/data_types/... softlayer-go/main/... softlayer-go/services/... softlayer-go/softlayer/...
