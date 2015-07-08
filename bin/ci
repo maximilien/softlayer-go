@@ -28,7 +28,7 @@
   echo -e "\n Unit Testing packages:"
   go test ./softlayer-go/client/... ./softlayer-go/data_types/... ./softlayer-go/main/... ./softlayer-go/services/... ./softlayer-go/softlayer/...
 
-  echo $GOPATH
+  echo $GOROOT
 
   go get golang.org/x/tools/cmd/vet
   # go get code.google.com/p/go.tools/cmd/vet
