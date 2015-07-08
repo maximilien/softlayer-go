@@ -26,8 +26,8 @@
   go fmt ./...
 
   echo -e "\n Unit Testing packages:"
-  go test ./client/... ./data_types/... ./main/... ./services/... ./softlayer/...
+  go test .../client/... .../data_types/... .../main/... .../services/... .../softlayer/...
 
   echo -e "\n Vetting packages for potential issues..."
-  go tool vet services data_types main client common test_helpers integration
+  go tool vet .../services .../data_types .../main .../client .../common .../test_helpers .../integration
 )
