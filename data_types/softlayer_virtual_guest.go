@@ -54,31 +54,29 @@ type SoftLayer_Virtual_Guest_Template_Parameters struct {
 	Parameters []SoftLayer_Virtual_Guest_Template `json:"parameters"`
 }
 
+
+//According the SL API Doc(http://sldn.softlayer.com/reference/services/SoftLayer_Virtual_Guest/createObject),
+//added some miss properties in SoftLayer_Virtual_Guest_Template.
 type SoftLayer_Virtual_Guest_Template struct {
 	//Required
 	Hostname          string     `json:"hostname"`
 	Domain            string     `json:"domain"`
 	StartCpus         int        `json:"startCpus"`
 	MaxMemory         int        `json:"maxMemory"`
+
 	Datacenter        Datacenter `json:"datacenter"`
 	HourlyBillingFlag bool       `json:"hourlyBillingFlag"`
 	LocalDiskFlag     bool       `json:"localDiskFlag"`
-
-	//Conditionally required
-	OperatingSystemReferenceCode string                    `json:"operatingSystemReferenceCode,omitempty"`
-	BlockDeviceTemplateGroup     *BlockDeviceTemplateGroup `json:"blockDeviceTemplateGroup,omitempty"`
-
-	//Optional
 	DedicatedAccountHostOnlyFlag   bool                            `json:"dedicatedAccountHostOnlyFlag,omitempty"`
+	OperatingSystemReferenceCode 	string                    `json:"operatingSystemReferenceCode,omitempty"`
+	BlockDeviceTemplateGroup       *BlockDeviceTemplateGroup `json:"blockDeviceTemplateGroup,omitempty"`
 	NetworkComponents              []NetworkComponents             `json:"networkComponents,omitempty"`
 	PrivateNetworkOnlyFlag         bool                            `json:"privateNetworkOnlyFlag,omitempty"`
-	PrimaryNetworkComponent        *PrimaryNetworkComponent        `json:"primaryNetworkComponent,omitempty"`
-	PrimaryBackendNetworkComponent *PrimaryBackendNetworkComponent `json:"primaryBackendNetworkComponent,omitempty"`
-
-	BlockDevices []BlockDevice `json:"blockDevices,omitempty"`
-	UserData     []UserData    `json:"userData,omitempty"`
-	SshKeys      []SshKey      `json:"sshKeys,omitempty"`
-
+	PrimaryNetworkComponent        PrimaryNetworkComponent        `json:"primaryNetworkComponent,omitempty"`
+	PrimaryBackendNetworkComponent PrimaryBackendNetworkComponent `json:"primaryBackendNetworkComponent,omitempty"`
+	BlockDevices []BlockDevice 										`json:"blockDevices,omitempty"`
+	UserData     []UserData    										`json:"userData,omitempty"`
+	SshKeys      []SshKey      										`json:"sshKeys,omitempty"`
 	PostInstallScriptUri string `json:"postInstallScriptUri,omitempty"`
 }
 
