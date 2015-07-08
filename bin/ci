@@ -4,8 +4,8 @@
 (
   set -e -x
 
-  # base=$( cd "$( dirname "$( dirname "$0" )")" && pwd )
-  # base_gopath=$( cd $base/../../../.. && pwd )
+  base=$( cd "$( dirname "$( dirname "$0" )")" && pwd )
+  base_gopath=$( cd $base/../../../.. && pwd )
  
   export GOPATH=$PWD:$base/Godeps/_workspace:$base_gopath GOBIN=$base_gopath/gobin
   export PATH=$PATH:$GOBIN
@@ -29,7 +29,7 @@
   go fmt ./...
 
   echo -e "\n Unit Testing packages:"
-  go test ./client/... ./data_types/... ./main/... ./services/... ./softlayer/...
+  go test .../client/... .../data_types/... .../main/... .../services/... .../softlayer/...
 
   echo -e "\n Vetting packages for potential issues..."
   go tool vet services data_types main client common test_helpers integration
