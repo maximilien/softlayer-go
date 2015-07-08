@@ -2,6 +2,7 @@ package data_types
 
 type SoftLayer_Item_Price struct {
 	Id         int        `json:"id"`
+	LocationGroupId		int   	   `json:"locationGroupId"`
 	Categories []Category `json:"categories,omitempty"`
 	Item       *Item      `json:"item,omitempty"`
 }

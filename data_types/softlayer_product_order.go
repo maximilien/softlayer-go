@@ -15,6 +15,13 @@ type SoftLayer_Product_Order struct {
 	Prices        []SoftLayer_Item_Price `json:"prices,omitempty"`
 	VirtualGuests []VirtualGuest         `json:"virtualGuests,omitempty"`
 	Properties    []Property             `json:"properties,omitempty"`
+	OsFormatType  OsFormatType           `json:"osFormatType,omitempty"`
+	Quantity      int 					 `json:"quantity,omitempty"`
+}
+
+type OsFormatType struct {
+	Id int `json:"id"`
+	KeyName string  `json:"keyName"`
 }
 
 type Property struct {

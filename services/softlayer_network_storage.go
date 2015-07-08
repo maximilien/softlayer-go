@@ -5,8 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"strconv"
-	"strings"
 	"time"
 
 	datatypes "github.com/maximilien/softlayer-go/data_types"
@@ -14,7 +12,8 @@ import (
 )
 
 const (
-	NETWORK_STORAGE_PACKAGE_ID         = 0
+	NETWORK_PERFORMANCE_STORAGE_PACKAGE_ID	   = 222
+	BLOCK_ITEM_PRICE_ID = 40678 // file or block item price id
 	CREATE_ISCSI_VOLUME_MAX_RETRY_TIME = 3
 	CREATE_ISCSI_VOLUME_CHECK_INTERVAL = 20 // seconds
 )
@@ -34,24 +33,34 @@ func (slns *softLayer_Network_Storage_Service) GetName() string {
 }
 
 func (slns *softLayer_Network_Storage_Service) CreateIscsiVolume(size int, location string) (datatypes.SoftLayer_Network_Storage, error) {
-	if size < 0 {
-		return datatypes.SoftLayer_Network_Storage{}, errors.New("Cannot create negative sized volumes")
-	}
 
-	iscsiVolumeItemId, err := slns.getIscsiVolumeItemIdBasedOnSize(size)
-	if err != nil {
+	sizeItemPriceId, err := slns.getIscsiVolumeItemIdBasedOnSize(size)
+	iopsItemPriceId, err := slns.getPerformanceStorageItemPriceIdByIops(size)
+
+	/*if err != nil {
 		return datatypes.SoftLayer_Network_Storage{}, err
-	}
+	}*/
 
 	order := datatypes.SoftLayer_Product_Order{
 		Location:    location,
-		ComplexType: "SoftLayer_Container_Product_Order",
+		ComplexType: "SoftLayer_Container_Product_Order_Network_PerformanceStorage_Iscsi",
+		OsFormatType: datatypes.OsFormatType{
+			Id: 12,
+			KeyName: "LINUX",
+		},
 		Prices: []datatypes.SoftLayer_Item_Price{
 			datatypes.SoftLayer_Item_Price{
-				Id: iscsiVolumeItemId,
+				Id: sizeItemPriceId,
+			},
+			datatypes.SoftLayer_Item_Price{
+				Id: iopsItemPriceId,
+			},
+			datatypes.SoftLayer_Item_Price{
+				Id: BLOCK_ITEM_PRICE_ID,
 			},
 		},
-		PackageId: NETWORK_STORAGE_PACKAGE_ID,
+		PackageId: NETWORK_PERFORMANCE_STORAGE_PACKAGE_ID,
+		Quantity: 1,
 	}
 
 	productOrderService, _ := slns.client.GetSoftLayer_Product_Order_Service()
@@ -139,7 +148,7 @@ func (slns *softLayer_Network_Storage_Service) findIscsiVolumeIdByOrderId(orderI
 		}
 	}
 
-	return datatypes.SoftLayer_Network_Storage{}, errors.New(fmt.Sprintf("Can not find an iSCSI volume with order id %d", orderId))
+	return datatypes.SoftLayer_Network_Storage{}, errors.New(fmt.Sprintf("Can not find an performance storage (iSCSI volume) with order id %d", orderId))
 }
 
 func (slns *softLayer_Network_Storage_Service) getIscsiVolumeItemIdBasedOnSize(size int) (int, error) {
@@ -148,30 +157,39 @@ func (slns *softLayer_Network_Storage_Service) getIscsiVolumeItemIdBasedOnSize(s
 		return 0, err
 	}
 
-	itemPrices, err := productPackageService.GetItemPrices(NETWORK_STORAGE_PACKAGE_ID)
+	itemPrices, err := productPackageService.GetItemPricesBySize(NETWORK_PERFORMANCE_STORAGE_PACKAGE_ID, size)
 	if err != nil {
 		return 0, err
 	}
 
-	var currentItemId, currentVolumeCapacity int
+	var currentItemId int
 
-	for _, itemPrice := range itemPrices {
-		if strings.Contains(itemPrice.Item.Description, "iSCSI SAN Storage") {
-
-			capacity, _ := strconv.Atoi(itemPrice.Item.Capacity)
-
-			if capacity >= size {
-				if currentItemId == 0 || currentVolumeCapacity >= capacity {
-					currentItemId = itemPrice.Id
-					currentVolumeCapacity = capacity
-				}
+	if len(itemPrices) >0 {
+		for _, itemPrice := range itemPrices {
+			if itemPrice.LocationGroupId == 0 {
+				currentItemId = itemPrice.Id
 			}
 		}
 	}
 
 	if currentItemId == 0 {
-		return 0, errors.New(fmt.Sprintf("No proper iSCSI volume for size %d", size))
+		return 0, errors.New(fmt.Sprintf("No proper performance storage (iSCSI volume)for size %d", size))
 	}
 
 	return currentItemId, nil
 }
+
+func (slns *softLayer_Network_Storage_Service) getPerformanceStorageItemPriceIdByIops(size int) (int, error) {
+	switch size {
+		case 20:
+			return 40838, nil // 500 IOPS
+		case 40:
+			return 40988, nil // 1000 IOPS
+		case 80:
+			return 41288, nil // 2000 IOPS
+		default:
+			return 41788, nil // 3000 IOPS
+	}
+	return 0, errors.New(fmt.Sprintf("No proper iops for performance storage (iSCSI volume) with size %d", size))
+}
+
