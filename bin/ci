@@ -17,6 +17,8 @@
       fi
   }
 
+  pwd
+
   trap printStatus EXIT
   
   echo -e "\n Cleaning build artifacts..."
@@ -26,8 +28,8 @@
   go fmt ./...
 
   echo -e "\n Unit Testing packages:"
-  go test .../client/... .../data_types/... .../main/... .../services/... .../softlayer/...
+  go test softlayer-go/client/... softlayer-go/data_types/... softlayer-go/main/... softlayer-go/services/... softlayer-go/softlayer/...
 
   echo -e "\n Vetting packages for potential issues..."
-  go tool vet .../services .../data_types .../main .../client .../common .../test_helpers .../integration
+  go tool vet softlayer-go/services softlayer-go/data_types softlayer-go/main softlayer-go/client softlayer-go/common softlayer-go/test_helpers softlayer-go/integration
 )
