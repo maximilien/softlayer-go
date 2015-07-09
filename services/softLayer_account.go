@@ -110,6 +110,35 @@ func (slas *softLayer_Account_Service) GetIscsiNetworkStorage() ([]datatypes.Sof
 	return networkStorage, nil
 }
 
+func (slas *softLayer_Account_Service) GetIscsiNetworkStorageWithFilter(filter string) ([]datatypes.SoftLayer_Network_Storage, error) {
+	path := fmt.Sprintf("%s/%s", slas.GetName(), "getIscsiNetworkStorage.json")
+
+	objectMasks := []string{
+		"username",
+		"accountId",
+		"capacityGb",
+		"id",
+		"billingItem.id",
+		"billingItem.orderItem.order.id",
+	}
+
+	responseBytes, err := slas.client.DoRawHttpRequestWithObjectFilterAndObjectMask(path, objectMasks, filter, "GET", &bytes.Buffer{})
+	if err != nil {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Account#getIscsiNetworkStorage, error message '%s'", err.Error())
+		return []datatypes.SoftLayer_Network_Storage{}, errors.New(errorMessage)
+	}
+
+	networkStorage := []datatypes.SoftLayer_Network_Storage{}
+	err = json.Unmarshal(responseBytes, &networkStorage)
+	if err != nil {
+		errorMessage := fmt.Sprintf("softlayer-go: failed to decode JSON response, err message '%s'", err.Error())
+		err := errors.New(errorMessage)
+		return []datatypes.SoftLayer_Network_Storage{}, err
+	}
+
+	return networkStorage, nil
+}
+
 func (slas *softLayer_Account_Service) GetVirtualDiskImages() ([]datatypes.SoftLayer_Virtual_Disk_Image, error) {
 	path := fmt.Sprintf("%s/%s", slas.GetName(), "getVirtualDiskImages.json")
 	responseBytes, err := slas.client.DoRawHttpRequest(path, "GET", &bytes.Buffer{})
