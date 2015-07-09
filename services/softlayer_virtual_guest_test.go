@@ -64,11 +64,34 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 				StartCpus: 2,
 				MaxMemory: 1024,
 				Datacenter: datatypes.Datacenter{
-					Name: "fake-datacenter-name",
+					Name: "fakeDatacenter",
 				},
 				HourlyBillingFlag:            true,
 				LocalDiskFlag:                false,
 				DedicatedAccountHostOnlyFlag: false,
+				PrivateNetworkOnlyFlag:       false,
+				PostInstallScriptUri:         "fake_Post_Install_Script_Uri",
+				OperatingSystemReferenceCode: "Fake_UBUNTU_LATEST",
+				NetworkComponents: []datatypes.NetworkComponents{
+					{MaxSpeed: 1000},
+				},
+				PrimaryNetworkComponent: &datatypes.PrimaryNetworkComponent{
+					NetworkVlan: datatypes.NetworkVlan{Id: 52000},
+				},
+
+				PrimaryBackendNetworkComponent: &datatypes.PrimaryBackendNetworkComponent{
+					NetworkVlan: datatypes.NetworkVlan{Id: 52001},
+				},
+
+				SshKeys: []datatypes.SshKey{
+					{Id: 1000},
+				},
+				UserData: []datatypes.UserData{
+					{Value: "someValue"},
+				},
+				BlockDevices: []datatypes.BlockDevice{
+					{Device: "0", DiskImage: datatypes.DiskImage{Capacity: 100}},
+				},
 			}
 			virtualGuest, err = virtualGuestService.CreateObject(virtualGuestTemplate)
 			Expect(err).ToNot(HaveOccurred())
@@ -77,6 +100,8 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			Expect(virtualGuest.StartCpus).To(Equal(2))
 			Expect(virtualGuest.MaxMemory).To(Equal(1024))
 			Expect(virtualGuest.DedicatedAccountHostOnlyFlag).To(BeFalse())
+			Expect(virtualGuest.PrivateNetworkOnlyFlag).To(BeFalse())
+			Expect(virtualGuest.PostInstallScriptUri).To(Equal("fake_Post_Install_Script_Uri"))
 		})
 
 		It("flags all missing required parameters for SoftLayer_Virtual_Guest/createObject.json POST call", func() {

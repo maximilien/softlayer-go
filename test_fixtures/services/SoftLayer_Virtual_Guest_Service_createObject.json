@@ -15,5 +15,48 @@
     "privateNetworkOnlyFlag": false, 
     "startCpus": 2, 
     "statusId": 1001, 
-    "globalIdentifier": "2d203774-0ee1-49f5-9599-6ef67358dd31" 
+    "globalIdentifier": "2d203774-0ee1-49f5-9599-6ef67358dd31",
+    "hourlyBillingFlag": true,
+    "localDiskFlag": true,
+    "vmNamePrefix": "vmNamePrefix-",
+    "RootDiskSize": 100,
+    "EphemeralDiskSize":100,
+    "PostInstallScriptUri": "fake_Post_Install_Script_Uri",
+    "blockDevices": [
+        {
+            "device": "0",
+            "diskImage": {
+                "capacity": 100
+            }
+        }
+    ],
+    "datacenter": {
+        "name": "fakeDatacenter"
+    },
+    "sshKeys": [
+        {
+            "id": 1000
+        }
+    ],
+    "operatingSystemReferenceCode": "Fake_UBUNTU_LATEST",
+    "networkComponents": [
+        {
+            "maxSpeed": 1000
+        }
+    ],
+    "primaryNetworkComponent": {
+        "networkVlan": {
+            "id": 52000
+        }
+    },
+    "primaryBackendNetworkComponent": {
+        "networkVlan": {
+            "id": 52001
+        }
+    },
+    "userData": [
+        {
+            "value": "someValue"
+        }
+    ]
 } 
