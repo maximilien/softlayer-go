@@ -188,7 +188,7 @@ func (slc *softLayerClient) DoRawHttpRequestWithObjectFilterAndObjectMask(path s
 			url += ";"
 		}
 	}
-	url +="]"
+	url += "]"
 
 	return slc.makeHttpRequest(url, requestType, requestBody)
 }

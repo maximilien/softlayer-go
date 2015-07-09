@@ -5,18 +5,18 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"time"
 	"strconv"
+	"time"
 
 	datatypes "github.com/maximilien/softlayer-go/data_types"
 	softlayer "github.com/maximilien/softlayer-go/softlayer"
 )
 
 const (
-	NETWORK_PERFORMANCE_STORAGE_PACKAGE_ID	   = 222
-	BLOCK_ITEM_PRICE_ID = 40678 // file or block item price id
-	CREATE_ISCSI_VOLUME_MAX_RETRY_TIME = 12
-	CREATE_ISCSI_VOLUME_CHECK_INTERVAL = 5 // seconds
+	NETWORK_PERFORMANCE_STORAGE_PACKAGE_ID = 222
+	BLOCK_ITEM_PRICE_ID                    = 40678 // file or block item price id
+	CREATE_ISCSI_VOLUME_MAX_RETRY_TIME     = 12
+	CREATE_ISCSI_VOLUME_CHECK_INTERVAL     = 5 // seconds
 )
 
 type softLayer_Network_Storage_Service struct {
@@ -34,6 +34,9 @@ func (slns *softLayer_Network_Storage_Service) GetName() string {
 }
 
 func (slns *softLayer_Network_Storage_Service) CreateIscsiVolume(size int, location string) (datatypes.SoftLayer_Network_Storage, error) {
+	if size < 0 {
+		return datatypes.SoftLayer_Network_Storage{}, errors.New("Cannot create negative sized volumes")
+	}
 
 	sizeItemPriceId, err := slns.getIscsiVolumeItemIdBasedOnSize(size)
 	iopsItemPriceId, err := slns.getPerformanceStorageItemPriceIdByIops(size)
@@ -46,7 +49,7 @@ func (slns *softLayer_Network_Storage_Service) CreateIscsiVolume(size int, locat
 		Location:    location,
 		ComplexType: "SoftLayer_Container_Product_Order_Network_PerformanceStorage_Iscsi",
 		OsFormatType: datatypes.OsFormatType{
-			Id: 12,
+			Id:      12,
 			KeyName: "LINUX",
 		},
 		Prices: []datatypes.SoftLayer_Item_Price{
@@ -61,7 +64,7 @@ func (slns *softLayer_Network_Storage_Service) CreateIscsiVolume(size int, locat
 			},
 		},
 		PackageId: NETWORK_PERFORMANCE_STORAGE_PACKAGE_ID,
-		Quantity: 1,
+		Quantity:  1,
 	}
 
 	productOrderService, _ := slns.client.GetSoftLayer_Product_Order_Service()
@@ -87,7 +90,7 @@ func (slns *softLayer_Network_Storage_Service) CreateIscsiVolume(size int, locat
 }
 
 func (slns *softLayer_Network_Storage_Service) DeleteIscsiVolume(volumeId int, immediateCancellationFlag bool) error {
-	ObjectFilter := string(`{"iscsiNetworkStorage":{"id":{"operation":`+strconv.Itoa(volumeId)+`}}}`)
+	ObjectFilter := string(`{"iscsiNetworkStorage":{"id":{"operation":` + strconv.Itoa(volumeId) + `}}}`)
 	accountService, _ := slns.client.GetSoftLayer_Account_Service()
 	iscsiStorages, _ := accountService.GetIscsiNetworkStorageWithFilter(ObjectFilter)
 
@@ -139,7 +142,7 @@ func (slns *softLayer_Network_Storage_Service) GetIscsiVolume(volumeId int) (dat
 // Private methods
 
 func (slns *softLayer_Network_Storage_Service) findIscsiVolumeId(orderId int) (datatypes.SoftLayer_Network_Storage, error) {
-	ObjectFilter := string(`{"iscsiNetworkStorage":{"billingItem":{"orderItem":{"order":{"id":{"operation":`+strconv.Itoa(orderId)+`}}}}}}`)
+	ObjectFilter := string(`{"iscsiNetworkStorage":{"billingItem":{"orderItem":{"order":{"id":{"operation":` + strconv.Itoa(orderId) + `}}}}}}`)
 	accountService, _ := slns.client.GetSoftLayer_Account_Service()
 
 	iscsiStorages, _ := accountService.GetIscsiNetworkStorageWithFilter(ObjectFilter)
@@ -164,7 +167,7 @@ func (slns *softLayer_Network_Storage_Service) getIscsiVolumeItemIdBasedOnSize(s
 
 	var currentItemId int
 
-	if len(itemPrices) >0 {
+	if len(itemPrices) > 0 {
 		for _, itemPrice := range itemPrices {
 			if itemPrice.LocationGroupId == 0 {
 				currentItemId = itemPrice.Id
@@ -181,15 +184,13 @@ func (slns *softLayer_Network_Storage_Service) getIscsiVolumeItemIdBasedOnSize(s
 
 func (slns *softLayer_Network_Storage_Service) getPerformanceStorageItemPriceIdByIops(size int) (int, error) {
 	switch size {
-		case 20:
-			return 40838, nil // 500 IOPS
-		case 40:
-			return 40988, nil // 1000 IOPS
-		case 80:
-			return 41288, nil // 2000 IOPS
-		default:
-			return 41788, nil // 3000 IOPS
+	case 20:
+		return 40838, nil // 500 IOPS
+	case 40:
+		return 40988, nil // 1000 IOPS
+	case 80:
+		return 41288, nil // 2000 IOPS
+	default:
+		return 41788, nil // 3000 IOPS
 	}
-	return 0, errors.New(fmt.Sprintf("No proper iops for performance storage (iSCSI volume) with size %d", size))
 }
-

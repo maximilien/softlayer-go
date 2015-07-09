@@ -16,12 +16,12 @@ type SoftLayer_Product_Order struct {
 	VirtualGuests []VirtualGuest         `json:"virtualGuests,omitempty"`
 	Properties    []Property             `json:"properties,omitempty"`
 	OsFormatType  OsFormatType           `json:"osFormatType,omitempty"`
-	Quantity      int 					 `json:"quantity,omitempty"`
+	Quantity      int                    `json:"quantity,omitempty"`
 }
 
 type OsFormatType struct {
-	Id int `json:"id"`
-	KeyName string  `json:"keyName"`
+	Id      int    `json:"id"`
+	KeyName string `json:"keyName"`
 }
 
 type Property struct {
