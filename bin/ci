@@ -28,6 +28,7 @@
   echo -e "\n Unit Testing packages:"
   go test ./client/... ./data_types/... ./main/... ./services/... ./softlayer/...
 
+  echo -e "\n Print GOPATH:"
   echo $GOPATH
 
   # go get golang.org/x/tools/cmd/vet
