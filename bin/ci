@@ -25,6 +25,9 @@
   echo -e "\n Formatting packages..."
   go fmt ./...
 
+  echo $GOPATH
+  echo $PWD
+  
   echo -e "\n Unit Testing packages:"
   go test ./src/github.com/maximilien/softlayer-go/client/... ./src/github.com/maximilien/softlayer-go/data_types/... ./src/github.com/maximilien/softlayer-go/main/... ./src/github.com/maximilien/softlayer-go/services/... ./src/github.com/maximilien/softlayer-go/softlayer/...
 
