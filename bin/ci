@@ -6,7 +6,7 @@
   base=$( cd "$( dirname "$( dirname "$0" )")" && pwd )
   base_gopath=$( cd $base/../../../.. && pwd )
  
-  export GOPATH=$base/Godeps/_workspace:$base_gopath GOBIN=$base_gopath/gobin
+  export GOPATH=$PWD/gopath:$base/Godeps/_workspace:$base_gopath GOBIN=$base_gopath/gobin
   export PATH=$PATH:$GOBIN
 
   function printStatus {
@@ -24,9 +24,6 @@
 
   echo -e "\n Formatting packages..."
   go fmt ./...
-
-  echo $GOPATH
-  echo $PWD
 
   echo -e "\n Unit Testing packages:"
   go test ./gopath/src/github.com/maximilien/softlayer-go/client/... ./gopath/src/github.com/maximilien/softlayer-go/data_types/... ./gopath/src/github.com/maximilien/softlayer-go/main/... ./gopath/src/github.com/maximilien/softlayer-go/services/... ./gopath/src/github.com/maximilien/softlayer-go/softlayer/...
