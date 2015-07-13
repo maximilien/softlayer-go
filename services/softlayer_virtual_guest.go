@@ -103,6 +103,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetObject(instanceId int) (datatyp
 		"datacenter.name",
 		"datacenter.longName",
 		"datacenter.id",
+		"networkComponents.maxSpeed",
 		"operatingSystem.passwords.password",
 		"operatingSystem.passwords.username",
 	}

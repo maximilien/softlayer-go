@@ -69,6 +69,9 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 				HourlyBillingFlag:            true,
 				LocalDiskFlag:                false,
 				DedicatedAccountHostOnlyFlag: false,
+				NetworkComponents: []datatypes.NetworkComponents{datatypes.NetworkComponents{
+					MaxSpeed: 10,
+				}},
 			}
 			virtualGuest, err = virtualGuestService.CreateObject(virtualGuestTemplate)
 			Expect(err).ToNot(HaveOccurred())
@@ -128,6 +131,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			Expect(vg.Datacenter.Id).To(Equal(456))
 			Expect(vg.Datacenter.Name).To(Equal("bej2"))
 			Expect(vg.Datacenter.LongName).To(Equal("Beijing 2"))
+			Expect(vg.NetworkComponents[0].MaxSpeed).To(Equal(100))
 			Expect(len(vg.OperatingSystem.Passwords)).To(BeNumerically(">=", 1))
 			Expect(vg.OperatingSystem.Passwords[0].Password).To(Equal("test_password"))
 			Expect(vg.OperatingSystem.Passwords[0].Username).To(Equal("test_username"))
