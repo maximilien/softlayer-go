@@ -1,6 +1,6 @@
 ---
 platform: linux
-image: docker:///golang
+image: docker:///posijon/slci
 
 inputs:
   - name: softlayer-go
