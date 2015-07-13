@@ -25,9 +25,10 @@
   echo -e "\n Formatting packages..."
   go fmt ./...
 
+  # base="./gopath/src/github.com/maximilien/softlayer-go"
   echo -e "\n Unit Testing packages:"
-  go test ./gopath/src/github.com/maximilien/softlayer-go/client/... ./gopath/src/github.com/maximilien/softlayer-go/data_types/... ./gopath/src/github.com/maximilien/softlayer-go/main/... ./gopath/src/github.com/maximilien/softlayer-go/services/... ./gopath/src/github.com/maximilien/softlayer-go/softlayer/...
+  go test $base/client/... $base/data_types/... $base/main/... $base/services/... $base/softlayer/...
 
   echo -e "\n Vetting packages for potential issues..."
-  go tool vet ./gopath/src/github.com/maximilien/softlayer-go/services ./gopath/src/github.com/maximilien/softlayer-go/data_types ./gopath/src/github.com/maximilien/softlayer-go/main ./gopath/src/github.com/maximilien/softlayer-go/client ./gopath/src/github.com/maximilien/softlayer-go/common ./gopath/src/github.com/maximilien/softlayer-go/test_helpers ./gopath/src/github.com/maximilien/softlayer-go/integration
+  go tool vet $base/services $base/data_types $base/main $base/client $base/common $base/test_helpers $base/integration
 )
