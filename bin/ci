@@ -25,9 +25,12 @@
   echo -e "\n Formatting packages..."
   go fmt ./...
 
+  echo -e "\n Install ginkgo..."
+  go install github.com/onsi/ginkgo/ginkgo
+
   # base="./gopath/src/github.com/maximilien/softlayer-go"
   echo -e "\n Unit Testing packages:"
-  go test $base/client/... $base/data_types/... $base/main/... $base/services/... $base/softlayer/...
+  ginkgo $base/client/... $base/data_types/... $base/main/... $base/services/... $base/softlayer/...
 
   echo -e "\n Vetting packages for potential issues..."
   go tool vet $base/services $base/data_types $base/main $base/client $base/common $base/test_helpers $base/integration
