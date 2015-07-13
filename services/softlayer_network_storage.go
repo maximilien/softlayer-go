@@ -139,6 +139,62 @@ func (slns *softLayer_Network_Storage_Service) GetIscsiVolume(volumeId int) (dat
 	return volume, nil
 }
 
+func (slns *softLayer_Network_Storage_Service) HasAllowedVirtualGuest(volumeId int, vmId int) (bool, error) {
+	filter := string(`{"allowedVirtualGuests":{"id":{"operation":"` + strconv.Itoa(vmId) + `"}}}`)
+	response, err := slns.client.DoRawHttpRequestWithObjectFilterAndObjectMask(fmt.Sprintf("%s/%d/getAllowedVirtualGuests.json", slns.GetName(), volumeId), []string{"id"}, fmt.Sprintf(string(filter)), "GET", new(bytes.Buffer))
+
+	if err != nil {
+		return false, errors.New(fmt.Sprintf("Can not check authentication for volume %d in vm %d", volumeId, vmId))
+	}
+
+	virtualGuest := []datatypes.SoftLayer_Virtual_Guest{}
+	err = json.Unmarshal(response, &virtualGuest)
+
+	if len(virtualGuest) > 0 {
+		return true, nil
+	}
+
+	return false, nil
+}
+
+func (slns *softLayer_Network_Storage_Service) AttachIscsiVolume(virtualGuest datatypes.SoftLayer_Virtual_Guest, volumeId int) error {
+	parameters := datatypes.SoftLayer_Virtual_Guest_Parameters{
+		Parameters: []datatypes.SoftLayer_Virtual_Guest{
+			virtualGuest,
+		},
+	}
+	requestBody, err := json.Marshal(parameters)
+	if err != nil {
+		return err
+	}
+
+	_, err = slns.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/allowAccessFromVirtualGuest.json", slns.GetName(), volumeId), "PUT", bytes.NewBuffer(requestBody))
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (slns *softLayer_Network_Storage_Service) DetachIscsiVolume(virtualGuest datatypes.SoftLayer_Virtual_Guest, volumeId int) error {
+	parameters := datatypes.SoftLayer_Virtual_Guest_Parameters{
+		Parameters: []datatypes.SoftLayer_Virtual_Guest{
+			virtualGuest,
+		},
+	}
+	requestBody, err := json.Marshal(parameters)
+	if err != nil {
+		return err
+	}
+
+	_, err = slns.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/removeAccessFromVirtualGuest.json", slns.GetName(), volumeId), "PUT", bytes.NewBuffer(requestBody))
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // Private methods
 
 func (slns *softLayer_Network_Storage_Service) findIscsiVolumeId(orderId int) (datatypes.SoftLayer_Network_Storage, error) {
