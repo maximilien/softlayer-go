@@ -96,6 +96,19 @@ var _ = Describe("SoftLayer_Account_Service", func() {
 		})
 	})
 
+	Context("#GetIscsiNetworkStorageWithFilter", func() {
+		BeforeEach(func() {
+			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Account_Service_getNetworkStorage.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("returns an array of datatypes.SoftLayer_Network_Storage", func() {
+			iscsiNetworkStorage, err := accountService.GetIscsiNetworkStorageWithFilter("fake-filter")
+			Expect(err).ToNot(HaveOccurred())
+			Expect(iscsiNetworkStorage).ToNot(BeNil())
+		})
+	})
+
 	Context("#GetVirtualDiskImages", func() {
 		BeforeEach(func() {
 			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Account_Service_getVirtualDiskImages.json")
