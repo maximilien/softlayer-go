@@ -165,6 +165,9 @@ func (slns *softLayer_Network_Storage_Service) HasAllowedVirtualGuest(volumeId i
 
 	virtualGuest := []datatypes.SoftLayer_Virtual_Guest{}
 	err = json.Unmarshal(response, &virtualGuest)
+	if err != nil {
+		return false, errors.New(fmt.Sprintf("Failed to unmarshal response of checking authentication for volume %d in vm %d", volumeId, vmId))
+	}
 
 	if len(virtualGuest) > 0 {
 		return true, nil

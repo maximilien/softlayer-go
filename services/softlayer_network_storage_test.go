@@ -74,7 +74,8 @@ var _ = Describe("SoftLayer_Network_Storage", func() {
 
 	Context("#HasAllowedVirtualGuest", func() {
 		It("virtual guest allows to access volume", func() {
-			fakeClient.DoRawHttpRequestResponse = []byte("true")
+			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Account_Service_getVirtualGuests.json")
+			Expect(err).ToNot(HaveOccurred())
 			_, err := networkStorageService.HasAllowedVirtualGuest(123, 456)
 			Expect(err).ToNot(HaveOccurred())
 		})
@@ -83,12 +84,12 @@ var _ = Describe("SoftLayer_Network_Storage", func() {
 	Context("#AttachIscsiVolume", func() {
 		It("Allow access to storage from virutal guest", func() {
 			virtualGuest := datatypes.SoftLayer_Virtual_Guest{
-				AccountId:                    278444,
+				AccountId:                    123456,
 				DedicatedAccountHostOnlyFlag: false,
 				Domain: "softlayer.com",
 				FullyQualifiedDomainName: "fake.softlayer.com",
 				Hostname:                 "fake-hostname",
-				Id:                       7967646,
+				Id:                       1234567,
 				MaxCpu:                   2,
 				MaxCpuUnits:              "CORE",
 				MaxMemory:                1024,
@@ -96,8 +97,8 @@ var _ = Describe("SoftLayer_Network_Storage", func() {
 				StatusId:                 1001,
 				Uuid:                     "fake-uuid",
 				GlobalIdentifier:         "fake-globalIdentifier",
-				PrimaryBackendIpAddress:  "10.104.170.130",
-				PrimaryIpAddress:         "159.8.14.86",
+				PrimaryBackendIpAddress:  "fake-primary-backend-ip",
+				PrimaryIpAddress:         "fake-primary-ip",
 			}
 			fakeClient.DoRawHttpRequestResponse = []byte("true")
 			err = networkStorageService.AttachIscsiVolume(virtualGuest, 123)
@@ -108,12 +109,12 @@ var _ = Describe("SoftLayer_Network_Storage", func() {
 	Context("#DetachIscsiVolume", func() {
 		It("Revoke access to storage from virtual guest", func() {
 			virtualGuest := datatypes.SoftLayer_Virtual_Guest{
-				AccountId:                    278444,
+				AccountId:                    123456,
 				DedicatedAccountHostOnlyFlag: false,
 				Domain: "softlayer.com",
 				FullyQualifiedDomainName: "fake.softlayer.com",
 				Hostname:                 "fake-hostname",
-				Id:                       7967646,
+				Id:                       1234567,
 				MaxCpu:                   2,
 				MaxCpuUnits:              "CORE",
 				MaxMemory:                1024,
@@ -121,8 +122,8 @@ var _ = Describe("SoftLayer_Network_Storage", func() {
 				StatusId:                 1001,
 				Uuid:                     "fake-uuid",
 				GlobalIdentifier:         "fake-globalIdentifier",
-				PrimaryBackendIpAddress:  "10.104.170.130",
-				PrimaryIpAddress:         "159.8.14.86",
+				PrimaryBackendIpAddress:  "fake-primary-backend-ip",
+				PrimaryIpAddress:         "fake-primary-ip",
 			}
 			fakeClient.DoRawHttpRequestResponse = []byte("true")
 			err = networkStorageService.DetachIscsiVolume(virtualGuest, 123)
