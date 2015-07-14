@@ -29,6 +29,11 @@
 		"name": "bej2",
 		"longName": "Beijing 2"
 	},
+    "networkComponents": [
+	  {
+		"maxSpeed": 100
+	  }
+	],
 	"operatingSystem": {
 		"passwords": [
 			{
