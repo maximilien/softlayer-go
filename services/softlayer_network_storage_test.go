@@ -74,7 +74,7 @@ var _ = Describe("SoftLayer_Network_Storage", func() {
 
 	Context("#HasAllowedVirtualGuest", func() {
 		It("virtual guest allows to access volume", func() {
-			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Account_Service_getVirtualGuests.json")
+			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Network_Storage_Service_getAllowedVirtualGuests.json")
 			Expect(err).ToNot(HaveOccurred())
 			_, err := networkStorageService.HasAllowedVirtualGuest(123, 456)
 			Expect(err).ToNot(HaveOccurred())
