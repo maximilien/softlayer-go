@@ -20,6 +20,9 @@
   echo -e "\n Formatting packages..."
   go fmt ./...
 
+  echo -e "\n Install ginkgo..."
+  go install github.com/onsi/ginkgo/ginkgo
+
   echo -e "\n Integration Testing packages:"
   ginkgo -r -p -v --noisyPendings integration
 
