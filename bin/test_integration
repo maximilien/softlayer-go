@@ -24,6 +24,7 @@
   echo -e "\n Formatting packages..."
   go fmt ./...
 
+  echo -e "\n cd to base of project..."
   cd $base
 
   echo -e "\n Integration Testing packages:"
