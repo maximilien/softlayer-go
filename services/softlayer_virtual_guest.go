@@ -91,6 +91,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetObject(instanceId int) (datatyp
 		"startCpus",
 		"statusId",
 		"uuid",
+		"userData.value",
 
 		"globalIdentifier",
 		"managedResourceFlag",
