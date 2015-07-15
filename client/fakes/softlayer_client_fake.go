@@ -183,6 +183,21 @@ func (fslc *FakeSoftLayerClient) DoRawHttpRequestWithObjectMask(path string, mas
 	}
 }
 
+func (fslc *FakeSoftLayerClient) DoRawHttpRequestWithObjectFilter(path string, filters string, requestType string, requestBody *bytes.Buffer) ([]byte, error) {
+	fslc.DoRawHttpRequestResponseCount += 1
+
+	if fslc.DoRawHttpRequestError != nil {
+		return []byte{}, fslc.DoRawHttpRequestError
+	}
+
+	if fslc.DoRawHttpRequestResponse != nil {
+		return fslc.DoRawHttpRequestResponse, fslc.DoRawHttpRequestError
+	} else {
+		fslc.DoRawHttpRequestResponsesIndex = fslc.DoRawHttpRequestResponsesIndex + 1
+		return fslc.DoRawHttpRequestResponses[fslc.DoRawHttpRequestResponsesIndex-1], fslc.DoRawHttpRequestError
+	}
+}
+
 func (fslc *FakeSoftLayerClient) DoRawHttpRequestWithObjectFilterAndObjectMask(path string, masks []string, filters string, requestType string, requestBody *bytes.Buffer) ([]byte, error) {
 	fslc.DoRawHttpRequestResponseCount += 1
 
