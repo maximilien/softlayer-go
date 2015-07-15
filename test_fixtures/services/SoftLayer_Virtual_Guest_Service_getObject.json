@@ -41,5 +41,8 @@
 				"password": "test_password"
 			}
 		]
-	}
+	},
+    "userData": [{
+	    "value": "some user data $_/<| with special characters"
+	}]
 }

@@ -72,6 +72,11 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 				NetworkComponents: []datatypes.NetworkComponents{datatypes.NetworkComponents{
 					MaxSpeed: 10,
 				}},
+				UserData: []datatypes.UserData{
+					datatypes.UserData{
+						Value: "some user data $_/<| with special characters",
+					},
+				},
 			}
 			virtualGuest, err = virtualGuestService.CreateObject(virtualGuestTemplate)
 			Expect(err).ToNot(HaveOccurred())
@@ -123,6 +128,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			Expect(vg.StatusId).To(Equal(1001))
 			Expect(vg.Uuid).To(Equal("85d444ce-55a0-39c0-e17a-f697f223cd8a"))
 			Expect(vg.GlobalIdentifier).To(Equal("52145e01-97b6-4312-9c15-dac7f24b6c2a"))
+			Expect(vg.UserData[0].Value).To(Equal("some user data $_/<| with special characters"))
 			Expect(vg.PrimaryBackendIpAddress).To(Equal("10.106.192.42"))
 			Expect(vg.PrimaryIpAddress).To(Equal("23.246.234.32"))
 			Expect(vg.Location.Id).To(Equal(1234567))
