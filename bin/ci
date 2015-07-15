@@ -24,9 +24,12 @@
   echo -e "\n Formatting packages..."
   go fmt ./...
 
+  echo -e "\n cd to base of project..."
+  cd $base
+
   echo -e "\n Unit Testing packages:"
-  ginkgo -r -p -v --noisyPendings $base/client $base/data_types $base/main $base/services $base/softlayer
+  ginkgo -r -p -v --noisyPendings client data_types main services softlayer
 
   echo -e "\n Vetting packages for potential issues..."
-  go tool vet $base/services $base/data_types $base/main $base/client $base/common $base/test_helpers $base/integration
+  go tool vet services data_types main client common test_helpers integration
 )
