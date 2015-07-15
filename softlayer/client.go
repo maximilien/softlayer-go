@@ -20,6 +20,7 @@ type Client interface {
 
 	DoRawHttpRequest(path string, requestType string, requestBody *bytes.Buffer) ([]byte, error)
 	DoRawHttpRequestWithObjectMask(path string, masks []string, requestType string, requestBody *bytes.Buffer) ([]byte, error)
+	DoRawHttpRequestWithObjectFilter(path string, filters string, requestType string, requestBody *bytes.Buffer) ([]byte, error)
 	GenerateRequestBody(templateData interface{}) (*bytes.Buffer, error)
 	HasErrors(body map[string]interface{}) error
 

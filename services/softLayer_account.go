@@ -129,6 +129,26 @@ func (slas *softLayer_Account_Service) GetVirtualDiskImages() ([]datatypes.SoftL
 	return virtualDiskImages, nil
 }
 
+func (slas *softLayer_Account_Service) GetVirtualDiskImagesWithFilter(filters string) ([]datatypes.SoftLayer_Virtual_Disk_Image, error) {
+	path := fmt.Sprintf("%s/%s", slas.GetName(), "getVirtualDiskImages.json")
+	responseBytes, err := slas.client.DoRawHttpRequestWithObjectFilter(path, filters, "GET", &bytes.Buffer{})
+	if err != nil {
+		errorMessage := fmt.Sprintf("softlayer-go: could get SoftLayer_Account#getVirtualDiskImages, error message '%s'", err.Error())
+		return []datatypes.SoftLayer_Virtual_Disk_Image{}, errors.New(errorMessage)
+	}
+
+	virtualDiskImages := []datatypes.SoftLayer_Virtual_Disk_Image{}
+	err = json.Unmarshal(responseBytes, &virtualDiskImages)
+	if err != nil {
+		errorMessage := fmt.Sprintf("softlayer-go: failed to decode JSON response, err message '%s'", err.Error())
+		err := errors.New(errorMessage)
+		return []datatypes.SoftLayer_Virtual_Disk_Image{}, err
+	}
+
+	return virtualDiskImages, nil
+}
+
+
 func (slas *softLayer_Account_Service) GetSshKeys() ([]datatypes.SoftLayer_Security_Ssh_Key, error) {
 	path := fmt.Sprintf("%s/%s", slas.GetName(), "getSshKeys.json")
 	responseBytes, err := slas.client.DoRawHttpRequest(path, "GET", &bytes.Buffer{})

@@ -176,6 +176,13 @@ func (slc *softLayerClient) DoRawHttpRequestWithObjectMask(path string, masks []
 	return slc.makeHttpRequest(url, requestType, requestBody)
 }
 
+func (slc *softLayerClient) DoRawHttpRequestWithObjectFilter(path string, filters string, requestType string, requestBody *bytes.Buffer) ([]byte, error) {
+	url := fmt.Sprintf("https://%s:%s@%s/%s", slc.username, slc.apiKey, SOFTLAYER_API_URL, path)
+	url += "?objectFilter=" + filters + "]"
+
+	return slc.makeHttpRequest(url, requestType, requestBody)
+}
+
 func (slc *softLayerClient) DoRawHttpRequest(path string, requestType string, requestBody *bytes.Buffer) ([]byte, error) {
 	url := fmt.Sprintf("https://%s:%s@%s/%s", slc.username, slc.apiKey, SOFTLAYER_API_URL, path)
 	return slc.makeHttpRequest(url, requestType, requestBody)
