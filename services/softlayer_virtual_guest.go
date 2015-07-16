@@ -636,6 +636,21 @@ func (slvgs *softLayer_Virtual_Guest_Service) CheckHostDiskAvailability(instance
 	return false, errors.New(fmt.Sprintf("Failed to check host disk availability for instance '%d', got '%s' as response from the API.", instanceId, res))
 }
 
+func (slvgs *softLayer_Virtual_Guest_Service) CaptureImage(instanceId int) (datatypes.SoftLayer_Container_Disk_Image_Capture_Template, error) {
+	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/captureImage.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+	if err != nil {
+		return datatypes.SoftLayer_Container_Disk_Image_Capture_Template{}, err
+	}
+
+	diskImageTemplate := datatypes.SoftLayer_Container_Disk_Image_Capture_Template{}
+	err = json.Unmarshal(response, &diskImageTemplate)
+	if err != nil {
+		return datatypes.SoftLayer_Container_Disk_Image_Capture_Template{}, err
+	}
+
+	return diskImageTemplate, nil
+}
+
 //Private methods
 func (slvgs *softLayer_Virtual_Guest_Service) checkCreateObjectRequiredValues(template datatypes.SoftLayer_Virtual_Guest_Template) error {
 	var err error

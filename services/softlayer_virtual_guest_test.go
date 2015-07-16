@@ -818,4 +818,25 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			Expect(available).To(BeTrue())
 		})
 	})
+
+	Context("#CaptureImage", func() {
+		BeforeEach(func() {
+			virtualGuest.Id = 1234567
+			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_captureImage.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("captures the virtual guest as a container disk image template", func() {
+			diskImageTemplate, err := virtualGuestService.CaptureImage(virtualGuest.Id)
+
+			Expect(err).ToNot(HaveOccurred())
+			Expect(diskImageTemplate.Description).To(Equal("fake-description"))
+			Expect(diskImageTemplate.Name).To(Equal("fake-name"))
+			Expect(diskImageTemplate.Summary).To(Equal("fake-summary"))
+			Expect(len(diskImageTemplate.Volumes)).To(BeNumerically(">=", 1))
+			Expect(diskImageTemplate.Volumes[0].Name).To(Equal("fake-volume-name"))
+			Expect(len(diskImageTemplate.Volumes[0].Partitions)).To(BeNumerically(">=", 1))
+			Expect(diskImageTemplate.Volumes[0].Partitions[0].Name).To(Equal("fake-partition-name"))
+		})
+	})
 })
