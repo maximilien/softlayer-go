@@ -6,8 +6,7 @@
   base=$( cd "$( dirname "$( dirname "$0" )")" && pwd )
   base_gopath=$( cd $base/../../../.. && pwd )
  
-  export GOPATH=$base/Godeps/_workspace:$base_gopath GOBIN=$base_gopath/gobin
-  export PATH=$PATH:$GOBIN
+  export GOPATH=$base/Godeps/_workspace:$base_gopath:$GOPATH
 
   function printStatus {
       if [ $? -eq 0 ]; then
@@ -25,8 +24,11 @@
   echo -e "\n Formatting packages..."
   go fmt ./...
 
+  echo -e "\n cd to base of project..."
+  cd $base
+
   echo -e "\n Unit Testing packages:"
-  go test ./client/... ./data_types/... ./main/... ./services/... ./softlayer/...
+  ginkgo -r -p -v --noisyPendings client data_types main services softlayer
 
   echo -e "\n Vetting packages for potential issues..."
   go tool vet services data_types main client common test_helpers integration
