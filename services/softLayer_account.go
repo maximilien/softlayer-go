@@ -219,23 +219,3 @@ func (slas *softLayer_Account_Service) GetHardware() ([]datatypes.SoftLayer_Hard
 
 	return hardwares, nil
 }
-
-func (slas *softLayer_Account_Service) GetPrivateBlockDeviceTemplateGroupsWithMaskAndFilter(masks []string, filters string) ([]datatypes.SoftLayer_Virtual_Guest_Block_Device_Template_Group, error) {
-	path := fmt.Sprintf("%s/%s", slas.GetName(), "getPrivateBlockDeviceTemplateGroups.json")
-
-	responseBytes, err := slas.client.DoRawHttpRequestWithObjectFilterAndObjectMask(path, masks, filters, "GET", &bytes.Buffer{})
-	if err != nil {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Account#getBlockDeviceTemplateGroups, error message '%s'", err.Error())
-		return []datatypes.SoftLayer_Virtual_Guest_Block_Device_Template_Group{}, errors.New(errorMessage)
-	}
-
-	vgbdtGroups := []datatypes.SoftLayer_Virtual_Guest_Block_Device_Template_Group{}
-	err = json.Unmarshal(responseBytes, &vgbdtGroups)
-	if err != nil {
-		errorMessage := fmt.Sprintf("softlayer-go: failed to decode JSON response, err message '%s'", err.Error())
-		err := errors.New(errorMessage)
-		return []datatypes.SoftLayer_Virtual_Guest_Block_Device_Template_Group{}, err
-	}
-
-	return vgbdtGroups, nil
-}
