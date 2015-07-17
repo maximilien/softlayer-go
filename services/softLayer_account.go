@@ -158,6 +158,25 @@ func (slas *softLayer_Account_Service) GetVirtualDiskImages() ([]datatypes.SoftL
 	return virtualDiskImages, nil
 }
 
+func (slas *softLayer_Account_Service) GetVirtualDiskImagesWithFilter(filters string) ([]datatypes.SoftLayer_Virtual_Disk_Image, error) {
+	path := fmt.Sprintf("%s/%s", slas.GetName(), "getVirtualDiskImages.json")
+	responseBytes, err := slas.client.DoRawHttpRequestWithObjectFilter(path, filters, "GET", &bytes.Buffer{})
+	if err != nil {
+		errorMessage := fmt.Sprintf("softlayer-go: could get SoftLayer_Account#getVirtualDiskImages, error message '%s'", err.Error())
+		return []datatypes.SoftLayer_Virtual_Disk_Image{}, errors.New(errorMessage)
+	}
+
+	virtualDiskImages := []datatypes.SoftLayer_Virtual_Disk_Image{}
+	err = json.Unmarshal(responseBytes, &virtualDiskImages)
+	if err != nil {
+		errorMessage := fmt.Sprintf("softlayer-go: failed to decode JSON response, err message '%s'", err.Error())
+		err := errors.New(errorMessage)
+		return []datatypes.SoftLayer_Virtual_Disk_Image{}, err
+	}
+
+	return virtualDiskImages, nil
+}
+
 func (slas *softLayer_Account_Service) GetSshKeys() ([]datatypes.SoftLayer_Security_Ssh_Key, error) {
 	path := fmt.Sprintf("%s/%s", slas.GetName(), "getSshKeys.json")
 	responseBytes, err := slas.client.DoRawHttpRequest(path, "GET", &bytes.Buffer{})
@@ -180,6 +199,25 @@ func (slas *softLayer_Account_Service) GetSshKeys() ([]datatypes.SoftLayer_Secur
 func (slas *softLayer_Account_Service) GetBlockDeviceTemplateGroups() ([]datatypes.SoftLayer_Virtual_Guest_Block_Device_Template_Group, error) {
 	path := fmt.Sprintf("%s/%s", slas.GetName(), "getBlockDeviceTemplateGroups.json")
 	responseBytes, err := slas.client.DoRawHttpRequest(path, "GET", &bytes.Buffer{})
+	if err != nil {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Account#getBlockDeviceTemplateGroups, error message '%s'", err.Error())
+		return []datatypes.SoftLayer_Virtual_Guest_Block_Device_Template_Group{}, errors.New(errorMessage)
+	}
+
+	vgbdtGroups := []datatypes.SoftLayer_Virtual_Guest_Block_Device_Template_Group{}
+	err = json.Unmarshal(responseBytes, &vgbdtGroups)
+	if err != nil {
+		errorMessage := fmt.Sprintf("softlayer-go: failed to decode JSON response, err message '%s'", err.Error())
+		err := errors.New(errorMessage)
+		return []datatypes.SoftLayer_Virtual_Guest_Block_Device_Template_Group{}, err
+	}
+
+	return vgbdtGroups, nil
+}
+
+func (slas *softLayer_Account_Service) GetBlockDeviceTemplateGroupsWithFilter(filters string) ([]datatypes.SoftLayer_Virtual_Guest_Block_Device_Template_Group, error) {
+	path := fmt.Sprintf("%s/%s", slas.GetName(), "getBlockDeviceTemplateGroups.json")
+	responseBytes, err := slas.client.DoRawHttpRequestWithObjectFilter(path, filters, "GET", &bytes.Buffer{})
 	if err != nil {
 		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Account#getBlockDeviceTemplateGroups, error message '%s'", err.Error())
 		return []datatypes.SoftLayer_Virtual_Guest_Block_Device_Template_Group{}, errors.New(errorMessage)
