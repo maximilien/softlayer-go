@@ -118,8 +118,8 @@ Test Suite Passed
 SWEET SUITE SUCCESS
 ```
 
-## Developing *
----------------
+## Developing (*)
+-----------------
 
 1. Run `go get golang.org/x/tools/cmd/vet`
 2. Run `go get github.com/xxx ...` to install test dependencies (as you see errors)
