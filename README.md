@@ -6,7 +6,7 @@ An *incomplete* SoftLayer (SL) client API written in Go language
 ## Getting Started
 ------------------
 
-The best way to get started would be to look at the [integration](integration) tests for creating a virtual guest. Here is a snippet of what is needed.
+The best way to get started would be to look at the [integration](integration) tests for creating a [virtual guest](https://github.com/maximilien/softlayer-go/blob/master/integration/virtual_guest_lifecycle/virtual_guest_lifecycle_test.go) and the [test helpers](test_helpers). Here is a snippet of what is needed.
 
 ```go
 //Add necessary imports, e.g., os, slclient, datatypes
