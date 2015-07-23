@@ -380,7 +380,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) AttachEphemeralDisk(instanceId int
 		return err
 	}
 
-	order := datatypes.SoftLayer_Product_Order{
+	order := datatypes.SoftLayer_Ephemeral_Disk_Order{
 		VirtualGuests: []datatypes.VirtualGuest{
 			datatypes.VirtualGuest{
 				Id: instanceId,
