@@ -6,7 +6,7 @@ An *incomplete* SoftLayer (SL) client API written in Go language
 ## Getting Started
 ------------------
 
-The best way to get started would be to look at the integration tests for creating a virtual guest. Here is a snippet of what is needed.
+The best way to get started would be to look at the [integration](integration) tests for creating a [virtual guest](https://github.com/maximilien/softlayer-go/blob/master/integration/virtual_guest_lifecycle/virtual_guest_lifecycle_test.go) and the [test helpers](test_helpers). Here is a snippet of what is needed.
 
 ```go
 //Add necessary imports, e.g., os, slclient, datatypes
@@ -118,8 +118,8 @@ Test Suite Passed
 SWEET SUITE SUCCESS
 ```
 
-## Developing *
----------------
+## Developing (*)
+-----------------
 
 1. Run `go get golang.org/x/tools/cmd/vet`
 2. Run `go get github.com/xxx ...` to install test dependencies (as you see errors)
@@ -131,11 +131,13 @@ SWEET SUITE SUCCESS
 ## Contributing
 ---------------
 
+* We gratefully acknowledge and thank the [current contributors](https://github.com/maximilien/softlayer-go/graphs/contributors)
 * We welcome any and all contributions as Pull Requests (PR)
 * We also welcome issues and bug report and new feature request. We will address as time permits
 * Follow the steps above in Developing to get your system setup correctly
 * Please make sure your PR is passing Travis before submitting
 * Feel free to email me or the current collaborators if you have additional questions about contributions
+* Before submitting your first PR, please read and follow steps in [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ### Managing dependencies
 -------------------------
