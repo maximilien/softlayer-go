@@ -8,6 +8,10 @@ type SoftLayer_Product_Order_Parameters struct {
 	Parameters []SoftLayer_Product_Order `json:"parameters"`
 }
 
+type SoftLayer_Ephemeral_Disk_Order_Parameters struct {
+	Parameters []SoftLayer_Ephemeral_Disk_Order `json:"parameters"`
+}
+
 type SoftLayer_Product_Order struct {
 	ComplexType   string                 `json:"complexType"`
 	Location      string                 `json:"location,omitempty"`

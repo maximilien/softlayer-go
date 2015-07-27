@@ -409,7 +409,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) AttachEphemeralDisk(instanceId int
 		},
 	}
 
-	_, err = service.PlaceOrder(order)
+	_, err = service.PlaceEphemeralDiskOrder(order)
 
 	return err
 }
