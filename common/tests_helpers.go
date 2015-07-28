@@ -1,4 +1,4 @@
-package test_helpers
+package common
 
 import (
 	"io/ioutil"
