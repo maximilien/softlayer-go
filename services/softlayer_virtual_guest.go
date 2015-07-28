@@ -68,15 +68,14 @@ func (slvgs *softLayer_Virtual_Guest_Service) CreateObject(template datatypes.So
 	return softLayer_Virtual_Guest, nil
 }
 
-
-func (slvgs *softLayer_Virtual_Guest_Service) ReloadOperatingSystem(instanceId int, template datatypes.Image_Template_Config) (error) {
+func (slvgs *softLayer_Virtual_Guest_Service) ReloadOperatingSystem(instanceId int, template datatypes.Image_Template_Config) error {
 
 	parameter := make([]interface{}, 2)
-	parameter[0]="Force"
-	parameter[1]=template
+	parameter[0] = "FORCE"
+	parameter[1] = template
 
 	parameters := map[string]interface{}{
-		"Parameters": parameter,
+		"parameters": parameter,
 	}
 
 	requestBody, err := json.Marshal(parameters)
@@ -99,7 +98,6 @@ func (slvgs *softLayer_Virtual_Guest_Service) ReloadOperatingSystem(instanceId i
 
 	return nil
 }
-
 
 func (slvgs *softLayer_Virtual_Guest_Service) GetObject(instanceId int) (datatypes.SoftLayer_Virtual_Guest, error) {
 
