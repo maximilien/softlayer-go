@@ -7,12 +7,13 @@
 	"Deps": [
 		{
 			"ImportPath": "github.com/onsi/ginkgo",
-			"Comment": "v1.1.0-33-g17ea479",
-			"Rev": "17ea479729ee427265ac1e913443018350946ddf"
+			"Comment": "v1.2.0-6-gd981d36",
+			"Rev": "d981d36e9884231afa909627b9c275e4ba678f90"
 		},
 		{
 			"ImportPath": "github.com/onsi/gomega",
-			"Rev": "d53f20ed6065e75dd459ceb4904b3e0a5cadbf0d"
+			"Comment": "v1.0-50-gd6c945f",
+			"Rev": "d6c945f9fdbf6cad99e85b0feff591caa268e0db"
 		}
 	]
 }

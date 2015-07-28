@@ -6,7 +6,10 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/url"
+
 	. "github.com/onsi/gomega"
+	"github.com/onsi/gomega/types"
 )
 
 //CombineHandler takes variadic list of handlers and produces one handler
@@ -21,12 +24,23 @@ func CombineHandlers(handlers ...http.HandlerFunc) http.HandlerFunc {
 
 //VerifyRequest returns a handler that verifies that a request uses the specified method to connect to the specified path
 //You may also pass in an optional rawQuery string which is tested against the request's `req.URL.RawQuery`
-func VerifyRequest(method string, path string, rawQuery ...string) http.HandlerFunc {
+//
+//For path, you may pass in a string, in which case strict equality will be applied
+//Alternatively you can pass in a matcher (ContainSubstring("/foo") and MatchRegexp("/foo/[a-f0-9]+") for example)
+func VerifyRequest(method string, path interface{}, rawQuery ...string) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
 		Ω(req.Method).Should(Equal(method), "Method mismatch")
-		Ω(req.URL.Path).Should(Equal(path), "Path mismatch")
+		switch p := path.(type) {
+		case types.GomegaMatcher:
+			Ω(req.URL.Path).Should(p, "Path mismatch")
+		default:
+			Ω(req.URL.Path).Should(Equal(path), "Path mismatch")
+		}
 		if len(rawQuery) > 0 {
-			Ω(req.URL.RawQuery).Should(Equal(rawQuery[0]), "RawQuery mismatch")
+			values, err := url.ParseQuery(rawQuery[0])
+			Ω(err).ShouldNot(HaveOccurred(), "Expected RawQuery is malformed")
+
+			Ω(req.URL.Query()).Should(Equal(values), "RawQuery mismatch")
 		}
 	}
 }
@@ -44,6 +58,8 @@ func VerifyContentType(contentType string) http.HandlerFunc {
 func VerifyBasicAuth(username string, password string) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
 		auth := req.Header.Get("Authorization")
+		Ω(auth).ShouldNot(Equal(""), "Authorization header must be specified")
+
 		decoded, err := base64.StdEncoding.DecodeString(auth[6:])
 		Ω(err).ShouldNot(HaveOccurred())
 
@@ -63,6 +79,13 @@ func VerifyHeader(header http.Header) http.HandlerFunc {
 			Ω(req.Header[key]).Should(Equal(values), "Header mismatch for key: %s", key)
 		}
 	}
+}
+
+//VerifyHeaderKV returns a handler that verifies the request contains a header matching the passed in key and values
+//(recall that a `http.Header` is a mapping from string (key) to []string (values))
+//It is a convenience wrapper around `VerifyHeader` that allows you to avoid having to create an `http.Header` object.
+func VerifyHeaderKV(key string, values ...string) http.HandlerFunc {
+	return VerifyHeader(http.Header{key: values})
 }
 
 //VerifyJSON returns a handler that verifies that the body of the request is a valid JSON representation
@@ -160,7 +183,17 @@ Also, RespondWithJSONEncoded can be given an optional http.Header.  The headers 
 func RespondWithJSONEncoded(statusCode int, object interface{}, optionalHeader ...http.Header) http.HandlerFunc {
 	data, err := json.Marshal(object)
 	Ω(err).ShouldNot(HaveOccurred())
-	return RespondWith(statusCode, string(data), optionalHeader...)
+
+	var headers http.Header
+	if len(optionalHeader) == 1 {
+		headers = optionalHeader[0]
+	} else {
+		headers = make(http.Header)
+	}
+	if _, found := headers["Content-Type"]; !found {
+		headers["Content-Type"] = []string{"application/json"}
+	}
+	return RespondWith(statusCode, string(data), headers)
 }
 
 /*
@@ -173,13 +206,20 @@ objects.
 Also, RespondWithJSONEncodedPtr can be given an optional http.Header.  The headers defined therein will be added to the response headers.
 Since the http.Header can be mutated after the fact you don't need to pass in a pointer.
 */
-func RespondWithJSONEncodedPtr(statusCode *int, object *interface{}, optionalHeader ...http.Header) http.HandlerFunc {
+func RespondWithJSONEncodedPtr(statusCode *int, object interface{}, optionalHeader ...http.Header) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
-		data, err := json.Marshal(*object)
+		data, err := json.Marshal(object)
 		Ω(err).ShouldNot(HaveOccurred())
+		var headers http.Header
 		if len(optionalHeader) == 1 {
-			copyHeader(optionalHeader[0], w.Header())
+			headers = optionalHeader[0]
+		} else {
+			headers = make(http.Header)
 		}
+		if _, found := headers["Content-Type"]; !found {
+			headers["Content-Type"] = []string{"application/json"}
+		}
+		copyHeader(headers, w.Header())
 		w.WriteHeader(*statusCode)
 		w.Write(data)
 	}

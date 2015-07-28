@@ -134,7 +134,7 @@ var _ = Describe("SoftLayer_Account_Service", func() {
 			Expect(virtualDiskImages).ToNot(BeNil())
 		})
 
-		It("returns an error due to failed Josn validation", func() {
+		It("returns an error due to failed Json validation", func() {
 			_, err := accountService.GetVirtualDiskImagesWithFilter(`{{"wrong-filter":"whatever"}`)
 			Expect(err).To(HaveOccurred())
 		})
@@ -177,8 +177,7 @@ var _ = Describe("SoftLayer_Account_Service", func() {
 			Expect(err).ToNot(HaveOccurred())
 			Expect(groups).ToNot(BeNil())
 		})
-
-		It("returns an error due to failed Josn validation", func() {
+		It("returns an error due to failed Json validation", func() {
 			_, err := accountService.GetBlockDeviceTemplateGroupsWithFilter(`{{"wrong-filter":"whatever"}`)
 			Expect(err).To(HaveOccurred())
 		})
