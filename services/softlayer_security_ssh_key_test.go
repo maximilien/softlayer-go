@@ -7,9 +7,9 @@ import (
 	. "github.com/onsi/gomega"
 
 	slclientfakes "github.com/maximilien/softlayer-go/client/fakes"
-	common "github.com/maximilien/softlayer-go/common"
 	datatypes "github.com/maximilien/softlayer-go/data_types"
 	softlayer "github.com/maximilien/softlayer-go/softlayer"
+	testhelpers "github.com/maximilien/softlayer-go/test_helpers"
 )
 
 var _ = Describe("SoftLayer_Ssh_Key_Service", func() {
@@ -52,7 +52,7 @@ var _ = Describe("SoftLayer_Ssh_Key_Service", func() {
 
 	Context("#CreateObject", func() {
 		BeforeEach(func() {
-			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Security_Ssh_Key_Service_createObject.json")
+			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Security_Ssh_Key_Service_createObject.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -75,7 +75,7 @@ var _ = Describe("SoftLayer_Ssh_Key_Service", func() {
 	Context("#GetObject", func() {
 		BeforeEach(func() {
 			sshKey.Id = 1337
-			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Security_Ssh_Key_Service_getObject.json")
+			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Security_Ssh_Key_Service_getObject.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -93,7 +93,7 @@ var _ = Describe("SoftLayer_Ssh_Key_Service", func() {
 	Context("#EditObject", func() {
 		BeforeEach(func() {
 			sshKey.Id = 1338
-			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Security_Ssh_Key_Service_editObject.json")
+			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Security_Ssh_Key_Service_editObject.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -129,7 +129,7 @@ var _ = Describe("SoftLayer_Ssh_Key_Service", func() {
 
 	Context("#GetSoftwarePasswords", func() {
 		BeforeEach(func() {
-			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Security_Ssh_Key_Service_getSoftwarePasswords.json")
+			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Security_Ssh_Key_Service_getSoftwarePasswords.json")
 			Expect(err).ToNot(HaveOccurred())
 
 			sshKey.Id = 1234567
