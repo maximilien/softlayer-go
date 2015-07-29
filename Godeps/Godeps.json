@@ -7,8 +7,8 @@
 	"Deps": [
 		{
 			"ImportPath": "github.com/onsi/ginkgo",
-		    "Comment": "v1.2.0-6-gd981d36",
-		    "Rev": "d981d36e9884231afa909627b9c275e4ba678f90"
+			"Comment": "v1.2.0-8-g25380c6",
+			"Rev": "25380c62e61d3f90436be125b8127dbae578fdef"
 		},
 		{
 			"ImportPath": "github.com/onsi/gomega",
