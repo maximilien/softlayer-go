@@ -129,9 +129,14 @@ var _ = Describe("SoftLayer_Account_Service", func() {
 		})
 
 		It("returns an array of datatypes.SoftLayer_Virtual_Disk_Image", func() {
-			virtualDiskImages, err := accountService.GetVirtualDiskImagesWithFilter("fake-filter")
+			virtualDiskImages, err := accountService.GetVirtualDiskImagesWithFilter(`{"correct-filter":"whatever"}`)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(virtualDiskImages).ToNot(BeNil())
+		})
+
+		It("returns an error due to failed Json validation", func() {
+			_, err := accountService.GetVirtualDiskImagesWithFilter(`{{"wrong-filter":"whatever"}`)
+			Expect(err).To(HaveOccurred())
 		})
 	})
 
@@ -158,6 +163,23 @@ var _ = Describe("SoftLayer_Account_Service", func() {
 			groups, err := accountService.GetBlockDeviceTemplateGroups()
 			Expect(err).ToNot(HaveOccurred())
 			Expect(groups).ToNot(BeNil())
+		})
+	})
+
+	Context("#GetBlockDeviceTemplateGroupsWithFilter", func() {
+		BeforeEach(func() {
+			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Account_Service_getBlockDeviceTemplateGroups.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("returns an array of datatypes.SoftLayer_Virtual_Guest_Block_Device_Template_Group", func() {
+			groups, err := accountService.GetBlockDeviceTemplateGroupsWithFilter(`{"correct-filter":"whatever"}`)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(groups).ToNot(BeNil())
+		})
+		It("returns an error due to failed Json validation", func() {
+			_, err := accountService.GetBlockDeviceTemplateGroupsWithFilter(`{{"wrong-filter":"whatever"}`)
+			Expect(err).To(HaveOccurred())
 		})
 	})
 
