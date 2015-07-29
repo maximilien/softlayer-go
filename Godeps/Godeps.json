@@ -1,14 +1,14 @@
 {
 	"ImportPath": "github.com/maximilien/softlayer-go",
-	"GoVersion": "go1.3.3",
+	"GoVersion": "go1.4.2",
 	"Packages": [
 		"./..."
 	],
 	"Deps": [
 		{
 			"ImportPath": "github.com/onsi/ginkgo",
-			"Comment": "v1.2.0-6-gd981d36",
-			"Rev": "d981d36e9884231afa909627b9c275e4ba678f90"
+		    "Comment": "v1.2.0-6-gd981d36",
+		    "Rev": "d981d36e9884231afa909627b9c275e4ba678f90"
 		},
 		{
 			"ImportPath": "github.com/onsi/gomega",
