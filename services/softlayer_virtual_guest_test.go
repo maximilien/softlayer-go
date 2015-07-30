@@ -183,7 +183,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 
 	Context("#AttachEphemeralDisk", func() {
 		BeforeEach(func() {
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Product_Order_placeOrder.json")
+			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Product_Order_placeEphemeralDiskOrder.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 

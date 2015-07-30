@@ -48,3 +48,29 @@ func (slpo *softLayer_Product_Order_Service) PlaceOrder(order datatypes.SoftLaye
 
 	return receipt, nil
 }
+
+func (slpo *softLayer_Product_Order_Service) PlaceEphemeralDiskOrder(order datatypes.SoftLayer_Ephemeral_Disk_Order) (datatypes.SoftLayer_Product_Order_Receipt, error) {
+	parameters := datatypes.SoftLayer_Ephemeral_Disk_Order_Parameters{
+		Parameters: []datatypes.SoftLayer_Ephemeral_Disk_Order{
+			order,
+		},
+	}
+
+	requestBody, err := json.Marshal(parameters)
+	if err != nil {
+		return datatypes.SoftLayer_Product_Order_Receipt{}, err
+	}
+
+	responseBytes, err := slpo.client.DoRawHttpRequest(fmt.Sprintf("%s/placeOrder.json", slpo.GetName()), "POST", bytes.NewBuffer(requestBody))
+	if err != nil {
+		return datatypes.SoftLayer_Product_Order_Receipt{}, err
+	}
+
+	receipt := datatypes.SoftLayer_Product_Order_Receipt{}
+	err = json.Unmarshal(responseBytes, &receipt)
+	if err != nil {
+		return datatypes.SoftLayer_Product_Order_Receipt{}, err
+	}
+
+	return receipt, nil
+}

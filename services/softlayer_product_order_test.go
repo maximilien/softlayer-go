@@ -57,4 +57,18 @@ var _ = Describe("SoftLayer_Product_Order", func() {
 			Expect(receipt.OrderId).To(Equal(123))
 		})
 	})
+
+	Context("#PlaceEphemeralDiskOrder", func() {
+		BeforeEach(func() {
+			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Product_Order_placeEphemeralDiskOrder.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("returns an instance of datatypes.SoftLayer_Product_Order_Receipt", func() {
+			receipt, err := productOrderService.PlaceEphemeralDiskOrder(datatypes.SoftLayer_Ephemeral_Disk_Order{})
+			Expect(err).ToNot(HaveOccurred())
+			Expect(receipt).ToNot(BeNil())
+			Expect(receipt.OrderId).To(Equal(123))
+		})
+	})
 })
