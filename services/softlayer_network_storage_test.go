@@ -7,9 +7,9 @@ import (
 	. "github.com/onsi/gomega"
 
 	slclientfakes "github.com/maximilien/softlayer-go/client/fakes"
-	common "github.com/maximilien/softlayer-go/common"
 	datatypes "github.com/maximilien/softlayer-go/data_types"
 	softlayer "github.com/maximilien/softlayer-go/softlayer"
+	testhelpers "github.com/maximilien/softlayer-go/test_helpers"
 )
 
 var _ = Describe("SoftLayer_Network_Storage", func() {
@@ -46,7 +46,7 @@ var _ = Describe("SoftLayer_Network_Storage", func() {
 
 	Context("#CreateIscsiVolume", func() {
 		BeforeEach(func() {
-			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Network_Storage_Service_getIscsiVolume.json")
+			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Network_Storage_Service_getIscsiVolume.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 		It("fails with error if the volume size is negative", func() {
@@ -57,7 +57,7 @@ var _ = Describe("SoftLayer_Network_Storage", func() {
 
 	Context("#GetIscsiVolume", func() {
 		BeforeEach(func() {
-			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Network_Storage_Service_getIscsiVolume.json")
+			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Network_Storage_Service_getIscsiVolume.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -74,7 +74,7 @@ var _ = Describe("SoftLayer_Network_Storage", func() {
 
 	Context("#HasAllowedVirtualGuest", func() {
 		It("virtual guest allows to access volume", func() {
-			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Network_Storage_Service_getAllowedVirtualGuests.json")
+			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Network_Storage_Service_getAllowedVirtualGuests.json")
 			Expect(err).ToNot(HaveOccurred())
 			_, err := networkStorageService.HasAllowedVirtualGuest(123, 456)
 			Expect(err).ToNot(HaveOccurred())

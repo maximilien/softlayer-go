@@ -14,6 +14,7 @@ package gbytes
 import (
 	"errors"
 	"fmt"
+	"io"
 	"regexp"
 	"sync"
 	"time"
@@ -42,6 +43,16 @@ func NewBuffer() *Buffer {
 }
 
 /*
+BufferWithBytes returns a new gbytes.Buffer seeded with the passed in bytes
+*/
+func BufferWithBytes(bytes []byte) *Buffer {
+	return &Buffer{
+		lock:     &sync.Mutex{},
+		contents: bytes,
+	}
+}
+
+/*
 Write implements the io.Writer interface
 */
 func (b *Buffer) Write(p []byte) (n int, err error) {
@@ -54,6 +65,30 @@ func (b *Buffer) Write(p []byte) (n int, err error) {
 
 	b.contents = append(b.contents, p...)
 	return len(p), nil
+}
+
+/*
+Read implements the io.Reader interface. It advances the
+cursor as it reads.
+
+Returns an error if called after Close.
+*/
+func (b *Buffer) Read(d []byte) (int, error) {
+	b.lock.Lock()
+	defer b.lock.Unlock()
+
+	if b.closed {
+		return 0, errors.New("attempt to read from closed buffer")
+	}
+
+	if uint64(len(b.contents)) <= b.readCursor {
+		return 0, io.EOF
+	}
+
+	n := copy(d, b.contents[b.readCursor:])
+	b.readCursor += uint64(n)
+
+	return n, nil
 }
 
 /*
