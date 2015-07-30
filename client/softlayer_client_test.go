@@ -49,8 +49,8 @@ var _ = Describe("SoftLayerClient", func() {
 		})
 	})
 
-	Context("#GetSoftLayer_Account", func() {
-		It("returns a instance implemementing the SoftLayer_Account interface", func() {
+	Context("#GetSoftLayer_Account_Service", func() {
+		It("returns a instance implemementing the SoftLayer_Account_Service interface", func() {
 			var accountService softlayer.SoftLayer_Account_Service
 			accountService, err := client.GetSoftLayer_Account_Service()
 			Expect(err).ToNot(HaveOccurred())
@@ -58,8 +58,8 @@ var _ = Describe("SoftLayerClient", func() {
 		})
 	})
 
-	Context("#GetSoftLayer_Virtual_Guest", func() {
-		It("returns a instance implemementing the SoftLayer_Virtual_Guest interface", func() {
+	Context("#GetSoftLayer_Virtual_Guest_Service", func() {
+		It("returns a instance implemementing the SoftLayer_Virtual_Guest_Service interface", func() {
 			var virtualGuestService softlayer.SoftLayer_Virtual_Guest_Service
 			virtualGuestService, err := client.GetSoftLayer_Virtual_Guest_Service()
 			Expect(err).ToNot(HaveOccurred())
@@ -67,8 +67,8 @@ var _ = Describe("SoftLayerClient", func() {
 		})
 	})
 
-	Context("#GetSoftLayer_Ssh_Key", func() {
-		It("returns a instance implemementing the SoftLayer_Ssh_Key interface", func() {
+	Context("#GetSoftLayer_Ssh_Key_Service", func() {
+		It("returns a instance implemementing the SoftLayer_Ssh_Key_Service interface", func() {
 			var sshKeyService softlayer.SoftLayer_Security_Ssh_Key_Service
 			sshKeyService, err := client.GetSoftLayer_Security_Ssh_Key_Service()
 			Expect(err).ToNot(HaveOccurred())
@@ -76,17 +76,8 @@ var _ = Describe("SoftLayerClient", func() {
 		})
 	})
 
-	Context("#GetSoftLayer_Network_Storage", func() {
-		It("returns a instance implemementing the SoftLayer_Network_Storage interface", func() {
-			var networkStorageService softlayer.SoftLayer_Network_Storage_Service
-			networkStorageService, err := client.GetSoftLayer_Network_Storage_Service()
-			Expect(err).ToNot(HaveOccurred())
-			Expect(networkStorageService).ToNot(BeNil())
-		})
-	})
-
-	Context("#GetSoftLayer_Product_Order", func() {
-		It("returns a instance implemementing the SoftLayer_Product_Order interface", func() {
+	Context("#GetSoftLayer_Product_Order_Service", func() {
+		It("returns a instance implemementing the SoftLayer_Product_Order_Service interface", func() {
 			var productOrderService softlayer.SoftLayer_Product_Order_Service
 			productOrderService, err := client.GetSoftLayer_Product_Order_Service()
 			Expect(err).ToNot(HaveOccurred())
@@ -94,12 +85,21 @@ var _ = Describe("SoftLayerClient", func() {
 		})
 	})
 
-	Context("#GetSoftLayer_Product_Package", func() {
+	Context("#GetSoftLayer_Product_Package_Service", func() {
 		It("returns a instance implemementing the SoftLayer_Product_Package interface", func() {
 			var productPackageService softlayer.SoftLayer_Product_Package_Service
 			productPackageService, err := client.GetSoftLayer_Product_Package_Service()
 			Expect(err).ToNot(HaveOccurred())
 			Expect(productPackageService).ToNot(BeNil())
+		})
+	})
+
+	Context("#GetSoftLayer_Network_Storage_Service", func() {
+		It("returns a instance implemementing the GetSoftLayer_Network_Storage_Service interface", func() {
+			var networkStorageService softlayer.SoftLayer_Network_Storage_Service
+			networkStorageService, err := client.GetSoftLayer_Network_Storage_Service()
+			Expect(err).ToNot(HaveOccurred())
+			Expect(networkStorageService).ToNot(BeNil())
 		})
 	})
 
@@ -112,7 +112,16 @@ var _ = Describe("SoftLayerClient", func() {
 		})
 	})
 
-	Context("#GetSoftLayer_Hardware", func() {
+	Context("#GetSoftLayer_Virtual_Guest_Block_Device_Template_Group_Service", func() {
+		It("returns a instance implemementing the SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service interface", func() {
+			var vgbdtgService softlayer.SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service
+			vgbdtgService, err := client.GetSoftLayer_Virtual_Guest_Block_Device_Template_Group_Service()
+			Expect(err).ToNot(HaveOccurred())
+			Expect(vgbdtgService).ToNot(BeNil())
+		})
+	})
+
+	Context("#GetSoftLayer_Hardware_Service", func() {
 		It("returns an instance implemementing the SoftLayer_Hardware_Service interface", func() {
 			var hardwareService softlayer.SoftLayer_Hardware_Service
 			hardwareService, err := client.GetSoftLayer_Hardware_Service()

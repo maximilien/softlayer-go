@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-
+	"github.com/maximilien/softlayer-go/common"
 	datatypes "github.com/maximilien/softlayer-go/data_types"
 	softlayer "github.com/maximilien/softlayer-go/softlayer"
 )
@@ -159,6 +159,12 @@ func (slas *softLayer_Account_Service) GetVirtualDiskImages() ([]datatypes.SoftL
 }
 
 func (slas *softLayer_Account_Service) GetVirtualDiskImagesWithFilter(filters string) ([]datatypes.SoftLayer_Virtual_Disk_Image, error) {
+	isJson, err := common.ValidateJson(filters)
+	if !isJson || err != nil {
+		errorMessage := fmt.Sprintf("softlayer-go: filters string %s is not a valid Json formatted string, error message '%s'", filters, err.Error())
+		return []datatypes.SoftLayer_Virtual_Disk_Image{}, errors.New(errorMessage)
+	}
+
 	path := fmt.Sprintf("%s/%s", slas.GetName(), "getVirtualDiskImages.json")
 	responseBytes, err := slas.client.DoRawHttpRequestWithObjectFilter(path, filters, "GET", &bytes.Buffer{})
 	if err != nil {
@@ -216,6 +222,12 @@ func (slas *softLayer_Account_Service) GetBlockDeviceTemplateGroups() ([]datatyp
 }
 
 func (slas *softLayer_Account_Service) GetBlockDeviceTemplateGroupsWithFilter(filters string) ([]datatypes.SoftLayer_Virtual_Guest_Block_Device_Template_Group, error) {
+	isJson, err := common.ValidateJson(filters)
+	if !isJson || err != nil {
+		errorMessage := fmt.Sprintf("softlayer-go: filters string %s is not a valid Json formatted string, error message '%s'", filters, err.Error())
+		return []datatypes.SoftLayer_Virtual_Guest_Block_Device_Template_Group{}, errors.New(errorMessage)
+	}
+
 	path := fmt.Sprintf("%s/%s", slas.GetName(), "getBlockDeviceTemplateGroups.json")
 	responseBytes, err := slas.client.DoRawHttpRequestWithObjectFilter(path, filters, "GET", &bytes.Buffer{})
 	if err != nil {

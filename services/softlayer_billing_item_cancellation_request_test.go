@@ -7,9 +7,9 @@ import (
 	. "github.com/onsi/gomega"
 
 	slclientfakes "github.com/maximilien/softlayer-go/client/fakes"
-	common "github.com/maximilien/softlayer-go/common"
 	datatypes "github.com/maximilien/softlayer-go/data_types"
 	softlayer "github.com/maximilien/softlayer-go/softlayer"
+	testhelpers "github.com/maximilien/softlayer-go/test_helpers"
 )
 
 var _ = Describe("SoftLayer_Billing_Item_Cancellation_Request", func() {
@@ -46,7 +46,7 @@ var _ = Describe("SoftLayer_Billing_Item_Cancellation_Request", func() {
 
 	Context("#CreateObject", func() {
 		BeforeEach(func() {
-			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Billing_Item_Cancellation_Request_Service_createObject.json")
+			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Billing_Item_Cancellation_Request_Service_createObject.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 

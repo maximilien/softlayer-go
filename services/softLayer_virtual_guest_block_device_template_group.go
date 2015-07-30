@@ -139,7 +139,7 @@ func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) Cre
 		return datatypes.SoftLayer_Virtual_Guest_Block_Device_Template_Group{}, err
 	}
 
-	response, err := slvgbdtg.client.DoRawHttpRequest(fmt.Sprintf("%s/CreateFromExternalSource.json", slvgbdtg.GetName()), "POST", bytes.NewBuffer(requestBody))
+	response, err := slvgbdtg.client.DoRawHttpRequest(fmt.Sprintf("%s/createFromExternalSource.json", slvgbdtg.GetName()), "POST", bytes.NewBuffer(requestBody))
 	if err != nil {
 		return datatypes.SoftLayer_Virtual_Guest_Block_Device_Template_Group{}, err
 	}
@@ -163,7 +163,7 @@ func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) Cop
 		return false, err
 	}
 
-	response, err := slvgbdtg.client.DoRawHttpRequest(fmt.Sprintf("%s/CopyToExternalSource.json", slvgbdtg.GetName()), "POST", bytes.NewBuffer(requestBody))
+	response, err := slvgbdtg.client.DoRawHttpRequest(fmt.Sprintf("%s/copyToExternalSource.json", slvgbdtg.GetName()), "POST", bytes.NewBuffer(requestBody))
 	if err != nil {
 		return false, err
 	}
@@ -176,7 +176,7 @@ func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) Cop
 }
 
 func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) GetImageTypeKeyName(id int) (string, error) {
-	response, err := slvgbdtg.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/GetImageTypeKeyName.json", slvgbdtg.GetName(), id), "GET", new(bytes.Buffer))
+	response, err := slvgbdtg.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/getImageTypeKeyName.json", slvgbdtg.GetName(), id), "GET", new(bytes.Buffer))
 
 	return string(response), err
 }

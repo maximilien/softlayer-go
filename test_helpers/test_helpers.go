@@ -36,6 +36,11 @@ const (
 	WAIT_TIME        = 5
 )
 
+func ReadJsonTestFixtures(packageName, fileName string) ([]byte, error) {
+	wd, _ := os.Getwd()
+	return ioutil.ReadFile(filepath.Join(wd, "..", "test_fixtures", packageName, fileName))
+}
+
 func FindTestVirtualGuests() ([]datatypes.SoftLayer_Virtual_Guest, error) {
 	accountService, err := CreateAccountService()
 	if err != nil {
@@ -179,7 +184,6 @@ func CreateSecuritySshKeyService() (softlayer.SoftLayer_Security_Ssh_Key_Service
 	return sshKeyService, nil
 }
 
-// TODO: need to refine and merge the CreateXXXService in test_helpers
 func CreateProductPackageService() (softlayer.SoftLayer_Product_Package_Service, error) {
 	username, apiKey, err := GetUsernameAndApiKey()
 	if err != nil {
@@ -290,84 +294,6 @@ func FileExists(filePath string) bool {
 	}
 
 	return !os.IsNotExist(err)
-}
-
-func generateSshKeyUsingGo() (string, string, error) {
-	privateKey, err := rsa.GenerateKey(rand.Reader, 2014)
-	if err != nil {
-		return "", "", err
-	}
-
-	fmt.Printf("----> creating ssh private key using Golang\n")
-	privateKeyDer := x509.MarshalPKCS1PrivateKey(privateKey)
-	privateKeyBlock := pem.Block{
-		Type:    "RSA PRIVATE KEY",
-		Headers: nil,
-		Bytes:   privateKeyDer,
-	}
-	privateKeyPem := string(pem.EncodeToMemory(&privateKeyBlock))
-
-	fmt.Printf("----> creating ssh public key using Golang\n")
-	publicKey := privateKey.PublicKey
-	publicKeyDer, err := x509.MarshalPKIXPublicKey(&publicKey)
-	if err != nil {
-		return "", "", err
-	}
-
-	publicKeyBlock := pem.Block{
-		Type:    "PUBLIC KEY",
-		Headers: nil,
-		Bytes:   publicKeyDer,
-	}
-
-	publicKeyPem := string(pem.EncodeToMemory(&publicKeyBlock))
-
-	return privateKeyPem, publicKeyPem, nil
-}
-
-func generateSshKeyUsingSshKeyGen() (string, string, error) {
-	tmpDir, err := ioutil.TempDir("", "generateSshKeyUsingSshKeyGen")
-	if err != nil {
-		return "", "", err
-	}
-
-	rsaKeyFileName := filepath.Join(tmpDir, "ssh_key_file.rsa")
-	rsaKeyFileNamePub := rsaKeyFileName + ".pub"
-
-	sshKeyGen, err := exec.LookPath("ssh-keygen")
-	if err != nil {
-		return "", "", err
-	}
-
-	out, err := exec.Command(sshKeyGen,
-		"-f", rsaKeyFileName,
-		"-t", "rsa", "-N", "").Output()
-
-	//DEBUG
-	fmt.Println("========= output ")
-	fmt.Println(string(out))
-	//END DEBUG
-
-	if err != nil {
-		return "", "", err
-	}
-
-	privateKey, err := ioutil.ReadFile(rsaKeyFileName)
-	if err != nil {
-		return "", "", err
-	}
-
-	publicKey, err := ioutil.ReadFile(rsaKeyFileNamePub)
-	if err != nil {
-		return "", "", err
-	}
-
-	err = os.RemoveAll(tmpDir)
-	if err != nil {
-		return "", "", err
-	}
-
-	return string(privateKey), string(publicKey), nil
 }
 
 func GenerateSshKey() (string, string, error) {
@@ -639,4 +565,78 @@ func GetVirtualGuestPrimaryIpAddress(virtualGuestId int) string {
 	Expect(err).ToNot(HaveOccurred())
 
 	return vgIpAddress
+}
+
+// Private functions
+
+func generateSshKeyUsingGo() (string, string, error) {
+	privateKey, err := rsa.GenerateKey(rand.Reader, 2014)
+	if err != nil {
+		return "", "", err
+	}
+
+	fmt.Printf("----> creating ssh private key using Golang\n")
+	privateKeyDer := x509.MarshalPKCS1PrivateKey(privateKey)
+	privateKeyBlock := pem.Block{
+		Type:    "RSA PRIVATE KEY",
+		Headers: nil,
+		Bytes:   privateKeyDer,
+	}
+	privateKeyPem := string(pem.EncodeToMemory(&privateKeyBlock))
+
+	fmt.Printf("----> creating ssh public key using Golang\n")
+	publicKey := privateKey.PublicKey
+	publicKeyDer, err := x509.MarshalPKIXPublicKey(&publicKey)
+	if err != nil {
+		return "", "", err
+	}
+
+	publicKeyBlock := pem.Block{
+		Type:    "PUBLIC KEY",
+		Headers: nil,
+		Bytes:   publicKeyDer,
+	}
+
+	publicKeyPem := string(pem.EncodeToMemory(&publicKeyBlock))
+
+	return privateKeyPem, publicKeyPem, nil
+}
+
+func generateSshKeyUsingSshKeyGen() (string, string, error) {
+	tmpDir, err := ioutil.TempDir("", "generateSshKeyUsingSshKeyGen")
+	if err != nil {
+		return "", "", err
+	}
+
+	rsaKeyFileName := filepath.Join(tmpDir, "ssh_key_file.rsa")
+	rsaKeyFileNamePub := rsaKeyFileName + ".pub"
+
+	sshKeyGen, err := exec.LookPath("ssh-keygen")
+	if err != nil {
+		return "", "", err
+	}
+
+	_, err = exec.Command(sshKeyGen,
+		"-f", rsaKeyFileName,
+		"-t", "rsa", "-N", "").Output()
+	if err != nil {
+		return "", "", err
+	}
+
+	privateKey, err := ioutil.ReadFile(rsaKeyFileName)
+	if err != nil {
+		return "", "", err
+	}
+
+	publicKey, err := ioutil.ReadFile(rsaKeyFileNamePub)
+	if err != nil {
+		return "", "", err
+	}
+
+	err = os.RemoveAll(tmpDir)
+	if err != nil {
+		return "", "", err
+	}
+
+	return string(privateKey), string(publicKey), nil
 }

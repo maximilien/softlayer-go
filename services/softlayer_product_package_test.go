@@ -7,8 +7,8 @@ import (
 	. "github.com/onsi/gomega"
 
 	slclientfakes "github.com/maximilien/softlayer-go/client/fakes"
-	common "github.com/maximilien/softlayer-go/common"
 	softlayer "github.com/maximilien/softlayer-go/softlayer"
+	testhelpers "github.com/maximilien/softlayer-go/test_helpers"
 )
 
 var _ = Describe("SoftLayer_Product_Package", func() {
@@ -45,7 +45,7 @@ var _ = Describe("SoftLayer_Product_Package", func() {
 
 	Context("#GetItemPrices", func() {
 		BeforeEach(func() {
-			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Product_Package_getItemPrices.json")
+			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Product_Package_getItemPrices.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -60,7 +60,7 @@ var _ = Describe("SoftLayer_Product_Package", func() {
 
 	Context("#GetItemPricesBySize", func() {
 		BeforeEach(func() {
-			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Product_Package_getItemPrices.json")
+			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Product_Package_getItemPrices.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
