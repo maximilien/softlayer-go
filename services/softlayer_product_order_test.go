@@ -60,7 +60,7 @@ var _ = Describe("SoftLayer_Product_Order", func() {
 
 	Context("#PlaceEphemeralDiskOrder", func() {
 		BeforeEach(func() {
-			fakeClient.DoRawHttpRequestResponse, err = common.ReadJsonTestFixtures("services", "SoftLayer_Product_Order_placeOrder.json")
+			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Product_Order_placeEphemeralDiskOrder.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
