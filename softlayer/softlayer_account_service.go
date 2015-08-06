@@ -18,6 +18,5 @@ type SoftLayer_Account_Service interface {
 	GetBlockDeviceTemplateGroups() ([]datatypes.SoftLayer_Virtual_Guest_Block_Device_Template_Group, error)
 	GetBlockDeviceTemplateGroupsWithFilter(filters string) ([]datatypes.SoftLayer_Virtual_Guest_Block_Device_Template_Group, error)
 	GetDatacentersWithSubnetAllocations() ([]datatypes.SoftLayer_Location, error)
-
 	GetHardware() ([]datatypes.SoftLayer_Hardware, error)
 }

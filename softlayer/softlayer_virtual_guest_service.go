@@ -48,4 +48,5 @@ type SoftLayer_Virtual_Guest_Service interface {
 	SetTags(instanceId int, tags []string) (bool, error)
 	ShutdownPrivatePort(instanceId int) (bool, error)
 	ShutdownPublicPort(instanceId int) (bool, error)
+	ReloadOperatingSystem(instanceId int, template datatypes.Image_Template_Config) error
 }

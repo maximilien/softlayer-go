@@ -138,3 +138,7 @@ type SshKey struct {
 type SoftLayer_Virtual_Guest_SetTags_Parameters struct {
 	Parameters []string `json:"parameters"`
 }
+
+type Image_Template_Config struct {
+	ImageTemplateId string `json:"imageTemplateId"`
+}

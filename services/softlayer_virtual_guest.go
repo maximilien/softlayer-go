@@ -68,6 +68,29 @@ func (slvgs *softLayer_Virtual_Guest_Service) CreateObject(template datatypes.So
 	return softLayer_Virtual_Guest, nil
 }
 
+func (slvgs *softLayer_Virtual_Guest_Service) ReloadOperatingSystem(instanceId int, template datatypes.Image_Template_Config) error {
+	parameter := [2]interface{}{"FORCE", template}
+	parameters := map[string]interface{}{
+		"parameters": parameter,
+	}
+
+	requestBody, err := json.Marshal(parameters)
+	if err != nil {
+		return err
+	}
+
+	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/reloadOperatingSystem.json", slvgs.GetName(), instanceId), "POST", bytes.NewBuffer(requestBody))
+	if err != nil {
+		return err
+	}
+
+	if res := string(response[:]); res != `"1"` {
+		return errors.New(fmt.Sprintf("Failed to reload OS on instance with id '%d', got '%s' as response from the API.", instanceId, res))
+	}
+
+	return nil
+}
+
 func (slvgs *softLayer_Virtual_Guest_Service) GetObject(instanceId int) (datatypes.SoftLayer_Virtual_Guest, error) {
 
 	objectMask := []string{

@@ -24,6 +24,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 
 		virtualGuest         datatypes.SoftLayer_Virtual_Guest
 		virtualGuestTemplate datatypes.SoftLayer_Virtual_Guest_Template
+		reload_OS_Config     datatypes.Image_Template_Config
 	)
 
 	BeforeEach(func() {
@@ -158,6 +159,29 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			edited, err := virtualGuestService.EditObject(virtualGuest.Id, virtualGuest)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(edited).To(BeTrue())
+		})
+	})
+
+	Context("#ReloadOperatingSystem", func() {
+		BeforeEach(func() {
+			reload_OS_Config = datatypes.Image_Template_Config{
+				ImageTemplateId: "5b7bc66a-72c6-447a-94a1-967803fcd76b",
+			}
+			virtualGuest.Id = 1234567
+		})
+
+		It("sucessfully reload OS on the virtual guest instance", func() {
+			fakeClient.DoRawHttpRequestResponse = []byte(`"1"`)
+
+			err = virtualGuestService.ReloadOperatingSystem(virtualGuest.Id, reload_OS_Config)
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("fails to reload OS on the virtual guest instance", func() {
+			fakeClient.DoRawHttpRequestResponse = []byte(`"99"`)
+
+			err = virtualGuestService.ReloadOperatingSystem(virtualGuest.Id, reload_OS_Config)
+			Expect(err).To(HaveOccurred())
 		})
 	})
 
