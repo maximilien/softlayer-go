@@ -36,7 +36,7 @@ type SoftLayer_Container_Product_Order_Network_PerformanceStorage_Iscsi struct {
 	VirtualGuests []VirtualGuest         `json:"virtualGuests,omitempty"`
 	Properties    []Property             `json:"properties,omitempty"`
 	Quantity      int                    `json:"quantity,omitempty"`
-	OsFormatType          OsFormatType `json:"osFormatType,omitempty"`
+	OsFormatType  OsFormatType           `json:"osFormatType,omitempty"`
 }
 
 //http://sldn.softlayer.com/reference/datatypes/SoftLayer_Container_Product_Order_Virtual_Guest_Upgrade
