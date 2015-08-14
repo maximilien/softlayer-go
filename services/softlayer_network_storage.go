@@ -45,7 +45,7 @@ func (slns *softLayer_Network_Storage_Service) CreateIscsiVolume(size int, locat
 
 	iopsItemPriceId := slns.getPerformanceStorageItemPriceIdByIops(size)
 
-	order := datatypes.SoftLayer_Product_Order{
+	order := datatypes.SoftLayer_Container_Product_Order_Network_PerformanceStorage_Iscsi{
 		Location:    location,
 		ComplexType: "SoftLayer_Container_Product_Order_Network_PerformanceStorage_Iscsi",
 		OsFormatType: datatypes.OsFormatType{
@@ -72,7 +72,7 @@ func (slns *softLayer_Network_Storage_Service) CreateIscsiVolume(size int, locat
 		return datatypes.SoftLayer_Network_Storage{}, err
 	}
 
-	receipt, err := productOrderService.PlaceOrder(order)
+	receipt, err := productOrderService.PlaceContainerOrderNetworkPerformanceStorageIscsi(order)
 	if err != nil {
 		return datatypes.SoftLayer_Network_Storage{}, err
 	}
