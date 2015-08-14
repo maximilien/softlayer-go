@@ -1,7 +1,7 @@
 softlayer-go [![Build Status](https://travis-ci.org/maximilien/softlayer-go.svg?branch=master)](https://travis-ci.org/maximilien/softlayer-go#)
 ============
 
-An *incomplete* SoftLayer (SL) client API written in Go language
+An *incomplete* SoftLayer (SL) client API written in Go language.
 
 ## Getting Started
 ------------------
