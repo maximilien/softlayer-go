@@ -122,6 +122,15 @@ func (fslc *FakeSoftLayerClient) GetSoftLayer_Network_Storage_Service() (softlay
 	return slService.(softlayer.SoftLayer_Network_Storage_Service), nil
 }
 
+func (fslc *FakeSoftLayerClient) GetSoftLayer_Network_Storage_Allowed_Host_Service() (softlayer.SoftLayer_Network_Storage_Allowed_Host_Service, error) {
+	slService, err := fslc.GetService("SoftLayer_Network_Storage_Allowed_Host")
+	if err != nil {
+		return nil, err
+	}
+
+	return slService.(softlayer.SoftLayer_Network_Storage_Allowed_Host_Service), nil
+}
+
 func (fslc *FakeSoftLayerClient) GetSoftLayer_Product_Order_Service() (softlayer.SoftLayer_Product_Order_Service, error) {
 	slService, err := fslc.GetService("SoftLayer_Product_Order")
 	if err != nil {

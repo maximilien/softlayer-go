@@ -805,6 +805,22 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 		})
 	})
 
+	Context("#GetAllowedHost", func() {
+		BeforeEach(func() {
+			virtualGuest.Id = 1234567
+			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_getAllowedHost.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("gets allowed host for virtual guest", func() {
+			allowedHost, err := virtualGuestService.GetAllowedHost(virtualGuest.Id)
+
+			Expect(err).ToNot(HaveOccurred())
+			Expect(allowedHost).NotTo(BeNil())
+			Expect(allowedHost.Name).To(Equal("fake-iqn"))
+		})
+	})
+
 	Context("#GetNetworkVlans", func() {
 		BeforeEach(func() {
 			virtualGuest.Id = 1234567

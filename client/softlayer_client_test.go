@@ -103,6 +103,15 @@ var _ = Describe("SoftLayerClient", func() {
 		})
 	})
 
+	Context("#GetSoftLayer_Network_Storage_Allowed_Host_Service", func() {
+		It("returns a instance implemementing the GetSoftLayer_Network_Storage_Allowed_Host_Service interface", func() {
+			var networkStorageAllowedHostService softlayer.SoftLayer_Network_Storage_Allowed_Host_Service
+			networkStorageAllowedHostService, err := client.GetSoftLayer_Network_Storage_Allowed_Host_Service()
+			Expect(err).ToNot(HaveOccurred())
+			Expect(networkStorageAllowedHostService).ToNot(BeNil())
+		})
+	})
+
 	Context("#GetSoftLayer_Billing_Item_Cancellation_Request", func() {
 		It("returns a instance implemementing the SoftLayer_Billing_Item_Cancellation_Request interface", func() {
 			var billingItemCancellationRequestService softlayer.SoftLayer_Billing_Item_Cancellation_Request_Service

@@ -14,7 +14,7 @@ type Client interface {
 	GetSoftLayer_Product_Order_Service() (SoftLayer_Product_Order_Service, error)
 	GetSoftLayer_Product_Package_Service() (SoftLayer_Product_Package_Service, error)
 	GetSoftLayer_Network_Storage_Service() (SoftLayer_Network_Storage_Service, error)
-	GetSoftLayer_Network_Storage_Allowed_Host_Service(SoftLayer_Network_Storage_Allowed_Host_Service, error)
+	GetSoftLayer_Network_Storage_Allowed_Host_Service() (SoftLayer_Network_Storage_Allowed_Host_Service, error)
 	GetSoftLayer_Billing_Item_Cancellation_Request_Service() (SoftLayer_Billing_Item_Cancellation_Request_Service, error)
 	GetSoftLayer_Virtual_Guest_Block_Device_Template_Group_Service() (SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service, error)
 	GetSoftLayer_Hardware_Service() (SoftLayer_Hardware_Service, error)
