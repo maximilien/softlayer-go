@@ -48,7 +48,7 @@ func (slns *softLayer_Network_Storage_Service) CreateIscsiVolume(size int, locat
 	order := datatypes.SoftLayer_Container_Product_Order_Network_PerformanceStorage_Iscsi{
 		Location:    location,
 		ComplexType: "SoftLayer_Container_Product_Order_Network_PerformanceStorage_Iscsi",
-		OsFormatType: datatypes.OsFormatType{
+		OsFormatType: datatypes.SoftLayer_Network_Storage_Iscsi_OS_Type{
 			Id:      12,
 			KeyName: "LINUX",
 		},

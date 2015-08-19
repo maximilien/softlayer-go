@@ -29,14 +29,14 @@ type SoftLayer_Container_Product_Order struct {
 
 //http://sldn.softlayer.com/reference/datatypes/SoftLayer_Container_Product_Order_Network_PerformanceStorage_Iscsi
 type SoftLayer_Container_Product_Order_Network_PerformanceStorage_Iscsi struct {
-	ComplexType   string                 `json:"complexType"`
-	Location      string                 `json:"location,omitempty"`
-	PackageId     int                    `json:"packageId"`
-	Prices        []SoftLayer_Item_Price `json:"prices,omitempty"`
-	VirtualGuests []VirtualGuest         `json:"virtualGuests,omitempty"`
-	Properties    []Property             `json:"properties,omitempty"`
-	Quantity      int                    `json:"quantity,omitempty"`
-	OsFormatType  OsFormatType           `json:"osFormatType,omitempty"`
+	ComplexType   string                                  `json:"complexType"`
+	Location      string                                  `json:"location,omitempty"`
+	PackageId     int                                     `json:"packageId"`
+	Prices        []SoftLayer_Item_Price                  `json:"prices,omitempty"`
+	VirtualGuests []VirtualGuest                          `json:"virtualGuests,omitempty"`
+	Properties    []Property                              `json:"properties,omitempty"`
+	Quantity      int                                     `json:"quantity,omitempty"`
+	OsFormatType  SoftLayer_Network_Storage_Iscsi_OS_Type `json:"osFormatType,omitempty"`
 }
 
 //http://sldn.softlayer.com/reference/datatypes/SoftLayer_Container_Product_Order_Virtual_Guest_Upgrade
@@ -48,11 +48,6 @@ type SoftLayer_Container_Product_Order_Virtual_Guest_Upgrade struct {
 	VirtualGuests []VirtualGuest         `json:"virtualGuests,omitempty"`
 	Properties    []Property             `json:"properties,omitempty"`
 	Quantity      int                    `json:"quantity,omitempty"`
-}
-
-type OsFormatType struct {
-	Id      int    `json:"id"`
-	KeyName string `json:"keyName"`
 }
 
 type Property struct {
