@@ -50,8 +50,36 @@ var _ = Describe("SoftLayer_Product_Order", func() {
 			Expect(err).ToNot(HaveOccurred())
 		})
 
-		It("returns an instance of datatypes.SoftLayer_Product_Order_Receipt", func() {
-			receipt, err := productOrderService.PlaceOrder(datatypes.SoftLayer_Product_Order{})
+		It("returns an instance of datatypes.SoftLayer_Container_Product_Order_Receipt", func() {
+			receipt, err := productOrderService.PlaceOrder(datatypes.SoftLayer_Container_Product_Order{})
+			Expect(err).ToNot(HaveOccurred())
+			Expect(receipt).ToNot(BeNil())
+			Expect(receipt.OrderId).To(Equal(123))
+		})
+	})
+
+	Context("#PlaceContainerOrderNetworkPerformanceStorageIscsi", func() {
+		BeforeEach(func() {
+			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Product_Order_placeOrder.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("returns an instance of datatypes.SoftLayer_Container_Product_Order_Receipt", func() {
+			receipt, err := productOrderService.PlaceContainerOrderNetworkPerformanceStorageIscsi(datatypes.SoftLayer_Container_Product_Order_Network_PerformanceStorage_Iscsi{})
+			Expect(err).ToNot(HaveOccurred())
+			Expect(receipt).ToNot(BeNil())
+			Expect(receipt.OrderId).To(Equal(123))
+		})
+	})
+
+	Context("#PlaceContainerOrderVirtualGuestUpgrade", func() {
+		BeforeEach(func() {
+			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Product_Order_placeOrder.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("returns an instance of datatypes.SoftLayer_Container_Product_Order_Receipt", func() {
+			receipt, err := productOrderService.PlaceContainerOrderVirtualGuestUpgrade(datatypes.SoftLayer_Container_Product_Order_Virtual_Guest_Upgrade{})
 			Expect(err).ToNot(HaveOccurred())
 			Expect(receipt).ToNot(BeNil())
 			Expect(receipt.OrderId).To(Equal(123))

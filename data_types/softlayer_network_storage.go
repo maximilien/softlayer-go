@@ -19,6 +19,7 @@ type SoftLayer_Network_Storage struct {
 	UpgradableFlag                  bool          `json:"upgradableFlag"`
 	Username                        string        `json:"username"`
 	BillingItem                     *Billing_Item `json:"billingItem"`
+	LunId                           string        `json:"lunId"`
 	ServiceResourceBackendIpAddress string        `json:"serviceResourceBackendIpAddress"`
 }
 

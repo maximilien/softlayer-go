@@ -45,10 +45,10 @@ func (slns *softLayer_Network_Storage_Service) CreateIscsiVolume(size int, locat
 
 	iopsItemPriceId := slns.getPerformanceStorageItemPriceIdByIops(size)
 
-	order := datatypes.SoftLayer_Product_Order{
+	order := datatypes.SoftLayer_Container_Product_Order_Network_PerformanceStorage_Iscsi{
 		Location:    location,
 		ComplexType: "SoftLayer_Container_Product_Order_Network_PerformanceStorage_Iscsi",
-		OsFormatType: datatypes.OsFormatType{
+		OsFormatType: datatypes.SoftLayer_Network_Storage_Iscsi_OS_Type{
 			Id:      12,
 			KeyName: "LINUX",
 		},
@@ -72,7 +72,7 @@ func (slns *softLayer_Network_Storage_Service) CreateIscsiVolume(size int, locat
 		return datatypes.SoftLayer_Network_Storage{}, err
 	}
 
-	receipt, err := productOrderService.PlaceOrder(order)
+	receipt, err := productOrderService.PlaceContainerOrderNetworkPerformanceStorageIscsi(order)
 	if err != nil {
 		return datatypes.SoftLayer_Network_Storage{}, err
 	}
@@ -141,7 +141,7 @@ func (slns *softLayer_Network_Storage_Service) DeleteIscsiVolume(volumeId int, i
 }
 
 func (slns *softLayer_Network_Storage_Service) GetIscsiVolume(volumeId int) (datatypes.SoftLayer_Network_Storage, error) {
-	response, err := slns.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/getObject.json", slns.GetName(), volumeId), "GET", new(bytes.Buffer))
+	response, err := slns.client.DoRawHttpRequestWithObjectMask(fmt.Sprintf("%s/%d/getObject.json", slns.GetName(), volumeId), []string{"serviceResourceBackendIpAddress", "lunId"}, "GET", new(bytes.Buffer))
 	if err != nil {
 		return datatypes.SoftLayer_Network_Storage{}, err
 	}
