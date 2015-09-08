@@ -121,12 +121,15 @@ SWEET SUITE SUCCESS
 ## Developing (*)
 -----------------
 
-1. Run `go get golang.org/x/tools/cmd/vet`
-2. Run `go get github.com/xxx ...` to install test dependencies (as you see errors)
-1. Write a [Ginkgo](https://github.com/onsi/ginkgo) test.
-1. Run `bin/test` and watch the test fail.
-1. Make the test pass.
-1. Submit a pull request.
+1. Check for existing stories on our [public Tracker](https://www.pivotaltracker.com/n/projects/1344876)
+2. Select an unstarted story and work on code for it
+3. If the story you want to work on is not there then open an issue and ask for a new story to be created
+4. Run `go get golang.org/x/tools/cmd/vet`
+5. Run `go get github.com/xxx ...` to install test dependencies (as you see errors)
+6. Write a [Ginkgo](https://github.com/onsi/ginkgo) test
+7. Run `bin/test` and watch the test fail
+8. Make the test pass
+9. Submit a pull request
 
 ## Contributing
 ---------------
