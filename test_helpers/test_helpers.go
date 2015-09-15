@@ -169,6 +169,21 @@ func CreateVirtualGuestService() (softlayer.SoftLayer_Virtual_Guest_Service, err
 	return virtualGuestService, nil
 }
 
+func CreateVirtualGuestBlockDeviceTemplateGroupService() (softlayer.SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service, error) {
+	username, apiKey, err := GetUsernameAndApiKey()
+	if err != nil {
+		return nil, err
+	}
+
+	client := slclient.NewSoftLayerClient(username, apiKey)
+	vgbdtgService, err := client.GetSoftLayer_Virtual_Guest_Block_Device_Template_Group_Service()
+	if err != nil {
+		return nil, err
+	}
+
+	return vgbdtgService, nil
+}
+
 func CreateSecuritySshKeyService() (softlayer.SoftLayer_Security_Ssh_Key_Service, error) {
 	username, apiKey, err := GetUsernameAndApiKey()
 	if err != nil {
