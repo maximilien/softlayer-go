@@ -474,6 +474,21 @@ func WaitForCreatedSshKeyToBePresent(sshKeyId int) {
 	}, TIMEOUT, POLLING_INTERVAL).Should(BeTrue(), "created ssh key but not in the list of ssh keys")
 }
 
+func WaitForVirtualGuestBlockTemplateGroupToHaveNoActiveTransactions(virtualGuestBlockTemplateGroupId int){
+	vgbdtgService, err := CreateVirtualGuestBlockDeviceTemplateGroupService()
+	Expect(err).ToNot(HaveOccurred())
+
+	fmt.Printf("----> waiting for virtual guest block template group to have no active transactions pending\n")
+	Eventually(func() int {
+		activeTransaction, err := virtualGuestService.GetTransaction(virtualGuestBlockTemplateGroupId)
+		Expect(err).ToNot(HaveOccurred())
+		if activeTransaction != SoftLayer_Provisioning_Version1_Transaction{} {
+			fmt.Printf("----> virtual guest template group: %d, has %d active transactions\n", virtualGuestId, len(activeTransactions))
+		}
+		return &activeTransaction
+	}, TIMEOUT, POLLING_INTERVAL).Should(BeNil(), "failed waiting for virtual guest block template group to have no active transactions")
+}
+
 func SetUserDataToVirtualGuest(virtualGuestId int, metadata string) {
 	virtualGuestService, err := CreateVirtualGuestService()
 	Expect(err).ToNot(HaveOccurred())
