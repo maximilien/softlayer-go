@@ -482,7 +482,7 @@ func WaitForVirtualGuestBlockTemplateGroupToHaveNoActiveTransactions(virtualGues
 	Eventually(func() int {
 		activeTransaction, err := virtualGuestService.GetTransaction(virtualGuestBlockTemplateGroupId)
 		Expect(err).ToNot(HaveOccurred())
-		if activeTransaction != SoftLayer_Provisioning_Version1_Transaction{} {
+		if &activeTransaction != nil {
 			fmt.Printf("----> virtual guest template group: %d, has %d active transactions\n", virtualGuestId, len(activeTransactions))
 		}
 		return &activeTransaction
