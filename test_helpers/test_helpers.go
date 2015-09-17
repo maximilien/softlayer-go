@@ -474,19 +474,22 @@ func WaitForCreatedSshKeyToBePresent(sshKeyId int) {
 	}, TIMEOUT, POLLING_INTERVAL).Should(BeTrue(), "created ssh key but not in the list of ssh keys")
 }
 
-func WaitForVirtualGuestBlockTemplateGroupToHaveNoActiveTransactions(virtualGuestBlockTemplateGroupId int){
+func WaitForVirtualGuestBlockTemplateGroupToHaveNoActiveTransactions(virtualGuestBlockTemplateGroupId int) {
 	vgbdtgService, err := CreateVirtualGuestBlockDeviceTemplateGroupService()
 	Expect(err).ToNot(HaveOccurred())
 
 	fmt.Printf("----> waiting for virtual guest block template group to have no active transactions pending\n")
-	Eventually(func() int {
-		activeTransaction, err := virtualGuestService.GetTransaction(virtualGuestBlockTemplateGroupId)
+	Eventually(func() bool {
+		activeTransaction, err := vgbdtgService.GetTransaction(virtualGuestBlockTemplateGroupId)
 		Expect(err).ToNot(HaveOccurred())
+
+		transactionTrue := false
 		if &activeTransaction != nil {
-			fmt.Printf("----> virtual guest template group: %d, has %d active transactions\n", virtualGuestId, len(activeTransactions))
+			fmt.Printf("----> virtual guest template group: %d, has %#v pending\n", virtualGuestBlockTemplateGroupId, activeTransaction)
+			transactionTrue = true
 		}
-		return &activeTransaction
-	}, TIMEOUT, POLLING_INTERVAL).Should(BeNil(), "failed waiting for virtual guest block template group to have no active transactions")
+		return transactionTrue
+	}, TIMEOUT, POLLING_INTERVAL).Should(BeFalse(), "failed waiting for virtual guest block template group to have no active transactions")
 }
 
 func SetUserDataToVirtualGuest(virtualGuestId int, metadata string) {
