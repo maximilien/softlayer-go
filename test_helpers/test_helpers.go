@@ -484,7 +484,8 @@ func WaitForVirtualGuestBlockTemplateGroupToHaveNoActiveTransactions(virtualGues
 		Expect(err).ToNot(HaveOccurred())
 
 		transactionTrue := false
-		if &activeTransaction != nil {
+		emptyTransaction := datatypes.SoftLayer_Provisioning_Version1_Transaction{}
+		if activeTransaction != emptyTransaction {
 			fmt.Printf("----> virtual guest template group: %d, has %#v pending\n", virtualGuestBlockTemplateGroupId, activeTransaction)
 			transactionTrue = true
 		}
