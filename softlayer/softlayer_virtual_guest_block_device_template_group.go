@@ -21,4 +21,5 @@ type SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service interface {
 
 	CreateFromExternalSource(configuration datatypes.SoftLayer_Container_Virtual_Guest_Block_Device_Template_Configuration) (datatypes.SoftLayer_Virtual_Guest_Block_Device_Template_Group, error)
 	CopyToExternalSource(configuration datatypes.SoftLayer_Container_Virtual_Guest_Block_Device_Template_Configuration) (bool, error)
+	GetTransaction(id int) (datatypes.SoftLayer_Provisioning_Version1_Transaction, error)
 }

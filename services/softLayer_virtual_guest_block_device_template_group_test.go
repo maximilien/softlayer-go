@@ -269,4 +269,20 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			Expect(copied).To(BeTrue())
 		})
 	})
+
+	Context("#GetTransaction", func() {
+		BeforeEach(func() {
+			vgbdtGroup.Id = 1234567
+			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service_deleteObject.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("sucessfully retrieves SoftLayer_Provisioning_Version1_Transaction for the Virtual_Guest_Block_Device_Template_Group instance", func() {
+			transaction, err := vgbdtgService.GetTransaction(vgbdtGroup.Id)
+			Expect(err).ToNot(HaveOccurred())
+
+			Expect(transaction.TransactionStatus).ToNot(BeNil())
+
+		})
+	})
 })

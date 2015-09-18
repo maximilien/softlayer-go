@@ -180,3 +180,18 @@ func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) Get
 
 	return string(response), err
 }
+
+func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) GetTransaction(id int) (datatypes.SoftLayer_Provisioning_Version1_Transaction, error) {
+	response, err := slvgbdtg.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/getTransaction.json", slvgbdtg.GetName(), id), "GET", new(bytes.Buffer))
+	if err != nil {
+		return datatypes.SoftLayer_Provisioning_Version1_Transaction{}, err
+	}
+
+	transaction := datatypes.SoftLayer_Provisioning_Version1_Transaction{}
+	err = json.Unmarshal(response, &transaction)
+	if err != nil {
+		return datatypes.SoftLayer_Provisioning_Version1_Transaction{}, err
+	}
+
+	return transaction, nil
+}
