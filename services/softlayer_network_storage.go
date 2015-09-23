@@ -141,7 +141,27 @@ func (slns *softLayer_Network_Storage_Service) DeleteIscsiVolume(volumeId int, i
 }
 
 func (slns *softLayer_Network_Storage_Service) GetIscsiVolume(volumeId int) (datatypes.SoftLayer_Network_Storage, error) {
-	response, err := slns.client.DoRawHttpRequestWithObjectMask(fmt.Sprintf("%s/%d/getObject.json", slns.GetName(), volumeId), []string{"serviceResourceBackendIpAddress", "lunId"}, "GET", new(bytes.Buffer))
+	objectMask := []string{
+		"accountId",
+		"capacityGb",
+		"createDate",
+		"guestId",
+		"hardwareId",
+		"hostId",
+		"id",
+		"nasType",
+		"notes",
+		"Password",
+		"serviceProviderId",
+		"upgradableFlag",
+		"username",
+		"billingItem.id",
+		"billingItem.orderItem.order.id",
+		"lunId",
+		"serviceResourceBackendIpAddress",
+	}
+
+	response, err := slns.client.DoRawHttpRequestWithObjectMask(fmt.Sprintf("%s/%d/getObject.json", slns.GetName(), volumeId), objectMask, "GET", new(bytes.Buffer))
 	if err != nil {
 		return datatypes.SoftLayer_Network_Storage{}, err
 	}
