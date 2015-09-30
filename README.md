@@ -36,7 +36,7 @@ virtualGuestTemplate := datatypes.SoftLayer_Virtual_Guest_Template{
 	Datacenter: datatypes.Datacenter{
 		Name: "ams01",
 	},
-	SshKeys:                      [],  //or get the necessary keys and add here
+	SshKeys:                      []SshKey{},  //or get the necessary keys and add here
 	HourlyBillingFlag:            true,
 	LocalDiskFlag:                true,
 	OperatingSystemReferenceCode: "UBUNTU_LATEST",
