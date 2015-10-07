@@ -21,12 +21,6 @@ apiKey := os.Getenv("SL_API_KEY")
 //Create a softLayer-go client
 client := slclient.NewSoftLayerClient(username, apiKey)
 
-//Get the SoftLayer account service object
-accountService, err := client.GetSoftLayer_Account_Service()
-if err != nil {
-  return err
-}
-
 //Create a template for the virtual guest (changing properties as needed)
 virtualGuestTemplate := datatypes.SoftLayer_Virtual_Guest_Template{
   Hostname:  "some-hostname",
