@@ -75,12 +75,15 @@ $ git clone https://github.com/maximilien/softlayer-go.git
 $ cd softlayer-go
 $ export SL_USERNAME=your-username@your-org.com
 $ export SL_API_KEY=your-softlayer-api-key
+$ godep restore
 $ ./bin/build
 $ ./bin/test-unit
 $ ./bin/test-integration
 ```
 
-NOTE: if you get any dependency errors, then use `go get path/to/dependency` to get it, e.g., `go get github.com/onsi/ginkgo` and `go get github.com/onsi/gomega`
+NOTE: you may need to install [godep](https://github.com/tools/godep) on your system, if you have not already. You can with this one line command: `$ go get github.com/tools/godep`
+
+NOTE2: if you get any dependency errors, then use `go get path/to/dependency` to get it, e.g., `go get github.com/onsi/ginkgo` and `go get github.com/onsi/gomega`
 
 The executable output should now be located in: `out/slgo`. It does not do anything currently, expect printing a version number. In time this may change. For now, this project is intended to be a set of useful and reusable Golang libraries to access SoftLayer.
 
