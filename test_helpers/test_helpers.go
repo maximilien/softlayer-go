@@ -436,6 +436,23 @@ func WaitForVirtualGuestToHaveNoActiveTransactions(virtualGuestId int) {
 	}, TIMEOUT, POLLING_INTERVAL).Should(Equal(0), "failed waiting for virtual guest to have no active transactions")
 }
 
+func WaitForVirtualGuestToHaveNoActiveTransactionsOrToErr(virtualGuestId int) {
+	virtualGuestService, err := CreateVirtualGuestService()
+    if err != nil {
+        return
+    }
+
+	fmt.Printf("----> waiting for virtual guest to have no active transactions pending\n")
+	Eventually(func() int {
+		activeTransactions, err := virtualGuestService.GetActiveTransactions(virtualGuestId)
+        if err != nil {
+            return 0
+        }
+		fmt.Printf("----> virtual guest: %d, has %d active transactions\n", virtualGuestId, len(activeTransactions))
+		return len(activeTransactions)
+	}, TIMEOUT, POLLING_INTERVAL).Should(Equal(0), "failed waiting for virtual guest to have no active transactions")
+}
+
 func WaitForDeletedSshKeyToNoLongerBePresent(sshKeyId int) {
 	accountService, err := CreateAccountService()
 	Expect(err).ToNot(HaveOccurred())
