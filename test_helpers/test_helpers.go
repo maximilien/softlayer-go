@@ -463,13 +463,12 @@ func SshKeyPresent(sshKeyId int) bool {
 	sshKeys, err := accountService.GetSshKeys()
 	Expect(err).ToNot(HaveOccurred())
 
-	present := false
 	for _, sshKey := range sshKeys {
 		if sshKey.Id == sshKeyId {
-			present = true
+			return true
 		}
 	}
-	return present
+	return false
 }
 
 func WaitForDeletedSshKeyToNoLongerBePresent(sshKeyId int) {
@@ -481,13 +480,12 @@ func WaitForDeletedSshKeyToNoLongerBePresent(sshKeyId int) {
 		sshKeys, err := accountService.GetSshKeys()
 		Expect(err).ToNot(HaveOccurred())
 
-		deleted := true
 		for _, sshKey := range sshKeys {
 			if sshKey.Id == sshKeyId {
-				deleted = false
+				return false
 			}
 		}
-		return deleted
+		return true
 	}, TIMEOUT, POLLING_INTERVAL).Should(BeTrue(), "failed waiting for deleted ssh key to be removed from list of ssh keys")
 }
 
@@ -500,13 +498,12 @@ func WaitForCreatedSshKeyToBePresent(sshKeyId int) {
 		sshKeys, err := accountService.GetSshKeys()
 		Expect(err).ToNot(HaveOccurred())
 
-		keyPresent := false
 		for _, sshKey := range sshKeys {
 			if sshKey.Id == sshKeyId {
-				keyPresent = true
+				return true
 			}
 		}
-		return keyPresent
+		return false
 	}, TIMEOUT, POLLING_INTERVAL).Should(BeTrue(), "created ssh key but not in the list of ssh keys")
 }
 
