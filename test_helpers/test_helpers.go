@@ -398,10 +398,14 @@ func DeleteSshKey(sshKeyId int) {
 	sshKeyService, err := CreateSecuritySshKeyService()
 	Expect(err).ToNot(HaveOccurred())
 
-	fmt.Printf("----> deleting ssh key: %d\n", sshKeyId)
-	deleted, err := sshKeyService.DeleteObject(sshKeyId)
-	Expect(err).ToNot(HaveOccurred())
-	Expect(deleted).To(BeTrue(), "could not delete ssh key")
+	if SshKeyPresent(sshKeyId) {
+		fmt.Printf("----> deleting ssh key: %d\n", sshKeyId)
+		deleted, err := sshKeyService.DeleteObject(sshKeyId)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(deleted).To(BeTrue(), "could not delete ssh key")
+	} else {
+		fmt.Printf("----> ssh key %d already not present\n", sshKeyId)
+	}
 
 	WaitForDeletedSshKeyToNoLongerBePresent(sshKeyId)
 }
@@ -438,19 +442,34 @@ func WaitForVirtualGuestToHaveNoActiveTransactions(virtualGuestId int) {
 
 func WaitForVirtualGuestToHaveNoActiveTransactionsOrToErr(virtualGuestId int) {
 	virtualGuestService, err := CreateVirtualGuestService()
-    if err != nil {
-        return
-    }
+	if err != nil {
+		return
+	}
 
 	fmt.Printf("----> waiting for virtual guest to have no active transactions pending\n")
 	Eventually(func() int {
 		activeTransactions, err := virtualGuestService.GetActiveTransactions(virtualGuestId)
-        if err != nil {
-            return 0
-        }
+		if err != nil {
+			return 0
+		}
 		fmt.Printf("----> virtual guest: %d, has %d active transactions\n", virtualGuestId, len(activeTransactions))
 		return len(activeTransactions)
 	}, TIMEOUT, POLLING_INTERVAL).Should(Equal(0), "failed waiting for virtual guest to have no active transactions")
+}
+
+func SshKeyPresent(sshKeyId int) bool {
+	accountService, err := CreateAccountService()
+	Expect(err).ToNot(HaveOccurred())
+	sshKeys, err := accountService.GetSshKeys()
+	Expect(err).ToNot(HaveOccurred())
+
+	present := false
+	for _, sshKey := range sshKeys {
+		if sshKey.Id == sshKeyId {
+			present = true
+		}
+	}
+	return present
 }
 
 func WaitForDeletedSshKeyToNoLongerBePresent(sshKeyId int) {
