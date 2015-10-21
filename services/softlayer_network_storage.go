@@ -209,7 +209,7 @@ func (slns *softLayer_Network_Storage_Service) AttachIscsiVolume(virtualGuest da
 
 	resp, err := slns.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/allowAccessFromVirtualGuest.json", slns.GetName(), volumeId), "PUT", bytes.NewBuffer(requestBody))
 
-	return resp, err
+	return string(resp[:]), err
 }
 
 func (slns *softLayer_Network_Storage_Service) DetachIscsiVolume(virtualGuest datatypes.SoftLayer_Virtual_Guest, volumeId int) error {
