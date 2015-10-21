@@ -101,8 +101,9 @@ var _ = Describe("SoftLayer_Network_Storage", func() {
 				PrimaryIpAddress:         "fake-primary-ip",
 			}
 			fakeClient.DoRawHttpRequestResponse = []byte("true")
-			err = networkStorageService.AttachIscsiVolume(virtualGuest, 123)
+			resp, err := networkStorageService.AttachIscsiVolume(virtualGuest, 123)
 			Expect(err).ToNot(HaveOccurred())
+			Expect(resp).To(Equal("true"))
 		})
 	})
 
