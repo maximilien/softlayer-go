@@ -23,8 +23,10 @@ type SoftLayer_Virtual_Guest_Service interface {
 	EditObject(instanceId int, template datatypes.SoftLayer_Virtual_Guest) (bool, error)
 
 	IsPingable(instanceId int) (bool, error)
+	IsBackendPingable(instanceId int) (bool, error)
 
 	GetActiveTransaction(instanceId int) (datatypes.SoftLayer_Provisioning_Version1_Transaction, error)
+	GetLastTransaction(instanceId int) (datatypes.SoftLayer_Provisioning_Version1_Transaction, error)
 	GetActiveTransactions(instanceId int) ([]datatypes.SoftLayer_Provisioning_Version1_Transaction, error)
 	GetAllowedHost(instanceId int) (datatypes.SoftLayer_Network_Storage_Allowed_Host, error)
 	GetNetworkVlans(instanceId int) ([]datatypes.SoftLayer_Network_Vlan, error)

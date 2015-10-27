@@ -276,6 +276,23 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 		})
 	})
 
+	Context("#GetLastTransaction", func() {
+		BeforeEach(func() {
+			virtualGuest.Id = 1234567
+			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_getLastTransaction.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("sucessfully retrieves last SoftLayer_Provisioning_Version1_Transaction for virtual guest", func() {
+			lastTransaction, err := virtualGuestService.GetLastTransaction(virtualGuest.Id)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(lastTransaction.CreateDate).ToNot(BeNil())
+			Expect(lastTransaction.ElapsedSeconds).To(BeNumerically(">", 0))
+			Expect(lastTransaction.GuestId).To(Equal(virtualGuest.Id))
+			Expect(lastTransaction.Id).To(BeNumerically(">", 0))
+		})
+	})
+
 	Context("#GetActiveTransactions", func() {
 		BeforeEach(func() {
 			virtualGuest.Id = 1234567
