@@ -575,6 +575,51 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 		})
 	})
 
+	Context("#IsBackendPingeable", func() {
+		BeforeEach(func() {
+			virtualGuest.Id = 1234567
+		})
+
+		Context("when there are no API errors", func() {
+			It("checks that the virtual guest instance backend is pigable", func() {
+				fakeClient.DoRawHttpRequestResponse = []byte("true")
+
+				pingable, err := virtualGuestService.IsBackendPingable(virtualGuest.Id)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(pingable).To(BeTrue())
+			})
+
+			It("checks that the virtual guest instance backend is NOT pigable", func() {
+				fakeClient.DoRawHttpRequestResponse = []byte("false")
+
+				pingable, err := virtualGuestService.IsBackendPingable(virtualGuest.Id)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(pingable).To(BeFalse())
+			})
+		})
+
+		Context("when there are API errors", func() {
+			It("returns false and error", func() {
+				fakeClient.DoRawHttpRequestError = errors.New("fake-error")
+
+				pingable, err := virtualGuestService.IsBackendPingable(virtualGuest.Id)
+				Expect(err).To(HaveOccurred())
+				Expect(pingable).To(BeFalse())
+			})
+		})
+
+		Context("when the API returns invalid or empty result", func() {
+			It("returns false and error", func() {
+				fakeClient.DoRawHttpRequestResponse = []byte("fake")
+
+				pingable, err := virtualGuestService.IsBackendPingable(virtualGuest.Id)
+				Expect(err).To(HaveOccurred())
+				Expect(err.Error()).To(ContainSubstring("Failed to checking that virtual guest backend is pingable"))
+				Expect(pingable).To(BeFalse())
+			})
+		})
+	})
+
 	Context("#ConfigureMetadataDisk", func() {
 		BeforeEach(func() {
 			virtualGuest.Id = 1234567
