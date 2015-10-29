@@ -180,7 +180,7 @@ func (slns *softLayer_Network_Storage_Service) HasAllowedVirtualGuest(volumeId i
 	response, err := slns.client.DoRawHttpRequestWithObjectFilterAndObjectMask(fmt.Sprintf("%s/%d/getAllowedVirtualGuests.json", slns.GetName(), volumeId), []string{"id"}, fmt.Sprintf(string(filter)), "GET", new(bytes.Buffer))
 
 	if err != nil {
-		return false, errors.New(fmt.Sprintf("Can not check authentication for volume %d in vm %d", volumeId, vmId))
+		return false, errors.New(fmt.Sprintf("Cannot check authentication for volume %d in vm %d", volumeId, vmId))
 	}
 
 	virtualGuest := []datatypes.SoftLayer_Virtual_Guest{}
@@ -250,7 +250,7 @@ func (slns *softLayer_Network_Storage_Service) findIscsiVolumeId(orderId int) (d
 		return iscsiStorages[0], nil
 	}
 
-	return datatypes.SoftLayer_Network_Storage{}, errors.New(fmt.Sprintf("Can not find an performance storage (iSCSI volume) with order id %d", orderId))
+	return datatypes.SoftLayer_Network_Storage{}, errors.New(fmt.Sprintf("Cannot find an performance storage (iSCSI volume) with order id %d", orderId))
 }
 
 func (slns *softLayer_Network_Storage_Service) getIscsiVolumeItemIdBasedOnSize(size int) (int, error) {

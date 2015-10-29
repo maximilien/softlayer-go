@@ -12,14 +12,5 @@
 			"friendlyName": "Cloud Reclaim Prep",
 			"name": "CLOUD_RECLAIM_PREP"
 		}
-	},
-	{
-		"createDate": "2014-09-08T11:09:52-08:00",
-		"elapsedSeconds": 1,
-		"guestId": 1234567,
-		"hardwareId": null,
-		"id": 11878005,
-		"modifyDate": "2014-09-08T11:09:52-08:00",
-		"statusChangeDate": "2014-09-08T11:09:52-08:00"
 	}
 ]

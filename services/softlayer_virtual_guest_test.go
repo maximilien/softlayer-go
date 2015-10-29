@@ -276,6 +276,23 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 		})
 	})
 
+	Context("#GetLastTransaction", func() {
+		BeforeEach(func() {
+			virtualGuest.Id = 1234567
+			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_getLastTransaction.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("sucessfully retrieves last SoftLayer_Provisioning_Version1_Transaction for virtual guest", func() {
+			lastTransaction, err := virtualGuestService.GetLastTransaction(virtualGuest.Id)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(lastTransaction.CreateDate).ToNot(BeNil())
+			Expect(lastTransaction.ElapsedSeconds).To(BeNumerically(">", 0))
+			Expect(lastTransaction.GuestId).To(Equal(virtualGuest.Id))
+			Expect(lastTransaction.Id).To(BeNumerically(">", 0))
+		})
+	})
+
 	Context("#GetActiveTransactions", func() {
 		BeforeEach(func() {
 			virtualGuest.Id = 1234567
@@ -553,6 +570,51 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 				pingable, err := virtualGuestService.IsPingable(virtualGuest.Id)
 				Expect(err).To(HaveOccurred())
 				Expect(err.Error()).To(ContainSubstring("Failed to checking that virtual guest is pingable"))
+				Expect(pingable).To(BeFalse())
+			})
+		})
+	})
+
+	Context("#IsBackendPingeable", func() {
+		BeforeEach(func() {
+			virtualGuest.Id = 1234567
+		})
+
+		Context("when there are no API errors", func() {
+			It("checks that the virtual guest instance backend is pigable", func() {
+				fakeClient.DoRawHttpRequestResponse = []byte("true")
+
+				pingable, err := virtualGuestService.IsBackendPingable(virtualGuest.Id)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(pingable).To(BeTrue())
+			})
+
+			It("checks that the virtual guest instance backend is NOT pigable", func() {
+				fakeClient.DoRawHttpRequestResponse = []byte("false")
+
+				pingable, err := virtualGuestService.IsBackendPingable(virtualGuest.Id)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(pingable).To(BeFalse())
+			})
+		})
+
+		Context("when there are API errors", func() {
+			It("returns false and error", func() {
+				fakeClient.DoRawHttpRequestError = errors.New("fake-error")
+
+				pingable, err := virtualGuestService.IsBackendPingable(virtualGuest.Id)
+				Expect(err).To(HaveOccurred())
+				Expect(pingable).To(BeFalse())
+			})
+		})
+
+		Context("when the API returns invalid or empty result", func() {
+			It("returns false and error", func() {
+				fakeClient.DoRawHttpRequestResponse = []byte("fake")
+
+				pingable, err := virtualGuestService.IsBackendPingable(virtualGuest.Id)
+				Expect(err).To(HaveOccurred())
+				Expect(err.Error()).To(ContainSubstring("Failed to checking that virtual guest backend is pingable"))
 				Expect(pingable).To(BeFalse())
 			})
 		})

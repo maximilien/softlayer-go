@@ -219,6 +219,24 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetActiveTransaction(instanceId in
 	return activeTransaction, nil
 }
 
+func (slvgs *softLayer_Virtual_Guest_Service) GetLastTransaction(instanceId int) (datatypes.SoftLayer_Provisioning_Version1_Transaction, error) {
+	objectMask := []string{
+		"transactionGroup",
+	}
+	response, err := slvgs.client.DoRawHttpRequestWithObjectMask(fmt.Sprintf("%s/%d/getLastTransaction.json", slvgs.GetName(), instanceId), objectMask, "GET", new(bytes.Buffer))
+	if err != nil {
+		return datatypes.SoftLayer_Provisioning_Version1_Transaction{}, err
+	}
+
+	lastTransaction := datatypes.SoftLayer_Provisioning_Version1_Transaction{}
+	err = json.Unmarshal(response, &lastTransaction)
+	if err != nil {
+		return datatypes.SoftLayer_Provisioning_Version1_Transaction{}, err
+	}
+
+	return lastTransaction, nil
+}
+
 func (slvgs *softLayer_Virtual_Guest_Service) GetActiveTransactions(instanceId int) ([]datatypes.SoftLayer_Provisioning_Version1_Transaction, error) {
 	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/getActiveTransactions.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
 	if err != nil {
@@ -390,6 +408,25 @@ func (slvgs *softLayer_Virtual_Guest_Service) IsPingable(instanceId int) (bool, 
 	}
 
 	return false, errors.New(fmt.Sprintf("Failed to checking that virtual guest is pingable for instance with id '%d', got '%s' as response from the API.", instanceId, res))
+}
+
+func (slvgs *softLayer_Virtual_Guest_Service) IsBackendPingable(instanceId int) (bool, error) {
+	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/isBackendPingable.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+	if err != nil {
+		return false, err
+	}
+
+	res := string(response)
+
+	if res == "true" {
+		return true, nil
+	}
+
+	if res == "false" {
+		return false, nil
+	}
+
+	return false, errors.New(fmt.Sprintf("Failed to checking that virtual guest backend is pingable for instance with id '%d', got '%s' as response from the API.", instanceId, res))
 }
 
 func (slvgs *softLayer_Virtual_Guest_Service) AttachEphemeralDisk(instanceId int, diskSize int) error {
