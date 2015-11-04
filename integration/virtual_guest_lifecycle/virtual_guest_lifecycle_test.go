@@ -163,6 +163,7 @@ var _ = Describe("SoftLayer Virtual Guest Lifecycle", func() {
 			testhelpers.WaitForVirtualGuestToHaveNoActiveTransactions(virtualGuest.Id)
 
 			testhelpers.DeleteVirtualGuest(virtualGuest.Id)
+			testhelpers.WaitForVirtualGuestToHaveNoActiveTransactionsOrToErr(virtualGuest.Id)
 			testhelpers.DeleteSshKey(createdSshKey.Id)
 		})
 	})
