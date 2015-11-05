@@ -103,7 +103,7 @@ var _ = Describe("SoftLayer_Network_Storage", func() {
 			fakeClient.DoRawHttpRequestResponse = []byte("true")
 			resp, err := networkStorageService.AttachIscsiVolume(virtualGuest, 123)
 			Expect(err).ToNot(HaveOccurred())
-			Expect(resp).To(Equal("true"))
+			Expect(resp).To(Equal(true))
 		})
 	})
 
