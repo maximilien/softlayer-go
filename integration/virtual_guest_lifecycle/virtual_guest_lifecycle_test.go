@@ -64,30 +64,29 @@ var _ = Describe("SoftLayer Virtual Guest Lifecycle", func() {
 	Context("SoftLayer_VirtualGuest#CreateObject, SoftLayer_VirtualGuest#GetVirtualGuestPrimaryIpAddress, and SoftLayer_VirtualGuest#DeleteObject", func() {
 		It("creates the virtual guest instance and waits for it to be active, get it's IP address, and then delete it", func() {
 			virtualGuest := testhelpers.CreateVirtualGuestAndMarkItTest([]datatypes.SoftLayer_Security_Ssh_Key{})
+			defer testhelpers.CleanUpVirtualGuest(virtualGuest.Id)
 
 			testhelpers.WaitForVirtualGuestToBeRunning(virtualGuest.Id)
 			testhelpers.WaitForVirtualGuestToHaveNoActiveTransactions(virtualGuest.Id)
 
 			ipAddress := testhelpers.GetVirtualGuestPrimaryIpAddress(virtualGuest.Id)
 			Expect(ipAddress).ToNot(Equal(""))
-
-			testhelpers.DeleteVirtualGuest(virtualGuest.Id)
 		})
 
 		It("creates the virtual guest instance and waits for it to be active, get it's network VLANS, and then delete it", func() {
 			virtualGuest := testhelpers.CreateVirtualGuestAndMarkItTest([]datatypes.SoftLayer_Security_Ssh_Key{})
+			defer testhelpers.CleanUpVirtualGuest(virtualGuest.Id)
 
 			testhelpers.WaitForVirtualGuestToBeRunning(virtualGuest.Id)
 
 			networkVlans, err := virtualGuestService.GetNetworkVlans(virtualGuest.Id)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(len(networkVlans)).To(BeNumerically(">", 0))
-
-			testhelpers.DeleteVirtualGuest(virtualGuest.Id)
 		})
 
 		It("creates the virtual guest and waits for it to be active and checks that the host could create a 1MB disk", func() {
 			virtualGuest := testhelpers.CreateVirtualGuestAndMarkItTest([]datatypes.SoftLayer_Security_Ssh_Key{})
+			defer testhelpers.CleanUpVirtualGuest(virtualGuest.Id)
 
 			testhelpers.WaitForVirtualGuestToBeRunning(virtualGuest.Id)
 			testhelpers.WaitForVirtualGuestToHaveNoActiveTransactions(virtualGuest.Id)
@@ -98,14 +97,13 @@ var _ = Describe("SoftLayer Virtual Guest Lifecycle", func() {
 			available, err := virtualGuestService.CheckHostDiskAvailability(virtualGuest.Id, 1024)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(available).To(BeTrue())
-
-			testhelpers.DeleteVirtualGuest(virtualGuest.Id)
 		})
 	})
 
 	Context("SoftLayer_VirtualGuest#CreateObject, SoftLayer_VirtualGuest#rebootSoft, wait for reboot to complete, and SoftLayer_VirtualGuest#DeleteObject", func() {
 		It("creates the virtual guest instance, wait for active, SOFT reboots it, wait for RUNNING, then delete it", func() {
 			virtualGuest := testhelpers.CreateVirtualGuestAndMarkItTest([]datatypes.SoftLayer_Security_Ssh_Key{})
+			defer testhelpers.CleanUpVirtualGuest(virtualGuest.Id)
 
 			testhelpers.WaitForVirtualGuestToBeRunning(virtualGuest.Id)
 			testhelpers.WaitForVirtualGuestToHaveNoActiveTransactions(virtualGuest.Id)
@@ -120,15 +118,13 @@ var _ = Describe("SoftLayer Virtual Guest Lifecycle", func() {
 			fmt.Printf("----> successfully SOFT rebooted virtual guest `%d`\n", virtualGuest.Id)
 
 			testhelpers.WaitForVirtualGuestToBeRunning(virtualGuest.Id)
-			testhelpers.WaitForVirtualGuestToHaveNoActiveTransactions(virtualGuest.Id)
-
-			testhelpers.DeleteVirtualGuest(virtualGuest.Id)
 		})
 	})
 
 	Context("SoftLayer_VirtualGuest#CreateObject, SoftLayer_VirtualGuest#rebootHard, wait for reboot to complete, and SoftLayer_VirtualGuest#DeleteObject", func() {
 		It("creates the virtual guest instance, wait for active, HARD reboots it, wait for RUNNING, then delete it", func() {
 			virtualGuest := testhelpers.CreateVirtualGuestAndMarkItTest([]datatypes.SoftLayer_Security_Ssh_Key{})
+			defer testhelpers.CleanUpVirtualGuest(virtualGuest.Id)
 
 			testhelpers.WaitForVirtualGuestToBeRunning(virtualGuest.Id)
 			testhelpers.WaitForVirtualGuestToHaveNoActiveTransactions(virtualGuest.Id)
@@ -143,9 +139,6 @@ var _ = Describe("SoftLayer Virtual Guest Lifecycle", func() {
 			fmt.Printf("----> successfully HARD rebooted virtual guest `%d`\n", virtualGuest.Id)
 
 			testhelpers.WaitForVirtualGuestToBeRunning(virtualGuest.Id)
-			testhelpers.WaitForVirtualGuestToHaveNoActiveTransactions(virtualGuest.Id)
-
-			testhelpers.DeleteVirtualGuest(virtualGuest.Id)
 		})
 	})
 
@@ -156,21 +149,20 @@ var _ = Describe("SoftLayer Virtual Guest Lifecycle", func() {
 
 			createdSshKey, _ := testhelpers.CreateTestSshKey()
 			testhelpers.WaitForCreatedSshKeyToBePresent(createdSshKey.Id)
+			defer testhelpers.DeleteSshKey(createdSshKey.Id)
 
 			virtualGuest := testhelpers.CreateVirtualGuestAndMarkItTest([]datatypes.SoftLayer_Security_Ssh_Key{createdSshKey})
+			defer testhelpers.WaitForVirtualGuestToHaveNoActiveTransactionsOrToErr(virtualGuest.Id)
+			defer testhelpers.CleanUpVirtualGuest(virtualGuest.Id)
 
 			testhelpers.WaitForVirtualGuestToBeRunning(virtualGuest.Id)
-			testhelpers.WaitForVirtualGuestToHaveNoActiveTransactions(virtualGuest.Id)
-
-			testhelpers.DeleteVirtualGuest(virtualGuest.Id)
-			testhelpers.WaitForVirtualGuestToHaveNoActiveTransactionsOrToErr(virtualGuest.Id)
-			testhelpers.DeleteSshKey(createdSshKey.Id)
 		})
 	})
 
 	Context("SoftLayer_VirtualGuest#CreateObject, SoftLayer_VirtualGuest#setTags, and SoftLayer_VirtualGuest#DeleteObject", func() {
 		It("creates the virtual guest instance, wait for active, wait for RUNNING, set some tags, verify that tags are added, then delete it", func() {
 			virtualGuest := testhelpers.CreateVirtualGuestAndMarkItTest([]datatypes.SoftLayer_Security_Ssh_Key{})
+			defer testhelpers.CleanUpVirtualGuest(virtualGuest.Id)
 
 			testhelpers.WaitForVirtualGuestToBeRunning(virtualGuest.Id)
 			testhelpers.WaitForVirtualGuestToHaveNoActiveTransactions(virtualGuest.Id)
@@ -203,8 +195,6 @@ var _ = Describe("SoftLayer Virtual Guest Lifecycle", func() {
 			}
 
 			fmt.Printf("----> successfully set the tags and verified tags were set in virtual guest `%d`\n", virtualGuest.Id)
-
-			testhelpers.DeleteVirtualGuest(virtualGuest.Id)
 		})
 	})
 })

@@ -403,6 +403,11 @@ func DeleteVirtualGuest(virtualGuestId int) {
 	WaitForVirtualGuestToHaveNoActiveTransactions(virtualGuestId)
 }
 
+func CleanUpVirtualGuest(virtualGuestId int) {
+	WaitForVirtualGuestToHaveNoActiveTransactions(virtualGuestId)
+	DeleteVirtualGuest(virtualGuestId)
+}
+
 func DeleteSshKey(sshKeyId int) {
 	sshKeyService, err := CreateSecuritySshKeyService()
 	Expect(err).ToNot(HaveOccurred())
