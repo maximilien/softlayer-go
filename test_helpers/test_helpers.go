@@ -419,6 +419,15 @@ func DeleteSshKey(sshKeyId int) {
 	WaitForDeletedSshKeyToNoLongerBePresent(sshKeyId)
 }
 
+func DeleteDisk(diskId int) {
+	networkStorageService, err := CreateNetworkStorageService()
+	Expect(err).ToNot(HaveOccurred())
+
+	fmt.Printf("----> deleting disk: %d\n", diskId)
+	err = networkStorageService.DeleteIscsiVolume(diskId, true)
+	Expect(err).ToNot(HaveOccurred())
+}
+
 func WaitForVirtualGuest(virtualGuestId int, targetState string, timeout time.Duration) {
 	virtualGuestService, err := CreateVirtualGuestService()
 	Expect(err).ToNot(HaveOccurred())
