@@ -144,9 +144,6 @@ var _ = Describe("SoftLayer Virtual Guest Lifecycle", func() {
 
 	Context("SoftLayer_SecuritySshKey#CreateObject and SoftLayer_VirtualGuest#CreateObject", func() {
 		It("creates key, creates virtual guest and adds key to list of VG", func() {
-			err = testhelpers.FindAndDeleteTestSshKeys()
-			Expect(err).ToNot(HaveOccurred())
-
 			createdSshKey, _ := testhelpers.CreateTestSshKey()
 			testhelpers.WaitForCreatedSshKeyToBePresent(createdSshKey.Id)
 			defer testhelpers.DeleteSshKey(createdSshKey.Id)
