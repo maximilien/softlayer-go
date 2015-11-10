@@ -38,8 +38,11 @@ var _ = Describe("SoftLayer Virtual Guest Lifecycle", func() {
 
 			createdSshKey, publicKeyValue := testhelpers.CreateTestSshKey()
 			testhelpers.WaitForCreatedSshKeyToBePresent(createdSshKey.Id)
+			defer testhelpers.DeleteSshKey(createdSshKey.Id)
 
 			virtualGuest := testhelpers.CreateVirtualGuestAndMarkItTest([]datatypes.SoftLayer_Security_Ssh_Key{createdSshKey})
+			defer testhelpers.WaitForVirtualGuestToHaveNoActiveTransactionsOrToErr(virtualGuest.Id)
+			defer testhelpers.CleanUpVirtualGuest(virtualGuest.Id)
 
 			testhelpers.WaitForVirtualGuestToBeRunning(virtualGuest.Id)
 			testhelpers.WaitForVirtualGuestToHaveNoActiveTransactions(virtualGuest.Id)
@@ -65,9 +68,6 @@ var _ = Describe("SoftLayer Virtual Guest Lifecycle", func() {
 			fmt.Printf("====> Set Metadata and configured disk on instance: %d in %d time\n", virtualGuest.Id, time.Since(startTime))
 
 			testhelpers.TestUserMetadata(userMetadata, publicKeyValue)
-
-			testhelpers.DeleteVirtualGuest(virtualGuest.Id)
-			testhelpers.DeleteSshKey(createdSshKey.Id)
 		})
 	})
 })
