@@ -18,6 +18,7 @@ var _ = Describe("SoftLayer_Network_Storage", func() {
 
 		fakeClient *slclientfakes.FakeSoftLayerClient
 
+		volume                datatypes.SoftLayer_Network_Storage
 		networkStorageService softlayer.SoftLayer_Network_Storage_Service
 		err                   error
 	)
@@ -35,6 +36,8 @@ var _ = Describe("SoftLayer_Network_Storage", func() {
 		networkStorageService, err = fakeClient.GetSoftLayer_Network_Storage_Service()
 		Expect(err).ToNot(HaveOccurred())
 		Expect(networkStorageService).ToNot(BeNil())
+
+		volume = datatypes.SoftLayer_Network_Storage{}
 	})
 
 	Context("#GetName", func() {
@@ -50,7 +53,7 @@ var _ = Describe("SoftLayer_Network_Storage", func() {
 			Expect(err).ToNot(HaveOccurred())
 		})
 		It("fails with error if the volume size is negative", func() {
-			_, err := networkStorageService.CreateIscsiVolume(-1, "fake-location")
+			volume, err = networkStorageService.CreateIscsiVolume(-1, "fake-location")
 			Expect(err).To(HaveOccurred())
 		})
 	})
@@ -62,7 +65,7 @@ var _ = Describe("SoftLayer_Network_Storage", func() {
 		})
 
 		It("returns the iSCSI volume object based on volume id", func() {
-			volume, err := networkStorageService.GetIscsiVolume(1)
+			volume, err = networkStorageService.GetIscsiVolume(1)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(volume.Id).To(Equal(1))
 			Expect(volume.Username).To(Equal("test_username"))
@@ -126,9 +129,30 @@ var _ = Describe("SoftLayer_Network_Storage", func() {
 				PrimaryBackendIpAddress:  "fake-primary-backend-ip",
 				PrimaryIpAddress:         "fake-primary-ip",
 			}
+			volume.Id = 1234567
 			fakeClient.DoRawHttpRequestResponse = []byte("true")
-			err = networkStorageService.DetachIscsiVolume(virtualGuest, 123)
+			err = networkStorageService.DetachIscsiVolume(virtualGuest, volume.Id)
 			Expect(err).ToNot(HaveOccurred())
+		})
+	})
+
+	Context("#DeleteObject", func() {
+		BeforeEach(func() {
+			volume.Id = 1234567
+		})
+
+		It("sucessfully deletes the SoftLayer_Network_Storage volume", func() {
+			fakeClient.DoRawHttpRequestResponse = []byte("true")
+			deleted, err := networkStorageService.DeleteObject(volume.Id)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(deleted).To(BeTrue())
+		})
+
+		It("fails to delete the SoftLayer_Network_Storage volume", func() {
+			fakeClient.DoRawHttpRequestResponse = []byte("false")
+			deleted, err := networkStorageService.DeleteObject(volume.Id)
+			Expect(err).To(HaveOccurred())
+			Expect(deleted).To(BeFalse())
 		})
 	})
 

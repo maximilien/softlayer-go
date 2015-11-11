@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"reflect"
 	"strconv"
 	"time"
 
@@ -93,6 +94,16 @@ func (slns *softLayer_Network_Storage_Service) CreateIscsiVolume(size int, locat
 	return iscsiStorage, nil
 }
 
+func (slvgs *softLayer_Network_Storage_Service) DeleteObject(volumeId int) (bool, error) {
+	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d.json", slvgs.GetName(), volumeId), "DELETE", new(bytes.Buffer))
+
+	if res := string(response[:]); res != "true" {
+		return false, errors.New(fmt.Sprintf("Failed to delete volume with id '%d', got '%s' as response from the API.", volumeId, res))
+	}
+
+	return true, err
+}
+
 func (slns *softLayer_Network_Storage_Service) DeleteIscsiVolume(volumeId int, immediateCancellationFlag bool) error {
 	ObjectFilter := string(`{"iscsiNetworkStorage":{"id":{"operation":` + strconv.Itoa(volumeId) + `}}}`)
 
@@ -111,8 +122,20 @@ func (slns *softLayer_Network_Storage_Service) DeleteIscsiVolume(volumeId int, i
 	for i := 0; i < len(iscsiStorages); i++ {
 		if iscsiStorages[i].Id == volumeId {
 			accountId = iscsiStorages[i].AccountId
-			billingItemId = iscsiStorages[i].BillingItem.Id
-			break
+			if reflect.ValueOf(iscsiStorages[i].BillingItem).IsNil() {
+				deleted, err := slns.DeleteObject(volumeId)
+				if err != nil {
+					return err
+				}
+				if deleted {
+					return nil
+				} else {
+					return errors.New(fmt.Sprintf("Cannot delete volume %d from client at present", volumeId))
+				}
+			} else {
+				billingItemId = iscsiStorages[i].BillingItem.Id
+				break
+			}
 		}
 	}
 
