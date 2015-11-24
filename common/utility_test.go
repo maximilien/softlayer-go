@@ -1,7 +1,7 @@
 package common_test
 
 import (
-	. "github.com/maximilien/softlayer-go/common"
+	. "github.com/TheWeatherCompany/softlayer-go/common"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
