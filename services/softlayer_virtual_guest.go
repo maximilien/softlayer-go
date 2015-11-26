@@ -134,6 +134,8 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetObject(instanceId int) (datatyp
 		"operatingSystem.passwords.username",
 
 		"blockDeviceTemplateGroup.globalIdentifier",
+		"primaryNetworkComponent.networkVlan.id",
+		"primaryBackendNetworkComponent.networkVlan.id",
 	}
 
 	response, err := slvgs.client.DoRawHttpRequestWithObjectMask(fmt.Sprintf("%s/%d/getObject.json", slvgs.GetName(), instanceId), objectMask, "GET", new(bytes.Buffer))
