@@ -29,6 +29,7 @@ type SoftLayer_Virtual_Guest struct {
 	StartCpus                    int        `json:"startCpus,omitempty"`
 	StatusId                     int        `json:"statusId,omitempty"`
 	Uuid                         string     `json:"uuid,omitempty"`
+	LocalDiskFlag                bool       `json:"localDiskFlag",omitempty`
 	HourlyBillingFlag 			 bool       `json:"hourlyBillingFlag,omitempty"`
 
 	GlobalIdentifier        string `json:"globalIdentifier,omitempty"`
@@ -42,6 +43,8 @@ type SoftLayer_Virtual_Guest struct {
 	UserData          []UserData          `json:"userData,omitempty"`
 
 	OperatingSystem *SoftLayer_Operating_System `json:"operatingSystem"`
+
+	BlockDeviceTemplateGroup *BlockDeviceTemplateGroup `json:"blockDeviceTemplateGroup,omitempty"`
 }
 
 type SoftLayer_Operating_System struct {
