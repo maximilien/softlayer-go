@@ -29,7 +29,7 @@ type SoftLayer_Virtual_Guest struct {
 	StartCpus                    int        `json:"startCpus,omitempty"`
 	StatusId                     int        `json:"statusId,omitempty"`
 	Uuid                         string     `json:"uuid,omitempty"`
-``	HourlyBillingFlag 			 bool       `json:"hourlyBillingFlag,omitempty"`
+	HourlyBillingFlag 			 bool       `json:"hourlyBillingFlag,omitempty"`
 
 	GlobalIdentifier        string `json:"globalIdentifier,omitempty"`
 	ManagedResourceFlag     bool   `json:"managedResourceFlag,omitempty"`
