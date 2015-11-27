@@ -83,12 +83,11 @@ type SoftLayer_Virtual_Guest_Template struct {
 	PrivateNetworkOnlyFlag         bool                            `json:"privateNetworkOnlyFlag,omitempty"`
 	PrimaryNetworkComponent        *PrimaryNetworkComponent        `json:"primaryNetworkComponent,omitempty"`
 	PrimaryBackendNetworkComponent *PrimaryBackendNetworkComponent `json:"primaryBackendNetworkComponent,omitempty"`
+	PostInstallScriptUri           string                          `json:"postInstallScriptUri,omitempty"`
 
 	BlockDevices []BlockDevice `json:"blockDevices,omitempty"`
 	UserData     []UserData    `json:"userData,omitempty"`
 	SshKeys      []SshKey      `json:"sshKeys,omitempty"`
-
-	PostInstallScriptUri string `json:"postInstallScriptUri,omitempty"`
 }
 
 type Datacenter struct {
