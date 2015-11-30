@@ -169,6 +169,15 @@ func (slc *softLayerClient) GetSoftLayer_Hardware_Service() (softlayer.SoftLayer
 	return slService.(softlayer.SoftLayer_Hardware_Service), nil
 }
 
+func (slc *softLayerClient) GetSoftLayer_Dns_Domain_Record_Service() (softlayer.SoftLayer_Dns_Domain_Record_Service, error) {
+	slService, err := slc.GetService("SoftLayer_Dns_Domain_ResourceRecord")
+	if err != nil {
+		return nil, err
+	}
+
+	return slService.(softlayer.SoftLayer_Dns_Domain_Record_Service), nil
+}
+
 //Public methods
 
 func (slc *softLayerClient) DoRawHttpRequestWithObjectMask(path string, masks []string, requestType string, requestBody *bytes.Buffer) ([]byte, error) {
