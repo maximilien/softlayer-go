@@ -15,8 +15,8 @@ type SoftLayer_Dns_Domain_Record_Template struct {
 	Refresh           int    `json:"refresh"`
 	ResponsiblePerson string    `json:"responsiblePerson"`
 	Retry             int    `json:"retry"`
-	ttl               int    `json:"ttl"`
-	Type              int    `json:"type"`
+	Ttl               int    `json:"ttl"`
+	Type              string    `json:"type"`
 }
 
 type SoftLayer_Dns_Domain_Record struct {
@@ -30,6 +30,6 @@ type SoftLayer_Dns_Domain_Record struct {
 	Refresh           int    `json:"refresh"`
 	ResponsiblePerson string    `json:"responsiblePerson"`
 	Retry             int    `json:"retry"`
-	ttl               int    `json:"ttl"`
-	Type              int    `json:"type"`
+	Ttl               int    `json:"ttl"`
+	Type              string    `json:"type"`
 }
