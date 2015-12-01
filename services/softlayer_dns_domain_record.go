@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"errors"
 
 	datatypes "github.com/TheWeatherCompany/softlayer-go/data_types"
 	softlayer "github.com/TheWeatherCompany/softlayer-go/softlayer"
@@ -90,3 +91,14 @@ func (sldr *softLayer_Dns_Domain_Record_Service) GetObject(id string) (datatypes
 
 	return dns_record, nil
 }
+
+func (sldr *softLayer_Dns_Domain_Record_Service) DeleteObject(recordId int) (bool, error) {
+	response, err := sldr.client.DoRawHttpRequest(fmt.Sprintf("%s/%d.json", sldr.GetName(), recordId), "DELETE", new(bytes.Buffer))
+
+	if res := string(response[:]); res != "true" {
+		return false, errors.New(fmt.Sprintf("Failed to delete dns domain record with id '%d', got '%s' as response from the API.", recordId, res))
+	}
+
+	return true, err
+}
+
