@@ -56,7 +56,12 @@ func (sldr *softLayer_Dns_Domain_Record_Service) CreateObject(template datatypes
 	return dns_record, nil
 }
 
-func (sldr *softLayer_Dns_Domain_Record_Service) GetObject(id string) (datatypes.SoftLayer_Dns_Domain_Record, error) {
+func (sldr *softLayer_Dns_Domain_Record_Service) CreateObjects(templates []datatypes.SoftLayer_Dns_Domain_Record_Template) ([]datatypes.SoftLayer_Dns_Domain_Record, error) {
+	//TODO to implement
+	return nil, nil
+}
+
+func (sldr *softLayer_Dns_Domain_Record_Service) GetObject(id int) (datatypes.SoftLayer_Dns_Domain_Record, error) {
 
 	objectMask := []string{
 		"data",
@@ -102,3 +107,7 @@ func (sldr *softLayer_Dns_Domain_Record_Service) DeleteObject(recordId int) (boo
 	return true, err
 }
 
+func (sldr *softLayer_Dns_Domain_Record_Service) GetDomain() (datatypes.SoftLayer_Dns_Domain_Record, error) {
+	//TODO need to implement and change return type to datatypes.SoftLayer_Dns_Domain
+	return datatypes.SoftLayer_Dns_Domain_Record{}, nil
+}

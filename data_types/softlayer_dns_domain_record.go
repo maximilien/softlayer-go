@@ -1,7 +1,7 @@
 package data_types
 
 type SoftLayer_Dns_Domain_Record_Template_Parameters struct {
-	Parameters []SoftLayer_Hardware_Template `json:"parameters"`
+	Parameters []SoftLayer_Dns_Domain_Record_Template `json:"parameters"`
 }
 
 type SoftLayer_Dns_Domain_Record_Template struct {
