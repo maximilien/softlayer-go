@@ -7,7 +7,7 @@ import (
 type SoftLayer_Dns_Domain_Record_Service interface {
 	Service
 
-	CreateObject(template datatypes.SoftLayer_Dns_Domain_Record) (datatypes.SoftLayer_Dns_Domain_Record, error)
+	CreateObject(template datatypes.SoftLayer_Dns_Domain_Record_Template) (datatypes.SoftLayer_Dns_Domain_Record, error)
 	GetObject(id string) (datatypes.SoftLayer_Dns_Domain_Record, error)
 	DeleteObject(id string) (datatypes.SoftLayer_Dns_Domain_Record, error)
 	UpdateObject(id string) (datatypes.SoftLayer_Dns_Domain_Record, error)

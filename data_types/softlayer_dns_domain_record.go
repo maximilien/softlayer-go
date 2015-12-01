@@ -5,10 +5,31 @@ type SoftLayer_Dns_Domain_Record_Template_Parameters struct {
 }
 
 type SoftLayer_Dns_Domain_Record_Template struct {
-	Host                     string `json:"hostname"`
+	Data              string `json:"data"`
+	DomainId          int    `json:"domainId"`
+	Expire            int    `json:"expire"`
+	Host              string `json:"host"`
+	Id                int    `json:"id"`
+	Minimum           int    `json:"minimum"`
+	MxPriority        int    `json:"mxPriority"`
+	Refresh           int    `json:"refresh"`
+	ResponsiblePerson string    `json:"responsiblePerson"`
+	Retry             int    `json:"retry"`
+	ttl               int    `json:"ttl"`
+	Type              int    `json:"type"`
 }
 
 type SoftLayer_Dns_Domain_Record struct {
-	Domain                string     `json:"domain"`
-	Host                     string `json:"hostname"`
+	Data              string `json:"data"`
+	DomainId          int    `json:"domainId"`
+	Expire            int    `json:"expire"`
+	Host              string `json:"host"`
+	Id                int    `json:"id"`
+	Minimum           int    `json:"minimum"`
+	MxPriority        int    `json:"mxPriority"`
+	Refresh           int    `json:"refresh"`
+	ResponsiblePerson string    `json:"responsiblePerson"`
+	Retry             int    `json:"retry"`
+	ttl               int    `json:"ttl"`
+	Type              int    `json:"type"`
 }
