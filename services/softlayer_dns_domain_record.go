@@ -107,7 +107,27 @@ func (sldr *softLayer_Dns_Domain_Record_Service) DeleteObject(recordId int) (boo
 	return true, err
 }
 
+func (sldr *softLayer_Dns_Domain_Record_Service) DeleteObjects(recordIds []int) (bool, error) {
+//	response, err := sldr.client.DoRawHttpRequest(fmt.Sprintf("%s/%d.json", sldr.GetName(), recordId), "DELETE", new(bytes.Buffer))
+//
+//	if res := string(response[:]); res != "true" {
+//		return false, errors.New(fmt.Sprintf("Failed to delete dns domain record with id '%d', got '%s' as response from the API.", recordId, res))
+//	}
+//
+	return true, nil
+}
+
 func (sldr *softLayer_Dns_Domain_Record_Service) GetDomain() (datatypes.SoftLayer_Dns_Domain_Record, error) {
 	//TODO need to implement and change return type to datatypes.SoftLayer_Dns_Domain
 	return datatypes.SoftLayer_Dns_Domain_Record{}, nil
+}
+
+func (sldr *softLayer_Dns_Domain_Record_Service) UpdateObject(recordId int) (bool, error) {
+	//	response, err := sldr.client.DoRawHttpRequest(fmt.Sprintf("%s/%d.json", sldr.GetName(), recordId), "DELETE", new(bytes.Buffer))
+	//
+	//	if res := string(response[:]); res != "true" {
+	//		return false, errors.New(fmt.Sprintf("Failed to delete dns domain record with id '%d', got '%s' as response from the API.", recordId, res))
+	//	}
+	//
+	return true, nil
 }

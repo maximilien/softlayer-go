@@ -88,6 +88,15 @@ func (slc *softLayerClient) GetSoftLayer_Virtual_Guest_Service() (softlayer.Soft
 	return slService.(softlayer.SoftLayer_Virtual_Guest_Service), nil
 }
 
+func (slc *softLayerClient) GetSoftLayer_Dns_Domain_Service() (softlayer.SoftLayer_Dns_Domain_Service, error) {
+	slService, err := slc.GetService("SoftLayer_Dns_Domain")
+	if err != nil {
+		return nil, err
+	}
+
+	return slService.(softlayer.SoftLayer_Dns_Domain_Service), nil
+}
+
 func (slc *softLayerClient) GetSoftLayer_Virtual_Disk_Image_Service() (softlayer.SoftLayer_Virtual_Disk_Image_Service, error) {
 	slService, err := slc.GetService("SoftLayer_Virtual_Disk_Image")
 	if err != nil {
@@ -272,6 +281,7 @@ func (slc *softLayerClient) initSoftLayerServices() {
 	slc.softLayerServices["SoftLayer_Billing_Item_Cancellation_Request"] = services.NewSoftLayer_Billing_Item_Cancellation_Request_Service(slc)
 	slc.softLayerServices["SoftLayer_Virtual_Guest_Block_Device_Template_Group"] = services.NewSoftLayer_Virtual_Guest_Block_Device_Template_Group_Service(slc)
 	slc.softLayerServices["SoftLayer_Hardware"] = services.NewSoftLayer_Hardware_Service(slc)
+	slc.softLayerServices["SoftLayer_Dns_Domain"] = services.NewSoftLayer_Dns_Domain_Service(slc)
 	slc.softLayerServices["SoftLayer_Dns_Domain_ResourceRecord"] = services.NewSoftLayer_Dns_Domain_Record_Service(slc)
 }
 
