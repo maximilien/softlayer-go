@@ -1,12 +1,10 @@
 package data_types
 
-import "time"
-
 type SoftLayer_Dns_Domain_Template struct {
-	Name		string		`json:"name,omitempty"`
-	Serial		int			`json:"serial,omitempty"`
+	Name		string		`json:"name"`
+	Serial		int			`json:"serial"`
 
-	//	ResourceRecords		[]Softlayer_Dns_Domain_Record		`json:"resourceRecords,omitempty"`
+	ResourceRecords		[]SoftLayer_Dns_Domain_Record		`json:"resourceRecords"`
 }
 
 type SoftLayer_Dns_Domain_Template_Parameters struct {
@@ -14,13 +12,13 @@ type SoftLayer_Dns_Domain_Template_Parameters struct {
 }
 
 type SoftLayer_Dns_Domain struct {
-	Id						int			`json:"id,omitempty"`
-	Name					string		`json:"name,omitempty"`
-	Serial					int			`json:"serial,omitempty"`
-	UpdateDate				*time.Time	`json:"updateDate,omitempty"`
-//	Account					SoftLayer_Account 		`json:"account,omitempty"`
-	ManagedResourceFlag		bool		`json:"managedResourceFlag,omitempty"`
-	ResourceRecordCount		int 		`json:"resourceRecordCount,omitempty"`
-//	ResourceRecords			[]Softlayer_Dns_Domain_Record		`json:"resourceRecords,omitempty"`
-//	Secondary				SoftLayer_Dns_Secondary						`json:"secondary,omitempty"`
+	Id						int			`json:"id"`
+	Name					string		`json:"name"`
+	Serial					int			`json:"serial"`
+	UpdateDate				string		`json:"updateDate"`
+//	Account					SoftLayer_Account 		`json:"account"`
+	ManagedResourceFlag		bool		`json:"managedResourceFlag"`
+	ResourceRecordCount		int 		`json:"resourceRecordCount"`
+	ResourceRecords			[]SoftLayer_Dns_Domain_Record		`json:"resourceRecords"`
+//	Secondary				SoftLayer_Dns_Secondary						`json:"secondary"`
 }

@@ -6,6 +6,8 @@ import (
 	"bytes"
 	"errors"
 	"encoding/json"
+	"time"
+	"strconv"
 )
 
 type softLayer_Dns_Domain_Service struct {
@@ -24,6 +26,14 @@ func (sldds *softLayer_Dns_Domain_Service) GetName() string {
 
 func (sldds *softLayer_Dns_Domain_Service) CreateObject(template datatypes.SoftLayer_Dns_Domain_Template) (datatypes.SoftLayer_Dns_Domain, error) {
 	// check required fields
+
+	if template.Serial == 0 {
+		template.Serial, _ = strconv.Atoi(time.Now().Format("20091110") + "01")
+	}
+
+	if template.ResourceRecords == nil {
+		template.ResourceRecords = []datatypes.SoftLayer_Dns_Domain_Record{}
+	}
 
 	parameters := datatypes.SoftLayer_Dns_Domain_Template_Parameters{
 		Parameters: []datatypes.SoftLayer_Dns_Domain_Template{

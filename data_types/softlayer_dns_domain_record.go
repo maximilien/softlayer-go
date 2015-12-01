@@ -19,6 +19,10 @@ type SoftLayer_Dns_Domain_Record_Template struct {
 	Type              string    `json:"type"`
 }
 
+type SoftLayer_Dns_Domain_Record_Parameters struct {
+	Parameters []SoftLayer_Dns_Domain_Record `json:"parameters"`
+}
+
 type SoftLayer_Dns_Domain_Record struct {
 	Data              string `json:"data"`
 	DomainId          int    `json:"domainId"`

@@ -57,7 +57,6 @@ func (sldr *softLayer_Dns_Domain_Record_Service) CreateObject(template datatypes
 }
 
 func (sldr *softLayer_Dns_Domain_Record_Service) GetObject(id int) (datatypes.SoftLayer_Dns_Domain_Record, error) {
-
 	objectMask := []string{
 		"data",
 		"domainId",
@@ -102,9 +101,9 @@ func (sldr *softLayer_Dns_Domain_Record_Service) DeleteObject(recordId int) (boo
 	return true, err
 }
 
-func (sldr *softLayer_Dns_Domain_Record_Service) UpdateObject(recordId int, template datatypes.SoftLayer_Dns_Domain_Record_Template) (bool, error) {
-	parameters := datatypes.SoftLayer_Dns_Domain_Record_Template_Parameters{
-		Parameters: []datatypes.SoftLayer_Dns_Domain_Record_Template{
+func (sldr *softLayer_Dns_Domain_Record_Service) EditObject(recordId int, template datatypes.SoftLayer_Dns_Domain_Record) (bool, error) {
+	parameters := datatypes.SoftLayer_Dns_Domain_Record_Parameters{
+		Parameters: []datatypes.SoftLayer_Dns_Domain_Record{
 			template,
 		},
 	}
