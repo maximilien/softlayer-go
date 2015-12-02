@@ -2,8 +2,6 @@ package data_types
 
 type SoftLayer_Dns_Domain_Template struct {
 	Name		string		`json:"name"`
-	Serial		int			`json:"serial"`
-
 	ResourceRecords		[]SoftLayer_Dns_Domain_Record		`json:"resourceRecords"`
 }
 
