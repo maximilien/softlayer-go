@@ -99,6 +99,15 @@ func (fslc *FakeSoftLayerClient) GetSoftLayer_Virtual_Guest_Service() (softlayer
 	return slService.(softlayer.SoftLayer_Virtual_Guest_Service), nil
 }
 
+func (fslc *FakeSoftLayerClient) GetSoftLayer_Dns_Domain_Service() (softlayer.SoftLayer_Dns_Domain_Service, error) {
+	slService, err := fslc.GetService("SoftLayer_Dns_Domain")
+	if err != nil {
+		return nil, err
+	}
+
+	return slService.(softlayer.SoftLayer_Dns_Domain_Service), nil
+}
+
 func (fslc *FakeSoftLayerClient) GetSoftLayer_Virtual_Disk_Image_Service() (softlayer.SoftLayer_Virtual_Disk_Image_Service, error) {
 	slService, err := fslc.GetService("SoftLayer_Virtual_Disk_Image")
 	if err != nil {
