@@ -18,8 +18,8 @@ var _ = Describe("SoftLayer_Dns_Domain_Record", func() {
 
 		fakeClient *slclientfakes.FakeSoftLayerClient
 
-		dnsDomainRecordService 	softlayer.SoftLayer_Dns_Domain_Record_Service
-		err             		error
+		dnsDomainRecordService softlayer.SoftLayer_Dns_Domain_Record_Service
+		err                    error
 	)
 
 	BeforeEach(func() {
@@ -52,18 +52,18 @@ var _ = Describe("SoftLayer_Dns_Domain_Record", func() {
 
 		It("creates a new SoftLayer_Dns_Domain_Record", func() {
 			template := datatypes.SoftLayer_Dns_Domain_Record_Template{
-				Data:		"testData",
-				DomainId:	123,
-				Expire:		99999,
-				Host:		"testHost.com",
-				Id:			111,
-				Minimum:	1,
-				MxPriority:	9,
-				Refresh:	100,
+				Data:              "testData",
+				DomainId:          123,
+				Expire:            99999,
+				Host:              "testHost.com",
+				Id:                111,
+				Minimum:           1,
+				MxPriority:        9,
+				Refresh:           100,
 				ResponsiblePerson: "someTestPerson",
-				Retry:		444,
-				Ttl:		222,
-				Type:		"someTestType",
+				Retry:             444,
+				Ttl:               222,
+				Type:              "someTestType",
 			}
 
 			result, err := dnsDomainRecordService.CreateObject(template)

@@ -13,10 +13,10 @@ type SoftLayer_Dns_Domain_Record_Template struct {
 	Minimum           int    `json:"minimum"`
 	MxPriority        int    `json:"mxPriority"`
 	Refresh           int    `json:"refresh"`
-	ResponsiblePerson string    `json:"responsiblePerson"`
+	ResponsiblePerson string `json:"responsiblePerson"`
 	Retry             int    `json:"retry"`
 	Ttl               int    `json:"ttl"`
-	Type              string    `json:"type"`
+	Type              string `json:"type"`
 }
 
 type SoftLayer_Dns_Domain_Record_Parameters struct {
@@ -32,8 +32,8 @@ type SoftLayer_Dns_Domain_Record struct {
 	Minimum           int    `json:"minimum"`
 	MxPriority        int    `json:"mxPriority"`
 	Refresh           int    `json:"refresh"`
-	ResponsiblePerson string    `json:"responsiblePerson"`
+	ResponsiblePerson string `json:"responsiblePerson"`
 	Retry             int    `json:"retry"`
 	Ttl               int    `json:"ttl"`
-	Type              string    `json:"type"`
+	Type              string `json:"type"`
 }

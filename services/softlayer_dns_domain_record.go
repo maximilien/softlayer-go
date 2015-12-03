@@ -3,13 +3,12 @@ package services
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"errors"
+	"fmt"
 
 	datatypes "github.com/TheWeatherCompany/softlayer-go/data_types"
 	softlayer "github.com/TheWeatherCompany/softlayer-go/softlayer"
 )
-
 
 type softLayer_Dns_Domain_Record_Service struct {
 	client softlayer.Client
