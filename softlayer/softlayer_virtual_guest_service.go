@@ -62,5 +62,6 @@ type SoftLayer_Virtual_Guest_Service interface {
 	ReloadOperatingSystem(instanceId int, template datatypes.Image_Template_Config) error
 
 	// Upgrades CPU, Memory or network speed attributes (if provided) for particular instance
+	// Returns 'true' in case upgrade has started, and 'false' otherwise
 	UpgradeObject(instanceId int, upgradeParameters *UpgradeOptions) (bool, error)
 }

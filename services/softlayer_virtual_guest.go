@@ -503,7 +503,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) UpgradeObject(instanceId int, para
 
 	if len(prices) == 0 {
 		// Nothing to order, as all the values are up to date
-		return true, nil
+		return false, nil
 	}
 
 	orderService, err := slvgs.client.GetSoftLayer_Product_Order_Service()
