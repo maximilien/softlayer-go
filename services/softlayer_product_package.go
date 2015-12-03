@@ -148,7 +148,6 @@ func (slpp *softLayer_Product_Package_Service) GetPackagesByType(packageType str
 func (slpp *softLayer_Product_Package_Service) filterProducts(array []*datatypes.Softlayer_Product_Package, predicate func(*datatypes.Softlayer_Product_Package) bool) []datatypes.Softlayer_Product_Package {
     filtered := make([]datatypes.Softlayer_Product_Package, 0)
     for _, element := range array {
-		fmt.Fprintf(os.Stderr, "===> Processing element: %d\n", element.Id)
         if predicate(element) {
             filtered = append(filtered, *element)
         }
