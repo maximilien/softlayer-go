@@ -51,7 +51,7 @@ var _ = Describe("SoftLayer_Dns_Domain", func() {
 		})
 
 		It("returns an instance of datatypes.SoftLayer_Dns_Domain", func() {
-			dns, err := dnsDomainService.CreateObject(datatypes.SoftLayer_Dns_Domain{})
+			dns, err := dnsDomainService.CreateObject(datatypes.SoftLayer_Dns_Domain_Template{})
 			Expect(err).ToNot(HaveOccurred())
 			Expect(dns).NotTo(BeNil())
 			Expect(dns.Id).NotTo(BeNil())
