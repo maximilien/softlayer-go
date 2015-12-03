@@ -10,7 +10,6 @@ import (
 
 	datatypes "github.com/TheWeatherCompany/softlayer-go/data_types"
 	softlayer "github.com/TheWeatherCompany/softlayer-go/softlayer"
-	"os"
 )
 
 const (
