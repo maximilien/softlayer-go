@@ -17,7 +17,11 @@ type SoftLayer_Dns_Domain_Record_Template struct {
 	Retry             int    `json:"retry"`
 	Ttl               int    `json:"ttl"`
 	Type              string `json:"type"`
-	Service           string `json:"service"`
+	Service           string `json:"service,omitempty"`
+	Protocol          string `json:"protocol,omitempty"`
+	Priority          int    `json:"priority,omitempty"`
+	Port              int    `json:"port,omitempty"`
+	Weight            int    `json:"weight,omitempty"`
 }
 
 type SoftLayer_Dns_Domain_Record_Parameters struct {
@@ -37,5 +41,9 @@ type SoftLayer_Dns_Domain_Record struct {
 	Retry             int    `json:"retry"`
 	Ttl               int    `json:"ttl"`
 	Type              string `json:"type"`
-	Service           string `json:"service"`
+	Service           string `json:"service,omitempty"`
+	Protocol          string `json:"protocol,omitempty"`
+	Priority          int    `json:"priority,omitempty"`
+	Port              int    `json:"port,omitempty"`
+	Weight            int    `json:"weight,omitempty"`
 }
