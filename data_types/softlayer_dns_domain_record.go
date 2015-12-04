@@ -17,6 +17,7 @@ type SoftLayer_Dns_Domain_Record_Template struct {
 	Retry             int    `json:"retry"`
 	Ttl               int    `json:"ttl"`
 	Type              string `json:"type"`
+	Service           string `json:"service"`
 }
 
 type SoftLayer_Dns_Domain_Record_Parameters struct {
@@ -36,4 +37,5 @@ type SoftLayer_Dns_Domain_Record struct {
 	Retry             int    `json:"retry"`
 	Ttl               int    `json:"ttl"`
 	Type              string `json:"type"`
+	Service           string `json:"service"`
 }

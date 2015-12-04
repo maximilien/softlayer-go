@@ -299,4 +299,5 @@ func (fslc *FakeSoftLayerClient) initSoftLayerServices() {
 	fslc.SoftLayerServices["SoftLayer_Hardware"] = services.NewSoftLayer_Hardware_Service(fslc)
 	fslc.SoftLayerServices["SoftLayer_Dns_Domain"] = services.NewSoftLayer_Dns_Domain_Service(fslc)
 	fslc.SoftLayerServices["SoftLayer_Dns_Domain_ResourceRecord"] = services.NewSoftLayer_Dns_Domain_Record_Service(fslc)
+	fslc.SoftLayerServices["SoftLayer_Dns_Domain_ResourceRecord_SrvType"] = services.NewSoftLayer_Dns_Domain_Record_SRV_Service(fslc)
 }

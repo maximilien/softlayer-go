@@ -187,6 +187,15 @@ func (slc *softLayerClient) GetSoftLayer_Dns_Domain_Record_Service() (softlayer.
 	return slService.(softlayer.SoftLayer_Dns_Domain_Record_Service), nil
 }
 
+func (slc *softLayerClient) GetSoftLayer_Dns_Domain_Record_Srv_Service() (softlayer.SoftLayer_Dns_Domain_Record_Srv_Service, error) {
+	slService, err := slc.GetService("SoftLayer_Dns_Domain_ResourceRecord_SrvType")
+	if err != nil {
+		return nil, err
+	}
+
+	return slService.(softlayer.SoftLayer_Dns_Domain_Record_Srv_Service), nil
+}
+
 //Public methods
 
 func (slc *softLayerClient) DoRawHttpRequestWithObjectMask(path string, masks []string, requestType string, requestBody *bytes.Buffer) ([]byte, error) {
@@ -283,6 +292,7 @@ func (slc *softLayerClient) initSoftLayerServices() {
 	slc.softLayerServices["SoftLayer_Hardware"] = services.NewSoftLayer_Hardware_Service(slc)
 	slc.softLayerServices["SoftLayer_Dns_Domain"] = services.NewSoftLayer_Dns_Domain_Service(slc)
 	slc.softLayerServices["SoftLayer_Dns_Domain_ResourceRecord"] = services.NewSoftLayer_Dns_Domain_Record_Service(slc)
+	slc.softLayerServices["SoftLayer_Dns_Domain_ResourceRecord_SrvType"] = services.NewSoftLayer_Dns_Domain_Record_SRV_Service(slc)
 }
 
 func (slc *softLayerClient) makeHttpRequest(url string, requestType string, requestBody *bytes.Buffer) ([]byte, error) {
