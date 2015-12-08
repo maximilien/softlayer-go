@@ -6,10 +6,10 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
-	slclientfakes "github.com/TheWeatherCompany/softlayer-go/client/fakes"
-	datatypes "github.com/TheWeatherCompany/softlayer-go/data_types"
-	softlayer "github.com/TheWeatherCompany/softlayer-go/softlayer"
-	testhelpers "github.com/TheWeatherCompany/softlayer-go/test_helpers"
+	slclientfakes "github.com/maximilian/softlayer-go/client/fakes"
+	datatypes "github.com/maximilian/softlayer-go/data_types"
+	softlayer "github.com/maximilian/softlayer-go/softlayer"
+	testhelpers "github.com/maximilian/softlayer-go/test_helpers"
 )
 
 var _ = Describe("SoftLayer_Hardware", func() {

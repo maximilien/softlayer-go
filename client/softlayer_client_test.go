@@ -10,8 +10,8 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
-	slclient "github.com/TheWeatherCompany/softlayer-go/client"
-	softlayer "github.com/TheWeatherCompany/softlayer-go/softlayer"
+	slclient "github.com/maximilian/softlayer-go/client"
+	softlayer "github.com/maximilian/softlayer-go/softlayer"
 )
 
 var _ = Describe("SoftLayerClient", func() {

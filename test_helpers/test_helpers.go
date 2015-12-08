@@ -18,9 +18,9 @@ import (
 	. "github.com/onsi/gomega"
 	. "github.com/onsi/gomega/gexec"
 
-	slclient "github.com/TheWeatherCompany/softlayer-go/client"
-	datatypes "github.com/TheWeatherCompany/softlayer-go/data_types"
-	softlayer "github.com/TheWeatherCompany/softlayer-go/softlayer"
+	slclient "github.com/maximilian/softlayer-go/client"
+	datatypes "github.com/maximilian/softlayer-go/data_types"
+	softlayer "github.com/maximilian/softlayer-go/softlayer"
 )
 
 var (

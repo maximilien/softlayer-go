@@ -1,7 +1,7 @@
 package softlayer
 
 import (
-	datatypes "github.com/TheWeatherCompany/softlayer-go/data_types"
+	datatypes "github.com/maximilian/softlayer-go/data_types"
 )
 
 // Describes parameters, which can be use for upgrading

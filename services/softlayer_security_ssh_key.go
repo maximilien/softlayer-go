@@ -6,8 +6,8 @@ import (
 	"errors"
 	"fmt"
 
-	datatypes "github.com/TheWeatherCompany/softlayer-go/data_types"
-	softlayer "github.com/TheWeatherCompany/softlayer-go/softlayer"
+	datatypes "github.com/maximilian/softlayer-go/data_types"
+	softlayer "github.com/maximilian/softlayer-go/softlayer"
 )
 
 type softLayer_Security_Ssh_Key_Service struct {

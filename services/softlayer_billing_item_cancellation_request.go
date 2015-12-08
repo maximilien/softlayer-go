@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	datatypes "github.com/TheWeatherCompany/softlayer-go/data_types"
-	softlayer "github.com/TheWeatherCompany/softlayer-go/softlayer"
+	datatypes "github.com/maximilian/softlayer-go/data_types"
+	softlayer "github.com/maximilian/softlayer-go/softlayer"
 )
 
 type softLayer_Billing_Item_Cancellation_Request_Service struct {
