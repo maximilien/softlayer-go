@@ -6,10 +6,10 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
-	slclientfakes "github.com/maximilian/softlayer-go/client/fakes"
-	datatypes "github.com/maximilian/softlayer-go/data_types"
-	softlayer "github.com/maximilian/softlayer-go/softlayer"
-	testhelpers "github.com/maximilian/softlayer-go/test_helpers"
+	slclientfakes "github.com/maximilien/softlayer-go/client/fakes"
+	datatypes "github.com/maximilien/softlayer-go/data_types"
+	softlayer "github.com/maximilien/softlayer-go/softlayer"
+	testhelpers "github.com/maximilien/softlayer-go/test_helpers"
 )
 
 var _ = Describe("SoftLayer_Product_Order", func() {

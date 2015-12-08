@@ -8,8 +8,8 @@ import (
 	"errors"
 	"strings"
 
-	datatypes "github.com/maximilian/softlayer-go/data_types"
-	softlayer "github.com/maximilian/softlayer-go/softlayer"
+	datatypes "github.com/maximilien/softlayer-go/data_types"
+	softlayer "github.com/maximilien/softlayer-go/softlayer"
 )
 
 const (

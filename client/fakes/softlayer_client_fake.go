@@ -7,8 +7,8 @@ import (
 	"os"
 	"path/filepath"
 
-	services "github.com/maximilian/softlayer-go/services"
-	softlayer "github.com/maximilian/softlayer-go/softlayer"
+	services "github.com/maximilien/softlayer-go/services"
+	softlayer "github.com/maximilien/softlayer-go/softlayer"
 )
 
 const (
