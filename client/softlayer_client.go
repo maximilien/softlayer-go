@@ -22,33 +22,32 @@ const (
 	SL_GO_NON_VERBOSE  = "SL_GO_NON_VERBOSE"
 )
 
-type softLayerClient struct {
+type SoftLayerClient struct {
 	username string
 	apiKey   string
 
 	templatePath string
 
-	httpClient *http.Client
+	HTTPClient *http.Client
 
 	softLayerServices map[string]softlayer.Service
 
 	nonVerbose bool
 }
 
-func NewSoftLayerClient(username, apiKey string) *softLayerClient {
-	pwd, _ := os.Getwd()
-	slc := &softLayerClient{
+func NewSoftLayerClient(username, apiKey string) *SoftLayerClient {
+	pwd, err := os.Getwd()
+	if err != nil {
+		panic(err) // this should be handled by the user
+	}
+
+	slc := &SoftLayerClient{
 		username: username,
 		apiKey:   apiKey,
 
 		templatePath: filepath.Join(pwd, TEMPLATE_ROOT_PATH),
 
-		httpClient: &http.Client{
-			Transport: &http.Transport{
-				Proxy: http.ProxyFromEnvironment,
-			},
-		},
-
+		HTTPClient: http.DefaultClient,
 		nonVerbose: checkNonVerbose(),
 
 		softLayerServices: map[string]softlayer.Service{},
@@ -61,7 +60,7 @@ func NewSoftLayerClient(username, apiKey string) *softLayerClient {
 
 //softlayer.Client interface methods
 
-func (slc *softLayerClient) GetService(serviceName string) (softlayer.Service, error) {
+func (slc *SoftLayerClient) GetService(serviceName string) (softlayer.Service, error) {
 	slService, ok := slc.softLayerServices[serviceName]
 	if !ok {
 		return nil, errors.New(fmt.Sprintf("softlayer-go does not support service '%s'", serviceName))
@@ -70,7 +69,7 @@ func (slc *softLayerClient) GetService(serviceName string) (softlayer.Service, e
 	return slService, nil
 }
 
-func (slc *softLayerClient) GetSoftLayer_Account_Service() (softlayer.SoftLayer_Account_Service, error) {
+func (slc *SoftLayerClient) GetSoftLayer_Account_Service() (softlayer.SoftLayer_Account_Service, error) {
 	slService, err := slc.GetService("SoftLayer_Account")
 	if err != nil {
 		return nil, err
@@ -79,7 +78,7 @@ func (slc *softLayerClient) GetSoftLayer_Account_Service() (softlayer.SoftLayer_
 	return slService.(softlayer.SoftLayer_Account_Service), nil
 }
 
-func (slc *softLayerClient) GetSoftLayer_Virtual_Guest_Service() (softlayer.SoftLayer_Virtual_Guest_Service, error) {
+func (slc *SoftLayerClient) GetSoftLayer_Virtual_Guest_Service() (softlayer.SoftLayer_Virtual_Guest_Service, error) {
 	slService, err := slc.GetService("SoftLayer_Virtual_Guest")
 	if err != nil {
 		return nil, err
@@ -88,7 +87,7 @@ func (slc *softLayerClient) GetSoftLayer_Virtual_Guest_Service() (softlayer.Soft
 	return slService.(softlayer.SoftLayer_Virtual_Guest_Service), nil
 }
 
-func (slc *softLayerClient) GetSoftLayer_Virtual_Disk_Image_Service() (softlayer.SoftLayer_Virtual_Disk_Image_Service, error) {
+func (slc *SoftLayerClient) GetSoftLayer_Virtual_Disk_Image_Service() (softlayer.SoftLayer_Virtual_Disk_Image_Service, error) {
 	slService, err := slc.GetService("SoftLayer_Virtual_Disk_Image")
 	if err != nil {
 		return nil, err
@@ -97,7 +96,7 @@ func (slc *softLayerClient) GetSoftLayer_Virtual_Disk_Image_Service() (softlayer
 	return slService.(softlayer.SoftLayer_Virtual_Disk_Image_Service), nil
 }
 
-func (slc *softLayerClient) GetSoftLayer_Security_Ssh_Key_Service() (softlayer.SoftLayer_Security_Ssh_Key_Service, error) {
+func (slc *SoftLayerClient) GetSoftLayer_Security_Ssh_Key_Service() (softlayer.SoftLayer_Security_Ssh_Key_Service, error) {
 	slService, err := slc.GetService("SoftLayer_Security_Ssh_Key")
 	if err != nil {
 		return nil, err
@@ -106,7 +105,7 @@ func (slc *softLayerClient) GetSoftLayer_Security_Ssh_Key_Service() (softlayer.S
 	return slService.(softlayer.SoftLayer_Security_Ssh_Key_Service), nil
 }
 
-func (slc *softLayerClient) GetSoftLayer_Product_Package_Service() (softlayer.SoftLayer_Product_Package_Service, error) {
+func (slc *SoftLayerClient) GetSoftLayer_Product_Package_Service() (softlayer.SoftLayer_Product_Package_Service, error) {
 	slService, err := slc.GetService("SoftLayer_Product_Package")
 	if err != nil {
 		return nil, err
@@ -115,7 +114,7 @@ func (slc *softLayerClient) GetSoftLayer_Product_Package_Service() (softlayer.So
 	return slService.(softlayer.SoftLayer_Product_Package_Service), nil
 }
 
-func (slc *softLayerClient) GetSoftLayer_Virtual_Guest_Block_Device_Template_Group_Service() (softlayer.SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service, error) {
+func (slc *SoftLayerClient) GetSoftLayer_Virtual_Guest_Block_Device_Template_Group_Service() (softlayer.SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service, error) {
 	slService, err := slc.GetService("SoftLayer_Virtual_Guest_Block_Device_Template_Group")
 	if err != nil {
 		return nil, err
@@ -124,7 +123,7 @@ func (slc *softLayerClient) GetSoftLayer_Virtual_Guest_Block_Device_Template_Gro
 	return slService.(softlayer.SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service), nil
 }
 
-func (slc *softLayerClient) GetSoftLayer_Network_Storage_Service() (softlayer.SoftLayer_Network_Storage_Service, error) {
+func (slc *SoftLayerClient) GetSoftLayer_Network_Storage_Service() (softlayer.SoftLayer_Network_Storage_Service, error) {
 	slService, err := slc.GetService("SoftLayer_Network_Storage")
 	if err != nil {
 		return nil, err
@@ -133,7 +132,7 @@ func (slc *softLayerClient) GetSoftLayer_Network_Storage_Service() (softlayer.So
 	return slService.(softlayer.SoftLayer_Network_Storage_Service), nil
 }
 
-func (slc *softLayerClient) GetSoftLayer_Network_Storage_Allowed_Host_Service() (softlayer.SoftLayer_Network_Storage_Allowed_Host_Service, error) {
+func (slc *SoftLayerClient) GetSoftLayer_Network_Storage_Allowed_Host_Service() (softlayer.SoftLayer_Network_Storage_Allowed_Host_Service, error) {
 	slService, err := slc.GetService("SoftLayer_Network_Storage_Allowed_Host")
 	if err != nil {
 		return nil, err
@@ -142,7 +141,7 @@ func (slc *softLayerClient) GetSoftLayer_Network_Storage_Allowed_Host_Service() 
 	return slService.(softlayer.SoftLayer_Network_Storage_Allowed_Host_Service), nil
 }
 
-func (slc *softLayerClient) GetSoftLayer_Product_Order_Service() (softlayer.SoftLayer_Product_Order_Service, error) {
+func (slc *SoftLayerClient) GetSoftLayer_Product_Order_Service() (softlayer.SoftLayer_Product_Order_Service, error) {
 	slService, err := slc.GetService("SoftLayer_Product_Order")
 	if err != nil {
 		return nil, err
@@ -151,7 +150,7 @@ func (slc *softLayerClient) GetSoftLayer_Product_Order_Service() (softlayer.Soft
 	return slService.(softlayer.SoftLayer_Product_Order_Service), nil
 }
 
-func (slc *softLayerClient) GetSoftLayer_Billing_Item_Cancellation_Request_Service() (softlayer.SoftLayer_Billing_Item_Cancellation_Request_Service, error) {
+func (slc *SoftLayerClient) GetSoftLayer_Billing_Item_Cancellation_Request_Service() (softlayer.SoftLayer_Billing_Item_Cancellation_Request_Service, error) {
 	slService, err := slc.GetService("SoftLayer_Billing_Item_Cancellation_Request")
 	if err != nil {
 		return nil, err
@@ -160,7 +159,7 @@ func (slc *softLayerClient) GetSoftLayer_Billing_Item_Cancellation_Request_Servi
 	return slService.(softlayer.SoftLayer_Billing_Item_Cancellation_Request_Service), nil
 }
 
-func (slc *softLayerClient) GetSoftLayer_Hardware_Service() (softlayer.SoftLayer_Hardware_Service, error) {
+func (slc *SoftLayerClient) GetSoftLayer_Hardware_Service() (softlayer.SoftLayer_Hardware_Service, error) {
 	slService, err := slc.GetService("SoftLayer_Hardware")
 	if err != nil {
 		return nil, err
@@ -171,7 +170,7 @@ func (slc *softLayerClient) GetSoftLayer_Hardware_Service() (softlayer.SoftLayer
 
 //Public methods
 
-func (slc *softLayerClient) DoRawHttpRequestWithObjectMask(path string, masks []string, requestType string, requestBody *bytes.Buffer) ([]byte, error) {
+func (slc *SoftLayerClient) DoRawHttpRequestWithObjectMask(path string, masks []string, requestType string, requestBody *bytes.Buffer) ([]byte, error) {
 	url := fmt.Sprintf("https://%s:%s@%s/%s", slc.username, slc.apiKey, SOFTLAYER_API_URL, path)
 
 	url += "?objectMask="
@@ -185,14 +184,14 @@ func (slc *softLayerClient) DoRawHttpRequestWithObjectMask(path string, masks []
 	return slc.makeHttpRequest(url, requestType, requestBody)
 }
 
-func (slc *softLayerClient) DoRawHttpRequestWithObjectFilter(path string, filters string, requestType string, requestBody *bytes.Buffer) ([]byte, error) {
+func (slc *SoftLayerClient) DoRawHttpRequestWithObjectFilter(path string, filters string, requestType string, requestBody *bytes.Buffer) ([]byte, error) {
 	url := fmt.Sprintf("https://%s:%s@%s/%s", slc.username, slc.apiKey, SOFTLAYER_API_URL, path)
 	url += "?objectFilter=" + filters
 
 	return slc.makeHttpRequest(url, requestType, requestBody)
 }
 
-func (slc *softLayerClient) DoRawHttpRequestWithObjectFilterAndObjectMask(path string, masks []string, filters string, requestType string, requestBody *bytes.Buffer) ([]byte, error) {
+func (slc *SoftLayerClient) DoRawHttpRequestWithObjectFilterAndObjectMask(path string, masks []string, filters string, requestType string, requestBody *bytes.Buffer) ([]byte, error) {
 	url := fmt.Sprintf("https://%s:%s@%s/%s", slc.username, slc.apiKey, SOFTLAYER_API_URL, path)
 
 	url += "?objectFilter=" + filters
@@ -209,12 +208,12 @@ func (slc *softLayerClient) DoRawHttpRequestWithObjectFilterAndObjectMask(path s
 	return slc.makeHttpRequest(url, requestType, requestBody)
 }
 
-func (slc *softLayerClient) DoRawHttpRequest(path string, requestType string, requestBody *bytes.Buffer) ([]byte, error) {
+func (slc *SoftLayerClient) DoRawHttpRequest(path string, requestType string, requestBody *bytes.Buffer) ([]byte, error) {
 	url := fmt.Sprintf("https://%s:%s@%s/%s", slc.username, slc.apiKey, SOFTLAYER_API_URL, path)
 	return slc.makeHttpRequest(url, requestType, requestBody)
 }
 
-func (slc *softLayerClient) GenerateRequestBody(templateData interface{}) (*bytes.Buffer, error) {
+func (slc *SoftLayerClient) GenerateRequestBody(templateData interface{}) (*bytes.Buffer, error) {
 	cwd, err := os.Getwd()
 	if err != nil {
 		return nil, err
@@ -227,7 +226,7 @@ func (slc *softLayerClient) GenerateRequestBody(templateData interface{}) (*byte
 	return body, nil
 }
 
-func (slc *softLayerClient) HasErrors(body map[string]interface{}) error {
+func (slc *SoftLayerClient) HasErrors(body map[string]interface{}) error {
 	if errString, ok := body["error"]; !ok {
 		return nil
 	} else {
@@ -235,7 +234,7 @@ func (slc *softLayerClient) HasErrors(body map[string]interface{}) error {
 	}
 }
 
-func (slc *softLayerClient) CheckForHttpResponseErrors(data []byte) error {
+func (slc *SoftLayerClient) CheckForHttpResponseErrors(data []byte) error {
 	var decodedResponse map[string]interface{}
 	err := json.Unmarshal(data, &decodedResponse)
 	if err != nil {
@@ -251,7 +250,7 @@ func (slc *softLayerClient) CheckForHttpResponseErrors(data []byte) error {
 
 //Private methods
 
-func (slc *softLayerClient) initSoftLayerServices() {
+func (slc *SoftLayerClient) initSoftLayerServices() {
 	slc.softLayerServices["SoftLayer_Account"] = services.NewSoftLayer_Account_Service(slc)
 	slc.softLayerServices["SoftLayer_Virtual_Guest"] = services.NewSoftLayer_Virtual_Guest_Service(slc)
 	slc.softLayerServices["SoftLayer_Virtual_Disk_Image"] = services.NewSoftLayer_Virtual_Disk_Image_Service(slc)
@@ -265,7 +264,7 @@ func (slc *softLayerClient) initSoftLayerServices() {
 	slc.softLayerServices["SoftLayer_Hardware"] = services.NewSoftLayer_Hardware_Service(slc)
 }
 
-func (slc *softLayerClient) makeHttpRequest(url string, requestType string, requestBody *bytes.Buffer) ([]byte, error) {
+func (slc *SoftLayerClient) makeHttpRequest(url string, requestType string, requestBody *bytes.Buffer) ([]byte, error) {
 	req, err := http.NewRequest(requestType, url, requestBody)
 	if err != nil {
 		return nil, err
@@ -280,7 +279,7 @@ func (slc *softLayerClient) makeHttpRequest(url string, requestType string, requ
 		fmt.Fprintf(os.Stderr, "\n---\n[softlayer-go] Request:\n%s\n", string(bs))
 	}
 
-	resp, err := slc.httpClient.Do(req)
+	resp, err := slc.HTTPClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
