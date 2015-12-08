@@ -16,6 +16,9 @@ import (
 
 const (
 	EPHEMERAL_DISK_CATEGORY_CODE = "guest_disk1"
+	VIRTUAL_SERVER_PACKAGE_TYPE = "VIRTUAL_SERVER_INSTANCE"
+	MAINTENANCE_WINDOW_PROPERTY = "MAINTENANCE_WINDOW"
+	UPGRADE_VIRTUAL_SERVER_ORDER_TYPE = "SoftLayer_Container_Product_Order_Virtual_Guest_Upgrade"
 )
 
 type softLayer_Virtual_Guest_Service struct {
@@ -100,6 +103,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetObject(instanceId int) (datatyp
 		"domain",
 		"fullyQualifiedDomainName",
 		"hostname",
+		"hourlyBillingFlag",
 		"id",
 		"lastPowerStateId",
 		"lastVerifiedDate",
@@ -115,6 +119,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetObject(instanceId int) (datatyp
 		"statusId",
 		"uuid",
 		"userData.value",
+		"localDiskFlag",
 
 		"globalIdentifier",
 		"managedResourceFlag",
@@ -130,6 +135,10 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetObject(instanceId int) (datatyp
 		"networkComponents.maxSpeed",
 		"operatingSystem.passwords.password",
 		"operatingSystem.passwords.username",
+
+		"blockDeviceTemplateGroup.globalIdentifier",
+		"primaryNetworkComponent.networkVlan.id",
+		"primaryBackendNetworkComponent.networkVlan.id",
 	}
 
 	response, err := slvgs.client.DoRawHttpRequestWithObjectMask(fmt.Sprintf("%s/%d/getObject.json", slvgs.GetName(), instanceId), objectMask, "GET", new(bytes.Buffer))
@@ -435,7 +444,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) AttachEphemeralDisk(instanceId int
 		return err
 	}
 
-	service, err := slvgs.client.GetSoftLayer_Product_Order_Service()
+	orderService, err := slvgs.client.GetSoftLayer_Product_Order_Service()
 	if err != nil {
 		return err
 	}
@@ -456,10 +465,10 @@ func (slvgs *softLayer_Virtual_Guest_Service) AttachEphemeralDisk(instanceId int
 				},
 			},
 		},
-		ComplexType: "SoftLayer_Container_Product_Order_Virtual_Guest_Upgrade",
+		ComplexType: UPGRADE_VIRTUAL_SERVER_ORDER_TYPE,
 		Properties: []datatypes.Property{
 			datatypes.Property{
-				Name:  "MAINTENANCE_WINDOW",
+				Name:  MAINTENANCE_WINDOW_PROPERTY,
 				Value: time.Now().UTC().Format(time.RFC3339),
 			},
 			datatypes.Property{
@@ -469,9 +478,140 @@ func (slvgs *softLayer_Virtual_Guest_Service) AttachEphemeralDisk(instanceId int
 		},
 	}
 
-	_, err = service.PlaceContainerOrderVirtualGuestUpgrade(order)
+	_, err = orderService.PlaceContainerOrderVirtualGuestUpgrade(order)
 
 	return err
+}
+
+func (slvgs *softLayer_Virtual_Guest_Service) UpgradeObject(instanceId int, parameters *softlayer.UpgradeOptions) (bool, error) {
+
+	itemAmounts := make(map[string]int)
+	if parameters.Cpus > 0 {
+		itemAmounts["cpus"] = parameters.Cpus
+	}
+	if parameters.MemoryInGB > 0 {
+		itemAmounts["memory"] = parameters.MemoryInGB
+	}
+	if parameters.NicSpeed > 0 {
+		itemAmounts["nic_speed"] = parameters.NicSpeed
+	}
+
+	prices, err := slvgs.getPricesForItems(&itemAmounts)
+	if err != nil {
+		return false, err
+	}
+
+	if len(prices) == 0 {
+		// Nothing to order, as all the values are up to date
+		return false, nil
+	}
+
+	orderService, err := slvgs.client.GetSoftLayer_Product_Order_Service()
+	if err != nil {
+		return false, err
+	}
+
+	order := datatypes.SoftLayer_Container_Product_Order_Virtual_Guest_Upgrade {
+		VirtualGuests: []datatypes.VirtualGuest{
+			datatypes.VirtualGuest{
+				Id: instanceId,
+			},
+		},
+		Prices: prices,
+		ComplexType: UPGRADE_VIRTUAL_SERVER_ORDER_TYPE,
+		Properties: []datatypes.Property{
+			datatypes.Property{
+				Name:  MAINTENANCE_WINDOW_PROPERTY,
+				Value: time.Now().UTC().Format(time.RFC3339),
+			},
+		},
+	}
+
+	_, err = orderService.PlaceContainerOrderVirtualGuestUpgrade(order)
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
+}
+
+func (slvgs *softLayer_Virtual_Guest_Service) getPricesForItems(itemAmounts *map[string]int) ([]datatypes.SoftLayer_Item_Price, error) {
+
+	virtualServerPackageItems, err := slvgs.getVirtualServerItems()
+	if err != nil {
+		return []datatypes.SoftLayer_Item_Price{}, err
+	}
+
+	prices := make([]datatypes.SoftLayer_Item_Price, 0)
+
+	for item, amount := range *itemAmounts {
+		price, err := slvgs.filterProductItemPrice(virtualServerPackageItems, item, amount)
+		if err != nil {
+			return []datatypes.SoftLayer_Item_Price{}, err
+		}
+
+		prices = append(prices, datatypes.SoftLayer_Item_Price{
+			Id: price.Id,
+		})
+	}
+
+	return prices, nil
+}
+
+func (slvgs *softLayer_Virtual_Guest_Service) getVirtualServerItems() ([]datatypes.SoftLayer_Product_Item, error) {
+	service, err := slvgs.client.GetSoftLayer_Product_Package_Service()
+	if err != nil {
+		return []datatypes.SoftLayer_Product_Item{}, err
+	}
+
+	return service.GetItemsByType(VIRTUAL_SERVER_PACKAGE_TYPE)
+}
+
+func (slvgs *softLayer_Virtual_Guest_Service) filterProductItemPrice(packageItems []datatypes.SoftLayer_Product_Item, option string, amount int) (datatypes.SoftLayer_Item_Price, error) {
+
+	// for now use hardcoded values in the same "style" as Python client does
+	vsId := map[string]int{
+		"memory": 3,
+		"cpus": 80,
+		"nic_speed": 26,
+	}
+
+	for _, packageItem := range packageItems {
+		categories := packageItem.Prices[0].Categories
+		for _, category := range categories {
+
+			// Skip package item if capacity is not set
+			if packageItem.Capacity == "" {
+				continue
+			}
+
+			capacity, err := strconv.Atoi(packageItem.Capacity)
+			if err != nil {
+				return datatypes.SoftLayer_Item_Price{}, err
+			}
+
+			// Skip package item, if VS doesn't match requested amount and ID
+			if category.Id != vsId[option] || capacity != amount {
+				continue
+			}
+
+			// Use only public elements for items
+			switch option {
+			case "cpus":
+				if !strings.Contains(packageItem.Description, "Private") {
+					return packageItem.Prices[0], nil
+				}
+			case "nic_speed":
+				if strings.Contains(packageItem.Description, "Public") {
+					return packageItem.Prices[0], nil
+				}
+			default:
+				return packageItem.Prices[0], nil
+			}
+		}
+	}
+
+	return datatypes.SoftLayer_Item_Price{}, errors.New(fmt.Sprintf("Failed to find price for '%s' (of size %d)", option, amount))
 }
 
 func (slvgs *softLayer_Virtual_Guest_Service) GetUpgradeItemPrices(instanceId int) ([]datatypes.SoftLayer_Item_Price, error) {
