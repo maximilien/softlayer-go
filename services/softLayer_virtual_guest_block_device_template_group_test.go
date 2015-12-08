@@ -282,7 +282,36 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			Expect(err).ToNot(HaveOccurred())
 
 			Expect(transaction.TransactionStatus).ToNot(BeNil())
+		})
+	})
 
+	Context("#DenySharingAccess", func() {
+		BeforeEach(func() {
+			vgbdtGroup.Id = 1234567
+			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service_denySharingAccess.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("sucessfully denies sharing access for VGBDTG instance", func() {
+			denySharing, err := vgbdtgService.DenySharingAccess(vgbdtGroup.Id, 1234567)
+			Expect(err).ToNot(HaveOccurred())
+
+			Expect(denySharing).To(BeTrue())
+		})
+	})
+
+	Context("#PermitSharingAccess", func() {
+		BeforeEach(func() {
+			vgbdtGroup.Id = 1234567
+			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service_permitSharingAccess.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("sucessfully permits sharing access for VGBDTG instance", func() {
+			permitSharing, err := vgbdtgService.PermitSharingAccess(vgbdtGroup.Id, 1234567)
+			Expect(err).ToNot(HaveOccurred())
+
+			Expect(permitSharing).To(BeTrue())
 		})
 	})
 })
