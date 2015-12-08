@@ -6,9 +6,9 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/maximilien/softlayer-go/common"
-	datatypes "github.com/maximilien/softlayer-go/data_types"
-	softlayer "github.com/maximilien/softlayer-go/softlayer"
+	"github.com/maximilian/softlayer-go/common"
+	datatypes "github.com/maximilian/softlayer-go/data_types"
+	softlayer "github.com/maximilian/softlayer-go/softlayer"
 )
 
 type softLayer_Account_Service struct {

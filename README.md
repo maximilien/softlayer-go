@@ -6,13 +6,13 @@ An *incomplete* SoftLayer (SL) client API written in Go language.
 ## Getting Started
 ------------------
 
-The best way to get started would be to look at the [integration](integration) tests for creating a [virtual guest](https://github.com/maximilien/softlayer-go/blob/master/integration/virtual_guest_lifecycle/virtual_guest_lifecycle_test.go) and the [test helpers](test_helpers). Here is a snippet of what is needed.
+The best way to get started would be to look at the [integration](integration) tests for creating a [virtual guest](https://github.com/maximilian/softlayer-go/blob/master/integration/virtual_guest_lifecycle/virtual_guest_lifecycle_test.go) and the [test helpers](test_helpers). Here is a snippet of what is needed.
 
 ```go
 //Add necessary imports, e.g., os, slclient, datatypes
 // "os"
-// slclient "github.com/maximilien/softlayer-go/client"
-// datatypes "github.com/maximilien/softlayer-go/data_types"
+// slclient "github.com/maximilian/softlayer-go/client"
+// datatypes "github.com/maximilian/softlayer-go/data_types"
 
 //Access SoftLayer username and API key from environment variable or hardcode here
 username := os.Getenv("SL_USERNAME")
@@ -62,10 +62,10 @@ TBD
 Clone this repo and build it. Using the following commands on a Linux or Mac OS X system:
 
 ```
-$ mkdir -p softlayer-go/src/github.com/maximilien
+$ mkdir -p softlayer-go/src/github.com/maximilian
 $ export GOPATH=$(pwd)/softlayer-go:$GOPATH
-$ cd softlayer-go/src/github.com/maximilien
-$ git clone https://github.com/maximilien/softlayer-go.git
+$ cd softlayer-go/src/github.com/maximilian
+$ git clone https://github.com/maximilian/softlayer-go.git
 $ cd softlayer-go
 $ export SL_USERNAME=your-username@your-org.com
 $ export SL_API_KEY=your-softlayer-api-key
@@ -131,7 +131,7 @@ SWEET SUITE SUCCESS
 ## Contributing
 ---------------
 
-* We gratefully acknowledge and thank the [current contributors](https://github.com/maximilien/softlayer-go/graphs/contributors)
+* We gratefully acknowledge and thank the [current contributors](https://github.com/maximilian/softlayer-go/graphs/contributors)
 * We welcome any and all contributions as Pull Requests (PR)
 * We also welcome issues and bug report and new feature request. We will address as time permits
 * Follow the steps above in Developing to get your system setup correctly
@@ -142,7 +142,7 @@ SWEET SUITE SUCCESS
 ### Managing dependencies
 -------------------------
 
-* All dependencies managed via [Godep](https://github.com/tools/godep). See [Godeps/_workspace](https://github.com/maximilien/softlayer-go/tree/master/Godeps/_workspace) directory on master
+* All dependencies managed via [Godep](https://github.com/tools/godep). See [Godeps/_workspace](https://github.com/maximilian/softlayer-go/tree/master/Godeps/_workspace) directory on master
 
 #### Short `godep` Guide
 * If you ever import a new package `foo/bar` (after you `go get foo/bar`, so that foo/bar is in `$GOPATH`), you can type `godep save ./...` to add it to the `Godeps` directory.
@@ -160,4 +160,4 @@ SWEET SUITE SUCCESS
 
 (*) these items are in the works, we will remove the * once they are available
 
-**NOTE**: this client is created to support the [bosh-softlayer-cpi](https://github.com/maximilien/bosh-softlayer-cpi) project and only implements the portion of the SL APIs needed to complete the implementation of the BOSH CPI. You are welcome to use it in your own projects and as you do if you find areas we have not yet implemented but that you need, please submit [Pull Requests](https://help.github.com/articles/using-pull-requests/) or engage with us in discussions.
+**NOTE**: this client is created to support the [bosh-softlayer-cpi](https://github.com/maximilian/bosh-softlayer-cpi) project and only implements the portion of the SL APIs needed to complete the implementation of the BOSH CPI. You are welcome to use it in your own projects and as you do if you find areas we have not yet implemented but that you need, please submit [Pull Requests](https://help.github.com/articles/using-pull-requests/) or engage with us in discussions.

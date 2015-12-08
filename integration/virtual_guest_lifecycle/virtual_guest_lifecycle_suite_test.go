@@ -6,7 +6,7 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
-	testhelpers "github.com/maximilien/softlayer-go/test_helpers"
+	testhelpers "github.com/maximilian/softlayer-go/test_helpers"
 )
 
 func TestServices(t *testing.T) {

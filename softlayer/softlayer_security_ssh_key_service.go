@@ -1,7 +1,7 @@
 package softlayer
 
 import (
-	datatypes "github.com/maximilien/softlayer-go/data_types"
+	datatypes "github.com/maximilian/softlayer-go/data_types"
 )
 
 type SoftLayer_Security_Ssh_Key_Service interface {
