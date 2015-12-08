@@ -7,6 +7,8 @@ import (
 type SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service interface {
 	Service
 
+	AddLocations(id int, locations []datatypes.SoftLayer_Location) (bool, error)
+
 	CreateFromExternalSource(configuration datatypes.SoftLayer_Container_Virtual_Guest_Block_Device_Template_Configuration) (datatypes.SoftLayer_Virtual_Guest_Block_Device_Template_Group, error)
 	CopyToExternalSource(configuration datatypes.SoftLayer_Container_Virtual_Guest_Block_Device_Template_Configuration) (bool, error)
 
@@ -26,4 +28,8 @@ type SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service interface {
 	GetTransaction(id int) (datatypes.SoftLayer_Provisioning_Version1_Transaction, error)
 
 	PermitSharingAccess(id int, accountId int) (bool, error)
+
+	RemoveLocations(id int, locations []datatypes.SoftLayer_Location) (bool, error)
+
+	SetAvailableLocations(id int, locations []datatypes.SoftLayer_Location) (bool, error)
 }
