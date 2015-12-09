@@ -3,9 +3,9 @@ package services
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strconv"
-	"errors"
 	"strings"
 
 	datatypes "github.com/TheWeatherCompany/softlayer-go/data_types"
@@ -145,12 +145,11 @@ func (slpp *softLayer_Product_Package_Service) GetPackagesByType(packageType str
 
 // Utility method for filtering product packages using provided predicate
 func (slpp *softLayer_Product_Package_Service) filterProducts(array []*datatypes.Softlayer_Product_Package, predicate func(*datatypes.Softlayer_Product_Package) bool) []datatypes.Softlayer_Product_Package {
-    filtered := make([]datatypes.Softlayer_Product_Package, 0)
-    for _, element := range array {
-        if predicate(element) {
-            filtered = append(filtered, *element)
-        }
+	filtered := make([]datatypes.Softlayer_Product_Package, 0)
+	for _, element := range array {
+		if predicate(element) {
+			filtered = append(filtered, *element)
+		}
 	}
-    return filtered
+	return filtered
 }
-
