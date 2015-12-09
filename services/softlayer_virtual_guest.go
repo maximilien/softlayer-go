@@ -15,9 +15,9 @@ import (
 )
 
 const (
-	EPHEMERAL_DISK_CATEGORY_CODE = "guest_disk1"
-	VIRTUAL_SERVER_PACKAGE_TYPE = "VIRTUAL_SERVER_INSTANCE"
-	MAINTENANCE_WINDOW_PROPERTY = "MAINTENANCE_WINDOW"
+	EPHEMERAL_DISK_CATEGORY_CODE      = "guest_disk1"
+	VIRTUAL_SERVER_PACKAGE_TYPE       = "VIRTUAL_SERVER_INSTANCE"
+	MAINTENANCE_WINDOW_PROPERTY       = "MAINTENANCE_WINDOW"
 	UPGRADE_VIRTUAL_SERVER_ORDER_TYPE = "SoftLayer_Container_Product_Order_Virtual_Guest_Upgrade"
 )
 
@@ -483,20 +483,9 @@ func (slvgs *softLayer_Virtual_Guest_Service) AttachEphemeralDisk(instanceId int
 	return err
 }
 
-func (slvgs *softLayer_Virtual_Guest_Service) UpgradeObject(instanceId int, parameters *softlayer.UpgradeOptions) (bool, error) {
+func (slvgs *softLayer_Virtual_Guest_Service) UpgradeObject(instanceId int, options *softlayer.UpgradeOptions) (bool, error) {
 
-	itemAmounts := make(map[string]int)
-	if parameters.Cpus > 0 {
-		itemAmounts["cpus"] = parameters.Cpus
-	}
-	if parameters.MemoryInGB > 0 {
-		itemAmounts["memory"] = parameters.MemoryInGB
-	}
-	if parameters.NicSpeed > 0 {
-		itemAmounts["nic_speed"] = parameters.NicSpeed
-	}
-
-	prices, err := slvgs.getPricesForItems(&itemAmounts)
+	prices, err := slvgs.GetAvailableUpgradeItemPrices(options)
 	if err != nil {
 		return false, err
 	}
@@ -511,13 +500,13 @@ func (slvgs *softLayer_Virtual_Guest_Service) UpgradeObject(instanceId int, para
 		return false, err
 	}
 
-	order := datatypes.SoftLayer_Container_Product_Order_Virtual_Guest_Upgrade {
+	order := datatypes.SoftLayer_Container_Product_Order_Virtual_Guest_Upgrade{
 		VirtualGuests: []datatypes.VirtualGuest{
 			datatypes.VirtualGuest{
 				Id: instanceId,
 			},
 		},
-		Prices: prices,
+		Prices:      prices,
 		ComplexType: UPGRADE_VIRTUAL_SERVER_ORDER_TYPE,
 		Properties: []datatypes.Property{
 			datatypes.Property{
@@ -535,7 +524,18 @@ func (slvgs *softLayer_Virtual_Guest_Service) UpgradeObject(instanceId int, para
 	return true, nil
 }
 
-func (slvgs *softLayer_Virtual_Guest_Service) getPricesForItems(itemAmounts *map[string]int) ([]datatypes.SoftLayer_Item_Price, error) {
+func (slvgs *softLayer_Virtual_Guest_Service) GetAvailableUpgradeItemPrices(upgradeOptions *softlayer.UpgradeOptions) ([]datatypes.SoftLayer_Item_Price, error) {
+
+	itemsCapacity := make(map[string]int)
+	if upgradeOptions.Cpus > 0 {
+		itemsCapacity["cpus"] = upgradeOptions.Cpus
+	}
+	if upgradeOptions.MemoryInGB > 0 {
+		itemsCapacity["memory"] = upgradeOptions.MemoryInGB
+	}
+	if upgradeOptions.NicSpeed > 0 {
+		itemsCapacity["nic_speed"] = upgradeOptions.NicSpeed
+	}
 
 	virtualServerPackageItems, err := slvgs.getVirtualServerItems()
 	if err != nil {
@@ -544,15 +544,13 @@ func (slvgs *softLayer_Virtual_Guest_Service) getPricesForItems(itemAmounts *map
 
 	prices := make([]datatypes.SoftLayer_Item_Price, 0)
 
-	for item, amount := range *itemAmounts {
+	for item, amount := range itemsCapacity {
 		price, err := slvgs.filterProductItemPrice(virtualServerPackageItems, item, amount)
 		if err != nil {
 			return []datatypes.SoftLayer_Item_Price{}, err
 		}
 
-		prices = append(prices, datatypes.SoftLayer_Item_Price{
-			Id: price.Id,
-		})
+		prices = append(prices, price)
 	}
 
 	return prices, nil
@@ -571,8 +569,8 @@ func (slvgs *softLayer_Virtual_Guest_Service) filterProductItemPrice(packageItem
 
 	// for now use hardcoded values in the same "style" as Python client does
 	vsId := map[string]int{
-		"memory": 3,
-		"cpus": 80,
+		"memory":    3,
+		"cpus":      80,
 		"nic_speed": 26,
 	}
 
