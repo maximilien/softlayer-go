@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	datatypes "github.com/TheWeatherCompany/softlayer-go/data_types"
-	"github.com/TheWeatherCompany/softlayer-go/softlayer"
+	datatypes "github.com/maximilien/softlayer-go/data_types"
+	"github.com/maximilien/softlayer-go/softlayer"
 )
 
 type softLayer_Dns_Domain_Service struct {

@@ -1,7 +1,7 @@
 package softlayer
 
 import (
-	datatypes "github.com/TheWeatherCompany/softlayer-go/data_types"
+	datatypes "github.com/maximilien/softlayer-go/data_types"
 )
 
 // Modifying existing SoftLayer_Dns_Domain entries is not possible. Changes to zone names should be refactored to creation of new zones.
