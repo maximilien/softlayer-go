@@ -7,4 +7,4 @@ echo -e "\n Formatting packages..."
   go fmt ./...
 
 echo -e "\nGenerating Binary..."
-go build -o $(dirname $0)/../out/slgo ./main/slgo.go
+go build -o $(dirname $0)/../out/slgo ../main/slgo.go
