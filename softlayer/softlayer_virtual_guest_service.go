@@ -4,6 +4,14 @@ import (
 	datatypes "github.com/maximilien/softlayer-go/data_types"
 )
 
+// Describes parameters, which can be use for upgrading
+// virtual instance
+type UpgradeOptions struct {
+	Cpus       int
+	MemoryInGB int // Softlayer allows to upgrade Memory only in GB
+	NicSpeed   int
+}
+
 type SoftLayer_Virtual_Guest_Service interface {
 	Service
 
@@ -52,4 +60,12 @@ type SoftLayer_Virtual_Guest_Service interface {
 	ShutdownPrivatePort(instanceId int) (bool, error)
 	ShutdownPublicPort(instanceId int) (bool, error)
 	ReloadOperatingSystem(instanceId int, template datatypes.Image_Template_Config) error
+
+	// Upgrades CPU, Memory or network speed attributes (if provided) for particular instance
+	// Returns 'true' in case upgrade has started, and 'false' otherwise
+	UpgradeObject(instanceId int, upgradeOptions *UpgradeOptions) (bool, error)
+
+	// Returns available upgrade prices for virtual guests by provided options.
+	// Fails with error in case price is not found for any of provided non-empty upgrade options.
+	GetAvailableUpgradeItemPrices(upgradeOptions *UpgradeOptions) ([]datatypes.SoftLayer_Item_Price, error)
 }

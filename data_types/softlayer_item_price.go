@@ -14,5 +14,6 @@ type Item struct {
 }
 
 type Category struct {
+	Id           int    `json:"id"`
 	CategoryCode string `json:"categoryCode"`
 }
