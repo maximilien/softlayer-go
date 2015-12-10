@@ -198,6 +198,15 @@ func (fslc *FakeSoftLayerClient) GetSoftLayer_Dns_Domain_Record_Service() (softl
 	return slService.(softlayer.SoftLayer_Dns_Domain_Record_Service), nil
 }
 
+func (fslc *FakeSoftLayerClient) GetSoftLayer_SoftLayer_Dns_Domain_Record_SRV_Service() (softlayer.SoftLayer_Dns_Domain_Record_SRV_Service, error) {
+	slService, err := fslc.GetService("SoftLayer_Dns_Domain_ResourceRecord_SrvType")
+	if err != nil {
+		return nil, err
+	}
+
+	return slService.(softlayer.SoftLayer_Dns_Domain_Record_SRV_Service), nil
+}
+
 //Public methods
 func (fslc *FakeSoftLayerClient) DoRawHttpRequestWithObjectMask(path string, masks []string, requestType string, requestBody *bytes.Buffer) ([]byte, error) {
 	fslc.DoRawHttpRequestPath = path
