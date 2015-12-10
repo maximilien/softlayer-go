@@ -469,9 +469,16 @@ func (slvgs *softLayer_Virtual_Guest_Service) AttachEphemeralDisk(instanceId int
 		},
 	}
 
-	_, err = service.PlaceContainerOrderVirtualGuestUpgrade(order)
+	receipt, err := service.PlaceContainerOrderVirtualGuestUpgrade(order)
+	if err != nil {
+		return err
+	}
 
-	return err
+    if (receipt.OrderId == nil) || len(receipt.OrderId) == 0 {
+		return errors.New(fmt.Sprintf("Virtual guest with id '%d' can not order ephemeral disk", instanceId))
+	}
+
+	return nil
 }
 
 func (slvgs *softLayer_Virtual_Guest_Service) GetUpgradeItemPrices(instanceId int) ([]datatypes.SoftLayer_Item_Price, error) {
