@@ -7,9 +7,9 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
-	datatypes "github.com/TheWeatherCompany/softlayer-go/data_types"
-	softlayer "github.com/TheWeatherCompany/softlayer-go/softlayer"
-	testhelpers "github.com/TheWeatherCompany/softlayer-go/test_helpers"
+	datatypes "github.com/maximilien/softlayer-go/data_types"
+	softlayer "github.com/maximilien/softlayer-go/softlayer"
+	testhelpers "github.com/maximilien/softlayer-go/test_helpers"
 )
 
 var _ = Describe("SoftLayer Virtual Guest Lifecycle", func() {

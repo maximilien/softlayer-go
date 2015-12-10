@@ -6,9 +6,9 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
-	slclientfakes "github.com/TheWeatherCompany/softlayer-go/client/fakes"
-	softlayer "github.com/TheWeatherCompany/softlayer-go/softlayer"
-	testhelpers "github.com/TheWeatherCompany/softlayer-go/test_helpers"
+	slclientfakes "github.com/maximilien/softlayer-go/client/fakes"
+	softlayer "github.com/maximilien/softlayer-go/softlayer"
+	testhelpers "github.com/maximilien/softlayer-go/test_helpers"
 )
 
 var _ = Describe("SoftLayer_Product_Package", func() {

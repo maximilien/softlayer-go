@@ -10,8 +10,8 @@ import (
 	"strings"
 	"time"
 
-	datatypes "github.com/TheWeatherCompany/softlayer-go/data_types"
-	softlayer "github.com/TheWeatherCompany/softlayer-go/softlayer"
+	datatypes "github.com/maximilien/softlayer-go/data_types"
+	softlayer "github.com/maximilien/softlayer-go/softlayer"
 )
 
 const (

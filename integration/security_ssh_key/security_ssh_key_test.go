@@ -6,8 +6,8 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
-	softlayer "github.com/TheWeatherCompany/softlayer-go/softlayer"
-	testhelpers "github.com/TheWeatherCompany/softlayer-go/test_helpers"
+	softlayer "github.com/maximilien/softlayer-go/softlayer"
+	testhelpers "github.com/maximilien/softlayer-go/test_helpers"
 )
 
 var _ = Describe("SoftLayer Security SSH keys", func() {
