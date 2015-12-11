@@ -429,15 +429,15 @@ func (slvgs *softLayer_Virtual_Guest_Service) IsBackendPingable(instanceId int) 
 	return false, errors.New(fmt.Sprintf("Failed to checking that virtual guest backend is pingable for instance with id '%d', got '%s' as response from the API.", instanceId, res))
 }
 
-func (slvgs *softLayer_Virtual_Guest_Service) AttachEphemeralDisk(instanceId int, diskSize int) error {
+func (slvgs *softLayer_Virtual_Guest_Service) AttachEphemeralDisk(instanceId int, diskSize int) (datatypes.SoftLayer_Container_Product_Order_Receipt, error) {
 	diskItemPrice, err := slvgs.findUpgradeItemPriceForEphemeralDisk(instanceId, diskSize)
 	if err != nil {
-		return err
+		return datatypes.SoftLayer_Container_Product_Order_Receipt{}, err
 	}
 
 	service, err := slvgs.client.GetSoftLayer_Product_Order_Service()
 	if err != nil {
-		return err
+		return datatypes.SoftLayer_Container_Product_Order_Receipt{}, err
 	}
 
 	order := datatypes.SoftLayer_Container_Product_Order_Virtual_Guest_Upgrade{
@@ -471,14 +471,10 @@ func (slvgs *softLayer_Virtual_Guest_Service) AttachEphemeralDisk(instanceId int
 
 	receipt, err := service.PlaceContainerOrderVirtualGuestUpgrade(order)
 	if err != nil {
-		return err
+		return datatypes.SoftLayer_Container_Product_Order_Receipt{}, err
 	}
 
-    if (receipt.OrderId == nil) || len(receipt.OrderId) == 0 {
-		return errors.New(fmt.Sprintf("Virtual guest with id '%d' can not order ephemeral disk", instanceId))
-	}
-
-	return nil
+	return receipt, nil
 }
 
 func (slvgs *softLayer_Virtual_Guest_Service) GetUpgradeItemPrices(instanceId int) ([]datatypes.SoftLayer_Item_Price, error) {
