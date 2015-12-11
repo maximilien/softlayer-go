@@ -478,7 +478,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) AttachEphemeralDisk(instanceId int
 		},
 	}
 
-	receipt, err := service.PlaceContainerOrderVirtualGuestUpgrade(order)
+	receipt, err := orderService.PlaceContainerOrderVirtualGuestUpgrade(order)
 	if err != nil {
 		return datatypes.SoftLayer_Container_Product_Order_Receipt{}, err
 	}
