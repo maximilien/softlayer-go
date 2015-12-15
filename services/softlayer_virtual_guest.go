@@ -16,8 +16,10 @@ import (
 
 const (
 	EPHEMERAL_DISK_CATEGORY_CODE      = "guest_disk1"
+	// Defined in virtual server block here: http://sldn.softlayer.com/reference/services/SoftLayer_Product_Order/placeOrder
 	VIRTUAL_SERVER_PACKAGE_TYPE       = "VIRTUAL_SERVER_INSTANCE"
 	MAINTENANCE_WINDOW_PROPERTY       = "MAINTENANCE_WINDOW"
+	// Described in the following link: http://sldn.softlayer.com/reference/datatypes/SoftLayer_Container_Product_Order_Virtual_Guest_Upgrade
 	UPGRADE_VIRTUAL_SERVER_ORDER_TYPE = "SoftLayer_Container_Product_Order_Virtual_Guest_Upgrade"
 )
 
