@@ -18,7 +18,7 @@ var _ = Describe("SoftLayer_Dns_Domain_Record", func() {
 
 		fakeClient *slclientfakes.FakeSoftLayerClient
 
-		dnsDomainRecordService softlayer.SoftLayer_Dns_Domain_Record_Service
+		dnsDomainRecordService softlayer.SoftLayer_Dns_Domain_Resource_Record_Service
 		err                    error
 	)
 
@@ -32,7 +32,7 @@ var _ = Describe("SoftLayer_Dns_Domain_Record", func() {
 		fakeClient = slclientfakes.NewFakeSoftLayerClient(username, apiKey)
 		Expect(fakeClient).ToNot(BeNil())
 
-		dnsDomainRecordService, err = fakeClient.GetSoftLayer_Dns_Domain_Record_Service()
+		dnsDomainRecordService, err = fakeClient.GetSoftLayer_Dns_Domain_Resource_Record_Service()
 		Expect(err).ToNot(HaveOccurred())
 		Expect(dnsDomainRecordService).ToNot(BeNil())
 	})
@@ -51,7 +51,7 @@ var _ = Describe("SoftLayer_Dns_Domain_Record", func() {
 		})
 
 		It("creates a new SoftLayer_Dns_Domain_Record", func() {
-			template := datatypes.SoftLayer_Dns_Domain_Record_Template{
+			template := datatypes.SoftLayer_Dns_Domain_Resource_Record_Template{
 				Data:              "testData",
 				DomainId:          123,
 				Expire:            99999,
