@@ -64,7 +64,6 @@ func (slpp *softLayer_Product_Package_Service) GetItemPricesBySize(packageId int
 }
 
 func (slpp *softLayer_Product_Package_Service) GetItemsByType(packageType string) ([]datatypes.SoftLayer_Product_Item, error) {
-
 	productPackage, err := slpp.GetOnePackageByType(packageType)
 	if err != nil {
 		return []datatypes.SoftLayer_Product_Item{}, err
@@ -99,7 +98,6 @@ func (slpp *softLayer_Product_Package_Service) GetItems(packageId int) ([]dataty
 }
 
 func (slpp *softLayer_Product_Package_Service) GetOnePackageByType(packageType string) (datatypes.Softlayer_Product_Package, error) {
-
 	productPackages, err := slpp.GetPackagesByType(packageType)
 	if err != nil {
 		return datatypes.Softlayer_Product_Package{}, err
@@ -136,6 +134,7 @@ func (slpp *softLayer_Product_Package_Service) GetPackagesByType(packageType str
 	}
 
 	// Remove packages designated as OUTLET
+	// See method "#get_packages_of_type" in SoftLayer Python client for details: https://github.com/softlayer/softlayer-python/blob/master/SoftLayer/managers/ordering.py
 	nonOutletPackages := slpp.filterProducts(productPackages, func(productPackage *datatypes.Softlayer_Product_Package) bool {
 		return !strings.Contains(productPackage.Description, OUTLET_PACKAGE) && !strings.Contains(productPackage.Name, OUTLET_PACKAGE)
 	})
@@ -143,7 +142,8 @@ func (slpp *softLayer_Product_Package_Service) GetPackagesByType(packageType str
 	return nonOutletPackages, nil
 }
 
-// Utility method for filtering product packages using provided predicate
+//Private methods
+
 func (slpp *softLayer_Product_Package_Service) filterProducts(array []*datatypes.Softlayer_Product_Package, predicate func(*datatypes.Softlayer_Product_Package) bool) []datatypes.Softlayer_Product_Package {
 	filtered := make([]datatypes.Softlayer_Product_Package, 0)
 	for _, element := range array {

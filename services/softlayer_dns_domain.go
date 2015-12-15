@@ -27,7 +27,7 @@ func (sldds *softLayer_Dns_Domain_Service) CreateObject(template datatypes.SoftL
 	// check required fields
 
 	if template.ResourceRecords == nil {
-		template.ResourceRecords = []datatypes.SoftLayer_Dns_Domain_Record{}
+		template.ResourceRecords = []datatypes.SoftLayer_Dns_Domain_Resource_Record{}
 	}
 
 	parameters := datatypes.SoftLayer_Dns_Domain_Template_Parameters{

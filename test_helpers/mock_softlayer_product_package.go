@@ -12,7 +12,6 @@ func (mock *MockProductPackageService) GetName() string {
 	return "Mock_Product_Package_Service"
 }
 
-// Provides mock product items ('cpu', 'ram' and 'nic_speed') for "VIRTUAL_SERVER_INSTANCE" package type
 func (mock *MockProductPackageService) GetItemsByType(packageType string) ([]datatypes.SoftLayer_Product_Item, error) {
 	response, _ := ReadJsonTestFixtures("services", "SoftLayer_Product_Package_getItemsByType_virtual_server.json")
 

@@ -38,7 +38,6 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 		fakeClient = slclientfakes.NewFakeSoftLayerClient(username, apiKey)
 		Expect(fakeClient).ToNot(BeNil())
 
-		// Use mock for product package service (which provides mock pricing items for "cpu", "ram" and "network speed")
 		fakeClient.SoftLayerServices["SoftLayer_Product_Package"] = &testhelpers.MockProductPackageService{}
 
 		virtualGuestService, err = fakeClient.GetSoftLayer_Virtual_Guest_Service()
