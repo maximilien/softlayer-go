@@ -123,7 +123,7 @@ var _ = Describe("SoftLayer_Product_Package", func() {
 			Expect(productPackages[0].Name).To(Equal("Cloud Server 1"))
 		})
 
-		It("outlet packages are skipped", func() {
+		It("skips packaged marked OUTLET", func() {
 			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Product_Package_getAllObjects_virtual_server_with_OUTLET.json")
 			productPackages, err := productPackageService.GetPackagesByType("VIRTUAL_SERVER_INSTANCE")
 			Expect(err).ToNot(HaveOccurred())

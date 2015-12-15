@@ -10,8 +10,8 @@ import (
 	"net/http/httputil"
 	"os"
 	"path/filepath"
-	"text/template"
 	"regexp"
+	"text/template"
 
 	services "github.com/maximilien/softlayer-go/services"
 	softlayer "github.com/maximilien/softlayer-go/softlayer"
@@ -288,7 +288,7 @@ func (slc *SoftLayerClient) initSoftLayerServices() {
 func hideCredentials(s string) string {
 	hiddenStr := "\"password\":\"******\""
 	r := regexp.MustCompile(`"password":"[^"]*"`)
-	
+
 	return r.ReplaceAllString(s, hiddenStr)
 }
 
