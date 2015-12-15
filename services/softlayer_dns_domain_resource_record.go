@@ -128,7 +128,7 @@ func (sldr *softLayer_Dns_Domain_Resource_Record_Service) EditObject(recordId in
 
 //Private methods
 
-func (sldr *softLayer_Dns_Domain_Resource_Record_Service) getNameByType(dnsType string) string  {
+func (sldr *softLayer_Dns_Domain_Resource_Record_Service) getNameByType(dnsType string) string {
 	switch dnsType {
 	case "srv":
 		// Currently only SRV record type requires additional fields for Create and Update, while all other record types
