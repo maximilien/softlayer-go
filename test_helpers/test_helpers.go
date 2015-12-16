@@ -467,6 +467,24 @@ func WaitForVirtualGuestToBeRunning(virtualGuestId int) {
 	WaitForVirtualGuest(virtualGuestId, "RUNNING", TIMEOUT)
 }
 
+func WaitForVirtualGuestTransactionWithStatus(virtualGuestId int, status string) {
+	virtualGuestService, err := CreateVirtualGuestService()
+	Expect(err).ToNot(HaveOccurred())
+
+	fmt.Printf("----> waiting for virtual guest %d to have ugrade transactions with status '%s'\n", virtualGuestId, status)
+	Eventually(func() bool {
+		activeTransactions, err := virtualGuestService.GetActiveTransactions(virtualGuestId)
+		Expect(err).ToNot(HaveOccurred())
+		for _, transaction := range activeTransactions {
+			if strings.Contains(transaction.TransactionStatus.Name, status) {
+				return true
+			}
+		}
+		fmt.Printf("----> virtual guest: %d, doesn't have transactions with status '%s' yet\n", virtualGuestId, status)
+		return false
+	}, TIMEOUT, POLLING_INTERVAL).Should(BeTrue(), "failed waiting for virtual guest to have transactions with specifc status")
+}
+
 func WaitForVirtualGuestToHaveNoActiveTransactions(virtualGuestId int) {
 	virtualGuestService, err := CreateVirtualGuestService()
 	Expect(err).ToNot(HaveOccurred())
