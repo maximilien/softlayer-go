@@ -100,3 +100,29 @@ func (slpo *softLayer_Product_Order_Service) PlaceContainerOrderVirtualGuestUpgr
 
 	return receipt, nil
 }
+
+func (slpo *softLayer_Product_Order_Service) PlaceContainerOrderApplicationDeliveryController(order datatypes.SoftLayer_Container_Product_Order_Network_Application_Delivery_Controller) (datatypes.SoftLayer_Container_Product_Order_Receipt, error) {
+	parameters := datatypes.SoftLayer_Container_Product_Order_Network_Application_Delivery_Controller_Parameters{
+		Parameters: []datatypes.SoftLayer_Container_Product_Order_Network_Application_Delivery_Controller{
+			order,
+		},
+	}
+
+	requestBody, err := json.Marshal(parameters)
+	if err != nil {
+		return datatypes.SoftLayer_Container_Product_Order_Receipt{}, err
+	}
+
+	responseBytes, err := slpo.client.DoRawHttpRequest(fmt.Sprintf("%s/placeOrder.json", slpo.GetName()), "POST", bytes.NewBuffer(requestBody))
+	if err != nil {
+		return datatypes.SoftLayer_Container_Product_Order_Receipt{}, err
+	}
+
+	receipt := datatypes.SoftLayer_Container_Product_Order_Receipt{}
+	err = json.Unmarshal(responseBytes, &receipt)
+	if err != nil {
+		return datatypes.SoftLayer_Container_Product_Order_Receipt{}, err
+	}
+
+	return receipt, nil
+}

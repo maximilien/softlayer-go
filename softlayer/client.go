@@ -20,6 +20,7 @@ type Client interface {
 	GetSoftLayer_Hardware_Service() (SoftLayer_Hardware_Service, error)
 	GetSoftLayer_Dns_Domain_Service() (SoftLayer_Dns_Domain_Service, error)
 	GetSoftLayer_Dns_Domain_Record_Service() (SoftLayer_Dns_Domain_Record_Service, error)
+	GetSoftLayer_Network_Application_Delivery_Controller_Service() (SoftLayer_Network_Application_Delivery_Controller_Service, error)
 
 	DoRawHttpRequest(path string, requestType string, requestBody *bytes.Buffer) ([]byte, error)
 	DoRawHttpRequestWithObjectMask(path string, masks []string, requestType string, requestBody *bytes.Buffer) ([]byte, error)

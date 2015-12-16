@@ -25,7 +25,7 @@ func (sldr *softLayer_Dns_Domain_Record_Service) GetName() string {
 }
 
 // Provides SoftLayer resource type by record type
-func (sldr *softLayer_Dns_Domain_Record_Service) getNameByType(dnsType string) string  {
+func (sldr *softLayer_Dns_Domain_Record_Service) getNameByType(dnsType string) string {
 	switch dnsType {
 	case "srv":
 		// Currently only SRV record type requires additional fields for Create and Update, while all other record types

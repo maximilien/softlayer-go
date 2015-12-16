@@ -10,8 +10,8 @@ import (
 	"net/http/httputil"
 	"os"
 	"path/filepath"
-	"text/template"
 	"regexp"
+	"text/template"
 
 	services "github.com/maximilien/softlayer-go/services"
 	softlayer "github.com/maximilien/softlayer-go/softlayer"
@@ -187,6 +187,15 @@ func (slc *SoftLayerClient) GetSoftLayer_Dns_Domain_Record_Service() (softlayer.
 	return slService.(softlayer.SoftLayer_Dns_Domain_Record_Service), nil
 }
 
+func (slc *SoftLayerClient) GetSoftLayer_Network_Application_Delivery_Controller_Service() (softlayer.SoftLayer_Network_Application_Delivery_Controller_Service, error) {
+	slService, err := slc.GetService("SoftLayer_Network_Application_Delivery_Controller_Service")
+	if err != nil {
+		return nil, err
+	}
+
+	return slService.(softlayer.SoftLayer_Network_Application_Delivery_Controller_Service), nil
+}
+
 //Public methods
 
 func (slc *SoftLayerClient) DoRawHttpRequestWithObjectMask(path string, masks []string, requestType string, requestBody *bytes.Buffer) ([]byte, error) {
@@ -283,12 +292,13 @@ func (slc *SoftLayerClient) initSoftLayerServices() {
 	slc.softLayerServices["SoftLayer_Hardware"] = services.NewSoftLayer_Hardware_Service(slc)
 	slc.softLayerServices["SoftLayer_Dns_Domain"] = services.NewSoftLayer_Dns_Domain_Service(slc)
 	slc.softLayerServices["SoftLayer_Dns_Domain_ResourceRecord"] = services.NewSoftLayer_Dns_Domain_Record_Service(slc)
+	slc.softLayerServices["SoftLayer_Network_Application_Delivery_Controller_Service"] = services.NewSoftLayer_Network_Application_Delivery_Controller_Service(slc)
 }
 
 func hideCredentials(s string) string {
 	hiddenStr := "\"password\":\"******\""
 	r := regexp.MustCompile(`"password":"[^"]*"`)
-	
+
 	return r.ReplaceAllString(s, hiddenStr)
 }
 

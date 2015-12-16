@@ -16,5 +16,6 @@ type SoftLayer_Product_Item struct {
 	Id          int                    `json:"id"`
 	Description string                 `json:"description"`
 	Capacity    string                 `json:"capacity"`
+	Key         string                 `json:"keyName"`
 	Prices      []SoftLayer_Item_Price `json:"prices,omitempty"`
 }
