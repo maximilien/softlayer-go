@@ -824,7 +824,6 @@ func (slvgs *softLayer_Virtual_Guest_Service) getVirtualServerItems() ([]datatyp
 }
 
 func (slvgs *softLayer_Virtual_Guest_Service) filterProductItemPrice(packageItems []datatypes.SoftLayer_Product_Item, option string, amount int) (datatypes.SoftLayer_Item_Price, error) {
-
 	// for now use hardcoded values in the same "style" as Python client does
 	// refer to corresponding Python method #_get_item_id_for_upgrade: https://github.com/softlayer/softlayer-python/blob/master/SoftLayer/managers/vs.py
 	vsId := map[string]int{

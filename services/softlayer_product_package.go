@@ -73,7 +73,6 @@ func (slpp *softLayer_Product_Package_Service) GetItemsByType(packageType string
 }
 
 func (slpp *softLayer_Product_Package_Service) GetItems(packageId int) ([]datatypes.SoftLayer_Product_Item, error) {
-
 	objectMasks := []string{
 		"id",
 		"capacity",
@@ -111,7 +110,6 @@ func (slpp *softLayer_Product_Package_Service) GetOnePackageByType(packageType s
 }
 
 func (slpp *softLayer_Product_Package_Service) GetPackagesByType(packageType string) ([]datatypes.Softlayer_Product_Package, error) {
-
 	objectMasks := []string{
 		"id",
 		"name",

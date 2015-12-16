@@ -14,9 +14,7 @@ type SoftLayer_Dns_Domain struct {
 	Name       string `json:"name"`
 	Serial     int    `json:"serial"`
 	UpdateDate string `json:"updateDate"`
-	//	Account					SoftLayer_Account 		`json:"account"`
 	ManagedResourceFlag bool                                   `json:"managedResourceFlag"`
 	ResourceRecordCount int                                    `json:"resourceRecordCount"`
 	ResourceRecords     []SoftLayer_Dns_Domain_Resource_Record `json:"resourceRecords"`
-	//	Secondary				SoftLayer_Dns_Secondary						`json:"secondary"`
 }
