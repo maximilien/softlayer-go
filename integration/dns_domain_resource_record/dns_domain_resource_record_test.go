@@ -14,10 +14,14 @@ var _ = Describe("SoftLayer DNS Resource Records", func() {
 	var (
 		err								 error
 		dnsDomainResourceRecordService 	 softlayer.SoftLayer_Dns_Domain_Resource_Record_Service
+		dnsDomainService 	 			 softlayer.SoftLayer_Dns_Domain_Service
 	)
 
 	BeforeEach(func() {
 		dnsDomainResourceRecordService, err = testhelpers.CreateDnsDomainResourceRecordService()
+		Expect(err).ToNot(HaveOccurred())
+
+		dnsDomainService, err = testhelpers.CreateDnsDomainService()
 		Expect(err).ToNot(HaveOccurred())
 
 		testhelpers.TIMEOUT = 30 * time.Second
@@ -26,8 +30,8 @@ var _ = Describe("SoftLayer DNS Resource Records", func() {
 
 	Context("SoftLayer_Dns_Domain_ResourceRecord", func() {
 		It("creates a DNS Domain resource record, update it, and delete it", func() {
-			domainId := 123456
-			createdDnsDomainResourceRecord, _ := testhelpers.CreateTestDnsDomainResourceRecord(domainId)
+			testDnsDomain := testhelpers.CreateTestDnsDomain()
+			createdDnsDomainResourceRecord, _ := testhelpers.CreateTestDnsDomainResourceRecord(testDnsDomain.Id)
 
 			testhelpers.WaitForCreatedDnsDomainResourceRecordToBePresent(createdDnsDomainResourceRecord.Id)
 
@@ -39,9 +43,6 @@ var _ = Describe("SoftLayer DNS Resource Records", func() {
 			Expect(result.ResponsiblePerson).To(Equal("testemail@sl.com"))
 			Expect(result.Ttl).To(Equal(900))
 			Expect(result.Type).To(Equal("a"))
-
-			oldHost := result.Host
-			oldResponsiblePerson := result.ResponsiblePerson
 
 			result.Host = "edited.test.example.com"
 			result.ResponsiblePerson = "editedtestemail@sl.com"
@@ -57,6 +58,13 @@ var _ = Describe("SoftLayer DNS Resource Records", func() {
 			Expect(deleted).To(BeTrue())
 
 			testhelpers.WaitForDeletedDnsDomainResourceRecordToNoLongerBePresent(createdDnsDomainResourceRecord.Id)
+
+			//clean up
+			deletedDns, err := dnsDomainService.DeleteObject(testDnsDomain.Id)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(deletedDns).To(BeTrue())
+
+			testhelpers.WaitForDeletedDnsDomainToNoLongerBePresent(testDnsDomain.Id)
 		})
 	})
 })
