@@ -8,6 +8,7 @@ import (
 
 	softlayer "github.com/maximilien/softlayer-go/softlayer"
 	testhelpers "github.com/maximilien/softlayer-go/test_helpers"
+	"fmt"
 )
 
 var _ = Describe("SoftLayer DNS Resource Records", func() {
@@ -31,7 +32,7 @@ var _ = Describe("SoftLayer DNS Resource Records", func() {
 	Context("SoftLayer_Dns_Domain_ResourceRecord", func() {
 		It("creates a DNS Domain resource record, update it, and delete it", func() {
 			testDnsDomain := testhelpers.CreateTestDnsDomain()
-			createdDnsDomainResourceRecord, _ := testhelpers.CreateTestDnsDomainResourceRecord(testDnsDomain.Id)
+			createdDnsDomainResourceRecord := testhelpers.CreateTestDnsDomainResourceRecord(testDnsDomain.Id)
 
 			testhelpers.WaitForCreatedDnsDomainResourceRecordToBePresent(createdDnsDomainResourceRecord.Id)
 
@@ -57,14 +58,14 @@ var _ = Describe("SoftLayer DNS Resource Records", func() {
 			Expect(err).ToNot(HaveOccurred())
 			Expect(deleted).To(BeTrue())
 
-			testhelpers.WaitForDeletedDnsDomainResourceRecordToNoLongerBePresent(createdDnsDomainResourceRecord.Id)
+//			testhelpers.WaitForDeletedDnsDomainResourceRecordToNoLongerBePresent(createdDnsDomainResourceRecord.Id)
 
 			//clean up
 			deletedDns, err := dnsDomainService.DeleteObject(testDnsDomain.Id)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(deletedDns).To(BeTrue())
 
-			testhelpers.WaitForDeletedDnsDomainToNoLongerBePresent(testDnsDomain.Id)
+//			testhelpers.WaitForDeletedDnsDomainToNoLongerBePresent(testDnsDomain.Id)
 		})
 	})
 })

@@ -26,7 +26,7 @@ var _ = Describe("SoftLayer DNS domains", func() {
 
 	Context("SoftLayer_Dns_Domain", func() {
 		It("creates a DNS Domain, update it, and delete it", func() {
-			createdDnsDomain, _ := testhelpers.CreateTestDnsDomain()
+			createdDnsDomain := testhelpers.CreateTestDnsDomain()
 
 			testhelpers.WaitForCreatedDnsDomainToBePresent(createdDnsDomain.Id)
 

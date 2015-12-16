@@ -761,7 +761,7 @@ func CreateTestDnsDomainResourceRecord(domainId int) (datatypes.SoftLayer_Dns_Do
 		Host: TEST_HOST,
 		ResponsiblePerson: TEST_EMAIL,
 		Ttl: TEST_TTL,
-		Type: "a",
+		Type: "A",
 	}
 
 	dnsDomainResourceRecordService, err := CreateDnsDomainResourceRecordService()
@@ -774,8 +774,8 @@ func CreateTestDnsDomainResourceRecord(domainId int) (datatypes.SoftLayer_Dns_Do
 	Expect(createdDnsDomainResourceRecord.Data).To(Equal(template.Data), "127.0.0.1")
 	Expect(createdDnsDomainResourceRecord.Host).To(Equal(template.Host), TEST_HOST)
 	Expect(createdDnsDomainResourceRecord.ResponsiblePerson).To(Equal(template.ResponsiblePerson), TEST_EMAIL)
-	Expect(createdDnsDomainResourceRecord.Ttl).To(template.Ttl, TEST_TTL)
-	Expect(createdDnsDomainResourceRecord.Type).To(template.Type, "a")
+	Expect(createdDnsDomainResourceRecord.Ttl).To(Equal(template.Ttl), "900")
+	Expect(createdDnsDomainResourceRecord.Type).To(Equal(template.Type), "A")
 	fmt.Printf("----> created dns domain resource record: %d\n in SL", createdDnsDomainResourceRecord.Id)
 
 	return createdDnsDomainResourceRecord
