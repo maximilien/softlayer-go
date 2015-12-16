@@ -36,7 +36,6 @@ const (
 	TEST_EMAIL = "testemail@sl.com"
 	TEST_HOST = "test.example.com"
 	TEST_TTL = 900
-	TEST_DOMAIN_NAME = "test.domain.name"
 
 	MAX_WAIT_RETRIES = 10
 	WAIT_TIME        = 5
@@ -704,9 +703,9 @@ func CreateDnsDomainResourceRecordService() (softlayer.SoftLayer_Dns_Domain_Reso
 	return dnsDomainResourceRecordService, nil
 }
 
-func CreateTestDnsDomain() (datatypes.SoftLayer_Dns_Domain) {
+func CreateTestDnsDomain(name string) (datatypes.SoftLayer_Dns_Domain) {
 	template := datatypes.SoftLayer_Dns_Domain_Template{
-		Name: TEST_DOMAIN_NAME,
+		Name: name,
 	}
 
 	dnsDomainService, err := CreateDnsDomainService()
