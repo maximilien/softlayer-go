@@ -36,6 +36,7 @@ const (
 	TEST_EMAIL = "testemail@sl.com"
 	TEST_HOST = "test.example.com"
 	TEST_TTL = 900
+	TEST_DOMAIN_NAME = "test.domain.name"
 
 	MAX_WAIT_RETRIES = 10
 	WAIT_TIME        = 5
@@ -673,6 +674,21 @@ func GetVirtualGuestPrimaryIpAddress(virtualGuestId int) string {
 	return vgIpAddress
 }
 
+func CreateDnsDomainService() (softlayer.SoftLayer_Dns_Domain_Service, error) {
+	username, apiKey, err := GetUsernameAndApiKey()
+	if err != nil {
+		return nil, err
+	}
+
+	client := slclient.NewSoftLayerClient(username, apiKey)
+	dnsDomainService, err := client.GetSoftLayer_Dns_Domain_Service()
+	if err != nil {
+		return nil, err
+	}
+
+	return dnsDomainService, nil
+}
+
 func CreateDnsDomainResourceRecordService() (softlayer.SoftLayer_Dns_Domain_Resource_Record_Service, error) {
 	username, apiKey, err := GetUsernameAndApiKey()
 	if err != nil {
@@ -686,6 +702,56 @@ func CreateDnsDomainResourceRecordService() (softlayer.SoftLayer_Dns_Domain_Reso
 	}
 
 	return dnsDomainResourceRecordService, nil
+}
+
+func CreateTestDnsDomain() (datatypes.SoftLayer_Dns_Domain) {
+	template := datatypes.SoftLayer_Dns_Domain_Template{
+		Name: TEST_DOMAIN_NAME,
+	}
+
+	dnsDomainService, err := CreateDnsDomainService()
+	Expect(err).ToNot(HaveOccurred())
+
+	fmt.Printf("----> creating dns domain in SL\n")
+	createdDnsDomain, err := dnsDomainService.CreateObject(template)
+	Expect(err).ToNot(HaveOccurred())
+
+	Expect(createdDnsDomain.Name).To(Equal(template.Name))
+	fmt.Printf("----> created dns domain : %d\n in SL", createdDnsDomain.Id)
+
+	return createdDnsDomain
+}
+
+func WaitForCreatedDnsDomainToBePresent(dnsDomainId int) {
+	dnsDomainService, err := CreateDnsDomainService()
+	Expect(err).ToNot(HaveOccurred())
+
+	fmt.Printf("----> waiting for created dns domain to be present\n")
+	Eventually(func() bool {
+		dnsDomain, err := dnsDomainService.GetObject(dnsDomainId)
+		Expect(err).ToNot(HaveOccurred())
+
+		if dnsDomain.Id == dnsDomainId {
+			return true
+		}
+		return false
+	}, TIMEOUT, POLLING_INTERVAL).Should(BeTrue(), "created dns domain but not found")
+}
+
+func WaitForDeletedDnsDomainToNoLongerBePresent(dnsDomainId int) {
+	dnsDomainService, err := CreateDnsDomainService()
+	Expect(err).ToNot(HaveOccurred())
+
+	fmt.Printf("----> waiting for deleted dns domain to no longer be present\n")
+	Eventually(func() bool {
+		dnsDomain, err := dnsDomainService.GetObject(dnsDomainId)
+		Expect(err).ToNot(HaveOccurred())
+
+		if dnsDomain.Id == dnsDomainId {
+			return false
+		}
+		return true
+	}, TIMEOUT, POLLING_INTERVAL).Should(BeTrue(), "failed waiting for deleted dns domain to be removed")
 }
 
 func CreateTestDnsDomainResourceRecord(domainId int) (datatypes.SoftLayer_Dns_Domain_Resource_Record) {
