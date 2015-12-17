@@ -32,7 +32,7 @@ func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) GetNam
 	return "SoftLayer_Network_Application_Delivery_Controller"
 }
 
-func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) CreateNetscalerVPX(createOptions *softlayer.CreateOptions) (datatypes.SoftLayer_Network_Application_Delivery_Controller, error) {
+func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) CreateNetscalerVPX(createOptions *softlayer.NetworkApplicationDeliveryControllerCreateOptions) (datatypes.SoftLayer_Network_Application_Delivery_Controller, error) {
 	// check required fields
 	err := slnadcs.checkCreateVpxRequiredValues(createOptions)
 	if err != nil {
@@ -68,6 +68,7 @@ func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) Create
 	}
 
 	// TODO maybe call GetObject here
+	// TODO wait here ?
 
 	return vpx, nil
 }
@@ -76,6 +77,7 @@ func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) GetObj
 
 	objectMask := []string{
 		"id",
+		"createDate",
 		"name",
 		"typeId",
 		"modifyDate",
@@ -84,6 +86,20 @@ func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) GetObj
 		"managementIpAddress",
 		"primaryIpAddress",
 		"password",
+		"notes",
+		"datacenter",
+		"averageDailyPublicBandwidthUsage",
+		"licenseExpirationDate",
+		"networkVlan",
+		"networkVlanCount",
+		"networkVlans",
+		"subnetCount",
+		"subnets",
+		"tagReferenceCount",
+		"tagReferences",
+		"type",
+		"virtualIpAddressCount",
+		"virtualIpAddresses",
 	}
 
 	response, err := slnadcs.client.DoRawHttpRequestWithObjectMask(fmt.Sprintf("%s/%d/getObject.json", slnadcs.GetName(), id), objectMask, "GET", new(bytes.Buffer))
@@ -112,7 +128,7 @@ func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) Delete
 
 // Private methods
 
-func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) checkCreateVpxRequiredValues(createOptions *softlayer.CreateOptions) error {
+func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) checkCreateVpxRequiredValues(createOptions *softlayer.NetworkApplicationDeliveryControllerCreateOptions) error {
 	var err error
 	var errorMessages []string
 	errorTemplate := "* %s is required and cannot be empty\n"
@@ -134,7 +150,7 @@ func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) checkC
 	}
 
 	if len(errorMessages) > 0 {
-		err = errors.New(strings.Join(errorMessages, '\n'))
+		err = errors.New(strings.Join(errorMessages, "\n"))
 	}
 
 	return err
@@ -170,15 +186,17 @@ func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) getApp
 	return productPackageService.GetItemsByType(PACKAGE_TYPE_APPLICATION_DELIVERY_CONTROLLER)
 }
 
+// create item key for Netscaler VPX, based on the provided version, speed and plan
 func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) getVPXPriceItemKeyName(version string, speed int, plan string) string {
 	name := "CITRIX_NETSCALER_VPX"
 	speedMeasurements := "MBPS"
-	versionReplaced := strings.Replace(version, '.', DELIMITER, -1)
+	versionReplaced := strings.Replace(version, ".", DELIMITER, -1)
 	speedString := strconv.Itoa(speed) + speedMeasurements
 
 	return strings.Join([]string{name, versionReplaced, speedString, plan}, DELIMITER)
 }
 
+// create item key for Netscaler VPX, based on provided ips count
 func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) getPublicIpItemKeyName(ipCount int) string {
 	name := "STATIC_PUBLIC_IP_ADDRESSES"
 	ipCountString := strconv.Itoa(ipCount)
@@ -186,24 +204,45 @@ func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) getPub
 	return strings.Join([]string{name, ipCountString}, DELIMITER)
 }
 
-func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) findCreatePriceItems(createOptions *softlayer.CreateOptions) ([]datatypes.SoftLayer_Item_Price, error) {
+// use the create options to build keys for price items
+// using these keys the desired price items are found
+func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) findCreatePriceItems(createOptions *softlayer.NetworkApplicationDeliveryControllerCreateOptions) ([]*datatypes.SoftLayer_Item_Price, error) {
 	items, err := slnadcs.getApplicationDeliveryControllerItems()
 	if err != nil {
-		return []datatypes.SoftLayer_Item_Price{}, err
+		return []*datatypes.SoftLayer_Item_Price{}, err
 	}
 
-	adcKey := slnadcs.getVPXPriceItemKeyName(createOptions.Version, createOptions.Speed, createOptions.Plan)
+	// build price item keys based on the configuration values
+	nadcKey := slnadcs.getVPXPriceItemKeyName(createOptions.Version, createOptions.Speed, createOptions.Plan)
 	ipKey := slnadcs.getPublicIpItemKeyName(createOptions.IpCount)
 
-	var resultList [0]datatypes.SoftLayer_Item_Price
+	var nadcItemPrice , ipItemPrice *datatypes.SoftLayer_Item_Price
 
-	// TODO test this for cycle
+	// find the price items by keys
 	for _, item := range items {
 		itemKey := item.Key
-		if itemKey == adcKey || itemKey == ipKey {
-			resultList = append(resultList, item.Prices[0])
+		if itemKey == nadcKey {
+			nadcItemPrice = &item.Prices[0]
+		}
+		if itemKey == ipKey {
+			ipItemPrice = &item.Prices[0]
 		}
 	}
 
-	return resultList
+	var errorMessages []string
+
+	if nadcItemPrice == nil {
+		errorMessages = append(errorMessages, fmt.Sprintf("VPX version, speed or plan have incorrect values"))
+	}
+
+	if ipItemPrice == nil {
+		errorMessages = append(errorMessages, fmt.Sprintf("Ip quantity value is incorrect"))
+	}
+
+	if len(errorMessages) > 0 {
+		err = errors.New(strings.Join(errorMessages, "\n"))
+		return []*datatypes.SoftLayer_Item_Price{}, err
+	}
+
+	return []*datatypes.SoftLayer_Item_Price{nadcItemPrice, ipItemPrice}, nil
 }
