@@ -313,7 +313,7 @@ func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) findCr
 	nadcKey := slnadcs.getVPXPriceItemKeyName(createOptions.Version, createOptions.Speed, createOptions.Plan)
 	ipKey := slnadcs.getPublicIpItemKeyName(createOptions.IpCount)
 
-	var nadcItemPrice , ipItemPrice *datatypes.SoftLayer_Item_Price
+	var nadcItemPrice, ipItemPrice *datatypes.SoftLayer_Item_Price
 
 	// find the price items by keys
 	for _, item := range items {
