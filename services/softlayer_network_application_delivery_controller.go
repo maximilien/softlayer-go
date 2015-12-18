@@ -73,6 +73,103 @@ func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) Create
 	return vpx, nil
 }
 
+func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) CreateVirtualIpAddress(nadcId int, template datatypes.SoftLayer_Network_LoadBalancer_VirtualIpAddress_Template) (bool, error) {
+	// check required fields
+
+	nadc, err := slnadcs.GetObject(nadcId)
+	if err != nil {
+		return false, err
+	}
+	if nadc.Id != nadcId {
+		err = errors.New(fmt.Sprintf("Network application delivery controller with id %d is not found", nadcId))
+		return false, err
+	}
+
+	parameters := datatypes.SoftLayer_Network_LoadBalancer_VirtualIpAddress_Template_Parameters{
+		LoadBalancer: template,
+	}
+
+	requestBody, err := json.Marshal(parameters)
+	if err != nil {
+		return false, err
+	}
+
+	response, err := slnadcs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/%s.json", slnadcs.GetName(), nadcId, "createLiveLoadBalancer"), "POST", bytes.NewBuffer(requestBody))
+	if err != nil {
+		return false, err
+	}
+
+	if response_value := string(response[:]); response_value != "true" {
+		return false, errors.New(fmt.Sprintf("Failed to delete Virtual IP Address with id '%s' from network application delivery controller %d. got '%s' as response from the API", 0, nadcId, response_value))
+	}
+
+	return true, nil
+}
+
+func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) DeleteVirtualIpAddress(nadcId int, name string) (bool, error) {
+	nadc, err := slnadcs.GetObject(nadcId)
+	if err != nil {
+		return false, err
+	}
+	if nadc.Id != nadcId {
+		err = errors.New(fmt.Sprintf("Network application delivery controller with id %d is not found", nadcId))
+		return false, err
+	}
+
+	parameters := datatypes.SoftLayer_Network_LoadBalancer_VirtualIpAddress_Template_Parameters{
+		LoadBalancer: datatypes.SoftLayer_Network_LoadBalancer_VirtualIpAddress_Template{
+			Name: name,
+		},
+	}
+
+	requestBody, err := json.Marshal(parameters)
+	if err != nil {
+		return false, err
+	}
+
+	response, err := slnadcs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/%s.json", slnadcs.GetName(), nadcId, "deleteLiveLoadBalancer"), "POST", bytes.NewBuffer(requestBody))
+	if err != nil {
+		return false, err
+	}
+
+	if response_value := string(response[:]); response_value != "true" {
+		return false, errors.New(fmt.Sprintf("Failed to delete Virtual IP Address with name '%s' from network application delivery controller %d. got '%s' as response from the API", name, nadcId, response_value))
+	}
+
+	return true, err
+}
+
+func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) EditVirtualIpAddress(nadcId int, template datatypes.SoftLayer_Network_LoadBalancer_VirtualIpAddress_Template) (bool, error) {
+	nadc, err := slnadcs.GetObject(nadcId)
+	if err != nil {
+		return false, err
+	}
+	if nadc.Id != nadcId {
+		err = errors.New(fmt.Sprintf("Network application delivery controller with id %d is not found", nadcId))
+		return false, err
+	}
+
+	parameters := datatypes.SoftLayer_Network_LoadBalancer_VirtualIpAddress_Template_Parameters{
+		LoadBalancer: template,
+	}
+
+	requestBody, err := json.Marshal(parameters)
+	if err != nil {
+		return false, err
+	}
+
+	response, err := slnadcs.client.DoRawHttpRequest(fmt.Sprintf("%s/%s.json", slnadcs.GetName(), "updateLiveLoadBalancer"), "POST", bytes.NewBuffer(requestBody))
+	if err != nil {
+		return false, err
+	}
+
+	if response_value := string(response[:]); response_value != "true" {
+		return false, errors.New(fmt.Sprintf("Failed to update Virtual IP Address with id '%d' from network application delivery controller %d. got '%s' as response from the API", template.Id, nadcId, response_value))
+	}
+
+	return true, err
+}
+
 func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) GetObject(id int) (datatypes.SoftLayer_Network_Application_Delivery_Controller, error) {
 
 	objectMask := []string{
