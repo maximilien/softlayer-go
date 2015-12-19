@@ -158,7 +158,7 @@ func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) EditVi
 		return false, err
 	}
 
-	response, err := slnadcs.client.DoRawHttpRequest(fmt.Sprintf("%s/%s.json", slnadcs.GetName(), "updateLiveLoadBalancer"), "POST", bytes.NewBuffer(requestBody))
+	response, err := slnadcs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/%s.json", slnadcs.GetName(), nadcId, "updateLiveLoadBalancer"), "POST", bytes.NewBuffer(requestBody))
 	if err != nil {
 		return false, err
 	}
@@ -168,6 +168,38 @@ func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) EditVi
 	}
 
 	return true, err
+}
+
+func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) GetVirtualIpAddress(nadcId int, vipId int) (datatypes.SoftLayer_Network_LoadBalancer_VirtualIpAddress, error) {
+	nadc, err := slnadcs.GetObject(nadcId)
+	if err != nil {
+		return datatypes.SoftLayer_Network_LoadBalancer_VirtualIpAddress{}, err
+	}
+	if nadc.Id != nadcId {
+		err = errors.New(fmt.Sprintf("Network application delivery controller with id %d is not found", nadcId))
+		return datatypes.SoftLayer_Network_LoadBalancer_VirtualIpAddress{}, err
+	}
+
+	response, err := slnadcs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d.json", slnadcs.GetName(), nadcId, "getVirtualIpAddresses"), "GET", new(bytes.Buffer))
+	if err != nil {
+		return datatypes.SoftLayer_Network_LoadBalancer_VirtualIpAddress{}, err
+	}
+
+	addresses := datatypes.SoftLayer_Network_LoadBalancer_VirtualIpAddress_Array{}
+	err = json.Unmarshal(response, &addresses)
+	if err != nil {
+		return datatypes.SoftLayer_Network_LoadBalancer_VirtualIpAddress{}, err
+	}
+
+	var result datatypes.SoftLayer_Network_LoadBalancer_VirtualIpAddress
+	for _, address := range addresses {
+		if address.Id == vipId {
+			result = address
+			break;
+		}
+	}
+
+	return result, err
 }
 
 func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) GetObject(id int) (datatypes.SoftLayer_Network_Application_Delivery_Controller, error) {

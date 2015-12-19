@@ -24,4 +24,5 @@ type SoftLayer_Network_Application_Delivery_Controller_Service interface {
 	EditVirtualIpAddress(nadcId int, template datatypes.SoftLayer_Network_LoadBalancer_VirtualIpAddress_Template) (bool, error)
 
 	GetObject(id int) (datatypes.SoftLayer_Network_Application_Delivery_Controller, error)
+	GetVirtualIpAddress(nadcId int, vipId int) (datatypes.SoftLayer_Network_LoadBalancer_VirtualIpAddress, error)
 }

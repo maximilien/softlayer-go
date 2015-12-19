@@ -1,5 +1,7 @@
 package data_types
 
+type SoftLayer_Network_LoadBalancer_VirtualIpAddress_Array []SoftLayer_Network_LoadBalancer_VirtualIpAddress
+
 type SoftLayer_Network_LoadBalancer_VirtualIpAddress struct {
 	ConnectionLimit             int    `json:"connectionLimit"`
 	CustomManagedFlag           bool   `json:"customManagedFlag"`
