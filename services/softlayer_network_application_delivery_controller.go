@@ -195,7 +195,7 @@ func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) GetVir
 	for _, address := range addresses {
 		if address.Id == vipId {
 			result = address
-			break;
+			break
 		}
 	}
 

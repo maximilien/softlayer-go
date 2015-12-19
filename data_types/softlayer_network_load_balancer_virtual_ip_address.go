@@ -3,9 +3,9 @@ package data_types
 type SoftLayer_Network_LoadBalancer_VirtualIpAddress_Array []SoftLayer_Network_LoadBalancer_VirtualIpAddress
 
 type SoftLayer_Network_LoadBalancer_VirtualIpAddress struct {
+	Id                          int    `json:"id"`
 	ConnectionLimit             int    `json:"connectionLimit"`
 	CustomManagedFlag           bool   `json:"customManagedFlag"`
-	Id                          int    `json:"id"`
 	LoadBalancingMethod         string `json:"loadBalancingMethod"`
 	LoadBalancingMethodFullName string `json:"loadBalancingMethodFullName"`
 	ModifyDate                  string `json:"modifyDate"`
