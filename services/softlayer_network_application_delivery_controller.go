@@ -170,7 +170,7 @@ func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) EditVi
 	return true, err
 }
 
-func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) GetVirtualIpAddress(nadcId int, vipId int) (datatypes.SoftLayer_Network_LoadBalancer_VirtualIpAddress, error) {
+func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) GetVirtualIpAddress(nadcId int, vipName string) (datatypes.SoftLayer_Network_LoadBalancer_VirtualIpAddress, error) {
 	nadc, err := slnadcs.GetObject(nadcId)
 	if err != nil {
 		return datatypes.SoftLayer_Network_LoadBalancer_VirtualIpAddress{}, err
@@ -193,7 +193,7 @@ func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) GetVir
 
 	var result datatypes.SoftLayer_Network_LoadBalancer_VirtualIpAddress
 	for _, address := range addresses {
-		if address.Id == vipId {
+		if address.Name == vipName {
 			result = address
 			break
 		}
