@@ -148,18 +148,6 @@ var _ = Describe("SoftLayer_Network_Application_Delivery_Controller_Service", fu
 
 			result, err := nadcService.EditVirtualIpAddress(nadcId, template)
 			Expect(err).ToNot(HaveOccurred())
-			Expect(result.Data).To(Equal("changedData"))
-			Expect(result.DomainId).To(Equal(124))
-			Expect(result.Expire).To(Equal(99998))
-			Expect(result.Host).To(Equal("changedHost.com"))
-			Expect(result.Id).To(Equal(112))
-			Expect(result.Minimum).To(Equal(2))
-			Expect(result.MxPriority).To(Equal(8))
-			Expect(result.Refresh).To(Equal(101))
-			Expect(result.ResponsiblePerson).To(Equal("changedTestPerson"))
-			Expect(result.Retry).To(Equal(445))
-			Expect(result.Ttl).To(Equal(223))
-			Expect(result.Type).To(Equal("changedTestType"))
 		})
 	})
 
@@ -188,22 +176,14 @@ var _ = Describe("SoftLayer_Network_Application_Delivery_Controller_Service", fu
 			Expect(err).ToNot(HaveOccurred())
 		})
 
-		It("reports error when pricing item for provided CPUs is not available", func() {
-			_, err := virtualGuestService.GetAvailableUpgradeItemPrices(&softlayer.UpgradeOptions{Cpus: 3})
+		It("reports error when pricing item for provided version, speed and plan", func() {
+			_, err := nadcService.FindCreatePriceItems(softlayer.NetworkApplicationDeliveryControllerCreateOptions{
+				Speed    : 11,
+				Version  : "1.1",
+				Plan     : "qqqq",
+			})
 			Expect(err).To(HaveOccurred())
-			Expect(err.Error()).To(Equal("Failed to find price for 'cpus' (of size 3)"))
-		})
-
-		It("reports error when pricing item for provided RAM is not available", func() {
-			_, err := virtualGuestService.GetAvailableUpgradeItemPrices(&softlayer.UpgradeOptions{MemoryInGB: 1500})
-			Expect(err).To(HaveOccurred())
-			Expect(err.Error()).To(Equal("Failed to find price for 'memory' (of size 1500)"))
-		})
-
-		It("reports error when pricing item for provided network speed is not available", func() {
-			_, err := virtualGuestService.GetAvailableUpgradeItemPrices(&softlayer.UpgradeOptions{NicSpeed: 999})
-			Expect(err).To(HaveOccurred())
-			Expect(err.Error()).To(Equal("Failed to find price for 'nic_speed' (of size 999)"))
+			Expect(err.Error()).To(ContainSubstring("VPX version, speed or plan have incorrect values"))
 		})
 	})
 })

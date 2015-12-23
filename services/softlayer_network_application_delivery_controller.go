@@ -44,7 +44,7 @@ func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) Create
 		return datatypes.SoftLayer_Network_Application_Delivery_Controller{}, err
 	}
 
-	items, err := slnadcs.findCreatePriceItems(createOptions)
+	items, err := slnadcs.FindCreatePriceItems(createOptions)
 	if err != nil {
 		return datatypes.SoftLayer_Network_Application_Delivery_Controller{}, err
 	}
@@ -255,6 +255,49 @@ func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) Delete
 	return true, err
 }
 
+// use the create options to build keys for price items
+// using these keys the desired price items are found
+func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) FindCreatePriceItems(createOptions *softlayer.NetworkApplicationDeliveryControllerCreateOptions) ([]*datatypes.SoftLayer_Item_Price, error) {
+	items, err := slnadcs.getApplicationDeliveryControllerItems()
+	if err != nil {
+		return []*datatypes.SoftLayer_Item_Price{}, err
+	}
+
+	// build price item keys based on the configuration values
+	nadcKey := slnadcs.getVPXPriceItemKeyName(createOptions.Version, createOptions.Speed, createOptions.Plan)
+	ipKey := slnadcs.getPublicIpItemKeyName(createOptions.IpCount)
+
+	var nadcItemPrice, ipItemPrice *datatypes.SoftLayer_Item_Price
+
+	// find the price items by keys
+	for _, item := range items {
+		itemKey := item.Key
+		if itemKey == nadcKey {
+			nadcItemPrice = &item.Prices[0]
+		}
+		if itemKey == ipKey {
+			ipItemPrice = &item.Prices[0]
+		}
+	}
+
+	var errorMessages []string
+
+	if nadcItemPrice == nil {
+		errorMessages = append(errorMessages, fmt.Sprintf("VPX version, speed or plan have incorrect values"))
+	}
+
+	if ipItemPrice == nil {
+		errorMessages = append(errorMessages, fmt.Sprintf("Ip quantity value is incorrect"))
+	}
+
+	if len(errorMessages) > 0 {
+		err = errors.New(strings.Join(errorMessages, "\n"))
+		return []*datatypes.SoftLayer_Item_Price{}, err
+	}
+
+	return []*datatypes.SoftLayer_Item_Price{nadcItemPrice, ipItemPrice}, nil
+}
+
 // Private methods
 
 func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) checkCreateVpxRequiredValues(createOptions *softlayer.NetworkApplicationDeliveryControllerCreateOptions) error {
@@ -331,47 +374,4 @@ func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) getPub
 	ipCountString := strconv.Itoa(ipCount)
 
 	return strings.Join([]string{name, ipCountString}, DELIMITER)
-}
-
-// use the create options to build keys for price items
-// using these keys the desired price items are found
-func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) findCreatePriceItems(createOptions *softlayer.NetworkApplicationDeliveryControllerCreateOptions) ([]*datatypes.SoftLayer_Item_Price, error) {
-	items, err := slnadcs.getApplicationDeliveryControllerItems()
-	if err != nil {
-		return []*datatypes.SoftLayer_Item_Price{}, err
-	}
-
-	// build price item keys based on the configuration values
-	nadcKey := slnadcs.getVPXPriceItemKeyName(createOptions.Version, createOptions.Speed, createOptions.Plan)
-	ipKey := slnadcs.getPublicIpItemKeyName(createOptions.IpCount)
-
-	var nadcItemPrice, ipItemPrice *datatypes.SoftLayer_Item_Price
-
-	// find the price items by keys
-	for _, item := range items {
-		itemKey := item.Key
-		if itemKey == nadcKey {
-			nadcItemPrice = &item.Prices[0]
-		}
-		if itemKey == ipKey {
-			ipItemPrice = &item.Prices[0]
-		}
-	}
-
-	var errorMessages []string
-
-	if nadcItemPrice == nil {
-		errorMessages = append(errorMessages, fmt.Sprintf("VPX version, speed or plan have incorrect values"))
-	}
-
-	if ipItemPrice == nil {
-		errorMessages = append(errorMessages, fmt.Sprintf("Ip quantity value is incorrect"))
-	}
-
-	if len(errorMessages) > 0 {
-		err = errors.New(strings.Join(errorMessages, "\n"))
-		return []*datatypes.SoftLayer_Item_Price{}, err
-	}
-
-	return []*datatypes.SoftLayer_Item_Price{nadcItemPrice, ipItemPrice}, nil
 }
