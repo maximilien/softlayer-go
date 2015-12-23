@@ -186,7 +186,7 @@ func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) GetVir
 		return datatypes.SoftLayer_Network_LoadBalancer_VirtualIpAddress{}, err
 	}
 
-	response, err := slnadcs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d.json", slnadcs.GetName(), nadcId, "getVirtualIpAddresses"), "GET", new(bytes.Buffer))
+	response, err := slnadcs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/%s.json", slnadcs.GetName(), nadcId, "getLoadBalancers"), "GET", new(bytes.Buffer))
 	if err != nil {
 		return datatypes.SoftLayer_Network_LoadBalancer_VirtualIpAddress{}, err
 	}
