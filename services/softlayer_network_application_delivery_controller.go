@@ -86,7 +86,9 @@ func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) Create
 	}
 
 	parameters := datatypes.SoftLayer_Network_LoadBalancer_VirtualIpAddress_Template_Parameters{
-		LoadBalancer: template,
+		Parameters: []datatypes.SoftLayer_Network_LoadBalancer_VirtualIpAddress_Template{
+			template,
+		},
 	}
 
 	requestBody, err := json.Marshal(parameters)
@@ -117,8 +119,10 @@ func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) Delete
 	}
 
 	parameters := datatypes.SoftLayer_Network_LoadBalancer_VirtualIpAddress_Template_Parameters{
-		LoadBalancer: datatypes.SoftLayer_Network_LoadBalancer_VirtualIpAddress_Template{
-			Name: name,
+		Parameters: []datatypes.SoftLayer_Network_LoadBalancer_VirtualIpAddress_Template{
+			datatypes.SoftLayer_Network_LoadBalancer_VirtualIpAddress_Template {
+				Name: name,
+			},
 		},
 	}
 
@@ -150,7 +154,9 @@ func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) EditVi
 	}
 
 	parameters := datatypes.SoftLayer_Network_LoadBalancer_VirtualIpAddress_Template_Parameters{
-		LoadBalancer: template,
+		Parameters: []datatypes.SoftLayer_Network_LoadBalancer_VirtualIpAddress_Template{
+			template,
+		},
 	}
 
 	requestBody, err := json.Marshal(parameters)

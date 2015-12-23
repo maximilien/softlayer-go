@@ -18,7 +18,7 @@ type SoftLayer_Network_LoadBalancer_VirtualIpAddress struct {
 }
 
 type SoftLayer_Network_LoadBalancer_VirtualIpAddress_Template_Parameters struct {
-	LoadBalancer SoftLayer_Network_LoadBalancer_VirtualIpAddress_Template `json:"loadBalancer"`
+	Parameters []SoftLayer_Network_LoadBalancer_VirtualIpAddress_Template `json:"paramters"`
 }
 
 type SoftLayer_Network_LoadBalancer_VirtualIpAddress_Template struct {
