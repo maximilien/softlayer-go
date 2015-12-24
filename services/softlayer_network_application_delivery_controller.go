@@ -81,8 +81,7 @@ func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) Create
 		return false, err
 	}
 	if nadc.Id != nadcId {
-		err = errors.New(fmt.Sprintf("Network application delivery controller with id %d is not found", nadcId))
-		return false, err
+		return false, fmt.Errorf("Network application delivery controller with id %d is not found", nadcId)
 	}
 
 	parameters := datatypes.SoftLayer_Network_LoadBalancer_VirtualIpAddress_Template_Parameters{
@@ -102,7 +101,7 @@ func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) Create
 	}
 
 	if response_value := string(response[:]); response_value != "true" {
-		return false, errors.New(fmt.Sprintf("Failed to delete Virtual IP Address with id '%s' from network application delivery controller %d. got '%s' as response from the API", 0, nadcId, response_value))
+		return false, fmt.Errorf("Failed to delete Virtual IP Address with id '%s' from network application delivery controller %d. got '%s' as response from the API", 0, nadcId, response_value)
 	}
 
 	return true, nil
@@ -114,8 +113,7 @@ func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) Delete
 		return false, err
 	}
 	if nadc.Id != nadcId {
-		err = errors.New(fmt.Sprintf("Network application delivery controller with id %d is not found", nadcId))
-		return false, err
+		return false, fmt.Errorf("Network application delivery controller with id %d is not found", nadcId)
 	}
 
 	parameters := datatypes.SoftLayer_Network_LoadBalancer_VirtualIpAddress_Template_Parameters{
@@ -137,7 +135,7 @@ func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) Delete
 	}
 
 	if response_value := string(response[:]); response_value != "true" {
-		return false, errors.New(fmt.Sprintf("Failed to delete Virtual IP Address with name '%s' from network application delivery controller %d. got '%s' as response from the API", name, nadcId, response_value))
+		return false, fmt.Errorf("Failed to delete Virtual IP Address with name '%s' from network application delivery controller %d. got '%s' as response from the API", name, nadcId, response_value)
 	}
 
 	return true, err
@@ -149,8 +147,7 @@ func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) EditVi
 		return false, err
 	}
 	if nadc.Id != nadcId {
-		err = errors.New(fmt.Sprintf("Network application delivery controller with id %d is not found", nadcId))
-		return false, err
+		return false, fmt.Errorf("Network application delivery controller with id %d is not found", nadcId)
 	}
 
 	parameters := datatypes.SoftLayer_Network_LoadBalancer_VirtualIpAddress_Template_Parameters{
@@ -170,7 +167,7 @@ func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) EditVi
 	}
 
 	if response_value := string(response[:]); response_value != "true" {
-		return false, errors.New(fmt.Sprintf("Failed to update Virtual IP Address with id '%d' from network application delivery controller %d. got '%s' as response from the API", template.Id, nadcId, response_value))
+		return false, fmt.Errorf("Failed to update Virtual IP Address with id '%d' from network application delivery controller %d. got '%s' as response from the API", template.Id, nadcId, response_value)
 	}
 
 	return true, err
@@ -182,8 +179,7 @@ func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) GetVir
 		return datatypes.SoftLayer_Network_LoadBalancer_VirtualIpAddress{}, err
 	}
 	if nadc.Id != nadcId {
-		err = errors.New(fmt.Sprintf("Network application delivery controller with id %d is not found", nadcId))
-		return datatypes.SoftLayer_Network_LoadBalancer_VirtualIpAddress{}, err
+		return datatypes.SoftLayer_Network_LoadBalancer_VirtualIpAddress{}, fmt.Errorf("Network application delivery controller with id %d is not found", nadcId)
 	}
 
 	response, err := slnadcs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/%s.json", slnadcs.GetName(), nadcId, "getLoadBalancers"), "GET", new(bytes.Buffer))
@@ -255,7 +251,7 @@ func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) Delete
 	response, err := slnadcs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d.json", slnadcs.GetName(), id), "DELETE", new(bytes.Buffer))
 
 	if response_value := string(response[:]); response_value != "true" {
-		return false, errors.New(fmt.Sprintf("Failed to delete Application Delivery Controller with id '%d', got '%s' as response from the API", id, response_value))
+		return false, fmt.Errorf("Failed to delete Application Delivery Controller with id '%d', got '%s' as response from the API", id, response_value)
 	}
 
 	return true, err
@@ -352,7 +348,7 @@ func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) findVP
 	}
 
 	return datatypes.SoftLayer_Network_Application_Delivery_Controller{},
-		errors.New(fmt.Sprintf("Cannot find Application Delivery Controller with order id %d", orderId))
+		fmt.Errorf("Cannot find Application Delivery Controller with order id %d", orderId)
 }
 
 func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) getApplicationDeliveryControllerItems() ([]datatypes.SoftLayer_Product_Item, error) {
@@ -371,7 +367,7 @@ func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) getVPX
 	versionReplaced := strings.Replace(version, ".", DELIMITER, -1)
 	speedString := strconv.Itoa(speed) + speedMeasurements
 
-	return strings.Join([]string{name, versionReplaced, speedString, plan}, DELIMITER)
+	return strings.Join([]string{name, versionReplaced, speedString, strings.ToUpper(plan)}, DELIMITER)
 }
 
 // create item key for Netscaler VPX, based on provided ips count
@@ -379,5 +375,5 @@ func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) getPub
 	name := "STATIC_PUBLIC_IP_ADDRESSES"
 	ipCountString := strconv.Itoa(ipCount)
 
-	return strings.Join([]string{name, ipCountString}, DELIMITER)
+	return strings.Join([]string{ipCountString, name}, DELIMITER)
 }
