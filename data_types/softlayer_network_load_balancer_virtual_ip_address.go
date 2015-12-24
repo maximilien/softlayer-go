@@ -18,13 +18,12 @@ type SoftLayer_Network_LoadBalancer_VirtualIpAddress struct {
 }
 
 type SoftLayer_Network_LoadBalancer_VirtualIpAddress_Template_Parameters struct {
-	Parameters []SoftLayer_Network_LoadBalancer_VirtualIpAddress_Template `json:"paramters"`
+	Parameters []SoftLayer_Network_LoadBalancer_VirtualIpAddress_Template `json:"parameters"`
 }
 
 type SoftLayer_Network_LoadBalancer_VirtualIpAddress_Template struct {
 	Id                          int    `json:"id"`
 	ConnectionLimit             int    `json:"connectionLimit"`
-	CustomManagedFlag           bool   `json:"customManagedFlag"`
 	LoadBalancingMethod         string `json:"loadBalancingMethod"`
 	LoadBalancingMethodFullName string `json:"loadBalancingMethodFullName"`
 	Name                        string `json:"name"`
