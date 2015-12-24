@@ -210,4 +210,18 @@ var _ = Describe("SoftLayer_Account_Service", func() {
 			Expect(len(hardwares)).To(BeNumerically(">", 0))
 		})
 	})
+
+	Context("#GetApplicationDeliveryControllersWithFilter", func() {
+		BeforeEach(func() {
+			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Account_Service_getApplicationDeliveryControllers.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("returns an array of datatypes.SoftLayer_Network_Application_Delivery_Controller", func() {
+			ObjectFilter := string(`{"iscsiNetworkStorage":{"billingItem":{"orderItem":{"order":{"id":{"operation":123}}}}}}`)
+			applicationDeliveryControllers, err := accountService.GetApplicationDeliveryControllersWithFilter(ObjectFilter)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(applicationDeliveryControllers).ToNot(BeNil())
+		})
+	})
 })

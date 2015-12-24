@@ -145,16 +145,13 @@ func (slas *softLayer_Account_Service) GetApplicationDeliveryControllersWithFilt
 
 	responseBytes, err := slas.client.DoRawHttpRequestWithObjectFilter(path, filter, "GET", &bytes.Buffer{})
 	if err != nil {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Account#getApplicationDeliveryControllers, error message '%s'", err.Error())
-		return []datatypes.SoftLayer_Network_Application_Delivery_Controller{}, errors.New(errorMessage)
+		return []datatypes.SoftLayer_Network_Application_Delivery_Controller{}, fmt.Errorf("softlayer-go: could not SoftLayer_Account#getApplicationDeliveryControllers, error message '%s'", err.Error())
 	}
 
 	nadc := []datatypes.SoftLayer_Network_Application_Delivery_Controller{}
 	err = json.Unmarshal(responseBytes, &nadc)
 	if err != nil {
-		errorMessage := fmt.Sprintf("softlayer-go: failed to decode JSON response, err message '%s'", err.Error())
-		err := errors.New(errorMessage)
-		return []datatypes.SoftLayer_Network_Application_Delivery_Controller{}, err
+		return []datatypes.SoftLayer_Network_Application_Delivery_Controller{}, fmt.Errorf("softlayer-go: failed to decode JSON response, err message '%s'", err.Error())
 	}
 
 	return nadc, nil

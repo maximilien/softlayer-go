@@ -74,6 +74,7 @@ func (slpo *softLayer_Product_Order_Service) placeOrder(parameters interface{}) 
 	}
 
 	receipt := datatypes.SoftLayer_Container_Product_Order_Receipt{}
+
 	err = json.Unmarshal(responseBytes, &receipt)
 	if err != nil {
 		return datatypes.SoftLayer_Container_Product_Order_Receipt{}, err

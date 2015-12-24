@@ -33,7 +33,6 @@ func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) GetNam
 }
 
 func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) CreateNetscalerVPX(createOptions *softlayer.NetworkApplicationDeliveryControllerCreateOptions) (datatypes.SoftLayer_Network_Application_Delivery_Controller, error) {
-	// check required fields
 	err := slnadcs.checkCreateVpxRequiredValues(createOptions)
 	if err != nil {
 		return datatypes.SoftLayer_Network_Application_Delivery_Controller{}, err
@@ -67,21 +66,16 @@ func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) Create
 		return datatypes.SoftLayer_Network_Application_Delivery_Controller{}, err
 	}
 
-	// TODO maybe call GetObject here
-	// TODO wait here ?
-
 	return vpx, nil
 }
 
 func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) CreateVirtualIpAddress(nadcId int, template datatypes.SoftLayer_Network_LoadBalancer_VirtualIpAddress_Template) (bool, error) {
-	// check required fields
-
 	nadc, err := slnadcs.GetObject(nadcId)
 	if err != nil {
 		return false, err
 	}
 	if nadc.Id != nadcId {
-		return false, fmt.Errorf("Network application delivery controller with id %d is not found", nadcId)
+		return false, fmt.Errorf("Network application delivery controller with id '%d' is not found", nadcId)
 	}
 
 	parameters := datatypes.SoftLayer_Network_LoadBalancer_VirtualIpAddress_Template_Parameters{
@@ -92,7 +86,7 @@ func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) Create
 
 	requestBody, err := json.Marshal(parameters)
 	if err != nil {
-		return false, fmt.Errorf("Network application delivery controller with id %d is not found: %s", nadcId, err)
+		return false, fmt.Errorf("Network application delivery controller with id '%d' is not found: %s", nadcId, err)
 	}
 
 	response, err := slnadcs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/%s.json", slnadcs.GetName(), nadcId, "createLiveLoadBalancer"), "POST", bytes.NewBuffer(requestBody))
@@ -113,7 +107,7 @@ func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) Delete
 		return false, err
 	}
 	if nadc.Id != nadcId {
-		return false, fmt.Errorf("Network application delivery controller with id %d is not found", nadcId)
+		return false, fmt.Errorf("Network application delivery controller with id '%d' is not found", nadcId)
 	}
 
 	parameters := datatypes.SoftLayer_Network_LoadBalancer_VirtualIpAddress_Template_Parameters{
@@ -135,7 +129,7 @@ func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) Delete
 	}
 
 	if response_value := string(response[:]); response_value != "true" {
-		return false, fmt.Errorf("Failed to delete Virtual IP Address with name '%s' from network application delivery controller %d. got '%s' as response from the API", name, nadcId, response_value)
+		return false, fmt.Errorf("Failed to delete Virtual IP Address with name '%s' from network application delivery controller with id '%d'. Got '%s' as response from the API", name, nadcId, response_value)
 	}
 
 	return true, err
@@ -147,7 +141,7 @@ func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) EditVi
 		return false, err
 	}
 	if nadc.Id != nadcId {
-		return false, fmt.Errorf("Network application delivery controller with id %d is not found", nadcId)
+		return false, fmt.Errorf("Network application delivery controller with id '%d' is not found", nadcId)
 	}
 
 	parameters := datatypes.SoftLayer_Network_LoadBalancer_VirtualIpAddress_Template_Parameters{
@@ -167,7 +161,7 @@ func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) EditVi
 	}
 
 	if response_value := string(response[:]); response_value != "true" {
-		return false, fmt.Errorf("Failed to update Virtual IP Address with id '%d' from network application delivery controller %d. got '%s' as response from the API", template.Id, nadcId, response_value)
+		return false, fmt.Errorf("Failed to update Virtual IP Address with id '%d' from network application delivery controller with id '%d'. Got '%s' as response from the API", template.Id, nadcId, response_value)
 	}
 
 	return true, err
@@ -179,7 +173,7 @@ func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) GetVir
 		return datatypes.SoftLayer_Network_LoadBalancer_VirtualIpAddress{}, err
 	}
 	if nadc.Id != nadcId {
-		return datatypes.SoftLayer_Network_LoadBalancer_VirtualIpAddress{}, fmt.Errorf("Network application delivery controller with id %d is not found", nadcId)
+		return datatypes.SoftLayer_Network_LoadBalancer_VirtualIpAddress{}, fmt.Errorf("Network application delivery controller with id '%d' is not found", nadcId)
 	}
 
 	response, err := slnadcs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/%s.json", slnadcs.GetName(), nadcId, "getLoadBalancers"), "GET", new(bytes.Buffer))
@@ -251,53 +245,49 @@ func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) Delete
 	response, err := slnadcs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d.json", slnadcs.GetName(), id), "DELETE", new(bytes.Buffer))
 
 	if response_value := string(response[:]); response_value != "true" {
-		return false, fmt.Errorf("Failed to delete Application Delivery Controller with id '%d', got '%s' as response from the API", id, response_value)
+		return false, fmt.Errorf("Failed to delete Application Delivery Controller with id '%d'. Got '%s' as response from the API", id, response_value)
 	}
 
 	return true, err
 }
 
-// use the create options to build keys for price items
-// using these keys the desired price items are found
-func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) FindCreatePriceItems(createOptions *softlayer.NetworkApplicationDeliveryControllerCreateOptions) ([]*datatypes.SoftLayer_Item_Price, error) {
+func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) FindCreatePriceItems(createOptions *softlayer.NetworkApplicationDeliveryControllerCreateOptions) ([]datatypes.SoftLayer_Item_Price, error) {
 	items, err := slnadcs.getApplicationDeliveryControllerItems()
 	if err != nil {
-		return []*datatypes.SoftLayer_Item_Price{}, err
+		return []datatypes.SoftLayer_Item_Price{}, err
 	}
 
-	// build price item keys based on the configuration values
 	nadcKey := slnadcs.getVPXPriceItemKeyName(createOptions.Version, createOptions.Speed, createOptions.Plan)
 	ipKey := slnadcs.getPublicIpItemKeyName(createOptions.IpCount)
 
-	var nadcItemPrice, ipItemPrice *datatypes.SoftLayer_Item_Price
+	var nadcItemPrice, ipItemPrice datatypes.SoftLayer_Item_Price
 
-	// find the price items by keys
 	for _, item := range items {
 		itemKey := item.Key
 		if itemKey == nadcKey {
-			nadcItemPrice = &item.Prices[0]
+			nadcItemPrice = item.Prices[0]
 		}
 		if itemKey == ipKey {
-			ipItemPrice = &item.Prices[0]
+			ipItemPrice = item.Prices[0]
 		}
 	}
 
 	var errorMessages []string
 
-	if nadcItemPrice == nil {
+	if nadcItemPrice.Id == 0 {
 		errorMessages = append(errorMessages, fmt.Sprintf("VPX version, speed or plan have incorrect values"))
 	}
 
-	if ipItemPrice == nil {
+	if ipItemPrice.Id == 0 {
 		errorMessages = append(errorMessages, fmt.Sprintf("Ip quantity value is incorrect"))
 	}
 
 	if len(errorMessages) > 0 {
 		err = errors.New(strings.Join(errorMessages, "\n"))
-		return []*datatypes.SoftLayer_Item_Price{}, err
+		return []datatypes.SoftLayer_Item_Price{}, err
 	}
 
-	return []*datatypes.SoftLayer_Item_Price{nadcItemPrice, ipItemPrice}, nil
+	return []datatypes.SoftLayer_Item_Price{nadcItemPrice, ipItemPrice}, nil
 }
 
 // Private methods
@@ -348,7 +338,7 @@ func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) findVP
 	}
 
 	return datatypes.SoftLayer_Network_Application_Delivery_Controller{},
-		fmt.Errorf("Cannot find Application Delivery Controller with order id %d", orderId)
+		fmt.Errorf("Cannot find Application Delivery Controller with order id '%d'", orderId)
 }
 
 func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) getApplicationDeliveryControllerItems() ([]datatypes.SoftLayer_Product_Item, error) {
@@ -360,17 +350,14 @@ func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) getApp
 	return productPackageService.GetItemsByType(PACKAGE_TYPE_APPLICATION_DELIVERY_CONTROLLER)
 }
 
-// create item key for Netscaler VPX, based on the provided version, speed and plan
 func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) getVPXPriceItemKeyName(version string, speed int, plan string) string {
 	name := "CITRIX_NETSCALER_VPX"
 	speedMeasurements := "MBPS"
 	versionReplaced := strings.Replace(version, ".", DELIMITER, -1)
 	speedString := strconv.Itoa(speed) + speedMeasurements
-
 	return strings.Join([]string{name, versionReplaced, speedString, strings.ToUpper(plan)}, DELIMITER)
 }
 
-// create item key for Netscaler VPX, based on provided ips count
 func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) getPublicIpItemKeyName(ipCount int) string {
 	name := "STATIC_PUBLIC_IP_ADDRESSES"
 	ipCountString := strconv.Itoa(ipCount)

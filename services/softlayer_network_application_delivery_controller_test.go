@@ -19,7 +19,7 @@ var _ = Describe("SoftLayer_Network_Application_Delivery_Controller_Service", fu
 		fakeClient *slclientfakes.FakeSoftLayerClient
 
 		nadcService softlayer.SoftLayer_Network_Application_Delivery_Controller_Service
-		err                    error
+		err error
 	)
 
 	BeforeEach(func() {
@@ -49,12 +49,19 @@ var _ = Describe("SoftLayer_Network_Application_Delivery_Controller_Service", fu
 
 	Context("#CreateNetscalerVPX", func() {
 		BeforeEach(func() {
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Network_Application_Delivery_Controller_Service_CreateNetscalerVPX.json")
+			response_order, err := testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Product_Order_placeOrder.json")
+			fakeClient.DoRawHttpRequestResponses = append(fakeClient.DoRawHttpRequestResponses, response_order)
+			Expect(err).ToNot(HaveOccurred())
+			response_vpx_list, err := testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Account_Service_getApplicationDeliveryControllers.json")
+			fakeClient.DoRawHttpRequestResponses = append(fakeClient.DoRawHttpRequestResponses, response_vpx_list)
 			Expect(err).ToNot(HaveOccurred())
 		})
 
 		It("creates a new Netscaler VPX", func() {
-			createOptions := softlayer.NetworkApplicationDeliveryControllerCreateOptions {
+			response, err := testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Network_Application_Delivery_Controller_Service_CreateNetscalerVPX.json")
+			fakeClient.DoRawHttpRequestResponses = append(fakeClient.DoRawHttpRequestResponses, response)
+
+			createOptions := &softlayer.NetworkApplicationDeliveryControllerCreateOptions{
 				Speed: 10,
 				Version: "10.1",
 				Plan: "Standard",
@@ -83,22 +90,26 @@ var _ = Describe("SoftLayer_Network_Application_Delivery_Controller_Service", fu
 			Expect(result.NetworkVlanCount).To(Equal(1))
 			Expect(result.PrimaryIpAddress).To(Equal("184.172.114.147"))
 			Expect(result.Password).NotTo(BeNil())
-			Expect(result.Password[0].Password).To(Equal("GYdN95kA"))
-			Expect(result.Password[0].Username).To(Equal("root"))
+			Expect(result.Password.Password).To(Equal("GYdN95kA"))
+			Expect(result.Password.Username).To(Equal("root"))
 		})
 	})
 
 	Context("#CreateVirtualIpAddress", func() {
 		BeforeEach(func() {
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Network_Application_Delivery_Controller_Service_CreateVirtualIpAddress.json")
+			response, err := testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Network_Application_Delivery_Controller_GetObject.json")
+			fakeClient.DoRawHttpRequestResponses = append(fakeClient.DoRawHttpRequestResponses, response)
 			Expect(err).ToNot(HaveOccurred())
 		})
 
 		It("creates a new Virtual Ip Address", func() {
-			template := datatypes.SoftLayer_Network_LoadBalancer_VirtualIpAddress_Template {
+			response, err := testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Network_Application_Delivery_Controller_Service_CreateVirtualIpAddress.json")
+			fakeClient.DoRawHttpRequestResponses = append(fakeClient.DoRawHttpRequestResponses, response)
+			nadcId := 15293
+
+			template := datatypes.SoftLayer_Network_LoadBalancer_VirtualIpAddress_Template{
 				ConnectionLimit: 1,
 			}
-			nadcId := 123
 
 			result, err := nadcService.CreateVirtualIpAddress(nadcId, template)
 			Expect(err).ToNot(HaveOccurred())
@@ -113,20 +124,24 @@ var _ = Describe("SoftLayer_Network_Application_Delivery_Controller_Service", fu
 		})
 
 		It("sucessfully retrieves SoftLayer_Network_Application_Delivery_Controller instance", func() {
-			result, err := nadcService.GetObject(111)
+			result, err := nadcService.GetObject(15293)
 			Expect(err).ToNot(HaveOccurred())
-			Expect(result.Type).To(Equal("someTestType"))
+			Expect(result.Name).To(Equal("TWCADC795313-1"))
 		})
 	})
 
 	Context("#GetVirtualIpAddress", func() {
 		BeforeEach(func() {
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Network_Application_Delivery_Controller_GetVirtualIpAddress.json")
+			response, err := testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Network_Application_Delivery_Controller_GetObject.json")
+			fakeClient.DoRawHttpRequestResponses = append(fakeClient.DoRawHttpRequestResponses, response)
 			Expect(err).ToNot(HaveOccurred())
 		})
 
-		It("sucessfully retrieves SoftLayer_Network_LoadBalancer_VirtualIpAddress instance", func() {
-			nadcId := 1234
+		It("sucessfully retrieves SoftLayer_Network_LoadBalancer_VirtualIpAddress", func() {
+			response, err := testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Network_Application_Delivery_Controller_GetVirtualIpAddress.json")
+			fakeClient.DoRawHttpRequestResponses = append(fakeClient.DoRawHttpRequestResponses, response)
+
+			nadcId := 15293
 			vipName := "testVipName"
 			result, err := nadcService.GetVirtualIpAddress(nadcId, vipName)
 			Expect(err).ToNot(HaveOccurred())
@@ -136,37 +151,56 @@ var _ = Describe("SoftLayer_Network_Application_Delivery_Controller_Service", fu
 
 	Context("#EditVirtualIpAddress", func() {
 		BeforeEach(func() {
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Dns_Domain_Record_Service_editObject.json")
+			response, err := testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Network_Application_Delivery_Controller_GetObject.json")
+			fakeClient.DoRawHttpRequestResponses = append(fakeClient.DoRawHttpRequestResponses, response)
 			Expect(err).ToNot(HaveOccurred())
 		})
 
-		It("applies changes to the existing SoftLayer_Dns_Domain_Record instance", func() {
-			nadcId := 123
-			template := datatypes.SoftLayer_Network_LoadBalancer_VirtualIpAddress_Template {
+		It("applies changes to the existing SoftLayer_Network_LoadBalancer_VirtualIpAddress", func() {
+			response, err := testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Network_Application_Delivery_Controller_VirtualIpAddress_EditObject.json")
+			fakeClient.DoRawHttpRequestResponses = append(fakeClient.DoRawHttpRequestResponses, response)
 
+			nadcId := 15293
+			template := datatypes.SoftLayer_Network_LoadBalancer_VirtualIpAddress_Template{
+				Name: "testVipNameChanged",
 			}
 
-			result, err := nadcService.EditVirtualIpAddress(nadcId, template)
+			updated, err := nadcService.EditVirtualIpAddress(nadcId, template)
 			Expect(err).ToNot(HaveOccurred())
+			Expect(updated).To(BeTrue())
 		})
 	})
 
 	Context("#DeleteVirtualIpAddress", func() {
-		It("sucessfully removes SoftLayer_Network_LoadBalancer_VirtualIpAddress instance from NADC", func() {
-			nadcId := 1234
-			vipName := "testVipName"
-			result, err := nadcService.DeleteVirtualIpAddress(nadcId, vipName)
+		BeforeEach(func() {
+			response, err := testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Network_Application_Delivery_Controller_GetObject.json")
+			fakeClient.DoRawHttpRequestResponses = append(fakeClient.DoRawHttpRequestResponses, response)
 			Expect(err).ToNot(HaveOccurred())
-			Expect(result).To(Equal(true))
+		})
+
+		It("sucessfully removes SoftLayer_Network_LoadBalancer_VirtualIpAddress instance from NADC", func() {
+			response, err := testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Network_Application_Delivery_Controller_VirtualIpAddress_DeleteObject.json")
+			fakeClient.DoRawHttpRequestResponses = append(fakeClient.DoRawHttpRequestResponses, response)
+
+			nadcId := 15293
+			vipName := "testVipName"
+			deleted, err := nadcService.DeleteVirtualIpAddress(nadcId, vipName)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(deleted).To(BeTrue())
 		})
 	})
 
 	Context("#DeleteObject", func() {
-		It("sucessfully removes SoftLayer_Network_Application_Delivery_Controller instance", func() {
-			nadcId := 1234
-			result, err := nadcService.DeleteObject(nadcId)
+		BeforeEach(func() {
+			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Network_Application_Delivery_Controller_DeleteObject.json")
 			Expect(err).ToNot(HaveOccurred())
-			Expect(result).To(Equal(true))
+		})
+
+		It("sucessfully removes SoftLayer_Network_Application_Delivery_Controller instance", func() {
+			nadcId := 15293
+			deleted, err := nadcService.DeleteObject(nadcId)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(deleted).To(BeTrue())
 		})
 	})
 
@@ -177,11 +211,13 @@ var _ = Describe("SoftLayer_Network_Application_Delivery_Controller_Service", fu
 		})
 
 		It("reports error when pricing item for provided version, speed and plan", func() {
-			_, err := nadcService.FindCreatePriceItems(softlayer.NetworkApplicationDeliveryControllerCreateOptions{
+			createOptions := &softlayer.NetworkApplicationDeliveryControllerCreateOptions{
 				Speed    : 11,
 				Version  : "1.1",
 				Plan     : "qqqq",
-			})
+			}
+
+			_, err := nadcService.FindCreatePriceItems(createOptions)
 			Expect(err).To(HaveOccurred())
 			Expect(err.Error()).To(ContainSubstring("VPX version, speed or plan have incorrect values"))
 		})

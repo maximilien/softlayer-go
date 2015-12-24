@@ -59,7 +59,7 @@ type SoftLayer_Container_Product_Order_Network_Application_Delivery_Controller s
 	ComplexType string                  `json:"complexType"`
 	Location    string                  `json:"location,omitempty"`
 	PackageId   int                     `json:"packageId"`
-	Prices      []*SoftLayer_Item_Price `json:"prices,omitempty"`
+	Prices      []SoftLayer_Item_Price `json:"prices,omitempty"`
 	Properties  []Property              `json:"properties,omitempty"`
 	Quantity    int                     `json:"quantity,omitempty"`
 }
