@@ -706,14 +706,14 @@ func CreateDnsDomainService() (softlayer.SoftLayer_Dns_Domain_Service, error) {
 	return dnsDomainService, nil
 }
 
-func CreateDnsDomainResourceRecordService() (softlayer.SoftLayer_Dns_Domain_Resource_Record_Service, error) {
+func CreateDnsDomainResourceRecordService() (softlayer.SoftLayer_Dns_Domain_ResourceRecord_Service, error) {
 	username, apiKey, err := GetUsernameAndApiKey()
 	if err != nil {
 		return nil, err
 	}
 
 	client := slclient.NewSoftLayerClient(username, apiKey)
-	dnsDomainResourceRecordService, err := client.GetSoftLayer_Dns_Domain_Resource_Record_Service()
+	dnsDomainResourceRecordService, err := client.GetSoftLayer_Dns_Domain_ResourceRecord_Service()
 	if err != nil {
 		return nil, err
 	}

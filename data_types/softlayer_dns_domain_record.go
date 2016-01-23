@@ -6,10 +6,10 @@ type SoftLayer_Dns_Domain_Resource_Record_Template_Parameters struct {
 
 type SoftLayer_Dns_Domain_Resource_Record_Template struct {
 	Data              string `json:"data"`
-	DomainId          int    `json:"domainId"`
+	DomainId          uint32 `json:"domainId"`
 	Expire            int    `json:"expire"`
 	Host              string `json:"host"`
-	Id                int    `json:"id"`
+	Id                uint32 `json:"id"`
 	Minimum           int    `json:"minimum"`
 	MxPriority        int    `json:"mxPriority"`
 	Refresh           int    `json:"refresh"`
@@ -30,10 +30,10 @@ type SoftLayer_Dns_Domain_Resource_Record_Parameters struct {
 
 type SoftLayer_Dns_Domain_Resource_Record struct {
 	Data              string `json:"data"`
-	DomainId          int    `json:"domainId"`
+	DomainId          uint32 `json:"domainId"`
 	Expire            int    `json:"expire"`
 	Host              string `json:"host"`
-	Id                int    `json:"id"`
+	Id                uint32 `json:"id"`
 	Minimum           int    `json:"minimum"`
 	MxPriority        int    `json:"mxPriority"`
 	Refresh           int    `json:"refresh"`
