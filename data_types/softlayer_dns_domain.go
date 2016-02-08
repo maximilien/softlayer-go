@@ -10,10 +10,10 @@ type SoftLayer_Dns_Domain_Template_Parameters struct {
 }
 
 type SoftLayer_Dns_Domain struct {
-	Id         int    `json:"id"`
-	Name       string `json:"name"`
-	Serial     int    `json:"serial"`
-	UpdateDate string `json:"updateDate"`
+	Id                  uint32                                 `json:"id"`
+	Name                string                                 `json:"name"`
+	Serial              uint32                                 `json:"serial"`
+	UpdateDate          string                                 `json:"updateDate"`
 	ManagedResourceFlag bool                                   `json:"managedResourceFlag"`
 	ResourceRecordCount int                                    `json:"resourceRecordCount"`
 	ResourceRecords     []SoftLayer_Dns_Domain_Resource_Record `json:"resourceRecords"`

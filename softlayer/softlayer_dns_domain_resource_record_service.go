@@ -4,7 +4,7 @@ import (
 	datatypes "github.com/maximilien/softlayer-go/data_types"
 )
 
-type SoftLayer_Dns_Domain_Resource_Record_Service interface {
+type SoftLayer_Dns_Domain_ResourceRecord_Service interface {
 	Service
 
 	CreateObject(template datatypes.SoftLayer_Dns_Domain_Resource_Record_Template) (datatypes.SoftLayer_Dns_Domain_Resource_Record, error)

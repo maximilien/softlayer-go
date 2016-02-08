@@ -13,7 +13,7 @@ import (
 var _ = Describe("SoftLayer DNS Resource Records", func() {
 	var (
 		err								 error
-		dnsDomainResourceRecordService 	 softlayer.SoftLayer_Dns_Domain_Resource_Record_Service
+		dnsDomainResourceRecordService 	 softlayer.SoftLayer_Dns_Domain_ResourceRecord_Service
 		dnsDomainService 	 			 softlayer.SoftLayer_Dns_Domain_Service
 	)
 
