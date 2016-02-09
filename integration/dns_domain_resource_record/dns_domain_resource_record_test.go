@@ -12,9 +12,9 @@ import (
 
 var _ = Describe("SoftLayer DNS Resource Records", func() {
 	var (
-		err								 error
-		dnsDomainResourceRecordService 	 softlayer.SoftLayer_Dns_Domain_ResourceRecord_Service
-		dnsDomainService 	 			 softlayer.SoftLayer_Dns_Domain_Service
+		err                            error
+		dnsDomainResourceRecordService softlayer.SoftLayer_Dns_Domain_ResourceRecord_Service
+		dnsDomainService               softlayer.SoftLayer_Dns_Domain_Service
 	)
 
 	BeforeEach(func() {
@@ -64,4 +64,3 @@ var _ = Describe("SoftLayer DNS Resource Records", func() {
 		})
 	})
 })
-

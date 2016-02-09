@@ -34,8 +34,8 @@ const (
 	DEFAULT_DATACENTER = "dal09"
 
 	TEST_EMAIL = "testemail@sl.com"
-	TEST_HOST = "test.example.com"
-	TEST_TTL = 900
+	TEST_HOST  = "test.example.com"
+	TEST_TTL   = 900
 
 	MAX_WAIT_RETRIES = 10
 	WAIT_TIME        = 5
@@ -721,7 +721,7 @@ func CreateDnsDomainResourceRecordService() (softlayer.SoftLayer_Dns_Domain_Reso
 	return dnsDomainResourceRecordService, nil
 }
 
-func CreateTestDnsDomain(name string) (datatypes.SoftLayer_Dns_Domain) {
+func CreateTestDnsDomain(name string) datatypes.SoftLayer_Dns_Domain {
 	template := datatypes.SoftLayer_Dns_Domain_Template{
 		Name: name,
 	}
@@ -771,14 +771,14 @@ func WaitForDeletedDnsDomainToNoLongerBePresent(dnsDomainId int) {
 	}, TIMEOUT, POLLING_INTERVAL).Should(BeTrue(), "failed waiting for deleted dns domain to be removed")
 }
 
-func CreateTestDnsDomainResourceRecord(domainId int) (datatypes.SoftLayer_Dns_Domain_Resource_Record) {
+func CreateTestDnsDomainResourceRecord(domainId int) datatypes.SoftLayer_Dns_Domain_Resource_Record {
 	template := datatypes.SoftLayer_Dns_Domain_Resource_Record_Template{
-		Data: "127.0.0.1",
-		DomainId: domainId,
-		Host: TEST_HOST,
+		Data:              "127.0.0.1",
+		DomainId:          domainId,
+		Host:              TEST_HOST,
 		ResponsiblePerson: TEST_EMAIL,
-		Ttl: TEST_TTL,
-		Type: "A",
+		Ttl:               TEST_TTL,
+		Type:              "A",
 	}
 
 	dnsDomainResourceRecordService, err := CreateDnsDomainResourceRecordService()

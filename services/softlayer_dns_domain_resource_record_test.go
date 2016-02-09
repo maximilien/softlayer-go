@@ -19,7 +19,7 @@ var _ = Describe("SoftLayer_Dns_Domain_Record", func() {
 		fakeClient *slclientfakes.FakeSoftLayerClient
 
 		dnsDomainResourceRecordService softlayer.SoftLayer_Dns_Domain_ResourceRecord_Service
-		err                    error
+		err                            error
 	)
 
 	BeforeEach(func() {
