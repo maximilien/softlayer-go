@@ -1,10 +1,10 @@
 package data_types
 
-type SoftLayer_Dns_Domain_Resource_Record_Template_Parameters struct {
-	Parameters []SoftLayer_Dns_Domain_Resource_Record_Template `json:"parameters"`
+type SoftLayer_Dns_Domain_ResourceRecord_Template_Parameters struct {
+	Parameters []SoftLayer_Dns_Domain_ResourceRecord_Template `json:"parameters"`
 }
 
-type SoftLayer_Dns_Domain_Resource_Record_Template struct {
+type SoftLayer_Dns_Domain_ResourceRecord_Template struct {
 	Data              string `json:"data"`
 	DomainId          int    `json:"domainId"`
 	Expire            int    `json:"expire"`
@@ -24,11 +24,11 @@ type SoftLayer_Dns_Domain_Resource_Record_Template struct {
 	Weight            int    `json:"weight,omitempty"`
 }
 
-type SoftLayer_Dns_Domain_Resource_Record_Parameters struct {
-	Parameters []SoftLayer_Dns_Domain_Resource_Record `json:"parameters"`
+type SoftLayer_Dns_Domain_ResourceRecord_Parameters struct {
+	Parameters []SoftLayer_Dns_Domain_ResourceRecord `json:"parameters"`
 }
 
-type SoftLayer_Dns_Domain_Resource_Record struct {
+type SoftLayer_Dns_Domain_ResourceRecord struct {
 	Data              string `json:"data"`
 	DomainId          int    `json:"domainId"`
 	Expire            int    `json:"expire"`
