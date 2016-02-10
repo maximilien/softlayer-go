@@ -21,12 +21,12 @@ func (mock *MockProductPackageService) GetItemsByType(packageType string) ([]dat
 	return productItems, nil
 }
 
-func (mock *MockProductPackageService) GetItemPrices(packageId int) ([]datatypes.SoftLayer_Item_Price, error) {
-	return []datatypes.SoftLayer_Item_Price{}, errors.New("Not supported")
+func (mock *MockProductPackageService) GetItemPrices(packageId int) ([]datatypes.SoftLayer_Product_Item_Price, error) {
+	return []datatypes.SoftLayer_Product_Item_Price{}, errors.New("Not supported")
 }
 
-func (mock *MockProductPackageService) GetItemPricesBySize(packageId int, size int) ([]datatypes.SoftLayer_Item_Price, error) {
-	return []datatypes.SoftLayer_Item_Price{}, errors.New("Not supported")
+func (mock *MockProductPackageService) GetItemPricesBySize(packageId int, size int) ([]datatypes.SoftLayer_Product_Item_Price, error) {
+	return []datatypes.SoftLayer_Product_Item_Price{}, errors.New("Not supported")
 }
 
 func (mock *MockProductPackageService) GetItems(packageId int) ([]datatypes.SoftLayer_Product_Item, error) {

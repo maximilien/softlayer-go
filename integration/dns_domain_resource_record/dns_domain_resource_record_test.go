@@ -12,9 +12,9 @@ import (
 
 var _ = Describe("SoftLayer DNS Resource Records", func() {
 	var (
-		err								 error
-		dnsDomainResourceRecordService 	 softlayer.SoftLayer_Dns_Domain_ResourceRecord_Service
-		dnsDomainService 	 			 softlayer.SoftLayer_Dns_Domain_Service
+		err                            error
+		dnsDomainResourceRecordService softlayer.SoftLayer_Dns_Domain_Resource_Record_Service
+		dnsDomainService               softlayer.SoftLayer_Dns_Domain_Service
 	)
 
 	BeforeEach(func() {
@@ -28,7 +28,7 @@ var _ = Describe("SoftLayer DNS Resource Records", func() {
 		testhelpers.POLLING_INTERVAL = 10 * time.Second
 	})
 
-	Context("SoftLayer_Dns_Domain_ResourceRecord", func() {
+	Context("SoftLayer_Dns_Domain_Resource_Record", func() {
 		It("creates a DNS Domain resource record, update it, and delete it", func() {
 			testDnsDomain := testhelpers.CreateTestDnsDomain("test.domain.records.name")
 			createdDnsDomainResourceRecord := testhelpers.CreateTestDnsDomainResourceRecord(testDnsDomain.Id)
@@ -64,4 +64,3 @@ var _ = Describe("SoftLayer DNS Resource Records", func() {
 		})
 	})
 })
-

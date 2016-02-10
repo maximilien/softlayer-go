@@ -12,7 +12,7 @@ import (
 
 var _ = Describe("SoftLayer DNS domains", func() {
 	var (
-		err error
+		err              error
 		dnsDomainService softlayer.SoftLayer_Dns_Domain_Service
 	)
 
@@ -43,5 +43,3 @@ var _ = Describe("SoftLayer DNS domains", func() {
 		})
 	})
 })
-
-
