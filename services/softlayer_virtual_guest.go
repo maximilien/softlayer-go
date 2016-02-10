@@ -15,9 +15,11 @@ import (
 )
 
 const (
-	EPHEMERAL_DISK_CATEGORY_CODE      = "guest_disk1"
-	VIRTUAL_SERVER_PACKAGE_TYPE       = "VIRTUAL_SERVER_INSTANCE"
-	MAINTENANCE_WINDOW_PROPERTY       = "MAINTENANCE_WINDOW"
+	EPHEMERAL_DISK_CATEGORY_CODE = "guest_disk1"
+	// Package type for virtual servers: http://sldn.softlayer.com/reference/services/SoftLayer_Product_Order/placeOrder
+	VIRTUAL_SERVER_PACKAGE_TYPE = "VIRTUAL_SERVER_INSTANCE"
+	MAINTENANCE_WINDOW_PROPERTY = "MAINTENANCE_WINDOW"
+	// Described in the following link: http://sldn.softlayer.com/reference/datatypes/SoftLayer_Container_Product_Order_Virtual_Guest_Upgrade
 	UPGRADE_VIRTUAL_SERVER_ORDER_TYPE = "SoftLayer_Container_Product_Order_Virtual_Guest_Upgrade"
 )
 
@@ -438,15 +440,15 @@ func (slvgs *softLayer_Virtual_Guest_Service) IsBackendPingable(instanceId int) 
 	return false, errors.New(fmt.Sprintf("Failed to checking that virtual guest backend is pingable for instance with id '%d', got '%s' as response from the API.", instanceId, res))
 }
 
-func (slvgs *softLayer_Virtual_Guest_Service) AttachEphemeralDisk(instanceId int, diskSize int) error {
+func (slvgs *softLayer_Virtual_Guest_Service) AttachEphemeralDisk(instanceId int, diskSize int) (datatypes.SoftLayer_Container_Product_Order_Receipt, error) {
 	diskItemPrice, err := slvgs.findUpgradeItemPriceForEphemeralDisk(instanceId, diskSize)
 	if err != nil {
-		return err
+		return datatypes.SoftLayer_Container_Product_Order_Receipt{}, err
 	}
 
 	orderService, err := slvgs.client.GetSoftLayer_Product_Order_Service()
 	if err != nil {
-		return err
+		return datatypes.SoftLayer_Container_Product_Order_Receipt{}, err
 	}
 
 	order := datatypes.SoftLayer_Container_Product_Order_Virtual_Guest_Upgrade{
@@ -478,9 +480,11 @@ func (slvgs *softLayer_Virtual_Guest_Service) AttachEphemeralDisk(instanceId int
 		},
 	}
 
-	_, err = orderService.PlaceContainerOrderVirtualGuestUpgrade(order)
-
-	return err
+	receipt, err := orderService.PlaceContainerOrderVirtualGuestUpgrade(order)
+	if err != nil {
+		return datatypes.SoftLayer_Container_Product_Order_Receipt{}, err
+	}
+	return receipt, nil
 }
 
 func (slvgs *softLayer_Virtual_Guest_Service) UpgradeObject(instanceId int, options *softlayer.UpgradeOptions) (bool, error) {
@@ -554,62 +558,6 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetAvailableUpgradeItemPrices(upgr
 	}
 
 	return prices, nil
-}
-
-func (slvgs *softLayer_Virtual_Guest_Service) getVirtualServerItems() ([]datatypes.SoftLayer_Product_Item, error) {
-	service, err := slvgs.client.GetSoftLayer_Product_Package_Service()
-	if err != nil {
-		return []datatypes.SoftLayer_Product_Item{}, err
-	}
-
-	return service.GetItemsByType(VIRTUAL_SERVER_PACKAGE_TYPE)
-}
-
-func (slvgs *softLayer_Virtual_Guest_Service) filterProductItemPrice(packageItems []datatypes.SoftLayer_Product_Item, option string, amount int) (datatypes.SoftLayer_Item_Price, error) {
-
-	// for now use hardcoded values in the same "style" as Python client does
-	vsId := map[string]int{
-		"memory":    3,
-		"cpus":      80,
-		"nic_speed": 26,
-	}
-
-	for _, packageItem := range packageItems {
-		categories := packageItem.Prices[0].Categories
-		for _, category := range categories {
-
-			// Skip package item if capacity is not set
-			if packageItem.Capacity == "" {
-				continue
-			}
-
-			capacity, err := strconv.Atoi(packageItem.Capacity)
-			if err != nil {
-				return datatypes.SoftLayer_Item_Price{}, err
-			}
-
-			// Skip package item, if VS doesn't match requested amount and ID
-			if category.Id != vsId[option] || capacity != amount {
-				continue
-			}
-
-			// Use only public elements for items
-			switch option {
-			case "cpus":
-				if !strings.Contains(packageItem.Description, "Private") {
-					return packageItem.Prices[0], nil
-				}
-			case "nic_speed":
-				if strings.Contains(packageItem.Description, "Public") {
-					return packageItem.Prices[0], nil
-				}
-			default:
-				return packageItem.Prices[0], nil
-			}
-		}
-	}
-
-	return datatypes.SoftLayer_Item_Price{}, errors.New(fmt.Sprintf("Failed to find price for '%s' (of size %d)", option, amount))
 }
 
 func (slvgs *softLayer_Virtual_Guest_Service) GetUpgradeItemPrices(instanceId int) ([]datatypes.SoftLayer_Item_Price, error) {
@@ -865,6 +813,60 @@ func (slvgs *softLayer_Virtual_Guest_Service) CaptureImage(instanceId int) (data
 }
 
 //Private methods
+
+func (slvgs *softLayer_Virtual_Guest_Service) getVirtualServerItems() ([]datatypes.SoftLayer_Product_Item, error) {
+	service, err := slvgs.client.GetSoftLayer_Product_Package_Service()
+	if err != nil {
+		return []datatypes.SoftLayer_Product_Item{}, err
+	}
+
+	return service.GetItemsByType(VIRTUAL_SERVER_PACKAGE_TYPE)
+}
+
+func (slvgs *softLayer_Virtual_Guest_Service) filterProductItemPrice(packageItems []datatypes.SoftLayer_Product_Item, option string, amount int) (datatypes.SoftLayer_Item_Price, error) {
+	// for now use hardcoded values in the same "style" as Python client does
+	// refer to corresponding Python method #_get_item_id_for_upgrade: https://github.com/softlayer/softlayer-python/blob/master/SoftLayer/managers/vs.py
+	vsId := map[string]int{
+		"memory":    3,
+		"cpus":      80,
+		"nic_speed": 26,
+	}
+
+	for _, packageItem := range packageItems {
+		categories := packageItem.Prices[0].Categories
+		for _, category := range categories {
+
+			if packageItem.Capacity == "" {
+				continue
+			}
+
+			capacity, err := strconv.Atoi(packageItem.Capacity)
+			if err != nil {
+				return datatypes.SoftLayer_Item_Price{}, err
+			}
+
+			if category.Id != vsId[option] || capacity != amount {
+				continue
+			}
+
+			switch option {
+			case "cpus":
+				if !strings.Contains(packageItem.Description, "Private") {
+					return packageItem.Prices[0], nil
+				}
+			case "nic_speed":
+				if strings.Contains(packageItem.Description, "Public") {
+					return packageItem.Prices[0], nil
+				}
+			default:
+				return packageItem.Prices[0], nil
+			}
+		}
+	}
+
+	return datatypes.SoftLayer_Item_Price{}, errors.New(fmt.Sprintf("Failed to find price for '%s' (of size %d)", option, amount))
+}
+
 func (slvgs *softLayer_Virtual_Guest_Service) checkCreateObjectRequiredValues(template datatypes.SoftLayer_Virtual_Guest_Template) error {
 	var err error
 	errorMessage, errorTemplate := "", "* %s is required and cannot be empty\n"

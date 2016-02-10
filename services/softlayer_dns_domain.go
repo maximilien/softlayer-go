@@ -24,10 +24,8 @@ func (sldds *softLayer_Dns_Domain_Service) GetName() string {
 }
 
 func (sldds *softLayer_Dns_Domain_Service) CreateObject(template datatypes.SoftLayer_Dns_Domain_Template) (datatypes.SoftLayer_Dns_Domain, error) {
-	// check required fields
-
 	if template.ResourceRecords == nil {
-		template.ResourceRecords = []datatypes.SoftLayer_Dns_Domain_Record{}
+		template.ResourceRecords = []datatypes.SoftLayer_Dns_Domain_Resource_Record{}
 	}
 
 	parameters := datatypes.SoftLayer_Dns_Domain_Template_Parameters{
@@ -61,7 +59,6 @@ func (sldds *softLayer_Dns_Domain_Service) CreateObject(template datatypes.SoftL
 }
 
 func (sldds *softLayer_Dns_Domain_Service) GetObject(dnsId int) (datatypes.SoftLayer_Dns_Domain, error) {
-
 	objectMask := []string{
 		"id",
 		"name",

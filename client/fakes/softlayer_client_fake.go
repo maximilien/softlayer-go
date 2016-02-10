@@ -189,13 +189,13 @@ func (fslc *FakeSoftLayerClient) GetSoftLayer_Hardware_Service() (softlayer.Soft
 	return slService.(softlayer.SoftLayer_Hardware_Service), nil
 }
 
-func (fslc *FakeSoftLayerClient) GetSoftLayer_Dns_Domain_Record_Service() (softlayer.SoftLayer_Dns_Domain_Record_Service, error) {
+func (fslc *FakeSoftLayerClient) GetSoftLayer_Dns_Domain_ResourceRecord_Service() (softlayer.SoftLayer_Dns_Domain_ResourceRecord_Service, error) {
 	slService, err := fslc.GetService("SoftLayer_Dns_Domain_ResourceRecord")
 	if err != nil {
 		return nil, err
 	}
 
-	return slService.(softlayer.SoftLayer_Dns_Domain_Record_Service), nil
+	return slService.(softlayer.SoftLayer_Dns_Domain_ResourceRecord_Service), nil
 }
 
 //Public methods
@@ -209,7 +209,7 @@ func (fslc *FakeSoftLayerClient) DoRawHttpRequestWithObjectMask(path string, mas
 		return []byte{}, fslc.DoRawHttpRequestError
 	}
 
-	if fslc.DoRawHttpRequestResponse != nil {
+	if fslc.DoRawHttpRequestResponse != nil && len(fslc.DoRawHttpRequestResponses) == 0 {
 		return fslc.DoRawHttpRequestResponse, fslc.DoRawHttpRequestError
 	} else {
 		fslc.DoRawHttpRequestResponsesIndex = fslc.DoRawHttpRequestResponsesIndex + 1
@@ -227,7 +227,7 @@ func (fslc *FakeSoftLayerClient) DoRawHttpRequestWithObjectFilter(path string, f
 		return []byte{}, fslc.DoRawHttpRequestError
 	}
 
-	if fslc.DoRawHttpRequestResponse != nil {
+	if fslc.DoRawHttpRequestResponse != nil && len(fslc.DoRawHttpRequestResponses) == 0 {
 		return fslc.DoRawHttpRequestResponse, fslc.DoRawHttpRequestError
 	} else {
 		fslc.DoRawHttpRequestResponsesIndex = fslc.DoRawHttpRequestResponsesIndex + 1
@@ -245,7 +245,7 @@ func (fslc *FakeSoftLayerClient) DoRawHttpRequestWithObjectFilterAndObjectMask(p
 		return []byte{}, fslc.DoRawHttpRequestError
 	}
 
-	if fslc.DoRawHttpRequestResponse != nil {
+	if fslc.DoRawHttpRequestResponse != nil && len(fslc.DoRawHttpRequestResponses) == 0 {
 		return fslc.DoRawHttpRequestResponse, fslc.DoRawHttpRequestError
 	} else {
 		fslc.DoRawHttpRequestResponsesIndex = fslc.DoRawHttpRequestResponsesIndex + 1
@@ -263,7 +263,7 @@ func (fslc *FakeSoftLayerClient) DoRawHttpRequest(path string, requestType strin
 		return []byte{}, fslc.DoRawHttpRequestError
 	}
 
-	if fslc.DoRawHttpRequestResponse != nil {
+	if fslc.DoRawHttpRequestResponse != nil && len(fslc.DoRawHttpRequestResponses) == 0 {
 		return fslc.DoRawHttpRequestResponse, fslc.DoRawHttpRequestError
 	} else {
 		fslc.DoRawHttpRequestResponsesIndex = fslc.DoRawHttpRequestResponsesIndex + 1
@@ -298,5 +298,5 @@ func (fslc *FakeSoftLayerClient) initSoftLayerServices() {
 	fslc.SoftLayerServices["SoftLayer_Virtual_Guest_Block_Device_Template_Group"] = services.NewSoftLayer_Virtual_Guest_Block_Device_Template_Group_Service(fslc)
 	fslc.SoftLayerServices["SoftLayer_Hardware"] = services.NewSoftLayer_Hardware_Service(fslc)
 	fslc.SoftLayerServices["SoftLayer_Dns_Domain"] = services.NewSoftLayer_Dns_Domain_Service(fslc)
-	fslc.SoftLayerServices["SoftLayer_Dns_Domain_ResourceRecord"] = services.NewSoftLayer_Dns_Domain_Record_Service(fslc)
+	fslc.SoftLayerServices["SoftLayer_Dns_Domain_ResourceRecord"] = services.NewSoftLayer_Dns_Domain_ResourceRecord_Service(fslc)
 }
