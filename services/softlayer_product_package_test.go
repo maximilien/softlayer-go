@@ -49,7 +49,7 @@ var _ = Describe("SoftLayer_Product_Package", func() {
 			Expect(err).ToNot(HaveOccurred())
 		})
 
-		It("returns an array of datatypes.SoftLayer_Item_Price", func() {
+		It("returns an array of datatypes.SoftLayer_Product_Item_Price", func() {
 			itemPrices, err := productPackageService.GetItemPrices(0)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(len(itemPrices)).To(Equal(1))
@@ -64,7 +64,7 @@ var _ = Describe("SoftLayer_Product_Package", func() {
 			Expect(err).ToNot(HaveOccurred())
 		})
 
-		It("returns an array of datatypes.SoftLayer_Item_Price", func() {
+		It("returns an array of datatypes.SoftLayer_Product_Item_Price", func() {
 			itemPrices, err := productPackageService.GetItemPricesBySize(222, 20)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(len(itemPrices)).To(Equal(1))
