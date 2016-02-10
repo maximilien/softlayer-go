@@ -457,8 +457,8 @@ func (slvgs *softLayer_Virtual_Guest_Service) AttachEphemeralDisk(instanceId int
 				Id: instanceId,
 			},
 		},
-		Prices: []datatypes.SoftLayer_Item_Price{
-			datatypes.SoftLayer_Item_Price{
+		Prices: []datatypes.SoftLayer_Product_Item_Price{
+			datatypes.SoftLayer_Product_Item_Price{
 				Id: diskItemPrice.Id,
 				Categories: []datatypes.Category{
 					datatypes.Category{
@@ -528,7 +528,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) UpgradeObject(instanceId int, opti
 	return true, nil
 }
 
-func (slvgs *softLayer_Virtual_Guest_Service) GetAvailableUpgradeItemPrices(upgradeOptions *softlayer.UpgradeOptions) ([]datatypes.SoftLayer_Item_Price, error) {
+func (slvgs *softLayer_Virtual_Guest_Service) GetAvailableUpgradeItemPrices(upgradeOptions *softlayer.UpgradeOptions) ([]datatypes.SoftLayer_Product_Item_Price, error) {
 
 	itemsCapacity := make(map[string]int)
 	if upgradeOptions.Cpus > 0 {
@@ -543,15 +543,15 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetAvailableUpgradeItemPrices(upgr
 
 	virtualServerPackageItems, err := slvgs.getVirtualServerItems()
 	if err != nil {
-		return []datatypes.SoftLayer_Item_Price{}, err
+		return []datatypes.SoftLayer_Product_Item_Price{}, err
 	}
 
-	prices := make([]datatypes.SoftLayer_Item_Price, 0)
+	prices := make([]datatypes.SoftLayer_Product_Item_Price, 0)
 
 	for item, amount := range itemsCapacity {
 		price, err := slvgs.filterProductItemPrice(virtualServerPackageItems, item, amount)
 		if err != nil {
-			return []datatypes.SoftLayer_Item_Price{}, err
+			return []datatypes.SoftLayer_Product_Item_Price{}, err
 		}
 
 		prices = append(prices, price)
@@ -560,16 +560,16 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetAvailableUpgradeItemPrices(upgr
 	return prices, nil
 }
 
-func (slvgs *softLayer_Virtual_Guest_Service) GetUpgradeItemPrices(instanceId int) ([]datatypes.SoftLayer_Item_Price, error) {
+func (slvgs *softLayer_Virtual_Guest_Service) GetUpgradeItemPrices(instanceId int) ([]datatypes.SoftLayer_Product_Item_Price, error) {
 	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/getUpgradeItemPrices.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
 	if err != nil {
-		return []datatypes.SoftLayer_Item_Price{}, err
+		return []datatypes.SoftLayer_Product_Item_Price{}, err
 	}
 
-	itemPrices := []datatypes.SoftLayer_Item_Price{}
+	itemPrices := []datatypes.SoftLayer_Product_Item_Price{}
 	err = json.Unmarshal(response, &itemPrices)
 	if err != nil {
-		return []datatypes.SoftLayer_Item_Price{}, err
+		return []datatypes.SoftLayer_Product_Item_Price{}, err
 	}
 
 	return itemPrices, nil
@@ -823,7 +823,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) getVirtualServerItems() ([]datatyp
 	return service.GetItemsByType(VIRTUAL_SERVER_PACKAGE_TYPE)
 }
 
-func (slvgs *softLayer_Virtual_Guest_Service) filterProductItemPrice(packageItems []datatypes.SoftLayer_Product_Item, option string, amount int) (datatypes.SoftLayer_Item_Price, error) {
+func (slvgs *softLayer_Virtual_Guest_Service) filterProductItemPrice(packageItems []datatypes.SoftLayer_Product_Item, option string, amount int) (datatypes.SoftLayer_Product_Item_Price, error) {
 	// for now use hardcoded values in the same "style" as Python client does
 	// refer to corresponding Python method #_get_item_id_for_upgrade: https://github.com/softlayer/softlayer-python/blob/master/SoftLayer/managers/vs.py
 	vsId := map[string]int{
@@ -842,7 +842,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) filterProductItemPrice(packageItem
 
 			capacity, err := strconv.Atoi(packageItem.Capacity)
 			if err != nil {
-				return datatypes.SoftLayer_Item_Price{}, err
+				return datatypes.SoftLayer_Product_Item_Price{}, err
 			}
 
 			if category.Id != vsId[option] || capacity != amount {
@@ -864,7 +864,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) filterProductItemPrice(packageItem
 		}
 	}
 
-	return datatypes.SoftLayer_Item_Price{}, errors.New(fmt.Sprintf("Failed to find price for '%s' (of size %d)", option, amount))
+	return datatypes.SoftLayer_Product_Item_Price{}, errors.New(fmt.Sprintf("Failed to find price for '%s' (of size %d)", option, amount))
 }
 
 func (slvgs *softLayer_Virtual_Guest_Service) checkCreateObjectRequiredValues(template datatypes.SoftLayer_Virtual_Guest_Template) error {
@@ -904,18 +904,18 @@ func (slvgs *softLayer_Virtual_Guest_Service) checkCreateObjectRequiredValues(te
 	return err
 }
 
-func (slvgs *softLayer_Virtual_Guest_Service) findUpgradeItemPriceForEphemeralDisk(instanceId int, ephemeralDiskSize int) (datatypes.SoftLayer_Item_Price, error) {
+func (slvgs *softLayer_Virtual_Guest_Service) findUpgradeItemPriceForEphemeralDisk(instanceId int, ephemeralDiskSize int) (datatypes.SoftLayer_Product_Item_Price, error) {
 	if ephemeralDiskSize <= 0 {
-		return datatypes.SoftLayer_Item_Price{}, errors.New(fmt.Sprintf("Ephemeral disk size can not be negative: %d", ephemeralDiskSize))
+		return datatypes.SoftLayer_Product_Item_Price{}, errors.New(fmt.Sprintf("Ephemeral disk size can not be negative: %d", ephemeralDiskSize))
 	}
 
 	itemPrices, err := slvgs.GetUpgradeItemPrices(instanceId)
 	if err != nil {
-		return datatypes.SoftLayer_Item_Price{}, nil
+		return datatypes.SoftLayer_Product_Item_Price{}, nil
 	}
 
 	var currentDiskCapacity int
-	var currentItemPrice datatypes.SoftLayer_Item_Price
+	var currentItemPrice datatypes.SoftLayer_Product_Item_Price
 
 	for _, itemPrice := range itemPrices {
 
@@ -941,7 +941,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) findUpgradeItemPriceForEphemeralDi
 	}
 
 	if currentItemPrice.Id == 0 {
-		return datatypes.SoftLayer_Item_Price{}, errors.New(fmt.Sprintf("No proper local disk for size %d", ephemeralDiskSize))
+		return datatypes.SoftLayer_Product_Item_Price{}, errors.New(fmt.Sprintf("No proper local disk for size %d", ephemeralDiskSize))
 	}
 
 	return currentItemPrice, nil

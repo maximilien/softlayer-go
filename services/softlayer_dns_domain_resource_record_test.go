@@ -18,7 +18,7 @@ var _ = Describe("SoftLayer_Dns_Domain_Record", func() {
 
 		fakeClient *slclientfakes.FakeSoftLayerClient
 
-		dnsDomainResourceRecordService softlayer.SoftLayer_Dns_Domain_ResourceRecord_Service
+		dnsDomainResourceRecordService softlayer.SoftLayer_Dns_Domain_Resource_Record_Service
 		err                            error
 	)
 
@@ -32,7 +32,7 @@ var _ = Describe("SoftLayer_Dns_Domain_Record", func() {
 		fakeClient = slclientfakes.NewFakeSoftLayerClient(username, apiKey)
 		Expect(fakeClient).ToNot(BeNil())
 
-		dnsDomainResourceRecordService, err = fakeClient.GetSoftLayer_Dns_Domain_ResourceRecord_Service()
+		dnsDomainResourceRecordService, err = fakeClient.GetSoftLayer_Dns_Domain_Resource_Record_Service()
 		Expect(err).ToNot(HaveOccurred())
 		Expect(dnsDomainResourceRecordService).ToNot(BeNil())
 	})
@@ -40,13 +40,13 @@ var _ = Describe("SoftLayer_Dns_Domain_Record", func() {
 	Context("#GetName", func() {
 		It("returns the name for the service", func() {
 			name := dnsDomainResourceRecordService.GetName()
-			Expect(name).To(Equal("SoftLayer_Dns_Domain_ResourceRecord"))
+			Expect(name).To(Equal("SoftLayer_Dns_Domain_Resource_Record"))
 		})
 	})
 
 	Context("#CreateObject", func() {
 		BeforeEach(func() {
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Dns_Domain_ResourceRecord_Service_createObject.json")
+			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Dns_Domain_Resource_Record_Service_createObject.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -96,7 +96,7 @@ var _ = Describe("SoftLayer_Dns_Domain_Record", func() {
 
 	Context("#GetObject", func() {
 		BeforeEach(func() {
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Dns_Domain_ResourceRecord_Service_createObject.json")
+			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Dns_Domain_Resource_Record_Service_createObject.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -120,7 +120,7 @@ var _ = Describe("SoftLayer_Dns_Domain_Record", func() {
 
 	Context("#EditObject", func() {
 		BeforeEach(func() {
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Dns_Domain_ResourceRecord_Service_editObject.json")
+			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Dns_Domain_Resource_Record_Service_editObject.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
