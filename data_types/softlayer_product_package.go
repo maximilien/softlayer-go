@@ -1,7 +1,7 @@
 package data_types
 
 type Softlayer_Product_Package struct {
-	Id          int           `json:"id"`
+	Id          uint32        `json:"id"`
 	Name        string        `json:"name"`
 	IsActive    int           `json:"isActive"`
 	Description string        `json:"description"`
@@ -13,7 +13,7 @@ type Package_Type struct {
 }
 
 type SoftLayer_Product_Item struct {
-	Id          int                            `json:"id"`
+	Id          uint32                         `json:"id"`
 	Description string                         `json:"description"`
 	Capacity    string                         `json:"capacity"`
 	Prices      []SoftLayer_Product_Item_Price `json:"prices,omitempty"`
