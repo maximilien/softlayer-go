@@ -13,8 +13,8 @@ type Package_Type struct {
 }
 
 type SoftLayer_Product_Item struct {
-	Id          int                    `json:"id"`
-	Description string                 `json:"description"`
-	Capacity    string                 `json:"capacity"`
-	Prices      []SoftLayer_Item_Price `json:"prices,omitempty"`
+	Id          int                            `json:"id"`
+	Description string                         `json:"description"`
+	Capacity    string                         `json:"capacity"`
+	Prices      []SoftLayer_Product_Item_Price `json:"prices,omitempty"`
 }

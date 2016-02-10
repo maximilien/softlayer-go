@@ -18,8 +18,8 @@ var _ = Describe("SoftLayer_Dns_Domain_Record", func() {
 
 		fakeClient *slclientfakes.FakeSoftLayerClient
 
-		dnsDomainRecordService softlayer.SoftLayer_Dns_Domain_Record_Service
-		err                    error
+		dnsDomainResourceRecordService softlayer.SoftLayer_Dns_Domain_Resource_Record_Service
+		err                            error
 	)
 
 	BeforeEach(func() {
@@ -32,26 +32,26 @@ var _ = Describe("SoftLayer_Dns_Domain_Record", func() {
 		fakeClient = slclientfakes.NewFakeSoftLayerClient(username, apiKey)
 		Expect(fakeClient).ToNot(BeNil())
 
-		dnsDomainRecordService, err = fakeClient.GetSoftLayer_Dns_Domain_Record_Service()
+		dnsDomainResourceRecordService, err = fakeClient.GetSoftLayer_Dns_Domain_Resource_Record_Service()
 		Expect(err).ToNot(HaveOccurred())
-		Expect(dnsDomainRecordService).ToNot(BeNil())
+		Expect(dnsDomainResourceRecordService).ToNot(BeNil())
 	})
 
 	Context("#GetName", func() {
 		It("returns the name for the service", func() {
-			name := dnsDomainRecordService.GetName()
-			Expect(name).To(Equal("SoftLayer_Dns_Domain_ResourceRecord"))
+			name := dnsDomainResourceRecordService.GetName()
+			Expect(name).To(Equal("SoftLayer_Dns_Domain_Resource_Record"))
 		})
 	})
 
 	Context("#CreateObject", func() {
 		BeforeEach(func() {
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Dns_Domain_Record_Service_createObject.json")
+			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Dns_Domain_Resource_Record_Service_createObject.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
 		It("creates a new SoftLayer_Dns_Domain_Record", func() {
-			template := datatypes.SoftLayer_Dns_Domain_Record_Template{
+			template := datatypes.SoftLayer_Dns_Domain_Resource_Record_Template{
 				Data:              "testData",
 				DomainId:          123,
 				Expire:            99999,
@@ -66,7 +66,7 @@ var _ = Describe("SoftLayer_Dns_Domain_Record", func() {
 				Type:              "someTestType",
 			}
 
-			result, err := dnsDomainRecordService.CreateObject(template)
+			result, err := dnsDomainResourceRecordService.CreateObject(template)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(result.Data).To(Equal("testData"))
 			Expect(result.DomainId).To(Equal(123))
@@ -81,16 +81,27 @@ var _ = Describe("SoftLayer_Dns_Domain_Record", func() {
 			Expect(result.Ttl).To(Equal(222))
 			Expect(result.Type).To(Equal("someTestType"))
 		})
+
+		It("fails to create a resource record without mandatory parameters", func() {
+			fakeClient.DoRawHttpRequestResponse = []byte("fake")
+
+			template := datatypes.SoftLayer_Dns_Domain_Resource_Record_Template{
+				Data: "testData",
+			}
+
+			_, err := dnsDomainResourceRecordService.CreateObject(template)
+			Expect(err).To(HaveOccurred())
+		})
 	})
 
 	Context("#GetObject", func() {
 		BeforeEach(func() {
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Dns_Domain_Record_Service_createObject.json")
+			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Dns_Domain_Resource_Record_Service_createObject.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
 		It("sucessfully retrieves SoftLayer_Dns_Domain_Record instance", func() {
-			result, err := dnsDomainRecordService.GetObject(111)
+			result, err := dnsDomainResourceRecordService.GetObject(111)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(result.Data).To(Equal("testData"))
 			Expect(result.DomainId).To(Equal(123))
@@ -109,12 +120,12 @@ var _ = Describe("SoftLayer_Dns_Domain_Record", func() {
 
 	Context("#EditObject", func() {
 		BeforeEach(func() {
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Dns_Domain_Record_Service_editObject.json")
+			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Dns_Domain_Resource_Record_Service_editObject.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
 		It("applies changes to the existing SoftLayer_Dns_Domain_Record instance", func() {
-			result, err := dnsDomainRecordService.GetObject(112)
+			result, err := dnsDomainResourceRecordService.GetObject(112)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(result.Data).To(Equal("changedData"))
 			Expect(result.DomainId).To(Equal(124))
