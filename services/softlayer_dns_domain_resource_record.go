@@ -24,38 +24,38 @@ func (sldr *SoftLayer_Dns_Domain_ResourceRecord_Service) GetName() string {
 	return "SoftLayer_Dns_Domain_ResourceRecord"
 }
 
-func (sldr *SoftLayer_Dns_Domain_ResourceRecord_Service) CreateObject(template datatypes.SoftLayer_Dns_Domain_Resource_Record_Template) (datatypes.SoftLayer_Dns_Domain_Resource_Record, error) {
-	parameters := datatypes.SoftLayer_Dns_Domain_Resource_Record_Template_Parameters{
-		Parameters: []datatypes.SoftLayer_Dns_Domain_Resource_Record_Template{
+func (sldr *SoftLayer_Dns_Domain_ResourceRecord_Service) CreateObject(template datatypes.SoftLayer_Dns_Domain_ResourceRecord_Template) (datatypes.SoftLayer_Dns_Domain_ResourceRecord, error) {
+	parameters := datatypes.SoftLayer_Dns_Domain_ResourceRecord_Template_Parameters{
+		Parameters: []datatypes.SoftLayer_Dns_Domain_ResourceRecord_Template{
 			template,
 		},
 	}
 
 	requestBody, err := json.Marshal(parameters)
 	if err != nil {
-		return datatypes.SoftLayer_Dns_Domain_Resource_Record{}, err
+		return datatypes.SoftLayer_Dns_Domain_ResourceRecord{}, err
 	}
 
 	response, err := sldr.client.DoRawHttpRequest(fmt.Sprintf("%s/createObject", sldr.getNameByType(template.Type)), "POST", bytes.NewBuffer(requestBody))
 	if err != nil {
-		return datatypes.SoftLayer_Dns_Domain_Resource_Record{}, err
+		return datatypes.SoftLayer_Dns_Domain_ResourceRecord{}, err
 	}
 
 	err = sldr.client.CheckForHttpResponseErrors(response)
 	if err != nil {
-		return datatypes.SoftLayer_Dns_Domain_Resource_Record{}, err
+		return datatypes.SoftLayer_Dns_Domain_ResourceRecord{}, err
 	}
 
-	dns_record := datatypes.SoftLayer_Dns_Domain_Resource_Record{}
+	dns_record := datatypes.SoftLayer_Dns_Domain_ResourceRecord{}
 	err = json.Unmarshal(response, &dns_record)
 	if err != nil {
-		return datatypes.SoftLayer_Dns_Domain_Resource_Record{}, err
+		return datatypes.SoftLayer_Dns_Domain_ResourceRecord{}, err
 	}
 
 	return dns_record, nil
 }
 
-func (sldr *SoftLayer_Dns_Domain_ResourceRecord_Service) GetObject(id int) (datatypes.SoftLayer_Dns_Domain_Resource_Record, error) {
+func (sldr *SoftLayer_Dns_Domain_ResourceRecord_Service) GetObject(id int) (datatypes.SoftLayer_Dns_Domain_ResourceRecord, error) {
 	objectMask := []string{
 		"data",
 		"domainId",
@@ -78,18 +78,18 @@ func (sldr *SoftLayer_Dns_Domain_ResourceRecord_Service) GetObject(id int) (data
 
 	response, err := sldr.client.DoRawHttpRequestWithObjectMask(fmt.Sprintf("%s/%d/getObject.json", sldr.GetName(), id), objectMask, "GET", new(bytes.Buffer))
 	if err != nil {
-		return datatypes.SoftLayer_Dns_Domain_Resource_Record{}, err
+		return datatypes.SoftLayer_Dns_Domain_ResourceRecord{}, err
 	}
 
 	err = sldr.client.CheckForHttpResponseErrors(response)
 	if err != nil {
-		return datatypes.SoftLayer_Dns_Domain_Resource_Record{}, err
+		return datatypes.SoftLayer_Dns_Domain_ResourceRecord{}, err
 	}
 
-	dns_record := datatypes.SoftLayer_Dns_Domain_Resource_Record{}
+	dns_record := datatypes.SoftLayer_Dns_Domain_ResourceRecord{}
 	err = json.Unmarshal(response, &dns_record)
 	if err != nil {
-		return datatypes.SoftLayer_Dns_Domain_Resource_Record{}, err
+		return datatypes.SoftLayer_Dns_Domain_ResourceRecord{}, err
 	}
 
 	return dns_record, nil
@@ -105,9 +105,9 @@ func (sldr *SoftLayer_Dns_Domain_ResourceRecord_Service) DeleteObject(recordId i
 	return true, err
 }
 
-func (sldr *SoftLayer_Dns_Domain_ResourceRecord_Service) EditObject(recordId int, template datatypes.SoftLayer_Dns_Domain_Resource_Record) (bool, error) {
-	parameters := datatypes.SoftLayer_Dns_Domain_Resource_Record_Parameters{
-		Parameters: []datatypes.SoftLayer_Dns_Domain_Resource_Record{
+func (sldr *SoftLayer_Dns_Domain_ResourceRecord_Service) EditObject(recordId int, template datatypes.SoftLayer_Dns_Domain_ResourceRecord) (bool, error) {
+	parameters := datatypes.SoftLayer_Dns_Domain_ResourceRecord_Parameters{
+		Parameters: []datatypes.SoftLayer_Dns_Domain_ResourceRecord{
 			template,
 		},
 	}

@@ -1,15 +1,15 @@
 package data_types
 
-type SoftLayer_Dns_Domain_Resource_Record_Template_Parameters struct {
-	Parameters []SoftLayer_Dns_Domain_Resource_Record_Template `json:"parameters"`
+type SoftLayer_Dns_Domain_ResourceRecord_Template_Parameters struct {
+	Parameters []SoftLayer_Dns_Domain_ResourceRecord_Template `json:"parameters"`
 }
 
-type SoftLayer_Dns_Domain_Resource_Record_Template struct {
+type SoftLayer_Dns_Domain_ResourceRecord_Template struct {
 	Data              string `json:"data"`
-	DomainId          uint32 `json:"domainId"`
+	DomainId          int    `json:"domainId"`
 	Expire            int    `json:"expire"`
 	Host              string `json:"host"`
-	Id                uint32 `json:"id"`
+	Id                int    `json:"id"`
 	Minimum           int    `json:"minimum"`
 	MxPriority        int    `json:"mxPriority"`
 	Refresh           int    `json:"refresh"`
@@ -24,16 +24,16 @@ type SoftLayer_Dns_Domain_Resource_Record_Template struct {
 	Weight            int    `json:"weight,omitempty"`
 }
 
-type SoftLayer_Dns_Domain_Resource_Record_Parameters struct {
-	Parameters []SoftLayer_Dns_Domain_Resource_Record `json:"parameters"`
+type SoftLayer_Dns_Domain_ResourceRecord_Parameters struct {
+	Parameters []SoftLayer_Dns_Domain_ResourceRecord `json:"parameters"`
 }
 
-type SoftLayer_Dns_Domain_Resource_Record struct {
+type SoftLayer_Dns_Domain_ResourceRecord struct {
 	Data              string `json:"data"`
-	DomainId          uint32 `json:"domainId"`
+	DomainId          int    `json:"domainId"`
 	Expire            int    `json:"expire"`
 	Host              string `json:"host"`
-	Id                uint32 `json:"id"`
+	Id                int    `json:"id"`
 	Minimum           int    `json:"minimum"`
 	MxPriority        int    `json:"mxPriority"`
 	Refresh           int    `json:"refresh"`

@@ -771,8 +771,8 @@ func WaitForDeletedDnsDomainToNoLongerBePresent(dnsDomainId int) {
 	}, TIMEOUT, POLLING_INTERVAL).Should(BeTrue(), "failed waiting for deleted dns domain to be removed")
 }
 
-func CreateTestDnsDomainResourceRecord(domainId int) datatypes.SoftLayer_Dns_Domain_Resource_Record {
-	template := datatypes.SoftLayer_Dns_Domain_Resource_Record_Template{
+func CreateTestDnsDomainResourceRecord(domainId int) datatypes.SoftLayer_Dns_Domain_ResourceRecord {
+	template := datatypes.SoftLayer_Dns_Domain_ResourceRecord_Template{
 		Data:              "127.0.0.1",
 		DomainId:          domainId,
 		Host:              TEST_HOST,

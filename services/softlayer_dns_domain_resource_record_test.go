@@ -51,7 +51,7 @@ var _ = Describe("SoftLayer_Dns_Domain_Record", func() {
 		})
 
 		It("creates a new SoftLayer_Dns_Domain_Record", func() {
-			template := datatypes.SoftLayer_Dns_Domain_Resource_Record_Template{
+			template := datatypes.SoftLayer_Dns_Domain_ResourceRecord_Template{
 				Data:              "testData",
 				DomainId:          123,
 				Expire:            99999,
@@ -85,7 +85,7 @@ var _ = Describe("SoftLayer_Dns_Domain_Record", func() {
 		It("fails to create a resource record without mandatory parameters", func() {
 			fakeClient.DoRawHttpRequestResponse = []byte("fake")
 
-			template := datatypes.SoftLayer_Dns_Domain_Resource_Record_Template{
+			template := datatypes.SoftLayer_Dns_Domain_ResourceRecord_Template{
 				Data: "testData",
 			}
 
