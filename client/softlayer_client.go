@@ -328,6 +328,10 @@ func (slc *SoftLayerClient) makeHttpRequest(url string, requestType string, requ
 		return nil, err
 	}
 
+	if resp.StatusCode >= 400 {
+		return nil, errors.New(string(responseBody[:]))
+	}
+
 	return responseBody, nil
 }
 
