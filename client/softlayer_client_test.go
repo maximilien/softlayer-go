@@ -12,6 +12,8 @@ import (
 
 	slclient "github.com/maximilien/softlayer-go/client"
 	softlayer "github.com/maximilien/softlayer-go/softlayer"
+
+	// slclientfakes "github.com/maximilien/softlayer-go/client/fakes"
 )
 
 var _ = Describe("SoftLayerClient", func() {
@@ -42,14 +44,15 @@ var _ = Describe("SoftLayerClient", func() {
 	Context("#NewSoftLayerClient_HTTPClient", func() {
 		It("creates a new client which should have an initialized default HTTP client", func() {
 			client = slclient.NewSoftLayerClient(username, apiKey)
-			if c, ok := client.(*slclient.SoftLayerClient); ok {
-				Expect(c.HTTPClient).ToNot(BeNil())
-			}
+			c, ok := client.(*slclient.SoftLayerClient)
+			Expect(ok).To(BeTrue())
+			Expect(c.HTTPClient).ToNot(BeNil())
 		})
 
 		It("creates a new client with a custom HTTP client", func() {
 			client = slclient.NewSoftLayerClient(username, apiKey)
-			c, _ := client.(*slclient.SoftLayerClient)
+			c, ok := client.(*slclient.SoftLayerClient)
+			Expect(ok).To(BeTrue())
 
 			// Assign a malformed dialer to test if the HTTP client really works
 			var errDialFailed = errors.New("dial failed")
@@ -61,8 +64,8 @@ var _ = Describe("SoftLayerClient", func() {
 				},
 			}
 
-			_, err := c.DoRawHttpRequest("/foo", "application/text", bytes.NewBufferString("random text"))
-			Expect(err).To(Equal(errDialFailed))
+			_, doErr := c.DoRawHttpRequest("/foo", "application/text", bytes.NewBufferString("random text"))
+			Expect(doErr).To(Equal(errDialFailed))
 
 		})
 	})
@@ -168,6 +171,20 @@ var _ = Describe("SoftLayerClient", func() {
 			hardwareService, err := client.GetSoftLayer_Hardware_Service()
 			Expect(err).ToNot(HaveOccurred())
 			Expect(hardwareService).ToNot(BeNil())
+		})
+	})
+
+	Context("When HTTP request fails with error codes 400+", func() {
+		BeforeEach(func() {
+			_, ok := client.(*slclient.SoftLayerClient)
+			Expect(ok).To(BeTrue())
+
+			// c.HTTPClient = slclientfakes.NewFakeHttpClient()
+			// Expect(c.HTTPClient).ToNot(BeNil())
+		})
+
+		It("fails DoRawHttpRequest when HttpClient returns 400+ error codes", func() {
+			//TODO
 		})
 	})
 })
