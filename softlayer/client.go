@@ -21,10 +21,14 @@ type Client interface {
 	GetSoftLayer_Dns_Domain_Service() (SoftLayer_Dns_Domain_Service, error)
 	GetSoftLayer_Dns_Domain_ResourceRecord_Service() (SoftLayer_Dns_Domain_ResourceRecord_Service, error)
 
-	DoRawHttpRequest(path string, requestType string, requestBody *bytes.Buffer) ([]byte, error)
-	DoRawHttpRequestWithObjectMask(path string, masks []string, requestType string, requestBody *bytes.Buffer) ([]byte, error)
-	DoRawHttpRequestWithObjectFilter(path string, filters string, requestType string, requestBody *bytes.Buffer) ([]byte, error)
-	DoRawHttpRequestWithObjectFilterAndObjectMask(path string, masks []string, filters string, requestType string, requestBody *bytes.Buffer) ([]byte, error)
+	HttpClient
+}
+
+type HttpClient interface {
+	DoRawHttpRequest(path string, requestType string, requestBody *bytes.Buffer) ([]byte, int, error)
+	DoRawHttpRequestWithObjectMask(path string, masks []string, requestType string, requestBody *bytes.Buffer) ([]byte, int, error)
+	DoRawHttpRequestWithObjectFilter(path string, filters string, requestType string, requestBody *bytes.Buffer) ([]byte, int, error)
+	DoRawHttpRequestWithObjectFilterAndObjectMask(path string, masks []string, filters string, requestType string, requestBody *bytes.Buffer) ([]byte, int, error)
 	GenerateRequestBody(templateData interface{}) (*bytes.Buffer, error)
 	HasErrors(body map[string]interface{}) error
 

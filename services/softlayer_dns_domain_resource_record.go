@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 
+	common "github.com/maximilien/softlayer-go/common"
 	datatypes "github.com/maximilien/softlayer-go/data_types"
 	softlayer "github.com/maximilien/softlayer-go/softlayer"
 )
@@ -36,9 +37,14 @@ func (sldr *SoftLayer_Dns_Domain_ResourceRecord_Service) CreateObject(template d
 		return datatypes.SoftLayer_Dns_Domain_ResourceRecord{}, err
 	}
 
-	response, err := sldr.client.DoRawHttpRequest(fmt.Sprintf("%s/createObject", sldr.getNameByType(template.Type)), "POST", bytes.NewBuffer(requestBody))
+	response, errorCode, err := sldr.client.DoRawHttpRequest(fmt.Sprintf("%s/createObject", sldr.getNameByType(template.Type)), "POST", bytes.NewBuffer(requestBody))
 	if err != nil {
 		return datatypes.SoftLayer_Dns_Domain_ResourceRecord{}, err
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Dns_Domain_ResourceRecord#createObject, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		return datatypes.SoftLayer_Dns_Domain_ResourceRecord{}, errors.New(errorMessage)
 	}
 
 	err = sldr.client.CheckForHttpResponseErrors(response)
@@ -76,7 +82,7 @@ func (sldr *SoftLayer_Dns_Domain_ResourceRecord_Service) GetObject(id int) (data
 		"weight",
 	}
 
-	response, err := sldr.client.DoRawHttpRequestWithObjectMask(fmt.Sprintf("%s/%d/getObject.json", sldr.GetName(), id), objectMask, "GET", new(bytes.Buffer))
+	response, errorCode, err := sldr.client.DoRawHttpRequestWithObjectMask(fmt.Sprintf("%s/%d/getObject.json", sldr.GetName(), id), objectMask, "GET", new(bytes.Buffer))
 	if err != nil {
 		return datatypes.SoftLayer_Dns_Domain_ResourceRecord{}, err
 	}
@@ -84,6 +90,11 @@ func (sldr *SoftLayer_Dns_Domain_ResourceRecord_Service) GetObject(id int) (data
 	err = sldr.client.CheckForHttpResponseErrors(response)
 	if err != nil {
 		return datatypes.SoftLayer_Dns_Domain_ResourceRecord{}, err
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Dns_Domain_ResourceRecord#getObject, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		return datatypes.SoftLayer_Dns_Domain_ResourceRecord{}, errors.New(errorMessage)
 	}
 
 	dns_record := datatypes.SoftLayer_Dns_Domain_ResourceRecord{}
@@ -96,10 +107,15 @@ func (sldr *SoftLayer_Dns_Domain_ResourceRecord_Service) GetObject(id int) (data
 }
 
 func (sldr *SoftLayer_Dns_Domain_ResourceRecord_Service) DeleteObject(recordId int) (bool, error) {
-	response, err := sldr.client.DoRawHttpRequest(fmt.Sprintf("%s/%d.json", sldr.GetName(), recordId), "DELETE", new(bytes.Buffer))
+	response, errorCode, err := sldr.client.DoRawHttpRequest(fmt.Sprintf("%s/%d.json", sldr.GetName(), recordId), "DELETE", new(bytes.Buffer))
 
 	if res := string(response[:]); res != "true" {
 		return false, errors.New(fmt.Sprintf("Failed to delete DNS Domain Record with id '%d', got '%s' as response from the API.", recordId, res))
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Dns_Domain_ResourceRecord#deleteObject, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		return false, errors.New(errorMessage)
 	}
 
 	return true, err
@@ -117,10 +133,15 @@ func (sldr *SoftLayer_Dns_Domain_ResourceRecord_Service) EditObject(recordId int
 		return false, err
 	}
 
-	response, err := sldr.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/editObject.json", sldr.getNameByType(template.Type), recordId), "POST", bytes.NewBuffer(requestBody))
+	response, errorCode, err := sldr.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/editObject.json", sldr.getNameByType(template.Type), recordId), "POST", bytes.NewBuffer(requestBody))
 
 	if res := string(response[:]); res != "true" {
 		return false, errors.New(fmt.Sprintf("Failed to edit DNS Domain Record with id: %d, got '%s' as response from the API.", recordId, res))
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Dns_Domain_ResourceRecord#editObject, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		return false, errors.New(errorMessage)
 	}
 
 	return true, err
