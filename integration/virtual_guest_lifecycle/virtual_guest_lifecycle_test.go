@@ -94,7 +94,7 @@ var _ = Describe("SoftLayer Virtual Guest Lifecycle", func() {
 			virtualGuestService, err := testhelpers.CreateVirtualGuestService()
 			Expect(err).ToNot(HaveOccurred())
 
-			available, err := virtualGuestService.CheckHostDiskAvailability(virtualGuest.Id, 1024)
+			available, err := virtualGuestService.CheckHostDiskAvailability(virtualGuest.Id, 10*1024)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(available).To(BeTrue())
 		})
