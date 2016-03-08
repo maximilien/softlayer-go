@@ -27,10 +27,6 @@
   echo -e "\n cd to base of project..."
   cd $base
 
-  echo -e "\n Print out username and apikey"
-  echo "SL_USERNAME is $SL_USERNAME"
-  echo "SL_API_KEY is $SL_API_KEY"
-
   echo -e "\n Integration Testing packages:"
   ginkgo -r -p -v --noisyPendings=false -skipPackage=dns_domain integration
 
