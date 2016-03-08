@@ -32,7 +32,7 @@
   echo "SL_API_KEY is $SL_API_KEY"
 
   echo -e "\n Integration Testing packages:"
-  ginkgo -r -p -v --noisyPendings integration -skipPackage=dns_domain
+  ginkgo -r -p -v --noisyPendings=false integration --skipPackage=dns_domain
 
   echo -e "\n Vetting packages for potential issues..."
   go tool vet services data_types main client common test_helpers integration
