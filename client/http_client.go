@@ -17,6 +17,11 @@ import (
 type HttpClient struct {
 	HTTPClient *http.Client
 
+	username string
+	apiKey   string
+
+	nonVerbose bool
+
 	templatePath string
 }
 
@@ -26,7 +31,7 @@ const (
 	SL_GO_NON_VERBOSE  = "SL_GO_NON_VERBOSE"
 )
 
-func NewSoftLayerClient(username, apiKey string) *HttpClient {
+func NewHttpClient(username, apiKey string) *HttpClient {
 	pwd, err := os.Getwd()
 	if err != nil {
 		panic(err) // this should be handled by the user
@@ -40,8 +45,6 @@ func NewSoftLayerClient(username, apiKey string) *HttpClient {
 
 		HTTPClient: http.DefaultClient,
 		nonVerbose: checkNonVerbose(),
-
-		softLayerServices: map[string]softlayer.Service{},
 	}
 
 	return hClient

@@ -21,7 +21,7 @@ type Client interface {
 	GetSoftLayer_Dns_Domain_Service() (SoftLayer_Dns_Domain_Service, error)
 	GetSoftLayer_Dns_Domain_ResourceRecord_Service() (SoftLayer_Dns_Domain_ResourceRecord_Service, error)
 
-	HttpClient
+	GetHttpClient() HttpClient
 }
 
 type HttpClient interface {

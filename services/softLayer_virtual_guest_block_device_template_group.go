@@ -26,7 +26,7 @@ func (slvgs *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) GetNam
 }
 
 func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) GetObject(id int) (datatypes.SoftLayer_Virtual_Guest_Block_Device_Template_Group, error) {
-	response, errorCode, err := slvgbdtg.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/getObject.json", slvgbdtg.GetName(), id), "GET", new(bytes.Buffer))
+	response, errorCode, err := slvgbdtg.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/getObject.json", slvgbdtg.GetName(), id), "GET", new(bytes.Buffer))
 	if err != nil {
 		return datatypes.SoftLayer_Virtual_Guest_Block_Device_Template_Group{}, err
 	}
@@ -46,7 +46,7 @@ func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) Get
 }
 
 func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) DeleteObject(id int) (datatypes.SoftLayer_Provisioning_Version1_Transaction, error) {
-	response, errorCode, err := slvgbdtg.client.DoRawHttpRequest(fmt.Sprintf("%s/%d.json", slvgbdtg.GetName(), id), "DELETE", new(bytes.Buffer))
+	response, errorCode, err := slvgbdtg.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d.json", slvgbdtg.GetName(), id), "DELETE", new(bytes.Buffer))
 	if err != nil {
 		return datatypes.SoftLayer_Provisioning_Version1_Transaction{}, err
 	}
@@ -66,7 +66,7 @@ func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) Del
 }
 
 func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) GetDatacenters(id int) ([]datatypes.SoftLayer_Location, error) {
-	response, errorCode, err := slvgbdtg.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/getDatacenters.json", slvgbdtg.GetName(), id), "GET", new(bytes.Buffer))
+	response, errorCode, err := slvgbdtg.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/getDatacenters.json", slvgbdtg.GetName(), id), "GET", new(bytes.Buffer))
 	if err != nil {
 		return []datatypes.SoftLayer_Location{}, err
 	}
@@ -86,7 +86,7 @@ func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) Get
 }
 
 func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) GetSshKeys(id int) ([]datatypes.SoftLayer_Security_Ssh_Key, error) {
-	response, errorCode, err := slvgbdtg.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/getSshKeys.json", slvgbdtg.GetName(), id), "GET", new(bytes.Buffer))
+	response, errorCode, err := slvgbdtg.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/getSshKeys.json", slvgbdtg.GetName(), id), "GET", new(bytes.Buffer))
 	if err != nil {
 		return []datatypes.SoftLayer_Security_Ssh_Key{}, err
 	}
@@ -106,7 +106,7 @@ func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) Get
 }
 
 func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) GetStatus(id int) (datatypes.SoftLayer_Virtual_Guest_Block_Device_Template_Group_Status, error) {
-	response, errorCode, err := slvgbdtg.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/getStatus.json", slvgbdtg.GetName(), id), "GET", new(bytes.Buffer))
+	response, errorCode, err := slvgbdtg.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/getStatus.json", slvgbdtg.GetName(), id), "GET", new(bytes.Buffer))
 	if err != nil {
 		return datatypes.SoftLayer_Virtual_Guest_Block_Device_Template_Group_Status{}, err
 	}
@@ -126,7 +126,7 @@ func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) Get
 }
 
 func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) GetImageType(id int) (datatypes.SoftLayer_Image_Type, error) {
-	response, errorCode, err := slvgbdtg.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/getImageType.json", slvgbdtg.GetName(), id), "GET", new(bytes.Buffer))
+	response, errorCode, err := slvgbdtg.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/getImageType.json", slvgbdtg.GetName(), id), "GET", new(bytes.Buffer))
 	if err != nil {
 		return datatypes.SoftLayer_Image_Type{}, err
 	}
@@ -146,7 +146,7 @@ func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) Get
 }
 
 func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) GetStorageLocations(id int) ([]datatypes.SoftLayer_Location, error) {
-	response, errorCode, err := slvgbdtg.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/getStorageLocations.json", slvgbdtg.GetName(), id), "GET", new(bytes.Buffer))
+	response, errorCode, err := slvgbdtg.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/getStorageLocations.json", slvgbdtg.GetName(), id), "GET", new(bytes.Buffer))
 	if err != nil {
 		return []datatypes.SoftLayer_Location{}, err
 	}
@@ -175,7 +175,7 @@ func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) Cre
 		return datatypes.SoftLayer_Virtual_Guest_Block_Device_Template_Group{}, err
 	}
 
-	response, errorCode, err := slvgbdtg.client.DoRawHttpRequest(fmt.Sprintf("%s/createFromExternalSource.json", slvgbdtg.GetName()), "POST", bytes.NewBuffer(requestBody))
+	response, errorCode, err := slvgbdtg.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/createFromExternalSource.json", slvgbdtg.GetName()), "POST", bytes.NewBuffer(requestBody))
 	if err != nil {
 		return datatypes.SoftLayer_Virtual_Guest_Block_Device_Template_Group{}, err
 	}
@@ -204,7 +204,7 @@ func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) Cop
 		return false, err
 	}
 
-	response, errorCode, err := slvgbdtg.client.DoRawHttpRequest(fmt.Sprintf("%s/copyToExternalSource.json", slvgbdtg.GetName()), "POST", bytes.NewBuffer(requestBody))
+	response, errorCode, err := slvgbdtg.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/copyToExternalSource.json", slvgbdtg.GetName()), "POST", bytes.NewBuffer(requestBody))
 	if err != nil {
 		return false, err
 	}
@@ -222,7 +222,7 @@ func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) Cop
 }
 
 func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) GetImageTypeKeyName(id int) (string, error) {
-	response, errorCode, err := slvgbdtg.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/getImageTypeKeyName.json", slvgbdtg.GetName(), id), "GET", new(bytes.Buffer))
+	response, errorCode, err := slvgbdtg.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/getImageTypeKeyName.json", slvgbdtg.GetName(), id), "GET", new(bytes.Buffer))
 
 	if common.IsHttpErrorCode(errorCode) {
 		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest_Block_Device_Template_Group#getImageTypeKeyName, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
@@ -233,7 +233,7 @@ func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) Get
 }
 
 func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) GetTransaction(id int) (datatypes.SoftLayer_Provisioning_Version1_Transaction, error) {
-	response, errorCode, err := slvgbdtg.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/getTransaction.json", slvgbdtg.GetName(), id), "GET", new(bytes.Buffer))
+	response, errorCode, err := slvgbdtg.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/getTransaction.json", slvgbdtg.GetName(), id), "GET", new(bytes.Buffer))
 	if err != nil {
 		return datatypes.SoftLayer_Provisioning_Version1_Transaction{}, err
 	}
@@ -264,7 +264,7 @@ func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) Den
 		return false, err
 	}
 
-	response, errorCode, err := slvgbdtg.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/denySharingAccess.json", slvgbdtg.GetName(), id), "POST", bytes.NewBuffer(requestBody))
+	response, errorCode, err := slvgbdtg.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/denySharingAccess.json", slvgbdtg.GetName(), id), "POST", bytes.NewBuffer(requestBody))
 	if err != nil {
 		return false, err
 	}
@@ -293,7 +293,7 @@ func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) Per
 		return false, err
 	}
 
-	response, errorCode, err := slvgbdtg.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/permitSharingAccess.json", slvgbdtg.GetName(), id), "POST", bytes.NewBuffer(requestBody))
+	response, errorCode, err := slvgbdtg.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/permitSharingAccess.json", slvgbdtg.GetName(), id), "POST", bytes.NewBuffer(requestBody))
 	if err != nil {
 		return false, err
 	}
@@ -322,7 +322,7 @@ func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) Add
 		return false, err
 	}
 
-	response, errorCode, err := slvgbdtg.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/addLocations.json", slvgbdtg.GetName(), id), "POST", bytes.NewBuffer(requestBody))
+	response, errorCode, err := slvgbdtg.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/addLocations.json", slvgbdtg.GetName(), id), "POST", bytes.NewBuffer(requestBody))
 	if err != nil {
 		return false, err
 	}
@@ -351,7 +351,7 @@ func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) Rem
 		return false, err
 	}
 
-	response, errorCode, err := slvgbdtg.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/removeLocations.json", slvgbdtg.GetName(), id), "POST", bytes.NewBuffer(requestBody))
+	response, errorCode, err := slvgbdtg.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/removeLocations.json", slvgbdtg.GetName(), id), "POST", bytes.NewBuffer(requestBody))
 	if err != nil {
 		return false, err
 	}
@@ -380,7 +380,7 @@ func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) Set
 		return false, err
 	}
 
-	response, errorCode, err := slvgbdtg.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/setAvailableLocations.json", slvgbdtg.GetName(), id), "POST", bytes.NewBuffer(requestBody))
+	response, errorCode, err := slvgbdtg.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/setAvailableLocations.json", slvgbdtg.GetName(), id), "POST", bytes.NewBuffer(requestBody))
 	if err != nil {
 		return false, err
 	}

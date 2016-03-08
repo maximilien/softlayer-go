@@ -37,7 +37,7 @@ func (slhs *softLayer_Hardware_Service) CreateObject(template datatypes.SoftLaye
 		return datatypes.SoftLayer_Hardware{}, err
 	}
 
-	response, errorCode, err := slhs.client.DoRawHttpRequest(fmt.Sprintf("%s.json", slhs.GetName()), "POST", bytes.NewBuffer(requestBody))
+	response, errorCode, err := slhs.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s.json", slhs.GetName()), "POST", bytes.NewBuffer(requestBody))
 	if err != nil {
 		return datatypes.SoftLayer_Hardware{}, err
 	}
@@ -47,7 +47,7 @@ func (slhs *softLayer_Hardware_Service) CreateObject(template datatypes.SoftLaye
 		return datatypes.SoftLayer_Hardware{}, errors.New(errorMessage)
 	}
 
-	err = slhs.client.CheckForHttpResponseErrors(response)
+	err = slhs.client.GetHttpClient().CheckForHttpResponseErrors(response)
 	if err != nil {
 		return datatypes.SoftLayer_Hardware{}, err
 	}
@@ -76,7 +76,7 @@ func (slhs *softLayer_Hardware_Service) GetObject(id string) (datatypes.SoftLaye
 		"operatingSystem.passwords.username",
 	}
 
-	response, errorCode, err := slhs.client.DoRawHttpRequestWithObjectMask(fmt.Sprintf("%s/%s.json", slhs.GetName(), id), objectMask, "GET", new(bytes.Buffer))
+	response, errorCode, err := slhs.client.GetHttpClient().DoRawHttpRequestWithObjectMask(fmt.Sprintf("%s/%s.json", slhs.GetName(), id), objectMask, "GET", new(bytes.Buffer))
 	if err != nil {
 		return datatypes.SoftLayer_Hardware{}, err
 	}
@@ -86,7 +86,7 @@ func (slhs *softLayer_Hardware_Service) GetObject(id string) (datatypes.SoftLaye
 		return datatypes.SoftLayer_Hardware{}, errors.New(errorMessage)
 	}
 
-	err = slhs.client.CheckForHttpResponseErrors(response)
+	err = slhs.client.GetHttpClient().CheckForHttpResponseErrors(response)
 	if err != nil {
 		return datatypes.SoftLayer_Hardware{}, err
 	}

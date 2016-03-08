@@ -46,7 +46,7 @@ var _ = Describe("SoftLayer_Product_Order", func() {
 
 	Context("#PlaceOrder", func() {
 		BeforeEach(func() {
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Product_Order_placeOrder.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Product_Order_placeOrder.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -60,7 +60,7 @@ var _ = Describe("SoftLayer_Product_Order", func() {
 
 	Context("#PlaceContainerOrderNetworkPerformanceStorageIscsi", func() {
 		BeforeEach(func() {
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Product_Order_placeOrder.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Product_Order_placeOrder.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -74,7 +74,7 @@ var _ = Describe("SoftLayer_Product_Order", func() {
 
 	Context("#PlaceContainerOrderVirtualGuestUpgrade", func() {
 		BeforeEach(func() {
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Product_Order_placeOrder.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Product_Order_placeOrder.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 

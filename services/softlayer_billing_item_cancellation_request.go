@@ -37,7 +37,7 @@ func (slbicr *softLayer_Billing_Item_Cancellation_Request_Service) CreateObject(
 		return datatypes.SoftLayer_Billing_Item_Cancellation_Request{}, err
 	}
 
-	responseBytes, errorCode, err := slbicr.client.DoRawHttpRequest(fmt.Sprintf("%s/createObject.json", slbicr.GetName()), "POST", bytes.NewBuffer(requestBody))
+	responseBytes, errorCode, err := slbicr.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/createObject.json", slbicr.GetName()), "POST", bytes.NewBuffer(requestBody))
 	if err != nil {
 		return datatypes.SoftLayer_Billing_Item_Cancellation_Request{}, err
 	}

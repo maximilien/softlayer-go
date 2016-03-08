@@ -45,7 +45,7 @@ var _ = Describe("SoftLayer_Product_Package", func() {
 
 	Context("#GetItemPrices", func() {
 		BeforeEach(func() {
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Product_Package_getItemPrices.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Product_Package_getItemPrices.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -60,7 +60,7 @@ var _ = Describe("SoftLayer_Product_Package", func() {
 
 	Context("#GetItemPricesBySize", func() {
 		BeforeEach(func() {
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Product_Package_getItemPrices.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Product_Package_getItemPrices.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -75,7 +75,7 @@ var _ = Describe("SoftLayer_Product_Package", func() {
 
 	Context("#GetItems", func() {
 		BeforeEach(func() {
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Product_Package_getItems.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Product_Package_getItems.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -92,14 +92,14 @@ var _ = Describe("SoftLayer_Product_Package", func() {
 
 		BeforeEach(func() {
 			response, err := testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Product_Package_getAllObjects_virtual_server.json")
-			fakeClient.DoRawHttpRequestResponses = append(fakeClient.DoRawHttpRequestResponses, response)
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponses = append(fakeClient.FakeHttpClient.DoRawHttpRequestResponses, response)
 
 			Expect(err).ToNot(HaveOccurred())
 		})
 
 		It("returns an array of datatypes.SoftLayer_Product_Item", func() {
 			response, err := testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Product_Package_getItems.json")
-			fakeClient.DoRawHttpRequestResponses = append(fakeClient.DoRawHttpRequestResponses, response)
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponses = append(fakeClient.FakeHttpClient.DoRawHttpRequestResponses, response)
 
 			productItems, err := productPackageService.GetItemsByType("VIRTUAL_SERVER_INSTANCE")
 			Expect(err).ToNot(HaveOccurred())
@@ -111,7 +111,7 @@ var _ = Describe("SoftLayer_Product_Package", func() {
 
 	Context("#GetPackagesByType", func() {
 		BeforeEach(func() {
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Product_Package_getAllObjects_virtual_server.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Product_Package_getAllObjects_virtual_server.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -124,7 +124,7 @@ var _ = Describe("SoftLayer_Product_Package", func() {
 		})
 
 		It("skips packaged marked OUTLET", func() {
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Product_Package_getAllObjects_virtual_server_with_OUTLET.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Product_Package_getAllObjects_virtual_server_with_OUTLET.json")
 			productPackages, err := productPackageService.GetPackagesByType("VIRTUAL_SERVER_INSTANCE")
 			Expect(err).ToNot(HaveOccurred())
 			Expect(len(productPackages)).To(Equal(3)) // OUTLET should be skipped
@@ -135,14 +135,14 @@ var _ = Describe("SoftLayer_Product_Package", func() {
 
 	Context("#GetOnePackageByType", func() {
 		BeforeEach(func() {
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Product_Package_getAllObjects_virtual_server.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Product_Package_getAllObjects_virtual_server.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
 		It("reports error when NO product packages are found", func() {
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Product_Package_getAllObjects_virtual_server_empty.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Product_Package_getAllObjects_virtual_server_empty.json")
 
-			GinkgoWriter.Write(fakeClient.DoRawHttpRequestResponse)
+			GinkgoWriter.Write(fakeClient.FakeHttpClient.DoRawHttpRequestResponse)
 
 			_, err := productPackageService.GetOnePackageByType("SOME_TYPE")
 			Expect(err).To(HaveOccurred())
@@ -150,7 +150,7 @@ var _ = Describe("SoftLayer_Product_Package", func() {
 		})
 
 		It("returns datatypes.Softlayer_Product_Package", func() {
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Product_Package_getAllObjects_virtual_server.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Product_Package_getAllObjects_virtual_server.json")
 			productPackage, err := productPackageService.GetOnePackageByType("VIRTUAL_SERVER_INSTANCE")
 			Expect(err).ToNot(HaveOccurred())
 			Expect(productPackage.Id).To(Equal(200))

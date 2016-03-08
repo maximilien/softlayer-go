@@ -57,7 +57,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 
 	Context("#CreateObject", func() {
 		BeforeEach(func() {
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_createObject.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_createObject.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -106,7 +106,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 	Context("#GetObject", func() {
 		BeforeEach(func() {
 			virtualGuest.Id = 1234567
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_getObject.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_getObject.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -151,7 +151,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 	Context("#EditObject", func() {
 		BeforeEach(func() {
 			virtualGuest.Id = 1234567
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_editObject.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_editObject.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -174,14 +174,14 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 		})
 
 		It("sucessfully reload OS on the virtual guest instance", func() {
-			fakeClient.DoRawHttpRequestResponse = []byte(`"1"`)
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte(`"1"`)
 
 			err = virtualGuestService.ReloadOperatingSystem(virtualGuest.Id, reload_OS_Config)
 			Expect(err).ToNot(HaveOccurred())
 		})
 
 		It("fails to reload OS on the virtual guest instance", func() {
-			fakeClient.DoRawHttpRequestResponse = []byte(`"99"`)
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte(`"99"`)
 
 			err = virtualGuestService.ReloadOperatingSystem(virtualGuest.Id, reload_OS_Config)
 			Expect(err).To(HaveOccurred())
@@ -194,14 +194,14 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 		})
 
 		It("sucessfully deletes the SoftLayer_Virtual_Guest instance", func() {
-			fakeClient.DoRawHttpRequestResponse = []byte("true")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("true")
 			deleted, err := virtualGuestService.DeleteObject(virtualGuest.Id)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(deleted).To(BeTrue())
 		})
 
 		It("fails to delete the SoftLayer_Virtual_Guest instance", func() {
-			fakeClient.DoRawHttpRequestResponse = []byte("false")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("false")
 			deleted, err := virtualGuestService.DeleteObject(virtualGuest.Id)
 			Expect(err).To(HaveOccurred())
 			Expect(deleted).To(BeFalse())
@@ -210,7 +210,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 
 	Context("#AttachEphemeralDisk", func() {
 		BeforeEach(func() {
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Product_Order_placeOrder.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Product_Order_placeOrder.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -230,7 +230,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 
 	Context("#UpgradeObject", func() {
 		BeforeEach(func() {
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Product_Order_placeOrder.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Product_Order_placeOrder.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -246,7 +246,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 
 	Context("#GetAvailableUpgradeItemPrices", func() {
 		BeforeEach(func() {
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Product_Order_placeOrder.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Product_Order_placeOrder.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -272,7 +272,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 	Context("#GetPowerState", func() {
 		BeforeEach(func() {
 			virtualGuest.Id = 1234567
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_getPowerState.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_getPowerState.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -286,7 +286,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 	Context("#GetPrimaryIpAddress", func() {
 		BeforeEach(func() {
 			virtualGuest.Id = 1234567
-			fakeClient.DoRawHttpRequestResponse = []byte("159.99.99.99")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("159.99.99.99")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -300,7 +300,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 	Context("#GetActiveTransaction", func() {
 		BeforeEach(func() {
 			virtualGuest.Id = 1234567
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_getActiveTransaction.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_getActiveTransaction.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -317,7 +317,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 	Context("#GetLastTransaction", func() {
 		BeforeEach(func() {
 			virtualGuest.Id = 1234567
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_getLastTransaction.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_getLastTransaction.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -334,7 +334,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 	Context("#GetActiveTransactions", func() {
 		BeforeEach(func() {
 			virtualGuest.Id = 1234567
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_getActiveTransactions.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_getActiveTransactions.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -355,7 +355,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 	Context("#GetSshKeys", func() {
 		BeforeEach(func() {
 			virtualGuest.Id = 1234567
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_getSshKeys.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_getSshKeys.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -382,7 +382,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 		})
 
 		It("sucessfully power cycle virtual guest instance", func() {
-			fakeClient.DoRawHttpRequestResponse = []byte("true")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("true")
 
 			rebooted, err := virtualGuestService.PowerCycle(virtualGuest.Id)
 			Expect(err).ToNot(HaveOccurred())
@@ -390,7 +390,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 		})
 
 		It("fails to power cycle virtual guest instance", func() {
-			fakeClient.DoRawHttpRequestResponse = []byte("false")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("false")
 
 			rebooted, err := virtualGuestService.PowerCycle(virtualGuest.Id)
 			Expect(err).To(HaveOccurred())
@@ -404,7 +404,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 		})
 
 		It("sucessfully power off virtual guest instance", func() {
-			fakeClient.DoRawHttpRequestResponse = []byte("true")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("true")
 
 			rebooted, err := virtualGuestService.PowerOff(virtualGuest.Id)
 			Expect(err).ToNot(HaveOccurred())
@@ -412,7 +412,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 		})
 
 		It("fails to power off virtual guest instance", func() {
-			fakeClient.DoRawHttpRequestResponse = []byte("false")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("false")
 
 			rebooted, err := virtualGuestService.PowerOff(virtualGuest.Id)
 			Expect(err).To(HaveOccurred())
@@ -426,7 +426,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 		})
 
 		It("sucessfully power off soft virtual guest instance", func() {
-			fakeClient.DoRawHttpRequestResponse = []byte("true")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("true")
 
 			rebooted, err := virtualGuestService.PowerOffSoft(virtualGuest.Id)
 			Expect(err).ToNot(HaveOccurred())
@@ -434,7 +434,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 		})
 
 		It("fails to power off soft virtual guest instance", func() {
-			fakeClient.DoRawHttpRequestResponse = []byte("false")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("false")
 
 			rebooted, err := virtualGuestService.PowerOffSoft(virtualGuest.Id)
 			Expect(err).To(HaveOccurred())
@@ -448,7 +448,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 		})
 
 		It("sucessfully power on virtual guest instance", func() {
-			fakeClient.DoRawHttpRequestResponse = []byte("true")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("true")
 
 			rebooted, err := virtualGuestService.PowerOn(virtualGuest.Id)
 			Expect(err).ToNot(HaveOccurred())
@@ -456,7 +456,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 		})
 
 		It("fails to power on virtual guest instance", func() {
-			fakeClient.DoRawHttpRequestResponse = []byte("false")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("false")
 
 			rebooted, err := virtualGuestService.PowerOn(virtualGuest.Id)
 			Expect(err).To(HaveOccurred())
@@ -470,7 +470,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 		})
 
 		It("sucessfully default reboots virtual guest instance", func() {
-			fakeClient.DoRawHttpRequestResponse = []byte("true")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("true")
 
 			rebooted, err := virtualGuestService.RebootDefault(virtualGuest.Id)
 			Expect(err).ToNot(HaveOccurred())
@@ -478,7 +478,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 		})
 
 		It("fails to default reboot virtual guest instance", func() {
-			fakeClient.DoRawHttpRequestResponse = []byte("false")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("false")
 
 			rebooted, err := virtualGuestService.RebootDefault(virtualGuest.Id)
 			Expect(err).To(HaveOccurred())
@@ -492,7 +492,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 		})
 
 		It("sucessfully soft reboots virtual guest instance", func() {
-			fakeClient.DoRawHttpRequestResponse = []byte("true")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("true")
 
 			rebooted, err := virtualGuestService.RebootSoft(virtualGuest.Id)
 			Expect(err).ToNot(HaveOccurred())
@@ -500,7 +500,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 		})
 
 		It("fails to soft reboot virtual guest instance", func() {
-			fakeClient.DoRawHttpRequestResponse = []byte("false")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("false")
 
 			rebooted, err := virtualGuestService.RebootSoft(virtualGuest.Id)
 			Expect(err).To(HaveOccurred())
@@ -514,7 +514,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 		})
 
 		It("sucessfully hard reboot virtual guest instance", func() {
-			fakeClient.DoRawHttpRequestResponse = []byte("true")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("true")
 
 			rebooted, err := virtualGuestService.RebootHard(virtualGuest.Id)
 			Expect(err).ToNot(HaveOccurred())
@@ -522,7 +522,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 		})
 
 		It("fails to hard reboot virtual guest instance", func() {
-			fakeClient.DoRawHttpRequestResponse = []byte("false")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("false")
 
 			rebooted, err := virtualGuestService.RebootHard(virtualGuest.Id)
 			Expect(err).To(HaveOccurred())
@@ -533,7 +533,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 	Context("#SetUserMetadata", func() {
 		BeforeEach(func() {
 			virtualGuest.Id = 1234567
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_setMetadata.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_setMetadata.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -548,7 +548,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 	Context("#GetUserData", func() {
 		BeforeEach(func() {
 			virtualGuest.Id = 1234567
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_getUserData.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_getUserData.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -575,7 +575,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 
 		Context("when there are no API errors", func() {
 			It("checks that the virtual guest instance is pigable", func() {
-				fakeClient.DoRawHttpRequestResponse = []byte("true")
+				fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("true")
 
 				pingable, err := virtualGuestService.IsPingable(virtualGuest.Id)
 				Expect(err).ToNot(HaveOccurred())
@@ -583,7 +583,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			})
 
 			It("checks that the virtual guest instance is NOT pigable", func() {
-				fakeClient.DoRawHttpRequestResponse = []byte("false")
+				fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("false")
 
 				pingable, err := virtualGuestService.IsPingable(virtualGuest.Id)
 				Expect(err).ToNot(HaveOccurred())
@@ -593,7 +593,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 
 		Context("when there are API errors", func() {
 			It("returns false and error", func() {
-				fakeClient.DoRawHttpRequestError = errors.New("fake-error")
+				fakeClient.FakeHttpClient.DoRawHttpRequestError = errors.New("fake-error")
 
 				pingable, err := virtualGuestService.IsPingable(virtualGuest.Id)
 				Expect(err).To(HaveOccurred())
@@ -603,7 +603,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 
 		Context("when the API returns invalid or empty result", func() {
 			It("returns false and error", func() {
-				fakeClient.DoRawHttpRequestResponse = []byte("fake")
+				fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("fake")
 
 				pingable, err := virtualGuestService.IsPingable(virtualGuest.Id)
 				Expect(err).To(HaveOccurred())
@@ -620,7 +620,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 
 		Context("when there are no API errors", func() {
 			It("checks that the virtual guest instance backend is pigable", func() {
-				fakeClient.DoRawHttpRequestResponse = []byte("true")
+				fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("true")
 
 				pingable, err := virtualGuestService.IsBackendPingable(virtualGuest.Id)
 				Expect(err).ToNot(HaveOccurred())
@@ -628,7 +628,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			})
 
 			It("checks that the virtual guest instance backend is NOT pigable", func() {
-				fakeClient.DoRawHttpRequestResponse = []byte("false")
+				fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("false")
 
 				pingable, err := virtualGuestService.IsBackendPingable(virtualGuest.Id)
 				Expect(err).ToNot(HaveOccurred())
@@ -638,7 +638,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 
 		Context("when there are API errors", func() {
 			It("returns false and error", func() {
-				fakeClient.DoRawHttpRequestError = errors.New("fake-error")
+				fakeClient.FakeHttpClient.DoRawHttpRequestError = errors.New("fake-error")
 
 				pingable, err := virtualGuestService.IsBackendPingable(virtualGuest.Id)
 				Expect(err).To(HaveOccurred())
@@ -648,7 +648,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 
 		Context("when the API returns invalid or empty result", func() {
 			It("returns false and error", func() {
-				fakeClient.DoRawHttpRequestResponse = []byte("fake")
+				fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("fake")
 
 				pingable, err := virtualGuestService.IsBackendPingable(virtualGuest.Id)
 				Expect(err).To(HaveOccurred())
@@ -661,7 +661,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 	Context("#ConfigureMetadataDisk", func() {
 		BeforeEach(func() {
 			virtualGuest.Id = 1234567
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_configureMetadataDisk.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_configureMetadataDisk.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -689,7 +689,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 	Context("#GetUpgradeItemPrices", func() {
 		BeforeEach(func() {
 			virtualGuest.Id = 1234567
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_getUpgradeItemPrices.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_getUpgradeItemPrices.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -706,7 +706,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 	Context("#SetTags", func() {
 		BeforeEach(func() {
 			virtualGuest.Id = 1234567
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_setTags.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_setTags.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -722,7 +722,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 	Context("#GetReferenceTags", func() {
 		BeforeEach(func() {
 			virtualGuest.Id = 1234567
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_getReferenceTags.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_getReferenceTags.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -816,7 +816,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 	Context("#AttachDiskImage", func() {
 		BeforeEach(func() {
 			virtualGuest.Id = 1234567
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_attachDiskImage.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_attachDiskImage.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -832,7 +832,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 	Context("#DetachDiskImage", func() {
 		BeforeEach(func() {
 			virtualGuest.Id = 1234567
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_detachDiskImage.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_detachDiskImage.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -848,7 +848,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 	Context("#ActivatePrivatePort", func() {
 		BeforeEach(func() {
 			virtualGuest.Id = 1234567
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_activatePrivatePort.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_activatePrivatePort.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -863,7 +863,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 	Context("#ActivatePublicPort", func() {
 		BeforeEach(func() {
 			virtualGuest.Id = 1234567
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_activatePublicPort.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_activatePublicPort.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -878,7 +878,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 	Context("#ShutdownPrivatePort", func() {
 		BeforeEach(func() {
 			virtualGuest.Id = 1234567
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_shutdownPrivatePort.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_shutdownPrivatePort.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -893,7 +893,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 	Context("#ShutdownPublicPort", func() {
 		BeforeEach(func() {
 			virtualGuest.Id = 1234567
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_shutdownPublicPort.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_shutdownPublicPort.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -908,7 +908,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 	Context("#GetAllowedHost", func() {
 		BeforeEach(func() {
 			virtualGuest.Id = 1234567
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_getAllowedHost.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_getAllowedHost.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -924,7 +924,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 	Context("#GetNetworkVlans", func() {
 		BeforeEach(func() {
 			virtualGuest.Id = 1234567
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_getNetworkVlans.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_getNetworkVlans.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -947,7 +947,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 	Context("#CheckHostDiskAvailability", func() {
 		BeforeEach(func() {
 			virtualGuest.Id = 1234567
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_checkHostDiskAvailability.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_checkHostDiskAvailability.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -962,7 +962,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 	Context("#CaptureImage", func() {
 		BeforeEach(func() {
 			virtualGuest.Id = 1234567
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_captureImage.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_captureImage.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 

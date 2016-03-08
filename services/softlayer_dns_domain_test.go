@@ -46,7 +46,7 @@ var _ = Describe("SoftLayer_Dns_Domain", func() {
 
 	Context("#CreateDns", func() {
 		BeforeEach(func() {
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Dns_Domain_createObject.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Dns_Domain_createObject.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 

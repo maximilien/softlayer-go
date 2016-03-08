@@ -41,7 +41,7 @@ func (sldds *softLayer_Dns_Domain_Service) CreateObject(template datatypes.SoftL
 		return datatypes.SoftLayer_Dns_Domain{}, err
 	}
 
-	response, errorCode, err := sldds.client.DoRawHttpRequest(fmt.Sprintf("%s.json", sldds.GetName()), "POST", bytes.NewBuffer(requestBody))
+	response, errorCode, err := sldds.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s.json", sldds.GetName()), "POST", bytes.NewBuffer(requestBody))
 	if err != nil {
 		return datatypes.SoftLayer_Dns_Domain{}, err
 	}
@@ -51,7 +51,7 @@ func (sldds *softLayer_Dns_Domain_Service) CreateObject(template datatypes.SoftL
 		return datatypes.SoftLayer_Dns_Domain{}, errors.New(errorMessage)
 	}
 
-	err = sldds.client.CheckForHttpResponseErrors(response)
+	err = sldds.client.GetHttpClient().CheckForHttpResponseErrors(response)
 	if err != nil {
 		return datatypes.SoftLayer_Dns_Domain{}, err
 	}
@@ -78,7 +78,7 @@ func (sldds *softLayer_Dns_Domain_Service) GetObject(dnsId int) (datatypes.SoftL
 		"secondary",
 	}
 
-	response, errorCode, err := sldds.client.DoRawHttpRequestWithObjectMask(fmt.Sprintf("%s/%d/getObject.json", sldds.GetName(), dnsId), objectMask, "GET", new(bytes.Buffer))
+	response, errorCode, err := sldds.client.GetHttpClient().DoRawHttpRequestWithObjectMask(fmt.Sprintf("%s/%d/getObject.json", sldds.GetName(), dnsId), objectMask, "GET", new(bytes.Buffer))
 	if err != nil {
 		return datatypes.SoftLayer_Dns_Domain{}, err
 	}
@@ -98,7 +98,7 @@ func (sldds *softLayer_Dns_Domain_Service) GetObject(dnsId int) (datatypes.SoftL
 }
 
 func (sldds *softLayer_Dns_Domain_Service) DeleteObject(dnsId int) (bool, error) {
-	response, errorCode, err := sldds.client.DoRawHttpRequest(fmt.Sprintf("%s/%d.json", sldds.GetName(), dnsId), "DELETE", new(bytes.Buffer))
+	response, errorCode, err := sldds.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d.json", sldds.GetName(), dnsId), "DELETE", new(bytes.Buffer))
 
 	if response_value := string(response[:]); response_value != "true" {
 		return false, errors.New(fmt.Sprintf("Failed to delete dns domain with id '%d', got '%s' as response from the API", dnsId, response_value))

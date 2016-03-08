@@ -1,26 +1,14 @@
 package client
 
 import (
-	"bytes"
-	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
-	"net/http"
-	"net/http/httputil"
-	"os"
-	"path/filepath"
-	"regexp"
-	"text/template"
 
 	services "github.com/maximilien/softlayer-go/services"
 	softlayer "github.com/maximilien/softlayer-go/softlayer"
 )
 
 type SoftLayerClient struct {
-	username string
-	apiKey   string
-
 	HttpClient softlayer.HttpClient
 
 	softLayerServices map[string]softlayer.Service
@@ -28,10 +16,7 @@ type SoftLayerClient struct {
 
 func NewSoftLayerClient(username, apiKey string) *SoftLayerClient {
 	slc := &SoftLayerClient{
-		username: username,
-		apiKey:   apiKey,
-
-		HTTPClient: NewHttpClient(),
+		HttpClient: NewHttpClient(username, apiKey),
 
 		softLayerServices: map[string]softlayer.Service{},
 	}
@@ -42,6 +27,10 @@ func NewSoftLayerClient(username, apiKey string) *SoftLayerClient {
 }
 
 //softlayer.Client interface methods
+
+func (slc *SoftLayerClient) GetHttpClient() softlayer.HttpClient {
+	return slc.HttpClient
+}
 
 func (slc *SoftLayerClient) GetService(serviceName string) (softlayer.Service, error) {
 	slService, ok := slc.softLayerServices[serviceName]

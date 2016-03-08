@@ -49,7 +49,7 @@ var _ = Describe("SoftLayer_Network_Storage", func() {
 
 	Context("#CreateIscsiVolume", func() {
 		BeforeEach(func() {
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Network_Storage_Service_getIscsiVolume.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Network_Storage_Service_getIscsiVolume.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 		It("fails with error if the volume size is negative", func() {
@@ -60,7 +60,7 @@ var _ = Describe("SoftLayer_Network_Storage", func() {
 
 	Context("#GetIscsiVolume", func() {
 		BeforeEach(func() {
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Network_Storage_Service_getIscsiVolume.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Network_Storage_Service_getIscsiVolume.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -77,7 +77,7 @@ var _ = Describe("SoftLayer_Network_Storage", func() {
 
 	Context("#HasAllowedVirtualGuest", func() {
 		It("virtual guest allows to access volume", func() {
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Network_Storage_Service_getAllowedVirtualGuests.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Network_Storage_Service_getAllowedVirtualGuests.json")
 			Expect(err).ToNot(HaveOccurred())
 			_, err := networkStorageService.HasAllowedVirtualGuest(123, 456)
 			Expect(err).ToNot(HaveOccurred())
@@ -103,7 +103,7 @@ var _ = Describe("SoftLayer_Network_Storage", func() {
 				PrimaryBackendIpAddress:  "fake-primary-backend-ip",
 				PrimaryIpAddress:         "fake-primary-ip",
 			}
-			fakeClient.DoRawHttpRequestResponse = []byte("true")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("true")
 			resp, err := networkStorageService.AttachIscsiVolume(virtualGuest, 123)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(resp).To(Equal(true))
@@ -130,7 +130,7 @@ var _ = Describe("SoftLayer_Network_Storage", func() {
 				PrimaryIpAddress:         "fake-primary-ip",
 			}
 			volume.Id = 1234567
-			fakeClient.DoRawHttpRequestResponse = []byte("true")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("true")
 			err = networkStorageService.DetachIscsiVolume(virtualGuest, volume.Id)
 			Expect(err).ToNot(HaveOccurred())
 		})
@@ -142,14 +142,14 @@ var _ = Describe("SoftLayer_Network_Storage", func() {
 		})
 
 		It("sucessfully deletes the SoftLayer_Network_Storage volume", func() {
-			fakeClient.DoRawHttpRequestResponse = []byte("true")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("true")
 			deleted, err := networkStorageService.DeleteObject(volume.Id)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(deleted).To(BeTrue())
 		})
 
 		It("fails to delete the SoftLayer_Network_Storage volume", func() {
-			fakeClient.DoRawHttpRequestResponse = []byte("false")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("false")
 			deleted, err := networkStorageService.DeleteObject(volume.Id)
 			Expect(err).To(HaveOccurred())
 			Expect(deleted).To(BeFalse())

@@ -50,7 +50,7 @@ var _ = Describe("SoftLayer_Virtual_Disk_Image_Service", func() {
 
 	Context("#GetObject", func() {
 		BeforeEach(func() {
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Disk_Image_Service_getObject.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Disk_Image_Service_getObject.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 

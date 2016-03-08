@@ -46,7 +46,7 @@ var _ = Describe("SoftLayer_Hardware", func() {
 
 	Context("#CreateObject", func() {
 		BeforeEach(func() {
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Hardware_Service_createObject.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Hardware_Service_createObject.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -75,7 +75,7 @@ var _ = Describe("SoftLayer_Hardware", func() {
 
 	Context("#GetObject", func() {
 		BeforeEach(func() {
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Hardware_Service_createObject.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Hardware_Service_createObject.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
