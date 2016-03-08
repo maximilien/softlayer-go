@@ -697,8 +697,6 @@ func CreateDnsDomainService() (softlayer.SoftLayer_Dns_Domain_Service, error) {
 		return nil, err
 	}
 
-	fmt.Printf("print out apikey is %s", apiKey)
-
 	client := slclient.NewSoftLayerClient(username, apiKey)
 	dnsDomainService, err := client.GetSoftLayer_Dns_Domain_Service()
 	if err != nil {
