@@ -45,7 +45,7 @@ var _ = Describe("SoftLayer_Network_Storage_Allowed_Host", func() {
 
 	Context("#GetCredential", func() {
 		BeforeEach(func() {
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Network_Storage_Allowed_Host_Service_getCredential.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Network_Storage_Allowed_Host_Service_getCredential.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 

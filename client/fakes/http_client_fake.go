@@ -1,65 +1,140 @@
 package client_fakes
 
 import (
-	"io"
-	"net/http"
-	"net/url"
+	"bytes"
 )
 
 type FakeHttpClient struct {
-	DoRequest *http.Request
+	Username string
+	ApiKey   string
 
-	GetUrl string
+	DoRawHttpRequestInt            int
+	DoRawHttpRequestError          error
+	DoRawHttpRequestResponse       []byte
+	DoRawHttpRequestResponses      [][]byte
+	DoRawHttpRequestResponsesCount int
+	DoRawHttpRequestResponsesIndex int
 
-	HeadUrl string
+	//DoRawHttpRequest
+	DoRawHttpRequestPath        string
+	DoRawHttpRequestRequestType string
+	DoRawHttpRequestRequestBody *bytes.Buffer
 
-	PostUrl      string
-	PostBodyType string
-	PostBody     io.Reader
+	//DoRawHttpRequestWithObject
+	DoRawHttpRequestWithObjectMaskPath        string
+	DoRawHttpRequestWithObjectMaskMasks       []string
+	DoRawHttpRequestWithObjectMaskRequestType string
+	DoRawHttpRequestWithObjectMaskRequestBody *bytes.Buffer
 
-	PostFormUrl string
-	PostData    url.Values
+	//DoRawHttpRequestWithObjectFilter
+	DoRawHttpRequestWithObjectFilterPath        string
+	DoRawHttpRequestWithObjectFilterFilters     string
+	DoRawHttpRequestWithObjectFilterRequestType string
+	DoRawHttpRequestWithObjectFilterRequestBody *bytes.Buffer
 
-	FakeResponse *http.Response
-	FakeErr      error
+	//DoRawHttpRequestWithObjectFilterAndObjectMask
+	DoRawHttpRequestWithObjectFilterAndObjectMaskPath        string
+	DoRawHttpRequestWithObjectFilterAndObjectMaskMasks       []string
+	DoRawHttpRequestWithObjectFilterAndObjectMaskFilters     string
+	DoRawHttpRequestWithObjectFilterAndObjectMaskRequestType string
+	DoRawHttpRequestWithObjectFilterAndObjectMaskRequestBody *bytes.Buffer
+
+	//GenerateRequest
+	GenerateRequestBodyTemplateData interface{}
+	GenerateRequestBodyBuffer       *bytes.Buffer
+	GenerateRequestBodyError        error
+
+	//HasErrors
+	HasErrorsBody  map[string]interface{}
+	HasErrorsError error
+
+	//CheclForHttpResponseErrors
+	CheckForHttpResponseErrorsData  []byte
+	CheckForHttpResponseErrorsError error
 }
 
-func NewFakeHttpClient() *FakeHttpClient {
+func NewFakeHttpClient(username, apiKey string) *FakeHttpClient {
 	return &FakeHttpClient{
-		FakeResponse: &http.Response{},
-		FakeErr:      nil,
+		Username: username,
+		ApiKey:   apiKey,
+
+		DoRawHttpRequestInt:            200,
+		DoRawHttpRequestError:          nil,
+		DoRawHttpRequestResponses:      [][]byte{},
+		DoRawHttpRequestResponsesCount: 0,
+		DoRawHttpRequestResponsesIndex: 0,
 	}
 }
 
-func (c *FakeHttpClient) Do(req *http.Request) (*http.Response, error) {
-	c.DoRequest = req
+//softlayer.HttpClient interface methods
 
-	return c.FakeResponse, c.FakeErr
+func (fhc *FakeHttpClient) DoRawHttpRequest(path string, requestType string, requestBody *bytes.Buffer) ([]byte, int, error) {
+	fhc.DoRawHttpRequestPath = path
+	fhc.DoRawHttpRequestRequestType = requestType
+	fhc.DoRawHttpRequestRequestBody = requestBody
+
+	return fhc.processResponse()
 }
 
-func (c *FakeHttpClient) Get(url string) (*http.Response, error) {
-	c.GetUrl = url
+func (fhc *FakeHttpClient) DoRawHttpRequestWithObjectMask(path string, masks []string, requestType string, requestBody *bytes.Buffer) ([]byte, int, error) {
+	fhc.DoRawHttpRequestWithObjectMaskPath = path
+	fhc.DoRawHttpRequestWithObjectMaskMasks = masks
+	fhc.DoRawHttpRequestWithObjectMaskRequestType = requestType
+	fhc.DoRawHttpRequestWithObjectMaskRequestBody = requestBody
 
-	return c.FakeResponse, c.FakeErr
+	return fhc.processResponse()
 }
 
-func (c *FakeHttpClient) Head(url string) (*http.Response, error) {
-	c.HeadUrl = url
+func (fhc *FakeHttpClient) DoRawHttpRequestWithObjectFilter(path string, filters string, requestType string, requestBody *bytes.Buffer) ([]byte, int, error) {
+	fhc.DoRawHttpRequestWithObjectFilterPath = path
+	fhc.DoRawHttpRequestWithObjectFilterFilters = filters
+	fhc.DoRawHttpRequestWithObjectFilterRequestType = requestType
+	fhc.DoRawHttpRequestWithObjectFilterRequestBody = requestBody
 
-	return c.FakeResponse, c.FakeErr
+	return fhc.processResponse()
 }
 
-func (c *FakeHttpClient) Post(url string, bodyType string, body io.Reader) (*http.Response, error) {
-	c.PostUrl = url
-	c.PostBodyType = bodyType
-	c.PostBody = body
+func (fhc *FakeHttpClient) DoRawHttpRequestWithObjectFilterAndObjectMask(path string, masks []string, filters string, requestType string, requestBody *bytes.Buffer) ([]byte, int, error) {
+	fhc.DoRawHttpRequestWithObjectFilterAndObjectMaskPath = path
+	fhc.DoRawHttpRequestWithObjectFilterAndObjectMaskMasks = masks
+	fhc.DoRawHttpRequestWithObjectFilterAndObjectMaskFilters = filters
+	fhc.DoRawHttpRequestWithObjectFilterAndObjectMaskRequestType = requestType
+	fhc.DoRawHttpRequestWithObjectFilterAndObjectMaskRequestBody = requestBody
 
-	return c.FakeResponse, c.FakeErr
+	return fhc.processResponse()
 }
 
-func (c *FakeHttpClient) PostForm(url string, data url.Values) (*http.Response, error) {
-	c.PostFormUrl = url
-	c.PostData = data
+func (fhc *FakeHttpClient) GenerateRequestBody(templateData interface{}) (*bytes.Buffer, error) {
+	fhc.GenerateRequestBodyTemplateData = templateData
 
-	return c.FakeResponse, c.FakeErr
+	return fhc.GenerateRequestBodyBuffer, fhc.GenerateRequestBodyError
+}
+
+func (fhc *FakeHttpClient) HasErrors(body map[string]interface{}) error {
+	fhc.HasErrorsBody = body
+
+	return fhc.HasErrorsError
+}
+
+func (fhc *FakeHttpClient) CheckForHttpResponseErrors(data []byte) error {
+	fhc.CheckForHttpResponseErrorsData = data
+
+	return fhc.CheckForHttpResponseErrorsError
+}
+
+// private methods
+
+func (fhc *FakeHttpClient) processResponse() ([]byte, int, error) {
+	fhc.DoRawHttpRequestResponsesCount += 1
+
+	if fhc.DoRawHttpRequestError != nil {
+		return []byte{}, fhc.DoRawHttpRequestInt, fhc.DoRawHttpRequestError
+	}
+
+	if fhc.DoRawHttpRequestResponses != nil && len(fhc.DoRawHttpRequestResponses) == 0 {
+		return fhc.DoRawHttpRequestResponse, fhc.DoRawHttpRequestInt, fhc.DoRawHttpRequestError
+	} else {
+		fhc.DoRawHttpRequestResponsesIndex = fhc.DoRawHttpRequestResponsesIndex + 1
+		return fhc.DoRawHttpRequestResponses[fhc.DoRawHttpRequestResponsesIndex-1], fhc.DoRawHttpRequestInt, fhc.DoRawHttpRequestError
+	}
 }

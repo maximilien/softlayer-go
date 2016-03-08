@@ -46,7 +46,7 @@ var _ = Describe("SoftLayer_Billing_Item_Cancellation_Request", func() {
 
 	Context("#CreateObject", func() {
 		BeforeEach(func() {
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Billing_Item_Cancellation_Request_Service_createObject.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Billing_Item_Cancellation_Request_Service_createObject.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 

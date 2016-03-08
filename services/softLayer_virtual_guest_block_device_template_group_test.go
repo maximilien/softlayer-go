@@ -53,7 +53,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 	Context("#GetObject", func() {
 		BeforeEach(func() {
 			vgbdtGroup.Id = 200150
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service_getObject.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service_getObject.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -78,7 +78,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 	Context("#DeleteObject", func() {
 		BeforeEach(func() {
 			vgbdtGroup.Id = 1234567
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service_deleteObject.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service_deleteObject.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -105,7 +105,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 	Context("#GetDatacenters", func() {
 		BeforeEach(func() {
 			vgbdtGroup.Id = 1234567
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service_getDatacenters.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service_getDatacenters.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -127,7 +127,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 	Context("#GetSshKeys", func() {
 		BeforeEach(func() {
 			vgbdtGroup.Id = 1234567
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service_getSshKeys.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service_getSshKeys.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -151,7 +151,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 	Context("#GetStatus", func() {
 		BeforeEach(func() {
 			vgbdtGroup.Id = 1234567
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service_getStatus.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service_getStatus.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -167,7 +167,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 	Context("#GetStorageLocations", func() {
 		BeforeEach(func() {
 			vgbdtGroup.Id = 1234567
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service_getStorageLocations.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service_getStorageLocations.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -192,7 +192,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 	Context("#GetImageType", func() {
 		BeforeEach(func() {
 			vgbdtGroup.Id = 1234567
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service_getImageType.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service_getImageType.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -208,7 +208,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 	Context("#GetImageTypeKeyName", func() {
 		BeforeEach(func() {
 			vgbdtGroup.Id = 1234567
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service_getImageTypeKeyName.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service_getImageTypeKeyName.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -229,7 +229,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 				OperatingSystemReferenceCode: "fake-operating-system-reference-code",
 				Uri: "swift://FakeObjectStorageAccountName>@fake-clusterName/fake-containerName/fake-fileName.vhd",
 			}
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service_createFromExternalSource.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service_createFromExternalSource.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -261,7 +261,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 				OperatingSystemReferenceCode: "fake-operating-system-reference-code",
 				Uri: "swift://FakeObjectStorageAccountName>@fake-clusterName/fake-containerName/fake-fileName.vhd",
 			}
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service_copyToExternalSource.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service_copyToExternalSource.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -275,7 +275,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 	Context("#GetTransaction", func() {
 		BeforeEach(func() {
 			vgbdtGroup.Id = 1234567
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service_deleteObject.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service_deleteObject.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -290,7 +290,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 	Context("#DenySharingAccess", func() {
 		BeforeEach(func() {
 			vgbdtGroup.Id = 1234567
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service_denySharingAccess.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service_denySharingAccess.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -305,7 +305,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 	Context("#PermitSharingAccess", func() {
 		BeforeEach(func() {
 			vgbdtGroup.Id = 1234567
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service_permitSharingAccess.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service_permitSharingAccess.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -341,7 +341,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 		Context("#AddLocations", func() {
 			BeforeEach(func() {
 				vgbdtGroup.Id = 1234567
-				fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service_addLocations.json")
+				fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service_addLocations.json")
 				Expect(err).ToNot(HaveOccurred())
 			})
 
@@ -356,7 +356,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 		Context("#RemoveLocations", func() {
 			BeforeEach(func() {
 				vgbdtGroup.Id = 1234567
-				fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service_removeLocations.json")
+				fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service_removeLocations.json")
 				Expect(err).ToNot(HaveOccurred())
 			})
 
@@ -371,7 +371,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 		Context("#SetAvailableLocations", func() {
 			BeforeEach(func() {
 				vgbdtGroup.Id = 1234567
-				fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service_setAvailableLocations.json")
+				fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service_setAvailableLocations.json")
 				Expect(err).ToNot(HaveOccurred())
 			})
 

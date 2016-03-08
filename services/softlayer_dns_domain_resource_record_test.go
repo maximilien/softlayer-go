@@ -46,7 +46,7 @@ var _ = Describe("SoftLayer_Dns_Domain_Record", func() {
 
 	Context("#CreateObject", func() {
 		BeforeEach(func() {
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Dns_Domain_ResourceRecord_Service_createObject.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Dns_Domain_ResourceRecord_Service_createObject.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -83,7 +83,7 @@ var _ = Describe("SoftLayer_Dns_Domain_Record", func() {
 		})
 
 		It("fails to create a resource record without mandatory parameters", func() {
-			fakeClient.DoRawHttpRequestResponse = []byte("fake")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("fake")
 
 			template := datatypes.SoftLayer_Dns_Domain_ResourceRecord_Template{
 				Data: "testData",
@@ -96,7 +96,7 @@ var _ = Describe("SoftLayer_Dns_Domain_Record", func() {
 
 	Context("#GetObject", func() {
 		BeforeEach(func() {
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Dns_Domain_ResourceRecord_Service_createObject.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Dns_Domain_ResourceRecord_Service_createObject.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -120,7 +120,7 @@ var _ = Describe("SoftLayer_Dns_Domain_Record", func() {
 
 	Context("#EditObject", func() {
 		BeforeEach(func() {
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Dns_Domain_ResourceRecord_Service_editObject.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Dns_Domain_ResourceRecord_Service_editObject.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
