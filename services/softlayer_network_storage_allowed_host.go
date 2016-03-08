@@ -32,7 +32,7 @@ func (slns *softLayer_Network_Storage_Allowed_Host_Service) GetCredential(allowe
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Network_Storage_Allowed_Host#getCredential, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Network_Storage_Allowed_Host#getCredential, HTTP error code: '%d'", errorCode)
 		return datatypes.SoftLayer_Network_Storage_Credential{}, errors.New(errorMessage)
 	}
 

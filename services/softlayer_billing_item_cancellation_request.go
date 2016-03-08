@@ -43,7 +43,7 @@ func (slbicr *softLayer_Billing_Item_Cancellation_Request_Service) CreateObject(
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Billing_Item_Cancellation_Request#createObject TTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Billing_Item_Cancellation_Request#createObject TTP error code: '%d'", errorCode)
 		return datatypes.SoftLayer_Billing_Item_Cancellation_Request{}, errors.New(errorMessage)
 	}
 

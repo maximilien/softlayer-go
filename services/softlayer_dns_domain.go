@@ -47,7 +47,7 @@ func (sldds *softLayer_Dns_Domain_Service) CreateObject(template datatypes.SoftL
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Dns_Domain#createObject, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Dns_Domain#createObject, HTTP error code: '%d'", errorCode)
 		return datatypes.SoftLayer_Dns_Domain{}, errors.New(errorMessage)
 	}
 
@@ -84,7 +84,7 @@ func (sldds *softLayer_Dns_Domain_Service) GetObject(dnsId int) (datatypes.SoftL
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Dns_Domain#getObject, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Dns_Domain#getObject, HTTP error code: '%d'", errorCode)
 		return datatypes.SoftLayer_Dns_Domain{}, errors.New(errorMessage)
 	}
 
@@ -105,7 +105,7 @@ func (sldds *softLayer_Dns_Domain_Service) DeleteObject(dnsId int) (bool, error)
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Dns_Domain#deleteObject, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Dns_Domain#deleteObject, HTTP error code: '%d'", errorCode)
 		return false, errors.New(errorMessage)
 	}
 

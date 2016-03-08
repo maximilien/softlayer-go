@@ -107,7 +107,7 @@ func (slvgs *softLayer_Network_Storage_Service) DeleteObject(volumeId int) (bool
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Network_Storage#deleteObject, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Network_Storage#deleteObject, HTTP error code: '%d'", errorCode)
 		return false, errors.New(errorMessage)
 	}
 
@@ -201,7 +201,7 @@ func (slns *softLayer_Network_Storage_Service) GetIscsiVolume(volumeId int) (dat
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Account#getAccountStatus, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Account#getAccountStatus, HTTP error code: '%d'", errorCode)
 		return datatypes.SoftLayer_Network_Storage{}, errors.New(errorMessage)
 	}
 
@@ -223,7 +223,7 @@ func (slns *softLayer_Network_Storage_Service) HasAllowedVirtualGuest(volumeId i
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Network_Storage#hasAllowedVirtualGuest, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Network_Storage#hasAllowedVirtualGuest, HTTP error code: '%d'", errorCode)
 		return false, errors.New(errorMessage)
 	}
 
@@ -258,7 +258,7 @@ func (slns *softLayer_Network_Storage_Service) AttachIscsiVolume(virtualGuest da
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Network_Storage#attachIscsiVolume, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Network_Storage#attachIscsiVolume, HTTP error code: '%d'", errorCode)
 		return false, errors.New(errorMessage)
 	}
 
@@ -287,7 +287,7 @@ func (slns *softLayer_Network_Storage_Service) DetachIscsiVolume(virtualGuest da
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Account#getAccountStatus, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Account#getAccountStatus, HTTP error code: '%d'", errorCode)
 		return errors.New(errorMessage)
 	}
 

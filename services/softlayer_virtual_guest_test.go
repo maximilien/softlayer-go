@@ -59,9 +59,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 		BeforeEach(func() {
 			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_createObject.json")
 			Expect(err).ToNot(HaveOccurred())
-		})
 
-		It("creates a new SoftLayer_Virtual_Guest instance", func() {
 			virtualGuestTemplate = datatypes.SoftLayer_Virtual_Guest_Template{
 				Hostname:  "fake-hostname",
 				Domain:    "fake.domain.com",
@@ -82,6 +80,9 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 					},
 				},
 			}
+		})
+
+		It("creates a new SoftLayer_Virtual_Guest instance", func() {
 			virtualGuest, err = virtualGuestService.CreateObject(virtualGuestTemplate)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(virtualGuest.Hostname).To(Equal("fake-hostname"))
@@ -100,6 +101,26 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			Expect(err.Error()).To(ContainSubstring("StartCpus"))
 			Expect(err.Error()).To(ContainSubstring("MaxMemory"))
 			Expect(err.Error()).To(ContainSubstring("Datacenter"))
+		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+					_, err = virtualGuestService.CreateObject(virtualGuestTemplate)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+					_, err = virtualGuestService.CreateObject(virtualGuestTemplate)
+					Expect(err).To(HaveOccurred())
+				}
+			})
 		})
 	})
 
@@ -146,6 +167,26 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			Expect(vg.OperatingSystem.Passwords[0].Password).To(Equal("test_password"))
 			Expect(vg.OperatingSystem.Passwords[0].Username).To(Equal("test_username"))
 		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+					_, err := virtualGuestService.GetObject(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+					_, err := virtualGuestService.GetObject(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+		})
 	})
 
 	Context("#EditObject", func() {
@@ -162,6 +203,26 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			edited, err := virtualGuestService.EditObject(virtualGuest.Id, virtualGuest)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(edited).To(BeTrue())
+		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+					_, err := virtualGuestService.EditObject(virtualGuest.Id, virtualGuest)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+					_, err := virtualGuestService.EditObject(virtualGuest.Id, virtualGuest)
+					Expect(err).To(HaveOccurred())
+				}
+			})
 		})
 	})
 
@@ -186,6 +247,26 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			err = virtualGuestService.ReloadOperatingSystem(virtualGuest.Id, reload_OS_Config)
 			Expect(err).To(HaveOccurred())
 		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+					err = virtualGuestService.ReloadOperatingSystem(virtualGuest.Id, reload_OS_Config)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+					err = virtualGuestService.ReloadOperatingSystem(virtualGuest.Id, reload_OS_Config)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+		})
 	})
 
 	Context("#DeleteObject", func() {
@@ -205,6 +286,26 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			deleted, err := virtualGuestService.DeleteObject(virtualGuest.Id)
 			Expect(err).To(HaveOccurred())
 			Expect(deleted).To(BeFalse())
+		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+					_, err := virtualGuestService.DeleteObject(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+					_, err := virtualGuestService.DeleteObject(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
 		})
 	})
 
@@ -226,6 +327,25 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			Expect(receipt.OrderId).NotTo(Equal(0))
 		})
 
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+					_, err := virtualGuestService.AttachEphemeralDisk(123, 25)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+					_, err := virtualGuestService.AttachEphemeralDisk(123, 25)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+		})
 	})
 
 	Context("#UpgradeObject", func() {
@@ -241,6 +361,34 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 				NicSpeed:   1000,
 			})
 			Expect(err).ToNot(HaveOccurred())
+		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+					_, err := virtualGuestService.UpgradeObject(123, &softlayer.UpgradeOptions{
+						Cpus:       2,
+						MemoryInGB: 2,
+						NicSpeed:   1000,
+					})
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+					_, err := virtualGuestService.UpgradeObject(123, &softlayer.UpgradeOptions{
+						Cpus:       2,
+						MemoryInGB: 2,
+						NicSpeed:   1000,
+					})
+					Expect(err).To(HaveOccurred())
+				}
+			})
 		})
 	})
 
@@ -267,6 +415,26 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			Expect(err).To(HaveOccurred())
 			Expect(err.Error()).To(Equal("Failed to find price for 'nic_speed' (of size 999)"))
 		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+					_, err := virtualGuestService.GetAvailableUpgradeItemPrices(&softlayer.UpgradeOptions{NicSpeed: 999})
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+					_, err := virtualGuestService.GetAvailableUpgradeItemPrices(&softlayer.UpgradeOptions{NicSpeed: 999})
+					Expect(err).To(HaveOccurred())
+				}
+			})
+		})
 	})
 
 	Context("#GetPowerState", func() {
@@ -281,6 +449,26 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			Expect(err).ToNot(HaveOccurred())
 			Expect(vgPowerState.KeyName).To(Equal("RUNNING"))
 		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+					_, err := virtualGuestService.GetPowerState(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+					_, err := virtualGuestService.GetPowerState(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+		})
 	})
 
 	Context("#GetPrimaryIpAddress", func() {
@@ -294,6 +482,26 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			vgPrimaryIpAddress, err := virtualGuestService.GetPrimaryIpAddress(virtualGuest.Id)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(vgPrimaryIpAddress).To(Equal("159.99.99.99"))
+		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+					_, err := virtualGuestService.GetPrimaryIpAddress(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+					_, err := virtualGuestService.GetPrimaryIpAddress(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
 		})
 	})
 
@@ -312,6 +520,26 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			Expect(activeTransaction.GuestId).To(Equal(virtualGuest.Id))
 			Expect(activeTransaction.Id).To(BeNumerically(">", 0))
 		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+					_, err := virtualGuestService.GetActiveTransaction(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+					_, err := virtualGuestService.GetActiveTransaction(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+		})
 	})
 
 	Context("#GetLastTransaction", func() {
@@ -328,6 +556,26 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			Expect(lastTransaction.ElapsedSeconds).To(BeNumerically(">", 0))
 			Expect(lastTransaction.GuestId).To(Equal(virtualGuest.Id))
 			Expect(lastTransaction.Id).To(BeNumerically(">", 0))
+		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+					_, err := virtualGuestService.GetLastTransaction(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+					_, err := virtualGuestService.GetLastTransaction(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
 		})
 	})
 
@@ -349,6 +597,26 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 				Expect(activeTransaction.GuestId).To(Equal(virtualGuest.Id))
 				Expect(activeTransaction.Id).To(BeNumerically(">", 0))
 			}
+		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+					_, err := virtualGuestService.GetActiveTransactions(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+					_, err := virtualGuestService.GetActiveTransactions(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
 		})
 	})
 
@@ -374,6 +642,26 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 				Expect(sshKey.Label).To(Equal("TEST:softlayer-go"))
 			}
 		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+					_, err := virtualGuestService.GetSshKeys(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+					_, err := virtualGuestService.GetSshKeys(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+		})
 	})
 
 	Context("#PowerCycle", func() {
@@ -395,6 +683,30 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			rebooted, err := virtualGuestService.PowerCycle(virtualGuest.Id)
 			Expect(err).To(HaveOccurred())
 			Expect(rebooted).To(BeFalse())
+		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("false")
+					_, err := virtualGuestService.PowerCycle(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("false")
+					_, err := virtualGuestService.PowerCycle(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
 		})
 	})
 
@@ -418,6 +730,30 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			Expect(err).To(HaveOccurred())
 			Expect(rebooted).To(BeFalse())
 		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+					fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("false")
+
+					_, err := virtualGuestService.PowerOff(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+					fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("false")
+
+					_, err := virtualGuestService.PowerOff(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+		})
 	})
 
 	Context("#PowerOffSoft", func() {
@@ -439,6 +775,30 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			rebooted, err := virtualGuestService.PowerOffSoft(virtualGuest.Id)
 			Expect(err).To(HaveOccurred())
 			Expect(rebooted).To(BeFalse())
+		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+					fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("true")
+
+					_, err := virtualGuestService.PowerOffSoft(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+					fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("true")
+
+					_, err := virtualGuestService.PowerOffSoft(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
 		})
 	})
 
@@ -462,6 +822,30 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			Expect(err).To(HaveOccurred())
 			Expect(rebooted).To(BeFalse())
 		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+					fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("false")
+
+					_, err := virtualGuestService.PowerOn(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+					fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("false")
+
+					_, err := virtualGuestService.PowerOn(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+		})
 	})
 
 	Context("#RebootDefault", func() {
@@ -483,6 +867,30 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			rebooted, err := virtualGuestService.RebootDefault(virtualGuest.Id)
 			Expect(err).To(HaveOccurred())
 			Expect(rebooted).To(BeFalse())
+		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+					fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("true")
+
+					_, err := virtualGuestService.RebootDefault(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+					fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("true")
+
+					_, err := virtualGuestService.RebootDefault(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
 		})
 	})
 
@@ -506,6 +914,30 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			Expect(err).To(HaveOccurred())
 			Expect(rebooted).To(BeFalse())
 		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+					fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("false")
+
+					_, err := virtualGuestService.RebootSoft(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+					fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("false")
+
+					_, err := virtualGuestService.RebootSoft(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+		})
 	})
 
 	Context("#RebootHard", func() {
@@ -528,6 +960,30 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			Expect(err).To(HaveOccurred())
 			Expect(rebooted).To(BeFalse())
 		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+					fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("false")
+
+					_, err := virtualGuestService.RebootHard(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+					fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("false")
+
+					_, err := virtualGuestService.RebootHard(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+		})
 	})
 
 	Context("#SetUserMetadata", func() {
@@ -542,6 +998,28 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			Expect(err).ToNot(HaveOccurred())
 
 			Expect(retBool).To(BeTrue())
+		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := virtualGuestService.SetMetadata(virtualGuest.Id, "fake-metadata")
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := virtualGuestService.SetMetadata(virtualGuest.Id, "fake-metadata")
+					Expect(err).To(HaveOccurred())
+				}
+			})
 		})
 	})
 
@@ -565,6 +1043,28 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			Expect(attributes[1].Value).To(Equal("ZmFrZS1iYXNlNjQtZGF0YQo="))
 			Expect(attributes[1].Type.Name).To(Equal("Fake Data"))
 			Expect(attributes[1].Type.Keyname).To(Equal("FAKE_DATA"))
+		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := virtualGuestService.GetUserData(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := virtualGuestService.GetUserData(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
 		})
 	})
 
@@ -609,6 +1109,30 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 				Expect(err).To(HaveOccurred())
 				Expect(err.Error()).To(ContainSubstring("Failed to checking that virtual guest is pingable"))
 				Expect(pingable).To(BeFalse())
+			})
+		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+					fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("fake")
+
+					_, err := virtualGuestService.IsPingable(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+					fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("fake")
+
+					_, err := virtualGuestService.IsPingable(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
 			})
 		})
 	})
@@ -656,6 +1180,30 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 				Expect(pingable).To(BeFalse())
 			})
 		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+					fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("fake")
+
+					_, err := virtualGuestService.IsBackendPingable(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+					fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("fake")
+
+					_, err := virtualGuestService.IsBackendPingable(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+		})
 	})
 
 	Context("#ConfigureMetadataDisk", func() {
@@ -684,6 +1232,28 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			Expect(transaction.TransactionStatus.FriendlyName).To(Equal("Configure Cloud Metadata Disk"))
 			Expect(transaction.TransactionStatus.Name).To(Equal("CLOUD_CONFIGURE_METADATA_DISK"))
 		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := virtualGuestService.ConfigureMetadataDisk(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := virtualGuestService.ConfigureMetadataDisk(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+		})
 	})
 
 	Context("#GetUpgradeItemPrices", func() {
@@ -701,6 +1271,28 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			Expect(itemPrices[0].Id).To(Equal(12345))
 			Expect(itemPrices[0].Categories[0].CategoryCode).To(Equal("guest_disk1"))
 		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := virtualGuestService.GetUpgradeItemPrices(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := virtualGuestService.GetUpgradeItemPrices(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+		})
 	})
 
 	Context("#SetTags", func() {
@@ -716,6 +1308,30 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 
 			Expect(err).ToNot(HaveOccurred())
 			Expect(tagsWasSet).To(BeTrue())
+		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					tags := []string{"tag0", "tag1", "tag2"}
+					_, err := virtualGuestService.SetTags(virtualGuest.Id, tags)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					tags := []string{"tag0", "tag1", "tag2"}
+					_, err := virtualGuestService.SetTags(virtualGuest.Id, tags)
+					Expect(err).To(HaveOccurred())
+				}
+			})
 		})
 	})
 
@@ -811,6 +1427,28 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 				itVerifiesATagReference(tagReferences[i], expectedTagReference)
 			}
 		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := virtualGuestService.GetTagReferences(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := virtualGuestService.GetTagReferences(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+		})
 	})
 
 	Context("#AttachDiskImage", func() {
@@ -821,11 +1459,32 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 		})
 
 		It("attaches disk image with ID `1234567` to virtual guest instance", func() {
-			imageId := 1234567
-			transaction, err := virtualGuestService.AttachDiskImage(virtualGuest.Id, imageId)
+			transaction, err := virtualGuestService.AttachDiskImage(virtualGuest.Id, 1234567)
 
 			Expect(err).ToNot(HaveOccurred())
 			Expect(transaction).ToNot(Equal(datatypes.SoftLayer_Provisioning_Version1_Transaction{}))
+		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := virtualGuestService.AttachDiskImage(virtualGuest.Id, 1234567)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := virtualGuestService.AttachDiskImage(virtualGuest.Id, 1234567)
+					Expect(err).To(HaveOccurred())
+				}
+			})
 		})
 	})
 
@@ -837,11 +1496,32 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 		})
 
 		It("detaches disk image with ID `1234567` to virtual guest instance", func() {
-			imageId := 1234567
-			transaction, err := virtualGuestService.DetachDiskImage(virtualGuest.Id, imageId)
+			transaction, err := virtualGuestService.DetachDiskImage(virtualGuest.Id, 1234567)
 
 			Expect(err).ToNot(HaveOccurred())
 			Expect(transaction).ToNot(Equal(datatypes.SoftLayer_Provisioning_Version1_Transaction{}))
+		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := virtualGuestService.DetachDiskImage(virtualGuest.Id, 1234567)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := virtualGuestService.DetachDiskImage(virtualGuest.Id, 1234567)
+					Expect(err).To(HaveOccurred())
+				}
+			})
 		})
 	})
 
@@ -858,6 +1538,28 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			Expect(err).ToNot(HaveOccurred())
 			Expect(activated).To(BeTrue())
 		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := virtualGuestService.ActivatePrivatePort(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := virtualGuestService.ActivatePrivatePort(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+		})
 	})
 
 	Context("#ActivatePublicPort", func() {
@@ -872,6 +1574,28 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 
 			Expect(err).ToNot(HaveOccurred())
 			Expect(activated).To(BeTrue())
+		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := virtualGuestService.ActivatePublicPort(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := virtualGuestService.ActivatePublicPort(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
 		})
 	})
 
@@ -888,6 +1612,28 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			Expect(err).ToNot(HaveOccurred())
 			Expect(shutdowned).To(BeTrue())
 		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := virtualGuestService.ShutdownPrivatePort(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := virtualGuestService.ShutdownPrivatePort(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+		})
 	})
 
 	Context("#ShutdownPublicPort", func() {
@@ -902,6 +1648,28 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 
 			Expect(err).ToNot(HaveOccurred())
 			Expect(shutdowned).To(BeTrue())
+		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := virtualGuestService.ShutdownPublicPort(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := virtualGuestService.ShutdownPublicPort(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
 		})
 	})
 
@@ -918,6 +1686,28 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			Expect(err).ToNot(HaveOccurred())
 			Expect(allowedHost).NotTo(BeNil())
 			Expect(allowedHost.Name).To(Equal("fake-iqn"))
+		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := virtualGuestService.GetAllowedHost(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := virtualGuestService.GetAllowedHost(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
 		})
 	})
 
@@ -942,6 +1732,28 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			Expect(networkVlans[0].PrimarySubnetId).To(Equal(517311))
 			Expect(networkVlans[0].VlanNumber).To(Equal(809))
 		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := virtualGuestService.GetNetworkVlans(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := virtualGuestService.GetNetworkVlans(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+		})
 	})
 
 	Context("#CheckHostDiskAvailability", func() {
@@ -956,6 +1768,28 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 
 			Expect(err).ToNot(HaveOccurred())
 			Expect(available).To(BeTrue())
+		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := virtualGuestService.CheckHostDiskAvailability(virtualGuest.Id, 10*1024)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := virtualGuestService.CheckHostDiskAvailability(virtualGuest.Id, 10*1024)
+					Expect(err).To(HaveOccurred())
+				}
+			})
 		})
 	})
 
@@ -977,6 +1811,28 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			Expect(diskImageTemplate.Volumes[0].Name).To(Equal("fake-volume-name"))
 			Expect(len(diskImageTemplate.Volumes[0].Partitions)).To(BeNumerically(">=", 1))
 			Expect(diskImageTemplate.Volumes[0].Partitions[0].Name).To(Equal("fake-partition-name"))
+		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := virtualGuestService.CaptureImage(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := virtualGuestService.CaptureImage(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
 		})
 	})
 })

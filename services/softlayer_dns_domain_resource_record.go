@@ -43,7 +43,7 @@ func (sldr *SoftLayer_Dns_Domain_ResourceRecord_Service) CreateObject(template d
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Dns_Domain_ResourceRecord#createObject, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Dns_Domain_ResourceRecord#createObject, HTTP error code: '%d'", errorCode)
 		return datatypes.SoftLayer_Dns_Domain_ResourceRecord{}, errors.New(errorMessage)
 	}
 
@@ -93,7 +93,7 @@ func (sldr *SoftLayer_Dns_Domain_ResourceRecord_Service) GetObject(id int) (data
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Dns_Domain_ResourceRecord#getObject, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Dns_Domain_ResourceRecord#getObject, HTTP error code: '%d'", errorCode)
 		return datatypes.SoftLayer_Dns_Domain_ResourceRecord{}, errors.New(errorMessage)
 	}
 
@@ -114,7 +114,7 @@ func (sldr *SoftLayer_Dns_Domain_ResourceRecord_Service) DeleteObject(recordId i
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Dns_Domain_ResourceRecord#deleteObject, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Dns_Domain_ResourceRecord#deleteObject, HTTP error code: '%d'", errorCode)
 		return false, errors.New(errorMessage)
 	}
 
@@ -140,7 +140,7 @@ func (sldr *SoftLayer_Dns_Domain_ResourceRecord_Service) EditObject(recordId int
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Dns_Domain_ResourceRecord#editObject, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Dns_Domain_ResourceRecord#editObject, HTTP error code: '%d'", errorCode)
 		return false, errors.New(errorMessage)
 	}
 

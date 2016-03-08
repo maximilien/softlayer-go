@@ -32,7 +32,7 @@ func (slvdi *softLayer_Virtual_Disk_Image_Service) GetObject(vdImageId int) (dat
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Disk_Image#getObject, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Disk_Image#getObject, HTTP error code: '%d'", errorCode)
 		return datatypes.SoftLayer_Virtual_Disk_Image{}, errors.New(errorMessage)
 	}
 

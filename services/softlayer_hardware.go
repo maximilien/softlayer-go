@@ -43,7 +43,7 @@ func (slhs *softLayer_Hardware_Service) CreateObject(template datatypes.SoftLaye
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Hardware#createObject, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Hardware#createObject, HTTP error code: '%d'", errorCode)
 		return datatypes.SoftLayer_Hardware{}, errors.New(errorMessage)
 	}
 
@@ -82,7 +82,7 @@ func (slhs *softLayer_Hardware_Service) GetObject(id string) (datatypes.SoftLaye
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Hardware#getObject, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Hardware#getObject, HTTP error code: '%d'", errorCode)
 		return datatypes.SoftLayer_Hardware{}, errors.New(errorMessage)
 	}
 

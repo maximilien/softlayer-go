@@ -61,7 +61,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) CreateObject(template datatypes.So
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#createObject, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#createObject, HTTP error code: '%d'", errorCode)
 		return datatypes.SoftLayer_Virtual_Guest{}, errors.New(errorMessage)
 	}
 
@@ -96,7 +96,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) ReloadOperatingSystem(instanceId i
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#reloadOperatingSystem, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#reloadOperatingSystem, HTTP error code: '%d'", errorCode)
 		return errors.New(errorMessage)
 	}
 
@@ -160,7 +160,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetObject(instanceId int) (datatyp
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#getObject, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#getObject, HTTP error code: '%d'", errorCode)
 		return datatypes.SoftLayer_Virtual_Guest{}, errors.New(errorMessage)
 	}
 
@@ -193,7 +193,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) EditObject(instanceId int, templat
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#editObject, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#editObject, HTTP error code: '%d'", errorCode)
 		return false, errors.New(errorMessage)
 	}
 
@@ -211,7 +211,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) DeleteObject(instanceId int) (bool
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#deleteObject, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#deleteObject, HTTP error code: '%d'", errorCode)
 		return false, errors.New(errorMessage)
 	}
 
@@ -225,7 +225,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetPowerState(instanceId int) (dat
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#getPowerState, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#getPowerState, HTTP error code: '%d'", errorCode)
 		return datatypes.SoftLayer_Virtual_Guest_Power_State{}, errors.New(errorMessage)
 	}
 
@@ -245,7 +245,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetPrimaryIpAddress(instanceId int
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#getPrimaryIpAddress, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#getPrimaryIpAddress, HTTP error code: '%d'", errorCode)
 		return "", errors.New(errorMessage)
 	}
 
@@ -264,7 +264,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetActiveTransaction(instanceId in
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#getActiveTransaction, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#getActiveTransaction, HTTP error code: '%d'", errorCode)
 		return datatypes.SoftLayer_Provisioning_Version1_Transaction{}, errors.New(errorMessage)
 	}
 
@@ -288,7 +288,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetLastTransaction(instanceId int)
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#getLastTransaction, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#getLastTransaction, HTTP error code: '%d'", errorCode)
 		return datatypes.SoftLayer_Provisioning_Version1_Transaction{}, errors.New(errorMessage)
 	}
 
@@ -308,7 +308,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetActiveTransactions(instanceId i
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#getActiveTransactions, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#getActiveTransactions, HTTP error code: '%d'", errorCode)
 		return []datatypes.SoftLayer_Provisioning_Version1_Transaction{}, errors.New(errorMessage)
 	}
 
@@ -328,7 +328,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetSshKeys(instanceId int) ([]data
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#getSshKeys, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#getSshKeys, HTTP error code: '%d'", errorCode)
 		return []datatypes.SoftLayer_Security_Ssh_Key{}, errors.New(errorMessage)
 	}
 
@@ -352,7 +352,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) PowerCycle(instanceId int) (bool, 
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#powerCycle, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#powerCycle, HTTP error code: '%d'", errorCode)
 		return false, errors.New(errorMessage)
 	}
 
@@ -370,7 +370,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) PowerOff(instanceId int) (bool, er
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#powerOff, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#powerOff, HTTP error code: '%d'", errorCode)
 		return false, errors.New(errorMessage)
 	}
 
@@ -388,7 +388,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) PowerOffSoft(instanceId int) (bool
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#powerOffSoft, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#powerOffSoft, HTTP error code: '%d'", errorCode)
 		return false, errors.New(errorMessage)
 	}
 
@@ -406,7 +406,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) PowerOn(instanceId int) (bool, err
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#powerOn, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#powerOn, HTTP error code: '%d'", errorCode)
 		return false, errors.New(errorMessage)
 	}
 
@@ -424,7 +424,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) RebootDefault(instanceId int) (boo
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#rebootDefault, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#rebootDefault, HTTP error code: '%d'", errorCode)
 		return false, errors.New(errorMessage)
 	}
 
@@ -442,7 +442,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) RebootSoft(instanceId int) (bool, 
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#rebootSoft, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#rebootSoft, HTTP error code: '%d'", errorCode)
 		return false, errors.New(errorMessage)
 	}
 
@@ -460,7 +460,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) RebootHard(instanceId int) (bool, 
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Security_Ssh_Key#rebootHard, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Security_Ssh_Key#rebootHard, HTTP error code: '%d'", errorCode)
 		return false, errors.New(errorMessage)
 	}
 
@@ -492,7 +492,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) SetMetadata(instanceId int, metada
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#setUserMetadata, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#setUserMetadata, HTTP error code: '%d'", errorCode)
 		return false, errors.New(errorMessage)
 	}
 
@@ -506,7 +506,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) ConfigureMetadataDisk(instanceId i
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#setUserMetadata, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#setUserMetadata, HTTP error code: '%d'", errorCode)
 		return datatypes.SoftLayer_Provisioning_Version1_Transaction{}, errors.New(errorMessage)
 	}
 
@@ -526,7 +526,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetUserData(instanceId int) ([]dat
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#getUserData, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#getUserData, HTTP error code: '%d'", errorCode)
 		return []datatypes.SoftLayer_Virtual_Guest_Attribute{}, errors.New(errorMessage)
 	}
 
@@ -546,7 +546,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) IsPingable(instanceId int) (bool, 
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#isPingable, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#isPingable, HTTP error code: '%d'", errorCode)
 		return false, errors.New(errorMessage)
 	}
 
@@ -570,7 +570,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) IsBackendPingable(instanceId int) 
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#isBackendPingable, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#isBackendPingable, HTTP error code: '%d'", errorCode)
 		return false, errors.New(errorMessage)
 	}
 
@@ -712,7 +712,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetUpgradeItemPrices(instanceId in
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#getUpgradeItemPrices, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#getUpgradeItemPrices, HTTP error code: '%d'", errorCode)
 		return []datatypes.SoftLayer_Product_Item_Price{}, errors.New(errorMessage)
 	}
 
@@ -749,7 +749,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) SetTags(instanceId int, tags []str
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#setTags, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#setTags, HTTP error code: '%d'", errorCode)
 		return false, errors.New(errorMessage)
 	}
 
@@ -767,7 +767,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetTagReferences(instanceId int) (
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#getTagReferences, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#getTagReferences, HTTP error code: '%d'", errorCode)
 		return []datatypes.SoftLayer_Tag_Reference{}, errors.New(errorMessage)
 	}
 
@@ -798,7 +798,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) AttachDiskImage(instanceId int, im
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#attachDiskImage, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#attachDiskImage, HTTP error code: '%d'", errorCode)
 		return datatypes.SoftLayer_Provisioning_Version1_Transaction{}, errors.New(errorMessage)
 	}
 
@@ -829,7 +829,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) DetachDiskImage(instanceId int, im
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#detachDiskImage, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#detachDiskImage, HTTP error code: '%d'", errorCode)
 		return datatypes.SoftLayer_Provisioning_Version1_Transaction{}, errors.New(errorMessage)
 	}
 
@@ -849,7 +849,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) ActivatePrivatePort(instanceId int
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#activatePrivatePort, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#activatePrivatePort, HTTP error code: '%d'", errorCode)
 		return false, errors.New(errorMessage)
 	}
 
@@ -873,7 +873,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) ActivatePublicPort(instanceId int)
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#activatePublicPort, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#activatePublicPort, HTTP error code: '%d'", errorCode)
 		return false, errors.New(errorMessage)
 	}
 
@@ -897,7 +897,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) ShutdownPrivatePort(instanceId int
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#shutdownPrivatePort, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#shutdownPrivatePort, HTTP error code: '%d'", errorCode)
 		return false, errors.New(errorMessage)
 	}
 
@@ -921,7 +921,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) ShutdownPublicPort(instanceId int)
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#shutdownPublicPort, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#shutdownPublicPort, HTTP error code: '%d'", errorCode)
 		return false, errors.New(errorMessage)
 	}
 
@@ -945,7 +945,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetAllowedHost(instanceId int) (da
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#getAllowedHost, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#getAllowedHost, HTTP error code: '%d'", errorCode)
 		return datatypes.SoftLayer_Network_Storage_Allowed_Host{}, errors.New(errorMessage)
 	}
 
@@ -965,7 +965,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetNetworkVlans(instanceId int) ([
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#getNetworkVlans, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#getNetworkVlans, HTTP error code: '%d'", errorCode)
 		return []datatypes.SoftLayer_Network_Vlan{}, errors.New(errorMessage)
 	}
 
@@ -985,7 +985,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) CheckHostDiskAvailability(instance
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#checkHostDiskAvailability, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#checkHostDiskAvailability, HTTP error code: '%d'", errorCode)
 		return false, errors.New(errorMessage)
 	}
 
@@ -1009,7 +1009,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) CaptureImage(instanceId int) (data
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#captureImage, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#captureImage, HTTP error code: '%d'", errorCode)
 		return datatypes.SoftLayer_Container_Disk_Image_Capture_Template{}, errors.New(errorMessage)
 	}
 

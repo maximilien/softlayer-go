@@ -32,7 +32,7 @@ func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) Get
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest_Block_Device_Template_Group#getObject, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest_Block_Device_Template_Group#getObject, HTTP error code: '%d'", errorCode)
 		return datatypes.SoftLayer_Virtual_Guest_Block_Device_Template_Group{}, errors.New(errorMessage)
 	}
 
@@ -52,7 +52,7 @@ func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) Del
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest_Block_Device_Template_Group#deleteObject, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest_Block_Device_Template_Group#deleteObject, HTTP error code: '%d'", errorCode)
 		return datatypes.SoftLayer_Provisioning_Version1_Transaction{}, errors.New(errorMessage)
 	}
 
@@ -72,7 +72,7 @@ func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) Get
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest_Block_Device_Template_Group#getDatacenters, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest_Block_Device_Template_Group#getDatacenters, HTTP error code: '%d'", errorCode)
 		return []datatypes.SoftLayer_Location{}, errors.New(errorMessage)
 	}
 
@@ -92,7 +92,7 @@ func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) Get
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest_Block_Device_Template_Group#getSshKeys, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest_Block_Device_Template_Group#getSshKeys, HTTP error code: '%d'", errorCode)
 		return []datatypes.SoftLayer_Security_Ssh_Key{}, errors.New(errorMessage)
 	}
 
@@ -112,7 +112,7 @@ func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) Get
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest_Block_Device_Template_Group#getStatus, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest_Block_Device_Template_Group#getStatus, HTTP error code: '%d'", errorCode)
 		return datatypes.SoftLayer_Virtual_Guest_Block_Device_Template_Group_Status{}, errors.New(errorMessage)
 	}
 
@@ -132,7 +132,7 @@ func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) Get
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest_Block_Device_Template_Group#getImageType, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest_Block_Device_Template_Group#getImageType, HTTP error code: '%d'", errorCode)
 		return datatypes.SoftLayer_Image_Type{}, errors.New(errorMessage)
 	}
 
@@ -152,7 +152,7 @@ func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) Get
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest_Block_Device_Template_Group#getStorageLocations, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest_Block_Device_Template_Group#getStorageLocations, HTTP error code: '%d'", errorCode)
 		return []datatypes.SoftLayer_Location{}, errors.New(errorMessage)
 	}
 
@@ -181,7 +181,7 @@ func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) Cre
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest_Block_Device_Template_Group#createFromExternalSource, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest_Block_Device_Template_Group#createFromExternalSource, HTTP error code: '%d'", errorCode)
 		return datatypes.SoftLayer_Virtual_Guest_Block_Device_Template_Group{}, errors.New(errorMessage)
 	}
 
@@ -210,7 +210,7 @@ func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) Cop
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest_Block_Device_Template_Group#copyToExternalSource, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest_Block_Device_Template_Group#copyToExternalSource, HTTP error code: '%d'", errorCode)
 		return false, errors.New(errorMessage)
 	}
 
@@ -225,7 +225,7 @@ func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) Get
 	response, errorCode, err := slvgbdtg.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/getImageTypeKeyName.json", slvgbdtg.GetName(), id), "GET", new(bytes.Buffer))
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest_Block_Device_Template_Group#getImageTypeKeyName, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest_Block_Device_Template_Group#getImageTypeKeyName, HTTP error code: '%d'", errorCode)
 		return "", errors.New(errorMessage)
 	}
 
@@ -239,7 +239,7 @@ func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) Get
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest_Block_Device_Template_Group#getTransaction, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest_Block_Device_Template_Group#getTransaction, HTTP error code: '%d'", errorCode)
 		return datatypes.SoftLayer_Provisioning_Version1_Transaction{}, errors.New(errorMessage)
 	}
 
@@ -270,7 +270,7 @@ func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) Den
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest_Block_Device_Template_Group#denySharingAccess, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest_Block_Device_Template_Group#denySharingAccess, HTTP error code: '%d'", errorCode)
 		return false, errors.New(errorMessage)
 	}
 
@@ -299,7 +299,7 @@ func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) Per
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest_Block_Device_Template_Group#permitSharingAccess, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest_Block_Device_Template_Group#permitSharingAccess, HTTP error code: '%d'", errorCode)
 		return false, errors.New(errorMessage)
 	}
 
@@ -328,7 +328,7 @@ func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) Add
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest_Block_Device_Template_Group#addLocations, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest_Block_Device_Template_Group#addLocations, HTTP error code: '%d'", errorCode)
 		return false, errors.New(errorMessage)
 	}
 
@@ -357,7 +357,7 @@ func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) Rem
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest_Block_Device_Template_Group#removeLocations, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest_Block_Device_Template_Group#removeLocations, HTTP error code: '%d'", errorCode)
 		return false, errors.New(errorMessage)
 	}
 
@@ -386,7 +386,7 @@ func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) Set
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest_Block_Device_Template_Group#setAvailableLocations, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest_Block_Device_Template_Group#setAvailableLocations, HTTP error code: '%d'", errorCode)
 		return false, errors.New(errorMessage)
 	}
 

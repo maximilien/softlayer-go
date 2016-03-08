@@ -149,7 +149,7 @@ func (slc *HttpClient) makeHttpRequest(url string, requestType string, requestBo
 
 	resp, err := slc.HTTPClient.Do(req)
 	if err != nil {
-		return nil, resp.StatusCode, err
+		return nil, 520, err
 	}
 
 	defer resp.Body.Close()

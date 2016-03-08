@@ -43,7 +43,7 @@ func (slssks *softLayer_Security_Ssh_Key_Service) CreateObject(template datatype
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Security_Ssh_Key#createObject, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Security_Ssh_Key#createObject, HTTP error code: '%d'", errorCode)
 		return datatypes.SoftLayer_Security_Ssh_Key{}, errors.New(errorMessage)
 	}
 
@@ -78,7 +78,7 @@ func (slssks *softLayer_Security_Ssh_Key_Service) GetObject(sshKeyId int) (datat
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Security_Ssh_Key#getObject, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Security_Ssh_Key#getObject, HTTP error code: '%d'", errorCode)
 		return datatypes.SoftLayer_Security_Ssh_Key{}, errors.New(errorMessage)
 	}
 
@@ -113,7 +113,7 @@ func (slssks *softLayer_Security_Ssh_Key_Service) EditObject(sshKeyId int, templ
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Security_Ssh_Key#editObject, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Security_Ssh_Key#editObject, HTTP error code: '%d'", errorCode)
 		return false, errors.New(errorMessage)
 	}
 
@@ -131,7 +131,7 @@ func (slssks *softLayer_Security_Ssh_Key_Service) DeleteObject(sshKeyId int) (bo
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Security_Ssh_Key#deleteObject, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Security_Ssh_Key#deleteObject, HTTP error code: '%d'", errorCode)
 		return false, errors.New(errorMessage)
 	}
 
@@ -145,7 +145,7 @@ func (slssks *softLayer_Security_Ssh_Key_Service) GetSoftwarePasswords(sshKeyId 
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Security_Ssh_Key#getSoftwarePasswords, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Security_Ssh_Key#getSoftwarePasswords, HTTP error code: '%d'", errorCode)
 		return []datatypes.SoftLayer_Software_Component_Password{}, errors.New(errorMessage)
 	}
 

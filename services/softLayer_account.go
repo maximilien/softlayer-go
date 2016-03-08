@@ -34,7 +34,7 @@ func (slas *softLayer_Account_Service) GetAccountStatus() (datatypes.SoftLayer_A
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Account#getAccountStatus, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Account#getAccountStatus, HTTP error code: '%d'", errorCode)
 		return datatypes.SoftLayer_Account_Status{}, errors.New(errorMessage)
 	}
 
@@ -58,7 +58,7 @@ func (slas *softLayer_Account_Service) GetVirtualGuests() ([]datatypes.SoftLayer
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Account#getVirtualGuests, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Account#getVirtualGuests, HTTP error code: '%d'", errorCode)
 		return []datatypes.SoftLayer_Virtual_Guest{}, errors.New(errorMessage)
 	}
 
@@ -82,7 +82,7 @@ func (slas *softLayer_Account_Service) GetNetworkStorage() ([]datatypes.SoftLaye
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Account#getNetworkStorage, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Account#getNetworkStorage, HTTP error code: '%d'", errorCode)
 		return []datatypes.SoftLayer_Network_Storage{}, errors.New(errorMessage)
 	}
 
@@ -116,7 +116,7 @@ func (slas *softLayer_Account_Service) GetIscsiNetworkStorage() ([]datatypes.Sof
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Account#getIscsiNetworkStorage, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Account#getIscsiNetworkStorage, HTTP error code: '%d'", errorCode)
 		return []datatypes.SoftLayer_Network_Storage{}, errors.New(errorMessage)
 	}
 
@@ -150,7 +150,7 @@ func (slas *softLayer_Account_Service) GetIscsiNetworkStorageWithFilter(filter s
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Account#getIscsiNetworkStorage, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Account#getIscsiNetworkStorage, HTTP error code: '%d'", errorCode)
 		return []datatypes.SoftLayer_Network_Storage{}, errors.New(errorMessage)
 	}
 
@@ -174,7 +174,7 @@ func (slas *softLayer_Account_Service) GetVirtualDiskImages() ([]datatypes.SoftL
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Account#getVirtualDiskImages, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Account#getVirtualDiskImages, HTTP error code: '%d'", errorCode)
 		return []datatypes.SoftLayer_Virtual_Disk_Image{}, errors.New(errorMessage)
 	}
 
@@ -204,7 +204,7 @@ func (slas *softLayer_Account_Service) GetVirtualDiskImagesWithFilter(filters st
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Account#getVirtualDiskImages, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Account#getVirtualDiskImages, HTTP error code: '%d'", errorCode)
 		return []datatypes.SoftLayer_Virtual_Disk_Image{}, errors.New(errorMessage)
 	}
 
@@ -228,7 +228,7 @@ func (slas *softLayer_Account_Service) GetSshKeys() ([]datatypes.SoftLayer_Secur
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Account#getSshKeys, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Account#getSshKeys, HTTP error code: '%d'", errorCode)
 		return []datatypes.SoftLayer_Security_Ssh_Key{}, errors.New(errorMessage)
 	}
 
@@ -252,7 +252,7 @@ func (slas *softLayer_Account_Service) GetBlockDeviceTemplateGroups() ([]datatyp
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Account#getBlockDeviceTemplateGroups, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Account#getBlockDeviceTemplateGroups, HTTP error code: '%d'", errorCode)
 		return []datatypes.SoftLayer_Virtual_Guest_Block_Device_Template_Group{}, errors.New(errorMessage)
 	}
 
@@ -282,7 +282,7 @@ func (slas *softLayer_Account_Service) GetBlockDeviceTemplateGroupsWithFilter(fi
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Account#getBlockDeviceTemplateGroups, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Account#getBlockDeviceTemplateGroups, HTTP error code: '%d'", errorCode)
 		return []datatypes.SoftLayer_Virtual_Guest_Block_Device_Template_Group{}, errors.New(errorMessage)
 	}
 
@@ -311,7 +311,7 @@ func (slas *softLayer_Account_Service) GetHardware() ([]datatypes.SoftLayer_Hard
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Account#getHardware, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Account#getHardware, HTTP error code: '%d'", errorCode)
 		return []datatypes.SoftLayer_Hardware{}, errors.New(errorMessage)
 	}
 
@@ -336,7 +336,7 @@ func (slas *softLayer_Account_Service) GetDnsDomains() ([]datatypes.SoftLayer_Dn
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Account#getDomains, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Account#getDomains, HTTP error code: '%d'", errorCode)
 		return []datatypes.SoftLayer_Dns_Domain{}, errors.New(errorMessage)
 	}
 

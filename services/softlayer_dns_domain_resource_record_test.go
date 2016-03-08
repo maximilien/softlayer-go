@@ -45,13 +45,13 @@ var _ = Describe("SoftLayer_Dns_Domain_Record", func() {
 	})
 
 	Context("#CreateObject", func() {
+		var template datatypes.SoftLayer_Dns_Domain_ResourceRecord_Template
+
 		BeforeEach(func() {
 			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Dns_Domain_ResourceRecord_Service_createObject.json")
 			Expect(err).ToNot(HaveOccurred())
-		})
 
-		It("creates a new SoftLayer_Dns_Domain_Record", func() {
-			template := datatypes.SoftLayer_Dns_Domain_ResourceRecord_Template{
+			template = datatypes.SoftLayer_Dns_Domain_ResourceRecord_Template{
 				Data:              "testData",
 				DomainId:          123,
 				Expire:            99999,
@@ -65,7 +65,9 @@ var _ = Describe("SoftLayer_Dns_Domain_Record", func() {
 				Ttl:               222,
 				Type:              "someTestType",
 			}
+		})
 
+		It("creates a new SoftLayer_Dns_Domain_Record", func() {
 			result, err := dnsDomainResourceRecordService.CreateObject(template)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(result.Data).To(Equal("testData"))
@@ -92,6 +94,28 @@ var _ = Describe("SoftLayer_Dns_Domain_Record", func() {
 			_, err := dnsDomainResourceRecordService.CreateObject(template)
 			Expect(err).To(HaveOccurred())
 		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := dnsDomainResourceRecordService.CreateObject(template)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := dnsDomainResourceRecordService.CreateObject(template)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+		})
 	})
 
 	Context("#GetObject", func() {
@@ -116,6 +140,28 @@ var _ = Describe("SoftLayer_Dns_Domain_Record", func() {
 			Expect(result.Ttl).To(Equal(222))
 			Expect(result.Type).To(Equal("someTestType"))
 		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := dnsDomainResourceRecordService.GetObject(111)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := dnsDomainResourceRecordService.GetObject(111)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+		})
 	})
 
 	Context("#EditObject", func() {
@@ -139,6 +185,28 @@ var _ = Describe("SoftLayer_Dns_Domain_Record", func() {
 			Expect(result.Retry).To(Equal(445))
 			Expect(result.Ttl).To(Equal(223))
 			Expect(result.Type).To(Equal("changedTestType"))
+		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := dnsDomainResourceRecordService.GetObject(112)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := dnsDomainResourceRecordService.GetObject(112)
+					Expect(err).To(HaveOccurred())
+				}
+			})
 		})
 	})
 })

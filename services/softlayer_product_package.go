@@ -38,7 +38,7 @@ func (slpp *softLayer_Product_Package_Service) GetItemPrices(packageId int) ([]d
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Product_Package#getItemPrices, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Product_Package#getItemPrices, HTTP error code: '%d'", errorCode)
 		return []datatypes.SoftLayer_Product_Item_Price{}, errors.New(errorMessage)
 	}
 
@@ -61,7 +61,7 @@ func (slpp *softLayer_Product_Package_Service) GetItemPricesBySize(packageId int
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Product_Package#getItemsPricesBySize, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Product_Package#getItemsPricesBySize, HTTP error code: '%d'", errorCode)
 		return []datatypes.SoftLayer_Product_Item_Price{}, errors.New(errorMessage)
 	}
 
@@ -99,7 +99,7 @@ func (slpp *softLayer_Product_Package_Service) GetItems(packageId int) ([]dataty
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Product_Package#getItems, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Product_Package#getItems, HTTP error code: '%d'", errorCode)
 		return []datatypes.SoftLayer_Product_Item{}, errors.New(errorMessage)
 	}
 
@@ -142,7 +142,7 @@ func (slpp *softLayer_Product_Package_Service) GetPackagesByType(packageType str
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Product_Package#getPackagesByType, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Product_Package#getPackagesByType, HTTP error code: '%d'", errorCode)
 		return []datatypes.Softlayer_Product_Package{}, errors.New(errorMessage)
 	}
 

@@ -43,7 +43,7 @@ func (slpo *softLayer_Product_Order_Service) PlaceOrder(order datatypes.SoftLaye
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Account#getAccountStatus, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Account#getAccountStatus, HTTP error code: '%d'", errorCode)
 		return datatypes.SoftLayer_Container_Product_Order_Receipt{}, errors.New(errorMessage)
 	}
 
@@ -74,7 +74,7 @@ func (slpo *softLayer_Product_Order_Service) PlaceContainerOrderNetworkPerforman
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Product_Order#placeContainerOrderNetworkPerformanceStorageIscsi, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Product_Order#placeContainerOrderNetworkPerformanceStorageIscsi, HTTP error code: '%d'", errorCode)
 		return datatypes.SoftLayer_Container_Product_Order_Receipt{}, errors.New(errorMessage)
 	}
 
@@ -105,7 +105,7 @@ func (slpo *softLayer_Product_Order_Service) PlaceContainerOrderVirtualGuestUpgr
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Product_Order#placeOrder, HTTP error code: '%d', error message '%s'", errorCode, err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Product_Order#placeOrder, HTTP error code: '%d'", errorCode)
 		return datatypes.SoftLayer_Container_Product_Order_Receipt{}, errors.New(errorMessage)
 	}
 

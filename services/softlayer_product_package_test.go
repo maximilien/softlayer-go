@@ -56,6 +56,28 @@ var _ = Describe("SoftLayer_Product_Package", func() {
 			Expect(itemPrices[0].Id).To(Equal(123))
 			Expect(itemPrices[0].Item.Id).To(Equal(456))
 		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := productPackageService.GetItemPrices(0)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := productPackageService.GetItemPrices(0)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+		})
 	})
 
 	Context("#GetItemPricesBySize", func() {
@@ -70,6 +92,28 @@ var _ = Describe("SoftLayer_Product_Package", func() {
 			Expect(len(itemPrices)).To(Equal(1))
 			Expect(itemPrices[0].Id).To(Equal(123))
 			Expect(itemPrices[0].Item.Id).To(Equal(456))
+		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := productPackageService.GetItemPricesBySize(222, 20)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := productPackageService.GetItemPricesBySize(222, 20)
+					Expect(err).To(HaveOccurred())
+				}
+			})
 		})
 	})
 
@@ -86,26 +130,67 @@ var _ = Describe("SoftLayer_Product_Package", func() {
 			Expect(productItems[0].Id).To(Equal(123))
 			Expect(productItems[0].Prices[0].Id).To(Equal(456))
 		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := productPackageService.GetItems(222)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := productPackageService.GetItems(222)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+		})
 	})
 
 	Context("#GetItemsByType", func() {
-
 		BeforeEach(func() {
-			response, err := testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Product_Package_getAllObjects_virtual_server.json")
-			fakeClient.FakeHttpClient.DoRawHttpRequestResponses = append(fakeClient.FakeHttpClient.DoRawHttpRequestResponses, response)
-
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Product_Package_getAllObjects_virtual_server.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
 		It("returns an array of datatypes.SoftLayer_Product_Item", func() {
-			response, err := testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Product_Package_getItems.json")
-			fakeClient.FakeHttpClient.DoRawHttpRequestResponses = append(fakeClient.FakeHttpClient.DoRawHttpRequestResponses, response)
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Product_Package_getItems.json")
+			Expect(err).ToNot(HaveOccurred())
 
 			productItems, err := productPackageService.GetItemsByType("VIRTUAL_SERVER_INSTANCE")
 			Expect(err).ToNot(HaveOccurred())
 			Expect(len(productItems)).To(Equal(2))
 			Expect(productItems[0].Id).To(Equal(123))
 			Expect(productItems[0].Prices[0].Id).To(Equal(456))
+		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := productPackageService.GetItemsByType("VIRTUAL_SERVER_INSTANCE")
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := productPackageService.GetItemsByType("VIRTUAL_SERVER_INSTANCE")
+					Expect(err).To(HaveOccurred())
+				}
+			})
 		})
 	})
 
@@ -125,11 +210,34 @@ var _ = Describe("SoftLayer_Product_Package", func() {
 
 		It("skips packaged marked OUTLET", func() {
 			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Product_Package_getAllObjects_virtual_server_with_OUTLET.json")
+
 			productPackages, err := productPackageService.GetPackagesByType("VIRTUAL_SERVER_INSTANCE")
 			Expect(err).ToNot(HaveOccurred())
 			Expect(len(productPackages)).To(Equal(3)) // OUTLET should be skipped
 			Expect(productPackages[0].Id).To(Equal(202))
 			Expect(productPackages[0].Name).To(Equal("Cloud Server 2"))
+		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := productPackageService.GetPackagesByType("VIRTUAL_SERVER_INSTANCE")
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := productPackageService.GetPackagesByType("VIRTUAL_SERVER_INSTANCE")
+					Expect(err).To(HaveOccurred())
+				}
+			})
 		})
 	})
 
@@ -151,11 +259,33 @@ var _ = Describe("SoftLayer_Product_Package", func() {
 
 		It("returns datatypes.Softlayer_Product_Package", func() {
 			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Product_Package_getAllObjects_virtual_server.json")
+
 			productPackage, err := productPackageService.GetOnePackageByType("VIRTUAL_SERVER_INSTANCE")
 			Expect(err).ToNot(HaveOccurred())
 			Expect(productPackage.Id).To(Equal(200))
 			Expect(productPackage.Name).To(Equal("Cloud Server 1"))
 		})
-	})
 
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := productPackageService.GetOnePackageByType("VIRTUAL_SERVER_INSTANCE")
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := productPackageService.GetOnePackageByType("VIRTUAL_SERVER_INSTANCE")
+					Expect(err).To(HaveOccurred())
+				}
+			})
+		})
+	})
 })
