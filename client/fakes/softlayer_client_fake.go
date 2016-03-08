@@ -1,7 +1,6 @@
 package client_fakes
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
 	"os"
@@ -24,19 +23,7 @@ type FakeSoftLayerClient struct {
 
 	SoftLayerServices map[string]softlayer.Service
 
-	DoRawHttpRequestResponseCount int
-
-	DoRawHttpRequestResponse       []byte
-	DoRawHttpRequestResponses      [][]byte
-	DoRawHttpRequestResponsesIndex int
-	DoRawHttpRequestError          error
-	DoRawHttpRequestPath           string
-	DoRawHttpRequestRequestType    string
-
-	GenerateRequestBodyBuffer *bytes.Buffer
-	GenerateRequestBodyError  error
-
-	HasErrorsError, CheckForHttpResponseError error
+	FakeHttpClient *FakeHttpClient
 }
 
 func NewFakeSoftLayerClient(username, apiKey string) *FakeSoftLayerClient {
@@ -47,22 +34,9 @@ func NewFakeSoftLayerClient(username, apiKey string) *FakeSoftLayerClient {
 
 		TemplatePath: filepath.Join(pwd, TEMPLATE_ROOT_PATH),
 
+		FakeHttpClient: NewFakeHttpClient(username, apiKey),
+
 		SoftLayerServices: map[string]softlayer.Service{},
-
-		DoRawHttpRequestResponseCount: 0,
-
-		DoRawHttpRequestResponse:       nil,
-		DoRawHttpRequestResponses:      [][]byte{},
-		DoRawHttpRequestResponsesIndex: 0,
-		DoRawHttpRequestError:          nil,
-		DoRawHttpRequestPath:           "",
-		DoRawHttpRequestRequestType:    "",
-
-		GenerateRequestBodyBuffer: new(bytes.Buffer),
-		GenerateRequestBodyError:  nil,
-
-		HasErrorsError:            nil,
-		CheckForHttpResponseError: nil,
 	}
 
 	fslc.initSoftLayerServices()
@@ -71,6 +45,10 @@ func NewFakeSoftLayerClient(username, apiKey string) *FakeSoftLayerClient {
 }
 
 //softlayer.Client interface methods
+
+func (fslc *FakeSoftLayerClient) GetHttpClient() softlayer.HttpClient {
+	return fslc.FakeHttpClient
+}
 
 func (fslc *FakeSoftLayerClient) GetService(serviceName string) (softlayer.Service, error) {
 	slService, ok := fslc.SoftLayerServices[serviceName]
@@ -196,91 +174,6 @@ func (fslc *FakeSoftLayerClient) GetSoftLayer_Dns_Domain_ResourceRecord_Service(
 	}
 
 	return slService.(softlayer.SoftLayer_Dns_Domain_ResourceRecord_Service), nil
-}
-
-//Public methods
-func (fslc *FakeSoftLayerClient) DoRawHttpRequestWithObjectMask(path string, masks []string, requestType string, requestBody *bytes.Buffer) ([]byte, error) {
-	fslc.DoRawHttpRequestPath = path
-	fslc.DoRawHttpRequestRequestType = requestType
-
-	fslc.DoRawHttpRequestResponseCount += 1
-
-	if fslc.DoRawHttpRequestError != nil {
-		return []byte{}, fslc.DoRawHttpRequestError
-	}
-
-	if fslc.DoRawHttpRequestResponse != nil && len(fslc.DoRawHttpRequestResponses) == 0 {
-		return fslc.DoRawHttpRequestResponse, fslc.DoRawHttpRequestError
-	} else {
-		fslc.DoRawHttpRequestResponsesIndex = fslc.DoRawHttpRequestResponsesIndex + 1
-		return fslc.DoRawHttpRequestResponses[fslc.DoRawHttpRequestResponsesIndex-1], fslc.DoRawHttpRequestError
-	}
-}
-
-func (fslc *FakeSoftLayerClient) DoRawHttpRequestWithObjectFilter(path string, filters string, requestType string, requestBody *bytes.Buffer) ([]byte, error) {
-	fslc.DoRawHttpRequestPath = path
-	fslc.DoRawHttpRequestRequestType = requestType
-
-	fslc.DoRawHttpRequestResponseCount += 1
-
-	if fslc.DoRawHttpRequestError != nil {
-		return []byte{}, fslc.DoRawHttpRequestError
-	}
-
-	if fslc.DoRawHttpRequestResponse != nil && len(fslc.DoRawHttpRequestResponses) == 0 {
-		return fslc.DoRawHttpRequestResponse, fslc.DoRawHttpRequestError
-	} else {
-		fslc.DoRawHttpRequestResponsesIndex = fslc.DoRawHttpRequestResponsesIndex + 1
-		return fslc.DoRawHttpRequestResponses[fslc.DoRawHttpRequestResponsesIndex-1], fslc.DoRawHttpRequestError
-	}
-}
-
-func (fslc *FakeSoftLayerClient) DoRawHttpRequestWithObjectFilterAndObjectMask(path string, masks []string, filters string, requestType string, requestBody *bytes.Buffer) ([]byte, error) {
-	fslc.DoRawHttpRequestPath = path
-	fslc.DoRawHttpRequestRequestType = requestType
-
-	fslc.DoRawHttpRequestResponseCount += 1
-
-	if fslc.DoRawHttpRequestError != nil {
-		return []byte{}, fslc.DoRawHttpRequestError
-	}
-
-	if fslc.DoRawHttpRequestResponse != nil && len(fslc.DoRawHttpRequestResponses) == 0 {
-		return fslc.DoRawHttpRequestResponse, fslc.DoRawHttpRequestError
-	} else {
-		fslc.DoRawHttpRequestResponsesIndex = fslc.DoRawHttpRequestResponsesIndex + 1
-		return fslc.DoRawHttpRequestResponses[fslc.DoRawHttpRequestResponsesIndex-1], fslc.DoRawHttpRequestError
-	}
-}
-
-func (fslc *FakeSoftLayerClient) DoRawHttpRequest(path string, requestType string, requestBody *bytes.Buffer) ([]byte, error) {
-	fslc.DoRawHttpRequestPath = path
-	fslc.DoRawHttpRequestRequestType = requestType
-
-	fslc.DoRawHttpRequestResponseCount += 1
-
-	if fslc.DoRawHttpRequestError != nil {
-		return []byte{}, fslc.DoRawHttpRequestError
-	}
-
-	if fslc.DoRawHttpRequestResponse != nil && len(fslc.DoRawHttpRequestResponses) == 0 {
-		return fslc.DoRawHttpRequestResponse, fslc.DoRawHttpRequestError
-	} else {
-		fslc.DoRawHttpRequestResponsesIndex = fslc.DoRawHttpRequestResponsesIndex + 1
-		return fslc.DoRawHttpRequestResponses[fslc.DoRawHttpRequestResponsesIndex-1], fslc.DoRawHttpRequestError
-	}
-}
-
-func (fslc *FakeSoftLayerClient) GenerateRequestBody(templateData interface{}) (*bytes.Buffer, error) {
-	return fslc.GenerateRequestBodyBuffer, fslc.GenerateRequestBodyError
-}
-
-func (fslc *FakeSoftLayerClient) HasErrors(body map[string]interface{}) error {
-	return fslc.HasErrorsError
-}
-
-func (fslc *FakeSoftLayerClient) CheckForHttpResponseErrors(data []byte) error {
-	return fslc.CheckForHttpResponseError
 }
 
 //Private methods
