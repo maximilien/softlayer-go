@@ -7,4 +7,4 @@ inputs:
     path: gopath/src/github.com/maximilien/softlayer-go
 
 run:
-  path: gopath/src/github.com/maximilien/softlayer-go/bin/test-unit
+  path: gopath/src/github.com/maximilien/softlayer-go/bin/ci
