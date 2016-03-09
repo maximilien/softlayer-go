@@ -1,6 +1,6 @@
 ---
 platform: linux
-image: docker:///cloudfoundry/bosh-lite-ci
+image: docker:///posijon/slci
 
 inputs:
   - name: softlayer-go
