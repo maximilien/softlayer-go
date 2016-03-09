@@ -21,7 +21,6 @@ jobs:
 - name: sl-go-integration
   plan:
   - get: softlayer-go
-    trigger: true
     passed: [sl-go-unit]
   - task: integration
     file: softlayer-go/ci/integration.yml
