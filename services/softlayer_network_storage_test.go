@@ -49,18 +49,41 @@ var _ = Describe("SoftLayer_Network_Storage", func() {
 
 	Context("#CreateIscsiVolume", func() {
 		BeforeEach(func() {
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Network_Storage_Service_getIscsiVolume.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Network_Storage_Service_getIscsiVolume.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
+
 		It("fails with error if the volume size is negative", func() {
 			volume, err = networkStorageService.CreateIscsiVolume(-1, "fake-location")
 			Expect(err).To(HaveOccurred())
+		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err = networkStorageService.CreateIscsiVolume(-1, "fake-location")
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err = networkStorageService.CreateIscsiVolume(-1, "fake-location")
+					Expect(err).To(HaveOccurred())
+				}
+			})
 		})
 	})
 
 	Context("#GetIscsiVolume", func() {
 		BeforeEach(func() {
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Network_Storage_Service_getIscsiVolume.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Network_Storage_Service_getIscsiVolume.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -73,20 +96,67 @@ var _ = Describe("SoftLayer_Network_Storage", func() {
 			Expect(volume.CapacityGb).To(Equal(20))
 			Expect(volume.ServiceResourceBackendIpAddress).To(Equal("1.1.1.1"))
 		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err = networkStorageService.GetIscsiVolume(1)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err = networkStorageService.GetIscsiVolume(1)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+		})
 	})
 
 	Context("#HasAllowedVirtualGuest", func() {
 		It("virtual guest allows to access volume", func() {
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Network_Storage_Service_getAllowedVirtualGuests.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Network_Storage_Service_getAllowedVirtualGuests.json")
 			Expect(err).ToNot(HaveOccurred())
+
 			_, err := networkStorageService.HasAllowedVirtualGuest(123, 456)
 			Expect(err).ToNot(HaveOccurred())
+		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := networkStorageService.HasAllowedVirtualGuest(123, 456)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := networkStorageService.HasAllowedVirtualGuest(123, 456)
+					Expect(err).To(HaveOccurred())
+				}
+			})
 		})
 	})
 
 	Context("#AttachIscsiVolume", func() {
-		It("Allow access to storage from virutal guest", func() {
-			virtualGuest := datatypes.SoftLayer_Virtual_Guest{
+		var virtualGuest datatypes.SoftLayer_Virtual_Guest
+
+		BeforeEach(func() {
+			virtualGuest = datatypes.SoftLayer_Virtual_Guest{
 				AccountId:                    123456,
 				DedicatedAccountHostOnlyFlag: false,
 				Domain: "softlayer.com",
@@ -103,16 +173,46 @@ var _ = Describe("SoftLayer_Network_Storage", func() {
 				PrimaryBackendIpAddress:  "fake-primary-backend-ip",
 				PrimaryIpAddress:         "fake-primary-ip",
 			}
-			fakeClient.DoRawHttpRequestResponse = []byte("true")
+		})
+
+		It("Allow access to storage from virutal guest", func() {
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("true")
+
 			resp, err := networkStorageService.AttachIscsiVolume(virtualGuest, 123)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(resp).To(Equal(true))
 		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+					fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("true")
+
+					_, err := networkStorageService.AttachIscsiVolume(virtualGuest, 123)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+					fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("true")
+
+					_, err := networkStorageService.AttachIscsiVolume(virtualGuest, 123)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+		})
 	})
 
 	Context("#DetachIscsiVolume", func() {
-		It("Revoke access to storage from virtual guest", func() {
-			virtualGuest := datatypes.SoftLayer_Virtual_Guest{
+		var virtualGuest datatypes.SoftLayer_Virtual_Guest
+
+		BeforeEach(func() {
+			virtualGuest = datatypes.SoftLayer_Virtual_Guest{
 				AccountId:                    123456,
 				DedicatedAccountHostOnlyFlag: false,
 				Domain: "softlayer.com",
@@ -129,10 +229,37 @@ var _ = Describe("SoftLayer_Network_Storage", func() {
 				PrimaryBackendIpAddress:  "fake-primary-backend-ip",
 				PrimaryIpAddress:         "fake-primary-ip",
 			}
-			volume.Id = 1234567
-			fakeClient.DoRawHttpRequestResponse = []byte("true")
-			err = networkStorageService.DetachIscsiVolume(virtualGuest, volume.Id)
+		})
+
+		It("Revoke access to storage from virtual guest", func() {
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("true")
+
+			err = networkStorageService.DetachIscsiVolume(virtualGuest, 1234567)
 			Expect(err).ToNot(HaveOccurred())
+		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+					fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("true")
+
+					err = networkStorageService.DetachIscsiVolume(virtualGuest, 1234567)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+					fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("true")
+
+					err = networkStorageService.DetachIscsiVolume(virtualGuest, 1234567)
+					Expect(err).To(HaveOccurred())
+				}
+			})
 		})
 	})
 
@@ -142,18 +269,43 @@ var _ = Describe("SoftLayer_Network_Storage", func() {
 		})
 
 		It("sucessfully deletes the SoftLayer_Network_Storage volume", func() {
-			fakeClient.DoRawHttpRequestResponse = []byte("true")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("true")
+
 			deleted, err := networkStorageService.DeleteObject(volume.Id)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(deleted).To(BeTrue())
 		})
 
 		It("fails to delete the SoftLayer_Network_Storage volume", func() {
-			fakeClient.DoRawHttpRequestResponse = []byte("false")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("false")
+
 			deleted, err := networkStorageService.DeleteObject(volume.Id)
 			Expect(err).To(HaveOccurred())
 			Expect(deleted).To(BeFalse())
 		})
-	})
 
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+					fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("false")
+
+					_, err := networkStorageService.DeleteObject(volume.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+					fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("false")
+
+					_, err := networkStorageService.DeleteObject(volume.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+		})
+	})
 })
