@@ -1,4 +1,4 @@
-softlayer-go [![Build Status](https://travis-ci.org/maximilien/softlayer-go.svg?branch=master)](https://travis-ci.org/maximilien/softlayer-go#)
+softlayer-go [![Build Status](https://travis-ci.org/maximilien/softlayer-go.svg?branch=master)](https://travis-ci.org/maximilien/softlayer-go#) [![Join the chat at https://gitter.im/maximilien/softlayer-go](https://badges.gitter.im/maximilien/softlayer-go.svg)](https://gitter.im/maximilien/softlayer-go?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 ============
 
 An *incomplete* SoftLayer (SL) client API written in Go language.

@@ -706,14 +706,14 @@ func CreateDnsDomainService() (softlayer.SoftLayer_Dns_Domain_Service, error) {
 	return dnsDomainService, nil
 }
 
-func CreateDnsDomainResourceRecordService() (softlayer.SoftLayer_Dns_Domain_Resource_Record_Service, error) {
+func CreateDnsDomainResourceRecordService() (softlayer.SoftLayer_Dns_Domain_ResourceRecord_Service, error) {
 	username, apiKey, err := GetUsernameAndApiKey()
 	if err != nil {
 		return nil, err
 	}
 
 	client := slclient.NewSoftLayerClient(username, apiKey)
-	dnsDomainResourceRecordService, err := client.GetSoftLayer_Dns_Domain_Resource_Record_Service()
+	dnsDomainResourceRecordService, err := client.GetSoftLayer_Dns_Domain_ResourceRecord_Service()
 	if err != nil {
 		return nil, err
 	}
@@ -771,8 +771,8 @@ func WaitForDeletedDnsDomainToNoLongerBePresent(dnsDomainId int) {
 	}, TIMEOUT, POLLING_INTERVAL).Should(BeTrue(), "failed waiting for deleted dns domain to be removed")
 }
 
-func CreateTestDnsDomainResourceRecord(domainId int) datatypes.SoftLayer_Dns_Domain_Resource_Record {
-	template := datatypes.SoftLayer_Dns_Domain_Resource_Record_Template{
+func CreateTestDnsDomainResourceRecord(domainId int) datatypes.SoftLayer_Dns_Domain_ResourceRecord {
+	template := datatypes.SoftLayer_Dns_Domain_ResourceRecord_Template{
 		Data:              "127.0.0.1",
 		DomainId:          domainId,
 		Host:              TEST_HOST,
