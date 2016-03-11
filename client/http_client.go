@@ -28,7 +28,7 @@ type HttpClient struct {
 const (
 	SOFTLAYER_API_URL  = "api.softlayer.com/rest/v3"
 	TEMPLATE_ROOT_PATH = "templates"
-	SL_GO_NON_VERBOSE  = "SL_GO_NON_VERBOSE"
+	NON_VERBOSE        = "NON_VERBOSE"
 )
 
 func NewHttpClient(username, apiKey string) *HttpClient {
@@ -181,7 +181,7 @@ func hideCredentials(s string) string {
 }
 
 func checkNonVerbose() bool {
-	slGoNonVerbose := os.Getenv(SL_GO_NON_VERBOSE)
+	slGoNonVerbose := os.Getenv(NON_VERBOSE)
 	switch slGoNonVerbose {
 	case "yes":
 		return true
