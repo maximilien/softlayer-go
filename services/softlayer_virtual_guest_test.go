@@ -189,6 +189,71 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 		})
 	})
 
+	Context("#GetObjectByPrimaryIpAddress", func() {
+		BeforeEach(func() {
+			virtualGuest.PrimaryIpAddress = "23.246.234.32"
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_getObject.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("sucessfully retrieves SoftLayer_Virtual_Guest instance", func() {
+			vg, err := virtualGuestService.GetObjectByPrimaryIpAddress(virtualGuest.PrimaryIpAddress)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(vg.Id).To(Equal(virtualGuest.Id))
+			Expect(vg.AccountId).To(Equal(278444))
+			Expect(vg.CreateDate).ToNot(BeNil())
+			Expect(vg.DedicatedAccountHostOnlyFlag).To(BeFalse())
+			Expect(vg.Domain).To(Equal("softlayer.com"))
+			Expect(vg.FullyQualifiedDomainName).To(Equal("bosh-ecpi1.softlayer.com"))
+			Expect(vg.Hostname).To(Equal("bosh-ecpi1"))
+			Expect(vg.Id).To(Equal(1234567))
+			Expect(vg.LastPowerStateId).To(Equal(0))
+			Expect(vg.LastVerifiedDate).To(BeNil())
+			Expect(vg.MaxCpu).To(Equal(1))
+			Expect(vg.MaxCpuUnits).To(Equal("CORE"))
+			Expect(vg.MaxMemory).To(Equal(1024))
+			Expect(vg.MetricPollDate).To(BeNil())
+			Expect(vg.ModifyDate).ToNot(BeNil())
+			Expect(vg.StartCpus).To(Equal(1))
+			Expect(vg.StatusId).To(Equal(1001))
+			Expect(vg.Uuid).To(Equal("85d444ce-55a0-39c0-e17a-f697f223cd8a"))
+			Expect(vg.GlobalIdentifier).To(Equal("52145e01-97b6-4312-9c15-dac7f24b6c2a"))
+			Expect(vg.UserData[0].Value).To(Equal("some user data $_/<| with special characters"))
+			Expect(vg.PrimaryBackendIpAddress).To(Equal("10.106.192.42"))
+			Expect(vg.PrimaryIpAddress).To(Equal("23.246.234.32"))
+			Expect(vg.Location.Id).To(Equal(1234567))
+			Expect(vg.Location.Name).To(Equal("R5"))
+			Expect(vg.Location.LongName).To(Equal("Room 5"))
+			Expect(vg.Datacenter.Id).To(Equal(456))
+			Expect(vg.Datacenter.Name).To(Equal("bej2"))
+			Expect(vg.Datacenter.LongName).To(Equal("Beijing 2"))
+			Expect(vg.NetworkComponents[0].MaxSpeed).To(Equal(100))
+			Expect(len(vg.OperatingSystem.Passwords)).To(BeNumerically(">=", 1))
+			Expect(vg.OperatingSystem.Passwords[0].Password).To(Equal("test_password"))
+			Expect(vg.OperatingSystem.Passwords[0].Username).To(Equal("test_username"))
+		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+					_, err := virtualGuestService.GetObject(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+					_, err := virtualGuestService.GetObject(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+		})
+	})
+
 	Context("#EditObject", func() {
 		BeforeEach(func() {
 			virtualGuest.Id = 1234567
