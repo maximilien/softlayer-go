@@ -76,7 +76,52 @@ func (slas *softLayer_Account_Service) GetVirtualGuests() ([]datatypes.SoftLayer
 func (slas *softLayer_Account_Service) GetVirtualGuestsByFilter(filters string) ([]datatypes.SoftLayer_Virtual_Guest, error) {
 	path := fmt.Sprintf("%s/%s", slas.GetName(), "getVirtualGuests.json")
 
-	responseBytes, errorCode, err := slas.client.GetHttpClient().DoRawHttpRequestWithObjectFilter(path, filters, "GET", &bytes.Buffer{})
+	objectMasks := []string{
+		"accountId",
+		"createDate",
+		"dedicatedAccountHostOnlyFlag",
+		"domain",
+		"fullyQualifiedDomainName",
+		"hostname",
+		"hourlyBillingFlag",
+		"id",
+		"lastPowerStateId",
+		"lastVerifiedDate",
+		"maxCpu",
+		"maxCpuUnits",
+		"maxMemory",
+		"metricPollDate",
+		"modifyDate",
+		"notes",
+		"postInstallScriptUri",
+		"privateNetworkOnlyFlag",
+		"startCpus",
+		"statusId",
+		"uuid",
+		"userData.value",
+		"localDiskFlag",
+
+		"globalIdentifier",
+		"managedResourceFlag",
+		"primaryBackendIpAddress",
+		"primaryIpAddress",
+
+		"location.name",
+		"location.longName",
+		"location.id",
+		"datacenter.name",
+		"datacenter.longName",
+		"datacenter.id",
+		"networkComponents.maxSpeed",
+		"operatingSystem.passwords.password",
+		"operatingSystem.passwords.username",
+
+		"blockDeviceTemplateGroup.globalIdentifier",
+		"primaryNetworkComponent.networkVlan.id",
+		"primaryBackendNetworkComponent.networkVlan.id",
+	}
+
+	responseBytes, errorCode, err := slas.client.GetHttpClient().DoRawHttpRequestWithObjectFilterAndObjectMask(path, objectMasks, filters, "GET", &bytes.Buffer{})
 	if err != nil {
 		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Account#getVirtualGuests, error message '%s'", err.Error())
 		return []datatypes.SoftLayer_Virtual_Guest{}, errors.New(errorMessage)
