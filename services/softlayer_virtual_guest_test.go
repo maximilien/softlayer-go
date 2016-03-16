@@ -199,7 +199,6 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 
 		It("sucessfully retrieves SoftLayer_Virtual_Guest instance", func() {
 			vg, err := virtualGuestService.GetObjectByPrimaryIpAddress(virtualGuest.PrimaryIpAddress)
-			fmt.Sprintf("%d", vg.Id)
 			Expect(err).ToNot(HaveOccurred())
 		})
 
