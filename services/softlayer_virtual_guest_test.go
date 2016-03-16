@@ -2,7 +2,6 @@ package services_test
 
 import (
 	"errors"
-	"fmt"
 	"os"
 
 	. "github.com/onsi/ginkgo"
