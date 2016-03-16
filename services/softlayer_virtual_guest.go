@@ -173,6 +173,25 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetObject(instanceId int) (datatyp
 	return virtualGuest, nil
 }
 
+func (slvgs *softLayer_Virtual_Guest_Service) GetObjectByPrimaryIpAddress(ipAddress string) (datatypes.SoftLayer_Virtual_Guest, error) {
+
+
+	ObjectFilter := string(`{"virtualGuests":{"id":{"operation":` + ipAddress + `}}}`)
+
+	accountService, err := slvgs.client.GetSoftLayer_Account_Service()
+	if err != nil {
+		return datatypes.SoftLayer_Virtual_Guest{}, err
+	}
+
+	virtualGuests, err := accountService.GetVirtualGuestsByFilter(ObjectFilter)
+	if err != nil {
+		return datatypes.SoftLayer_Virtual_Guest{}, err
+	}
+
+	return virtualGuests[0], nil
+}
+
+
 func (slvgs *softLayer_Virtual_Guest_Service) EditObject(instanceId int, template datatypes.SoftLayer_Virtual_Guest) (bool, error) {
 	parameters := datatypes.SoftLayer_Virtual_Guest_Parameters{
 		Parameters: []datatypes.SoftLayer_Virtual_Guest{template},

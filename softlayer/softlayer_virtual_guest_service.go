@@ -37,6 +37,7 @@ type SoftLayer_Virtual_Guest_Service interface {
 	GetAllowedHost(instanceId int) (datatypes.SoftLayer_Network_Storage_Allowed_Host, error)
 	GetNetworkVlans(instanceId int) ([]datatypes.SoftLayer_Network_Vlan, error)
 	GetObject(instanceId int) (datatypes.SoftLayer_Virtual_Guest, error)
+	GetObjectByPrimaryIpAddress(ipAddress string) (datatypes.SoftLayer_Virtual_Guest, error)
 	GetPrimaryIpAddress(instanceId int) (string, error)
 	GetPowerState(instanceId int) (datatypes.SoftLayer_Virtual_Guest_Power_State, error)
 	GetSshKeys(instanceId int) ([]datatypes.SoftLayer_Security_Ssh_Key, error)

@@ -73,6 +73,31 @@ func (slas *softLayer_Account_Service) GetVirtualGuests() ([]datatypes.SoftLayer
 	return virtualGuests, nil
 }
 
+func (slas *softLayer_Account_Service) GetVirtualGuestsByFilter(filters string) ([]datatypes.SoftLayer_Virtual_Guest, error) {
+	path := fmt.Sprintf("%s/%s", slas.GetName(), "getVirtualGuests.json")
+
+	responseBytes, errorCode, err := slas.client.GetHttpClient().DoRawHttpRequestWithObjectFilter(path, filters, "GET", &bytes.Buffer{})
+	if err != nil {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Account#getVirtualGuests, error message '%s'", err.Error())
+		return []datatypes.SoftLayer_Virtual_Guest{}, errors.New(errorMessage)
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Account#getVirtualGuests, HTTP error code: '%d'", errorCode)
+		return []datatypes.SoftLayer_Virtual_Guest{}, errors.New(errorMessage)
+	}
+
+	virtualGuests := []datatypes.SoftLayer_Virtual_Guest{}
+	err = json.Unmarshal(responseBytes, &virtualGuests)
+	if err != nil {
+		errorMessage := fmt.Sprintf("softlayer-go: failed to decode JSON response, err message '%s'", err.Error())
+		err := errors.New(errorMessage)
+		return []datatypes.SoftLayer_Virtual_Guest{}, err
+	}
+
+	return virtualGuests, nil
+}
+
 func (slas *softLayer_Account_Service) GetNetworkStorage() ([]datatypes.SoftLayer_Network_Storage, error) {
 	path := fmt.Sprintf("%s/%s", slas.GetName(), "getNetworkStorage.json")
 	responseBytes, errorCode, err := slas.client.GetHttpClient().DoRawHttpRequest(path, "GET", &bytes.Buffer{})
