@@ -175,7 +175,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetObject(instanceId int) (datatyp
 
 func (slvgs *softLayer_Virtual_Guest_Service) GetObjectByPrimaryIpAddress(ipAddress string) (datatypes.SoftLayer_Virtual_Guest, error) {
 
-	ObjectFilter := string(`{"virtualGuests":{"id":{"operation":` + ipAddress + `}}}`)
+	ObjectFilter := string(`{"virtualGuests":{"primaryIpAddress":{"operation":` + ipAddress + `}}}`)
 
 	accountService, err := slvgs.client.GetSoftLayer_Account_Service()
 	if err != nil {
@@ -192,6 +192,27 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetObjectByPrimaryIpAddress(ipAddr
 	}
 
 	return datatypes.SoftLayer_Virtual_Guest{}, errors.New(fmt.Sprintf("Cannot find virtual guest with primary ip: %s", ipAddress))
+}
+
+func (slvgs *softLayer_Virtual_Guest_Service) GetObjectByPrimaryBackendIpAddress(ipAddress string) (datatypes.SoftLayer_Virtual_Guest, error) {
+
+	ObjectFilter := string(`{"virtualGuests":{"primaryBackendIpAddress":{"operation":` + ipAddress + `}}}`)
+
+	accountService, err := slvgs.client.GetSoftLayer_Account_Service()
+	if err != nil {
+		return datatypes.SoftLayer_Virtual_Guest{}, err
+	}
+
+	virtualGuests, err := accountService.GetVirtualGuestsByFilter(ObjectFilter)
+	if err != nil {
+		return datatypes.SoftLayer_Virtual_Guest{}, err
+	}
+
+	if len(virtualGuests) == 1 {
+		return virtualGuests[0], nil
+	}
+
+	return datatypes.SoftLayer_Virtual_Guest{}, errors.New(fmt.Sprintf("Cannot find virtual guest with primary backend ip: %s", ipAddress))
 }
 
 func (slvgs *softLayer_Virtual_Guest_Service) EditObject(instanceId int, template datatypes.SoftLayer_Virtual_Guest) (bool, error) {
