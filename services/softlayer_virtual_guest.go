@@ -175,7 +175,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetObject(instanceId int) (datatyp
 
 func (slvgs *softLayer_Virtual_Guest_Service) GetObjectByPrimaryIpAddress(ipAddress string) (datatypes.SoftLayer_Virtual_Guest, error) {
 
-	ObjectFilter := string(`{"virtualGuests":{"primaryIpAddress":{"operation":` + ipAddress + `}}}`)
+	ObjectFilter := string(`{"virtualGuests":{"primaryIpAddress":{"operation":"` + ipAddress + `"}}}`)
 
 	accountService, err := slvgs.client.GetSoftLayer_Account_Service()
 	if err != nil {
