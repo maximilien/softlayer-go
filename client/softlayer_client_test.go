@@ -157,6 +157,15 @@ var _ = Describe("SoftLayerClient", func() {
 		})
 	})
 
+	Context("#GetSoftLayer_Billing_Item", func() {
+		It("returns a instance implemementing the SoftLayer_Billing_Item interface", func() {
+			var billingItemService softlayer.SoftLayer_Billing_Item_Service
+			billingItemService, err := client.GetSoftLayer_Billing_Item_Service()
+			Expect(err).ToNot(HaveOccurred())
+			Expect(billingItemService).ToNot(BeNil())
+		})
+	})
+
 	Context("#GetSoftLayer_Virtual_Guest_Block_Device_Template_Group_Service", func() {
 		It("returns a instance implemementing the SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service interface", func() {
 			var vgbdtgService softlayer.SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service

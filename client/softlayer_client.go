@@ -145,6 +145,15 @@ func (slc *SoftLayerClient) GetSoftLayer_Billing_Item_Cancellation_Request_Servi
 	return slService.(softlayer.SoftLayer_Billing_Item_Cancellation_Request_Service), nil
 }
 
+func (slc *SoftLayerClient) GetSoftLayer_Billing_Item_Service() (softlayer.SoftLayer_Billing_Item_Service, error) {
+	slService, err := slc.GetService("SoftLayer_Billing_Item")
+	if err != nil {
+		return nil, err
+	}
+
+	return slService.(softlayer.SoftLayer_Billing_Item_Service), nil
+}
+
 func (slc *SoftLayerClient) GetSoftLayer_Hardware_Service() (softlayer.SoftLayer_Hardware_Service, error) {
 	slService, err := slc.GetService("SoftLayer_Hardware")
 	if err != nil {
@@ -175,6 +184,7 @@ func (slc *SoftLayerClient) initSoftLayerServices() {
 	slc.softLayerServices["SoftLayer_Network_Storage_Allowed_Host"] = services.NewSoftLayer_Network_Storage_Allowed_Host_Service(slc)
 	slc.softLayerServices["SoftLayer_Product_Order"] = services.NewSoftLayer_Product_Order_Service(slc)
 	slc.softLayerServices["SoftLayer_Billing_Item_Cancellation_Request"] = services.NewSoftLayer_Billing_Item_Cancellation_Request_Service(slc)
+	slc.softLayerServices["SoftLayer_Billing_Item"] = services.NewSoftLayer_Billing_Item_Service(slc)
 	slc.softLayerServices["SoftLayer_Virtual_Guest_Block_Device_Template_Group"] = services.NewSoftLayer_Virtual_Guest_Block_Device_Template_Group_Service(slc)
 	slc.softLayerServices["SoftLayer_Hardware"] = services.NewSoftLayer_Hardware_Service(slc)
 	slc.softLayerServices["SoftLayer_Dns_Domain"] = services.NewSoftLayer_Dns_Domain_Service(slc)
