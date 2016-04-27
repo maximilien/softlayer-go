@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/url"
+	"strconv"
 
 	common "github.com/maximilien/softlayer-go/common"
 	datatypes "github.com/maximilien/softlayer-go/data_types"
@@ -395,4 +397,37 @@ func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) Set
 	}
 
 	return true, nil
+}
+
+func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) CreatePublicArchiveTransaction(id int, groupName string, summary string, note string, locations []datatypes.SoftLayer_Location) (int, error) {
+	locationIdsArray := []int{}
+	for _, location := range locations {
+		locationIdsArray = append(locationIdsArray, location.Id)
+	}
+	parameters := datatypes.SoftLayer_Virtual_Guest_Block_Device_Template_Group_LocationsArrayInitParameters{
+		Parameters: locationIdsArray,
+	}
+
+	requestBody, err := json.Marshal(parameters)
+	if err != nil {
+		return 0, err
+	}
+
+	queryParams := fmt.Sprintf("groupName=%s&summary=%s&note=%s", url.QueryEscape(groupName), url.QueryEscape(summary), url.QueryEscape(note))
+	response, errorCode, err := slvgbdtg.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/createPublicArchiveTransaction.json?%s", slvgbdtg.GetName(), id, queryParams), "POST", bytes.NewBuffer(requestBody))
+	if err != nil {
+		return 0, err
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest_Block_Device_Template_Group#createPublicArchiveTransaction, HTTP error code: '%d'", errorCode)
+		return 0, errors.New(errorMessage)
+	}
+
+	retCode, err := strconv.Atoi(string(response[:]))
+	if err != nil {
+		return 0, errors.New(fmt.Sprintf("Failed to createPublicArchiveTransaction for ID: %d, error: %s", id, string(response[:])))
+	}
+
+	return retCode, nil
 }
