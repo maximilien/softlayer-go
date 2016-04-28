@@ -404,8 +404,13 @@ func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) Cre
 	for _, location := range locations {
 		locationIdsArray = append(locationIdsArray, location.Id)
 	}
-	parameters := datatypes.SoftLayer_Virtual_Guest_Block_Device_Template_Group_LocationsArrayInitParameters{
-		Parameters: locationIdsArray,
+
+	groupName = url.QueryEscape(groupName)
+	summary = url.QueryEscape(summary)
+	note = url.QueryEscape(note)
+
+	parameters := datatypes.SoftLayer_Virtual_Guest_Block_Device_Template_GroupInitParameters2{
+		Parameters: []interface{}{groupName, summary, note, locationIdsArray},
 	}
 
 	requestBody, err := json.Marshal(parameters)
@@ -413,8 +418,7 @@ func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) Cre
 		return 0, err
 	}
 
-	queryParams := fmt.Sprintf("groupName=%s&summary=%s&note=%s", url.QueryEscape(groupName), url.QueryEscape(summary), url.QueryEscape(note))
-	response, errorCode, err := slvgbdtg.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/createPublicArchiveTransaction.json?%s", slvgbdtg.GetName(), id, queryParams), "POST", bytes.NewBuffer(requestBody))
+	response, errorCode, err := slvgbdtg.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/createPublicArchiveTransaction.json", slvgbdtg.GetName(), id), "POST", bytes.NewBuffer(requestBody))
 	if err != nil {
 		return 0, err
 	}
@@ -424,10 +428,10 @@ func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) Cre
 		return 0, errors.New(errorMessage)
 	}
 
-	retCode, err := strconv.Atoi(string(response[:]))
+	transactionId, err := strconv.Atoi(string(response[:]))
 	if err != nil {
 		return 0, errors.New(fmt.Sprintf("Failed to createPublicArchiveTransaction for ID: %d, error: %s", id, string(response[:])))
 	}
 
-	return retCode, nil
+	return transactionId, nil
 }
