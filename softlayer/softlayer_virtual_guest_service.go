@@ -21,6 +21,7 @@ type SoftLayer_Virtual_Guest_Service interface {
 	CaptureImage(instanceId int) (datatypes.SoftLayer_Container_Disk_Image_Capture_Template, error)
 	CheckHostDiskAvailability(instanceId int, diskCapacity int) (bool, error)
 	ConfigureMetadataDisk(instanceId int) (datatypes.SoftLayer_Provisioning_Version1_Transaction, error)
+	CreateArchiveTransaction(instanceId int, groupName string, blockDevices []datatypes.SoftLayer_Virtual_Guest_Block_Device, note string) (datatypes.SoftLayer_Provisioning_Version1_Transaction, error)
 	CreateObject(template datatypes.SoftLayer_Virtual_Guest_Template) (datatypes.SoftLayer_Virtual_Guest, error)
 
 	DeleteObject(instanceId int) (bool, error)
