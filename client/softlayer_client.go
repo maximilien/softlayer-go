@@ -8,6 +8,11 @@ import (
 	softlayer "github.com/maximilien/softlayer-go/softlayer"
 )
 
+const (
+	SOFTLAYER_API_URL  = "api.softlayer.com/rest/v3"
+	TEMPLATE_ROOT_PATH = "templates"
+)
+
 type SoftLayerClient struct {
 	HttpClient softlayer.HttpClient
 
@@ -16,7 +21,7 @@ type SoftLayerClient struct {
 
 func NewSoftLayerClient(username, apiKey string) *SoftLayerClient {
 	slc := &SoftLayerClient{
-		HttpClient: NewHttpClient(username, apiKey),
+		HttpClient: NewHttpsClient(username, apiKey, SOFTLAYER_API_URL, TEMPLATE_ROOT_PATH),
 
 		softLayerServices: map[string]softlayer.Service{},
 	}
@@ -140,6 +145,15 @@ func (slc *SoftLayerClient) GetSoftLayer_Billing_Item_Cancellation_Request_Servi
 	return slService.(softlayer.SoftLayer_Billing_Item_Cancellation_Request_Service), nil
 }
 
+func (slc *SoftLayerClient) GetSoftLayer_Billing_Item_Service() (softlayer.SoftLayer_Billing_Item_Service, error) {
+	slService, err := slc.GetService("SoftLayer_Billing_Item")
+	if err != nil {
+		return nil, err
+	}
+
+	return slService.(softlayer.SoftLayer_Billing_Item_Service), nil
+}
+
 func (slc *SoftLayerClient) GetSoftLayer_Hardware_Service() (softlayer.SoftLayer_Hardware_Service, error) {
 	slService, err := slc.GetService("SoftLayer_Hardware")
 	if err != nil {
@@ -170,6 +184,7 @@ func (slc *SoftLayerClient) initSoftLayerServices() {
 	slc.softLayerServices["SoftLayer_Network_Storage_Allowed_Host"] = services.NewSoftLayer_Network_Storage_Allowed_Host_Service(slc)
 	slc.softLayerServices["SoftLayer_Product_Order"] = services.NewSoftLayer_Product_Order_Service(slc)
 	slc.softLayerServices["SoftLayer_Billing_Item_Cancellation_Request"] = services.NewSoftLayer_Billing_Item_Cancellation_Request_Service(slc)
+	slc.softLayerServices["SoftLayer_Billing_Item"] = services.NewSoftLayer_Billing_Item_Service(slc)
 	slc.softLayerServices["SoftLayer_Virtual_Guest_Block_Device_Template_Group"] = services.NewSoftLayer_Virtual_Guest_Block_Device_Template_Group_Service(slc)
 	slc.softLayerServices["SoftLayer_Hardware"] = services.NewSoftLayer_Hardware_Service(slc)
 	slc.softLayerServices["SoftLayer_Dns_Domain"] = services.NewSoftLayer_Dns_Domain_Service(slc)

@@ -26,7 +26,7 @@ var _ = Describe("SoftLayerClient", func() {
 		username = os.Getenv("SL_USERNAME")
 		apiKey = os.Getenv("SL_API_KEY")
 
-		os.Setenv("SL_GO_NON_VERBOSE", "TRUE")
+		os.Setenv("NON_VERBOSE", "TRUE")
 
 		client = slclient.NewSoftLayerClient(username, apiKey)
 	})
@@ -154,6 +154,15 @@ var _ = Describe("SoftLayerClient", func() {
 			billingItemCancellationRequestService, err := client.GetSoftLayer_Billing_Item_Cancellation_Request_Service()
 			Expect(err).ToNot(HaveOccurred())
 			Expect(billingItemCancellationRequestService).ToNot(BeNil())
+		})
+	})
+
+	Context("#GetSoftLayer_Billing_Item", func() {
+		It("returns a instance implemementing the SoftLayer_Billing_Item interface", func() {
+			var billingItemService softlayer.SoftLayer_Billing_Item_Service
+			billingItemService, err := client.GetSoftLayer_Billing_Item_Service()
+			Expect(err).ToNot(HaveOccurred())
+			Expect(billingItemService).ToNot(BeNil())
 		})
 	})
 

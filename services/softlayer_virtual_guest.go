@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/url"
 	"strconv"
 	"strings"
 	"time"
@@ -171,6 +172,48 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetObject(instanceId int) (datatyp
 	}
 
 	return virtualGuest, nil
+}
+
+func (slvgs *softLayer_Virtual_Guest_Service) GetObjectByPrimaryIpAddress(ipAddress string) (datatypes.SoftLayer_Virtual_Guest, error) {
+
+	ObjectFilter := string(`{"virtualGuests":{"primaryIpAddress":{"operation":"` + ipAddress + `"}}}`)
+
+	accountService, err := slvgs.client.GetSoftLayer_Account_Service()
+	if err != nil {
+		return datatypes.SoftLayer_Virtual_Guest{}, err
+	}
+
+	virtualGuests, err := accountService.GetVirtualGuestsByFilter(ObjectFilter)
+	if err != nil {
+		return datatypes.SoftLayer_Virtual_Guest{}, err
+	}
+
+	if len(virtualGuests) == 1 {
+		return virtualGuests[0], nil
+	}
+
+	return datatypes.SoftLayer_Virtual_Guest{}, errors.New(fmt.Sprintf("Cannot find virtual guest with primary ip: %s", ipAddress))
+}
+
+func (slvgs *softLayer_Virtual_Guest_Service) GetObjectByPrimaryBackendIpAddress(ipAddress string) (datatypes.SoftLayer_Virtual_Guest, error) {
+
+	ObjectFilter := string(`{"virtualGuests":{"primaryBackendIpAddress":{"operation":` + ipAddress + `}}}`)
+
+	accountService, err := slvgs.client.GetSoftLayer_Account_Service()
+	if err != nil {
+		return datatypes.SoftLayer_Virtual_Guest{}, err
+	}
+
+	virtualGuests, err := accountService.GetVirtualGuestsByFilter(ObjectFilter)
+	if err != nil {
+		return datatypes.SoftLayer_Virtual_Guest{}, err
+	}
+
+	if len(virtualGuests) == 1 {
+		return virtualGuests[0], nil
+	}
+
+	return datatypes.SoftLayer_Virtual_Guest{}, errors.New(fmt.Sprintf("Cannot find virtual guest with primary backend ip: %s", ipAddress))
 }
 
 func (slvgs *softLayer_Virtual_Guest_Service) EditObject(instanceId int, template datatypes.SoftLayer_Virtual_Guest) (bool, error) {
@@ -781,8 +824,8 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetTagReferences(instanceId int) (
 }
 
 func (slvgs *softLayer_Virtual_Guest_Service) AttachDiskImage(instanceId int, imageId int) (datatypes.SoftLayer_Provisioning_Version1_Transaction, error) {
-	parameters := datatypes.SoftLayer_Virtual_GuestInitParameters{
-		Parameters: datatypes.SoftLayer_Virtual_GuestInitParameter{
+	parameters := datatypes.SoftLayer_Virtual_GuestInit_ImageId_Parameters{
+		Parameters: datatypes.ImageId_Parameter{
 			ImageId: imageId,
 		},
 	}
@@ -812,8 +855,8 @@ func (slvgs *softLayer_Virtual_Guest_Service) AttachDiskImage(instanceId int, im
 }
 
 func (slvgs *softLayer_Virtual_Guest_Service) DetachDiskImage(instanceId int, imageId int) (datatypes.SoftLayer_Provisioning_Version1_Transaction, error) {
-	parameters := datatypes.SoftLayer_Virtual_GuestInitParameters{
-		Parameters: datatypes.SoftLayer_Virtual_GuestInitParameter{
+	parameters := datatypes.SoftLayer_Virtual_GuestInit_ImageId_Parameters{
+		Parameters: datatypes.ImageId_Parameter{
 			ImageId: imageId,
 		},
 	}
@@ -1020,6 +1063,38 @@ func (slvgs *softLayer_Virtual_Guest_Service) CaptureImage(instanceId int) (data
 	}
 
 	return diskImageTemplate, nil
+}
+
+func (slvgs *softLayer_Virtual_Guest_Service) CreateArchiveTransaction(instanceId int, groupName string, blockDevices []datatypes.SoftLayer_Virtual_Guest_Block_Device, note string) (datatypes.SoftLayer_Provisioning_Version1_Transaction, error) {
+	groupName = url.QueryEscape(groupName)
+	note = url.QueryEscape(note)
+
+	parameters := datatypes.SoftLayer_Virtual_GuestInitParameters{
+		Parameters: []interface{}{groupName, blockDevices, note},
+	}
+
+	requestBody, err := json.Marshal(parameters)
+	if err != nil {
+		return datatypes.SoftLayer_Provisioning_Version1_Transaction{}, err
+	}
+
+	response, errorCode, err := slvgs.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/createArchiveTransaction.json", slvgs.GetName(), instanceId), "POST", bytes.NewBuffer(requestBody))
+	if err != nil {
+		return datatypes.SoftLayer_Provisioning_Version1_Transaction{}, err
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#createArchiveTransaction, HTTP error code: '%d'", errorCode)
+		return datatypes.SoftLayer_Provisioning_Version1_Transaction{}, errors.New(errorMessage)
+	}
+
+	transaction := datatypes.SoftLayer_Provisioning_Version1_Transaction{}
+	err = json.Unmarshal(response, &transaction)
+	if err != nil {
+		return datatypes.SoftLayer_Provisioning_Version1_Transaction{}, err
+	}
+
+	return transaction, nil
 }
 
 //Private methods

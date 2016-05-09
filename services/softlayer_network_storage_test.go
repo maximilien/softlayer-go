@@ -19,6 +19,7 @@ var _ = Describe("SoftLayer_Network_Storage", func() {
 		fakeClient *slclientfakes.FakeSoftLayerClient
 
 		volume                datatypes.SoftLayer_Network_Storage
+		billingItem           datatypes.SoftLayer_Billing_Item
 		networkStorageService softlayer.SoftLayer_Network_Storage_Service
 		err                   error
 	)
@@ -114,6 +115,41 @@ var _ = Describe("SoftLayer_Network_Storage", func() {
 					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
 
 					_, err = networkStorageService.GetIscsiVolume(1)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+		})
+	})
+
+	Context("#GetBillingItem", func() {
+		BeforeEach(func() {
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Network_Storage_Service_getBillingItem.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("returns the billing item object based on volume id", func() {
+			billingItem, err = networkStorageService.GetBillingItem(1)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(billingItem.Id).To(Equal(12345678))
+		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err = networkStorageService.GetBillingItem(1)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err = networkStorageService.GetBillingItem(1)
 					Expect(err).To(HaveOccurred())
 				}
 			})
