@@ -502,7 +502,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) RebootHard(instanceId int) (bool, 
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Security_Ssh_Key#rebootHard, HTTP error code: '%d'", errorCode)
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#rebootHard, HTTP error code: '%d'", errorCode)
 		return false, errors.New(errorMessage)
 	}
 

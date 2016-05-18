@@ -45,6 +45,7 @@ type SoftLayer_Virtual_Guest_Service interface {
 	GetTagReferences(instanceId int) ([]datatypes.SoftLayer_Tag_Reference, error)
 	GetUpgradeItemPrices(instanceId int) ([]datatypes.SoftLayer_Product_Item_Price, error)
 	GetUserData(instanceId int) ([]datatypes.SoftLayer_Virtual_Guest_Attribute, error)
+	GetAvailableUpgradeItemPrices(upgradeOptions *UpgradeOptions) ([]datatypes.SoftLayer_Product_Item_Price, error)
 
 	PowerCycle(instanceId int) (bool, error)
 	PowerOff(instanceId int) (bool, error)
@@ -62,5 +63,5 @@ type SoftLayer_Virtual_Guest_Service interface {
 	ReloadOperatingSystem(instanceId int, template datatypes.Image_Template_Config) error
 
 	UpgradeObject(instanceId int, upgradeOptions *UpgradeOptions) (bool, error)
-	GetAvailableUpgradeItemPrices(upgradeOptions *UpgradeOptions) ([]datatypes.SoftLayer_Product_Item_Price, error)
+
 }
