@@ -3,14 +3,14 @@
 	"domain": "fake.domain.com",
 	"hardwareStatusId": 5,
 	"hostname": "fake.hostname",
-	"id": 780189,
+	"id": 123456,
 	"provisionDate": "2016-03-08T22:52:17+08:00",
 	"datacenter": {
 		"id": 358694,
 		"longName": "London 2",
 		"name": "lon02"
 	},
-	"globalIdentifier": "e2286c99-cace-494c-8d37-c336a7d548f9",
+	"globalIdentifier": "abcdefg",
 	"operatingSystem": {
 		"hardwareId": 780189,
 		"id": 9505997,

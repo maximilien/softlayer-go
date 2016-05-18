@@ -107,12 +107,12 @@ var _ = Describe("SoftLayer_Hardware", func() {
 		})
 
 		It("sucessfully retrieves SoftLayer_Virtual_Guest instance", func() {
-			hardware, err := hardwareService.GetObject("abcdefg")
+			hardware, err := hardwareService.GetObject(123456)
 			Expect(err).ToNot(HaveOccurred())
-			Expect(hardware.Id).To(Equal(123))
-			Expect(hardware.Hostname).To(Equal("softlayer"))
-			Expect(hardware.Domain).To(Equal("testing.com"))
-			Expect(hardware.BareMetalInstanceFlag).To(Equal(1))
+			Expect(hardware.Id).To(Equal(123456))
+			Expect(hardware.Hostname).To(Equal("fake.hostname"))
+			Expect(hardware.Domain).To(Equal("fake.domain.com"))
+			Expect(hardware.BareMetalInstanceFlag).To(Equal(0))
 			Expect(hardware.GlobalIdentifier).To(Equal("abcdefg"))
 		})
 
@@ -122,7 +122,7 @@ var _ = Describe("SoftLayer_Hardware", func() {
 				for _, errorCode := range errorCodes {
 					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
 
-					_, err := hardwareService.GetObject("abcdefg")
+					_, err := hardwareService.GetObject(123456)
 					Expect(err).To(HaveOccurred())
 				}
 			})
@@ -132,7 +132,7 @@ var _ = Describe("SoftLayer_Hardware", func() {
 				for _, errorCode := range errorCodes {
 					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
 
-					_, err := hardwareService.GetObject("abcdefg")
+					_, err := hardwareService.GetObject(123456)
 					Expect(err).To(HaveOccurred())
 				}
 			})
