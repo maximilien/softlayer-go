@@ -26,6 +26,8 @@ var _ = Describe("SoftLayerClient", func() {
 		username = os.Getenv("SL_USERNAME")
 		apiKey = os.Getenv("SL_API_KEY")
 
+		os.Setenv("NON_VERBOSE", "TRUE")
+
 		client = slclient.NewSoftLayerClient(username, apiKey)
 	})
 
@@ -42,18 +44,18 @@ var _ = Describe("SoftLayerClient", func() {
 	Context("#NewSoftLayerClient_HTTPClient", func() {
 		It("creates a new client which should have an initialized default HTTP client", func() {
 			client = slclient.NewSoftLayerClient(username, apiKey)
-			if c, ok := client.(*slclient.SoftLayerClient); ok {
-				Expect(c.HTTPClient).ToNot(BeNil())
-			}
-		})
 
-		It("creates a new client with a custom HTTP client", func() {
-			client = slclient.NewSoftLayerClient(username, apiKey)
-			c, _ := client.(*slclient.SoftLayerClient)
+			c, ok := client.(*slclient.SoftLayerClient)
+			Expect(ok).To(BeTrue())
+			Expect(c.HttpClient).ToNot(BeNil())
+
+			httpClient, ok := c.GetHttpClient().(*slclient.HttpClient)
+			Expect(ok).To(BeTrue())
+			Expect(httpClient.HTTPClient).ToNot(BeNil())
 
 			// Assign a malformed dialer to test if the HTTP client really works
 			var errDialFailed = errors.New("dial failed")
-			c.HTTPClient = &http.Client{
+			httpClient.HTTPClient = &http.Client{
 				Transport: &http.Transport{
 					Dial: func(network, addr string) (net.Conn, error) {
 						return nil, errDialFailed
@@ -61,9 +63,11 @@ var _ = Describe("SoftLayerClient", func() {
 				},
 			}
 
-			_, err := c.DoRawHttpRequest("/foo", "application/text", bytes.NewBufferString("random text"))
-			Expect(err).To(Equal(errDialFailed))
+			Expect(client.GetHttpClient()).ToNot(BeNil())
 
+			_, errorCode, err := client.GetHttpClient().DoRawHttpRequest("/foo", "application/text", bytes.NewBufferString("random text"))
+			Expect(err).To(Equal(errDialFailed))
+			Expect(errorCode).To(BeNumerically(">", 400))
 		})
 	})
 
@@ -150,6 +154,15 @@ var _ = Describe("SoftLayerClient", func() {
 			billingItemCancellationRequestService, err := client.GetSoftLayer_Billing_Item_Cancellation_Request_Service()
 			Expect(err).ToNot(HaveOccurred())
 			Expect(billingItemCancellationRequestService).ToNot(BeNil())
+		})
+	})
+
+	Context("#GetSoftLayer_Billing_Item", func() {
+		It("returns a instance implemementing the SoftLayer_Billing_Item interface", func() {
+			var billingItemService softlayer.SoftLayer_Billing_Item_Service
+			billingItemService, err := client.GetSoftLayer_Billing_Item_Service()
+			Expect(err).ToNot(HaveOccurred())
+			Expect(billingItemService).ToNot(BeNil())
 		})
 	})
 

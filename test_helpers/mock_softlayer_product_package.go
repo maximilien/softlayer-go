@@ -12,7 +12,6 @@ func (mock *MockProductPackageService) GetName() string {
 	return "Mock_Product_Package_Service"
 }
 
-// Provides mock product items for "VIRTUAL_SERVER_INSTANCE" and "ADDITIONAL_SERVICES_APPLICATION_DELIVERY_APPLIANCE" package types
 func (mock *MockProductPackageService) GetItemsByType(packageType string) ([]datatypes.SoftLayer_Product_Item, error) {
 	var response []byte
 	switch packageType {
@@ -28,12 +27,12 @@ func (mock *MockProductPackageService) GetItemsByType(packageType string) ([]dat
 	return productItems, nil
 }
 
-func (mock *MockProductPackageService) GetItemPrices(packageId int) ([]datatypes.SoftLayer_Item_Price, error) {
-	return []datatypes.SoftLayer_Item_Price{}, errors.New("Not supported")
+func (mock *MockProductPackageService) GetItemPrices(packageId int) ([]datatypes.SoftLayer_Product_Item_Price, error) {
+	return []datatypes.SoftLayer_Product_Item_Price{}, errors.New("Not supported")
 }
 
-func (mock *MockProductPackageService) GetItemPricesBySize(packageId int, size int) ([]datatypes.SoftLayer_Item_Price, error) {
-	return []datatypes.SoftLayer_Item_Price{}, errors.New("Not supported")
+func (mock *MockProductPackageService) GetItemPricesBySize(packageId int, size int) ([]datatypes.SoftLayer_Product_Item_Price, error) {
+	return []datatypes.SoftLayer_Product_Item_Price{}, errors.New("Not supported")
 }
 
 func (mock *MockProductPackageService) GetItems(packageId int) ([]datatypes.SoftLayer_Product_Item, error) {

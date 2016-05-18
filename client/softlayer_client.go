@@ -1,8 +1,6 @@
 package client
 
 import (
-	"bytes"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -20,36 +18,17 @@ import (
 const (
 	SOFTLAYER_API_URL  = "api.softlayer.com/rest/v3"
 	TEMPLATE_ROOT_PATH = "templates"
-	SL_GO_NON_VERBOSE  = "SL_GO_NON_VERBOSE"
 )
 
 type SoftLayerClient struct {
-	username string
-	apiKey   string
-
-	templatePath string
-
-	HTTPClient *http.Client
+	HttpClient softlayer.HttpClient
 
 	softLayerServices map[string]softlayer.Service
-
-	nonVerbose bool
 }
 
 func NewSoftLayerClient(username, apiKey string) *SoftLayerClient {
-	pwd, err := os.Getwd()
-	if err != nil {
-		panic(err) // this should be handled by the user
-	}
-
 	slc := &SoftLayerClient{
-		username: username,
-		apiKey:   apiKey,
-
-		templatePath: filepath.Join(pwd, TEMPLATE_ROOT_PATH),
-
-		HTTPClient: http.DefaultClient,
-		nonVerbose: checkNonVerbose(),
+		HttpClient: NewHttpsClient(username, apiKey, SOFTLAYER_API_URL, TEMPLATE_ROOT_PATH),
 
 		softLayerServices: map[string]softlayer.Service{},
 	}
@@ -60,6 +39,10 @@ func NewSoftLayerClient(username, apiKey string) *SoftLayerClient {
 }
 
 //softlayer.Client interface methods
+
+func (slc *SoftLayerClient) GetHttpClient() softlayer.HttpClient {
+	return slc.HttpClient
+}
 
 func (slc *SoftLayerClient) GetService(serviceName string) (softlayer.Service, error) {
 	slService, ok := slc.softLayerServices[serviceName]
@@ -169,17 +152,17 @@ func (slc *SoftLayerClient) GetSoftLayer_Billing_Item_Cancellation_Request_Servi
 	return slService.(softlayer.SoftLayer_Billing_Item_Cancellation_Request_Service), nil
 }
 
-func (slc *SoftLayerClient) GetSoftLayer_Hardware_Service() (softlayer.SoftLayer_Hardware_Service, error) {
-	slService, err := slc.GetService("SoftLayer_Hardware")
+func (slc *SoftLayerClient) GetSoftLayer_Billing_Item_Service() (softlayer.SoftLayer_Billing_Item_Service, error) {
+	slService, err := slc.GetService("SoftLayer_Billing_Item")
 	if err != nil {
 		return nil, err
 	}
 
-	return slService.(softlayer.SoftLayer_Hardware_Service), nil
+	return slService.(softlayer.SoftLayer_Billing_Item_Service), nil
 }
 
-func (slc *SoftLayerClient) GetSoftLayer_Dns_Domain_Record_Service() (softlayer.SoftLayer_Dns_Domain_Record_Service, error) {
-	slService, err := slc.GetService("SoftLayer_Dns_Domain_ResourceRecord")
+func (slc *SoftLayerClient) GetSoftLayer_Hardware_Service() (softlayer.SoftLayer_Hardware_Service, error) {
+	slService, err := slc.GetService("SoftLayer_Hardware")
 	if err != nil {
 		return nil, err
 	}
@@ -238,42 +221,16 @@ func (slc *SoftLayerClient) DoRawHttpRequestWithObjectFilterAndObjectMask(path s
 
 func (slc *SoftLayerClient) DoRawHttpRequest(path string, requestType string, requestBody *bytes.Buffer) ([]byte, error) {
 	url := fmt.Sprintf("https://%s:%s@%s/%s", slc.username, slc.apiKey, SOFTLAYER_API_URL, path)
-	return slc.makeHttpRequest(url, requestType, requestBody)
+	return slService.(softlayer.SoftLayer_Hardware_Service), nil
 }
 
-func (slc *SoftLayerClient) GenerateRequestBody(templateData interface{}) (*bytes.Buffer, error) {
-	cwd, err := os.Getwd()
+func (slc *SoftLayerClient) GetSoftLayer_Dns_Domain_ResourceRecord_Service() (softlayer.SoftLayer_Dns_Domain_ResourceRecord_Service, error) {
+	slService, err := slc.GetService("SoftLayer_Dns_Domain_ResourceRecord")
 	if err != nil {
 		return nil, err
 	}
 
-	bodyTemplate := template.Must(template.ParseFiles(filepath.Join(cwd, slc.templatePath)))
-	body := new(bytes.Buffer)
-	bodyTemplate.Execute(body, templateData)
-
-	return body, nil
-}
-
-func (slc *SoftLayerClient) HasErrors(body map[string]interface{}) error {
-	if errString, ok := body["error"]; !ok {
-		return nil
-	} else {
-		return errors.New(errString.(string))
-	}
-}
-
-func (slc *SoftLayerClient) CheckForHttpResponseErrors(data []byte) error {
-	var decodedResponse map[string]interface{}
-	err := json.Unmarshal(data, &decodedResponse)
-	if err != nil {
-		return err
-	}
-
-	if err := slc.HasErrors(decodedResponse); err != nil {
-		return err
-	}
-
-	return nil
+	return slService.(softlayer.SoftLayer_Dns_Domain_ResourceRecord_Service), nil
 }
 
 //Private methods
@@ -288,6 +245,7 @@ func (slc *SoftLayerClient) initSoftLayerServices() {
 	slc.softLayerServices["SoftLayer_Network_Storage_Allowed_Host"] = services.NewSoftLayer_Network_Storage_Allowed_Host_Service(slc)
 	slc.softLayerServices["SoftLayer_Product_Order"] = services.NewSoftLayer_Product_Order_Service(slc)
 	slc.softLayerServices["SoftLayer_Billing_Item_Cancellation_Request"] = services.NewSoftLayer_Billing_Item_Cancellation_Request_Service(slc)
+	slc.softLayerServices["SoftLayer_Billing_Item"] = services.NewSoftLayer_Billing_Item_Service(slc)
 	slc.softLayerServices["SoftLayer_Virtual_Guest_Block_Device_Template_Group"] = services.NewSoftLayer_Virtual_Guest_Block_Device_Template_Group_Service(slc)
 	slc.softLayerServices["SoftLayer_Hardware"] = services.NewSoftLayer_Hardware_Service(slc)
 	slc.softLayerServices["SoftLayer_Dns_Domain"] = services.NewSoftLayer_Dns_Domain_Service(slc)

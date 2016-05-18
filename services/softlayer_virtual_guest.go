@@ -6,18 +6,22 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/url"
 	"strconv"
 	"strings"
 	"time"
 
+	common "github.com/maximilien/softlayer-go/common"
 	datatypes "github.com/maximilien/softlayer-go/data_types"
 	softlayer "github.com/maximilien/softlayer-go/softlayer"
 )
 
 const (
-	EPHEMERAL_DISK_CATEGORY_CODE      = "guest_disk1"
-	VIRTUAL_SERVER_PACKAGE_TYPE       = "VIRTUAL_SERVER_INSTANCE"
-	MAINTENANCE_WINDOW_PROPERTY       = "MAINTENANCE_WINDOW"
+	EPHEMERAL_DISK_CATEGORY_CODE = "guest_disk1"
+	// Package type for virtual servers: http://sldn.softlayer.com/reference/services/SoftLayer_Product_Order/placeOrder
+	VIRTUAL_SERVER_PACKAGE_TYPE = "VIRTUAL_SERVER_INSTANCE"
+	MAINTENANCE_WINDOW_PROPERTY = "MAINTENANCE_WINDOW"
+	// Described in the following link: http://sldn.softlayer.com/reference/datatypes/SoftLayer_Container_Product_Order_Virtual_Guest_Upgrade
 	UPGRADE_VIRTUAL_SERVER_ORDER_TYPE = "SoftLayer_Container_Product_Order_Virtual_Guest_Upgrade"
 )
 
@@ -52,12 +56,17 @@ func (slvgs *softLayer_Virtual_Guest_Service) CreateObject(template datatypes.So
 		return datatypes.SoftLayer_Virtual_Guest{}, err
 	}
 
-	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s.json", slvgs.GetName()), "POST", bytes.NewBuffer(requestBody))
+	response, errorCode, err := slvgs.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s.json", slvgs.GetName()), "POST", bytes.NewBuffer(requestBody))
 	if err != nil {
 		return datatypes.SoftLayer_Virtual_Guest{}, err
 	}
 
-	err = slvgs.client.CheckForHttpResponseErrors(response)
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#createObject, HTTP error code: '%d'", errorCode)
+		return datatypes.SoftLayer_Virtual_Guest{}, errors.New(errorMessage)
+	}
+
+	err = slvgs.client.GetHttpClient().CheckForHttpResponseErrors(response)
 	if err != nil {
 		return datatypes.SoftLayer_Virtual_Guest{}, err
 	}
@@ -82,9 +91,14 @@ func (slvgs *softLayer_Virtual_Guest_Service) ReloadOperatingSystem(instanceId i
 		return err
 	}
 
-	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/reloadOperatingSystem.json", slvgs.GetName(), instanceId), "POST", bytes.NewBuffer(requestBody))
+	response, errorCode, err := slvgs.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/reloadOperatingSystem.json", slvgs.GetName(), instanceId), "POST", bytes.NewBuffer(requestBody))
 	if err != nil {
 		return err
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#reloadOperatingSystem, HTTP error code: '%d'", errorCode)
+		return errors.New(errorMessage)
 	}
 
 	if res := string(response[:]); res != `"1"` {
@@ -141,9 +155,14 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetObject(instanceId int) (datatyp
 		"primaryBackendNetworkComponent.networkVlan.id",
 	}
 
-	response, err := slvgs.client.DoRawHttpRequestWithObjectMask(fmt.Sprintf("%s/%d/getObject.json", slvgs.GetName(), instanceId), objectMask, "GET", new(bytes.Buffer))
+	response, errorCode, err := slvgs.client.GetHttpClient().DoRawHttpRequestWithObjectMask(fmt.Sprintf("%s/%d/getObject.json", slvgs.GetName(), instanceId), objectMask, "GET", new(bytes.Buffer))
 	if err != nil {
 		return datatypes.SoftLayer_Virtual_Guest{}, err
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#getObject, HTTP error code: '%d'", errorCode)
+		return datatypes.SoftLayer_Virtual_Guest{}, errors.New(errorMessage)
 	}
 
 	virtualGuest := datatypes.SoftLayer_Virtual_Guest{}
@@ -153,6 +172,48 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetObject(instanceId int) (datatyp
 	}
 
 	return virtualGuest, nil
+}
+
+func (slvgs *softLayer_Virtual_Guest_Service) GetObjectByPrimaryIpAddress(ipAddress string) (datatypes.SoftLayer_Virtual_Guest, error) {
+
+	ObjectFilter := string(`{"virtualGuests":{"primaryIpAddress":{"operation":"` + ipAddress + `"}}}`)
+
+	accountService, err := slvgs.client.GetSoftLayer_Account_Service()
+	if err != nil {
+		return datatypes.SoftLayer_Virtual_Guest{}, err
+	}
+
+	virtualGuests, err := accountService.GetVirtualGuestsByFilter(ObjectFilter)
+	if err != nil {
+		return datatypes.SoftLayer_Virtual_Guest{}, err
+	}
+
+	if len(virtualGuests) == 1 {
+		return virtualGuests[0], nil
+	}
+
+	return datatypes.SoftLayer_Virtual_Guest{}, errors.New(fmt.Sprintf("Cannot find virtual guest with primary ip: %s", ipAddress))
+}
+
+func (slvgs *softLayer_Virtual_Guest_Service) GetObjectByPrimaryBackendIpAddress(ipAddress string) (datatypes.SoftLayer_Virtual_Guest, error) {
+
+	ObjectFilter := string(`{"virtualGuests":{"primaryBackendIpAddress":{"operation":` + ipAddress + `}}}`)
+
+	accountService, err := slvgs.client.GetSoftLayer_Account_Service()
+	if err != nil {
+		return datatypes.SoftLayer_Virtual_Guest{}, err
+	}
+
+	virtualGuests, err := accountService.GetVirtualGuestsByFilter(ObjectFilter)
+	if err != nil {
+		return datatypes.SoftLayer_Virtual_Guest{}, err
+	}
+
+	if len(virtualGuests) == 1 {
+		return virtualGuests[0], nil
+	}
+
+	return datatypes.SoftLayer_Virtual_Guest{}, errors.New(fmt.Sprintf("Cannot find virtual guest with primary backend ip: %s", ipAddress))
 }
 
 func (slvgs *softLayer_Virtual_Guest_Service) EditObject(instanceId int, template datatypes.SoftLayer_Virtual_Guest) (bool, error) {
@@ -165,29 +226,50 @@ func (slvgs *softLayer_Virtual_Guest_Service) EditObject(instanceId int, templat
 		return false, err
 	}
 
-	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/editObject.json", slvgs.GetName(), instanceId), "POST", bytes.NewBuffer(requestBody))
+	response, errorCode, err := slvgs.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/editObject.json", slvgs.GetName(), instanceId), "POST", bytes.NewBuffer(requestBody))
+	if err != nil {
+		return false, err
+	}
 
 	if res := string(response[:]); res != "true" {
 		return false, errors.New(fmt.Sprintf("Failed to edit virtual guest with id: %d, got '%s' as response from the API.", instanceId, res))
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#editObject, HTTP error code: '%d'", errorCode)
+		return false, errors.New(errorMessage)
 	}
 
 	return true, err
 }
 
 func (slvgs *softLayer_Virtual_Guest_Service) DeleteObject(instanceId int) (bool, error) {
-	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d.json", slvgs.GetName(), instanceId), "DELETE", new(bytes.Buffer))
+	response, errorCode, err := slvgs.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d.json", slvgs.GetName(), instanceId), "DELETE", new(bytes.Buffer))
+	if err != nil {
+		return false, err
+	}
 
 	if res := string(response[:]); res != "true" {
 		return false, errors.New(fmt.Sprintf("Failed to delete instance with id '%d', got '%s' as response from the API.", instanceId, res))
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#deleteObject, HTTP error code: '%d'", errorCode)
+		return false, errors.New(errorMessage)
 	}
 
 	return true, err
 }
 
 func (slvgs *softLayer_Virtual_Guest_Service) GetPowerState(instanceId int) (datatypes.SoftLayer_Virtual_Guest_Power_State, error) {
-	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/getPowerState.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+	response, errorCode, err := slvgs.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/getPowerState.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
 	if err != nil {
 		return datatypes.SoftLayer_Virtual_Guest_Power_State{}, err
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#getPowerState, HTTP error code: '%d'", errorCode)
+		return datatypes.SoftLayer_Virtual_Guest_Power_State{}, errors.New(errorMessage)
 	}
 
 	vgPowerState := datatypes.SoftLayer_Virtual_Guest_Power_State{}
@@ -200,9 +282,14 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetPowerState(instanceId int) (dat
 }
 
 func (slvgs *softLayer_Virtual_Guest_Service) GetPrimaryIpAddress(instanceId int) (string, error) {
-	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/getPrimaryIpAddress.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+	response, errorCode, err := slvgs.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/getPrimaryIpAddress.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
 	if err != nil {
 		return "", err
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#getPrimaryIpAddress, HTTP error code: '%d'", errorCode)
+		return "", errors.New(errorMessage)
 	}
 
 	vgPrimaryIpAddress := strings.TrimSpace(string(response))
@@ -214,9 +301,14 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetPrimaryIpAddress(instanceId int
 }
 
 func (slvgs *softLayer_Virtual_Guest_Service) GetActiveTransaction(instanceId int) (datatypes.SoftLayer_Provisioning_Version1_Transaction, error) {
-	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/getActiveTransaction.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+	response, errorCode, err := slvgs.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/getActiveTransaction.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
 	if err != nil {
 		return datatypes.SoftLayer_Provisioning_Version1_Transaction{}, err
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#getActiveTransaction, HTTP error code: '%d'", errorCode)
+		return datatypes.SoftLayer_Provisioning_Version1_Transaction{}, errors.New(errorMessage)
 	}
 
 	activeTransaction := datatypes.SoftLayer_Provisioning_Version1_Transaction{}
@@ -232,9 +324,15 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetLastTransaction(instanceId int)
 	objectMask := []string{
 		"transactionGroup",
 	}
-	response, err := slvgs.client.DoRawHttpRequestWithObjectMask(fmt.Sprintf("%s/%d/getLastTransaction.json", slvgs.GetName(), instanceId), objectMask, "GET", new(bytes.Buffer))
+
+	response, errorCode, err := slvgs.client.GetHttpClient().DoRawHttpRequestWithObjectMask(fmt.Sprintf("%s/%d/getLastTransaction.json", slvgs.GetName(), instanceId), objectMask, "GET", new(bytes.Buffer))
 	if err != nil {
 		return datatypes.SoftLayer_Provisioning_Version1_Transaction{}, err
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#getLastTransaction, HTTP error code: '%d'", errorCode)
+		return datatypes.SoftLayer_Provisioning_Version1_Transaction{}, errors.New(errorMessage)
 	}
 
 	lastTransaction := datatypes.SoftLayer_Provisioning_Version1_Transaction{}
@@ -247,9 +345,14 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetLastTransaction(instanceId int)
 }
 
 func (slvgs *softLayer_Virtual_Guest_Service) GetActiveTransactions(instanceId int) ([]datatypes.SoftLayer_Provisioning_Version1_Transaction, error) {
-	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/getActiveTransactions.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+	response, errorCode, err := slvgs.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/getActiveTransactions.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
 	if err != nil {
 		return []datatypes.SoftLayer_Provisioning_Version1_Transaction{}, err
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#getActiveTransactions, HTTP error code: '%d'", errorCode)
+		return []datatypes.SoftLayer_Provisioning_Version1_Transaction{}, errors.New(errorMessage)
 	}
 
 	activeTransactions := []datatypes.SoftLayer_Provisioning_Version1_Transaction{}
@@ -262,9 +365,14 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetActiveTransactions(instanceId i
 }
 
 func (slvgs *softLayer_Virtual_Guest_Service) GetSshKeys(instanceId int) ([]datatypes.SoftLayer_Security_Ssh_Key, error) {
-	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/getSshKeys.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+	response, errorCode, err := slvgs.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/getSshKeys.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
 	if err != nil {
 		return []datatypes.SoftLayer_Security_Ssh_Key{}, err
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#getSshKeys, HTTP error code: '%d'", errorCode)
+		return []datatypes.SoftLayer_Security_Ssh_Key{}, errors.New(errorMessage)
 	}
 
 	sshKeys := []datatypes.SoftLayer_Security_Ssh_Key{}
@@ -277,70 +385,126 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetSshKeys(instanceId int) ([]data
 }
 
 func (slvgs *softLayer_Virtual_Guest_Service) PowerCycle(instanceId int) (bool, error) {
-	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/powerCycle.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+	response, errorCode, err := slvgs.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/powerCycle.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+	if err != nil {
+		return false, err
+	}
 
 	if res := string(response[:]); res != "true" {
 		return false, errors.New(fmt.Sprintf("Failed to power cycle instance with id '%d', got '%s' as response from the API.", instanceId, res))
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#powerCycle, HTTP error code: '%d'", errorCode)
+		return false, errors.New(errorMessage)
 	}
 
 	return true, err
 }
 
 func (slvgs *softLayer_Virtual_Guest_Service) PowerOff(instanceId int) (bool, error) {
-	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/powerOff.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+	response, errorCode, err := slvgs.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/powerOff.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+	if err != nil {
+		return false, err
+	}
 
 	if res := string(response[:]); res != "true" {
 		return false, errors.New(fmt.Sprintf("Failed to power off instance with id '%d', got '%s' as response from the API.", instanceId, res))
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#powerOff, HTTP error code: '%d'", errorCode)
+		return false, errors.New(errorMessage)
 	}
 
 	return true, err
 }
 
 func (slvgs *softLayer_Virtual_Guest_Service) PowerOffSoft(instanceId int) (bool, error) {
-	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/powerOffSoft.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+	response, errorCode, err := slvgs.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/powerOffSoft.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+	if err != nil {
+		return false, err
+	}
 
 	if res := string(response[:]); res != "true" {
 		return false, errors.New(fmt.Sprintf("Failed to power off soft instance with id '%d', got '%s' as response from the API.", instanceId, res))
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#powerOffSoft, HTTP error code: '%d'", errorCode)
+		return false, errors.New(errorMessage)
 	}
 
 	return true, err
 }
 
 func (slvgs *softLayer_Virtual_Guest_Service) PowerOn(instanceId int) (bool, error) {
-	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/powerOn.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+	response, errorCode, err := slvgs.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/powerOn.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+	if err != nil {
+		return false, err
+	}
 
 	if res := string(response[:]); res != "true" {
 		return false, errors.New(fmt.Sprintf("Failed to power on instance with id '%d', got '%s' as response from the API.", instanceId, res))
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#powerOn, HTTP error code: '%d'", errorCode)
+		return false, errors.New(errorMessage)
 	}
 
 	return true, err
 }
 
 func (slvgs *softLayer_Virtual_Guest_Service) RebootDefault(instanceId int) (bool, error) {
-	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/rebootDefault.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+	response, errorCode, err := slvgs.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/rebootDefault.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+	if err != nil {
+		return false, err
+	}
 
 	if res := string(response[:]); res != "true" {
 		return false, errors.New(fmt.Sprintf("Failed to default reboot instance with id '%d', got '%s' as response from the API.", instanceId, res))
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#rebootDefault, HTTP error code: '%d'", errorCode)
+		return false, errors.New(errorMessage)
 	}
 
 	return true, err
 }
 
 func (slvgs *softLayer_Virtual_Guest_Service) RebootSoft(instanceId int) (bool, error) {
-	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/rebootSoft.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+	response, errorCode, err := slvgs.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/rebootSoft.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+	if err != nil {
+		return false, err
+	}
 
 	if res := string(response[:]); res != "true" {
 		return false, errors.New(fmt.Sprintf("Failed to soft reboot instance with id '%d', got '%s' as response from the API.", instanceId, res))
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#rebootSoft, HTTP error code: '%d'", errorCode)
+		return false, errors.New(errorMessage)
 	}
 
 	return true, err
 }
 
 func (slvgs *softLayer_Virtual_Guest_Service) RebootHard(instanceId int) (bool, error) {
-	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/rebootHard.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+	response, errorCode, err := slvgs.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/rebootHard.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+	if err != nil {
+		return false, err
+	}
 
 	if res := string(response[:]); res != "true" {
 		return false, errors.New(fmt.Sprintf("Failed to hard reboot instance with id '%d', got '%s' as response from the API.", instanceId, res))
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Security_Ssh_Key#rebootHard, HTTP error code: '%d'", errorCode)
+		return false, errors.New(errorMessage)
 	}
 
 	return true, err
@@ -361,19 +525,32 @@ func (slvgs *softLayer_Virtual_Guest_Service) SetMetadata(instanceId int, metada
 		return false, err
 	}
 
-	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/setUserMetadata.json", slvgs.GetName(), instanceId), "POST", bytes.NewBuffer(requestBody))
+	response, errorCode, err := slvgs.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/setUserMetadata.json", slvgs.GetName(), instanceId), "POST", bytes.NewBuffer(requestBody))
+	if err != nil {
+		return false, err
+	}
 
 	if res := string(response[:]); res != "true" {
 		return false, errors.New(fmt.Sprintf("Failed to setUserMetadata for instance with id '%d', got '%s' as response from the API.", instanceId, res))
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#setUserMetadata, HTTP error code: '%d'", errorCode)
+		return false, errors.New(errorMessage)
 	}
 
 	return true, err
 }
 
 func (slvgs *softLayer_Virtual_Guest_Service) ConfigureMetadataDisk(instanceId int) (datatypes.SoftLayer_Provisioning_Version1_Transaction, error) {
-	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/configureMetadataDisk.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+	response, errorCode, err := slvgs.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/configureMetadataDisk.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
 	if err != nil {
 		return datatypes.SoftLayer_Provisioning_Version1_Transaction{}, err
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#setUserMetadata, HTTP error code: '%d'", errorCode)
+		return datatypes.SoftLayer_Provisioning_Version1_Transaction{}, errors.New(errorMessage)
 	}
 
 	transaction := datatypes.SoftLayer_Provisioning_Version1_Transaction{}
@@ -386,9 +563,14 @@ func (slvgs *softLayer_Virtual_Guest_Service) ConfigureMetadataDisk(instanceId i
 }
 
 func (slvgs *softLayer_Virtual_Guest_Service) GetUserData(instanceId int) ([]datatypes.SoftLayer_Virtual_Guest_Attribute, error) {
-	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/getUserData.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+	response, errorCode, err := slvgs.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/getUserData.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
 	if err != nil {
 		return []datatypes.SoftLayer_Virtual_Guest_Attribute{}, err
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#getUserData, HTTP error code: '%d'", errorCode)
+		return []datatypes.SoftLayer_Virtual_Guest_Attribute{}, errors.New(errorMessage)
 	}
 
 	attributes := []datatypes.SoftLayer_Virtual_Guest_Attribute{}
@@ -401,9 +583,14 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetUserData(instanceId int) ([]dat
 }
 
 func (slvgs *softLayer_Virtual_Guest_Service) IsPingable(instanceId int) (bool, error) {
-	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/isPingable.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+	response, errorCode, err := slvgs.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/isPingable.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
 	if err != nil {
 		return false, err
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#isPingable, HTTP error code: '%d'", errorCode)
+		return false, errors.New(errorMessage)
 	}
 
 	res := string(response)
@@ -420,9 +607,14 @@ func (slvgs *softLayer_Virtual_Guest_Service) IsPingable(instanceId int) (bool, 
 }
 
 func (slvgs *softLayer_Virtual_Guest_Service) IsBackendPingable(instanceId int) (bool, error) {
-	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/isBackendPingable.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+	response, errorCode, err := slvgs.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/isBackendPingable.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
 	if err != nil {
 		return false, err
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#isBackendPingable, HTTP error code: '%d'", errorCode)
+		return false, errors.New(errorMessage)
 	}
 
 	res := string(response)
@@ -455,8 +647,8 @@ func (slvgs *softLayer_Virtual_Guest_Service) AttachEphemeralDisk(instanceId int
 				Id: instanceId,
 			},
 		},
-		Prices: []datatypes.SoftLayer_Item_Price{
-			datatypes.SoftLayer_Item_Price{
+		Prices: []datatypes.SoftLayer_Product_Item_Price{
+			datatypes.SoftLayer_Product_Item_Price{
 				Id: diskItemPrice.Id,
 				Categories: []datatypes.Category{
 					datatypes.Category{
@@ -486,7 +678,6 @@ func (slvgs *softLayer_Virtual_Guest_Service) AttachEphemeralDisk(instanceId int
 }
 
 func (slvgs *softLayer_Virtual_Guest_Service) UpgradeObject(instanceId int, options *softlayer.UpgradeOptions) (bool, error) {
-
 	prices, err := slvgs.GetAvailableUpgradeItemPrices(options)
 	if err != nil {
 		return false, err
@@ -526,8 +717,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) UpgradeObject(instanceId int, opti
 	return true, nil
 }
 
-func (slvgs *softLayer_Virtual_Guest_Service) GetAvailableUpgradeItemPrices(upgradeOptions *softlayer.UpgradeOptions) ([]datatypes.SoftLayer_Item_Price, error) {
-
+func (slvgs *softLayer_Virtual_Guest_Service) GetAvailableUpgradeItemPrices(upgradeOptions *softlayer.UpgradeOptions) ([]datatypes.SoftLayer_Product_Item_Price, error) {
 	itemsCapacity := make(map[string]int)
 	if upgradeOptions.Cpus > 0 {
 		itemsCapacity["cpus"] = upgradeOptions.Cpus
@@ -541,15 +731,15 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetAvailableUpgradeItemPrices(upgr
 
 	virtualServerPackageItems, err := slvgs.getVirtualServerItems()
 	if err != nil {
-		return []datatypes.SoftLayer_Item_Price{}, err
+		return []datatypes.SoftLayer_Product_Item_Price{}, err
 	}
 
-	prices := make([]datatypes.SoftLayer_Item_Price, 0)
+	prices := make([]datatypes.SoftLayer_Product_Item_Price, 0)
 
 	for item, amount := range itemsCapacity {
 		price, err := slvgs.filterProductItemPrice(virtualServerPackageItems, item, amount)
 		if err != nil {
-			return []datatypes.SoftLayer_Item_Price{}, err
+			return []datatypes.SoftLayer_Product_Item_Price{}, err
 		}
 
 		prices = append(prices, price)
@@ -558,72 +748,21 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetAvailableUpgradeItemPrices(upgr
 	return prices, nil
 }
 
-func (slvgs *softLayer_Virtual_Guest_Service) getVirtualServerItems() ([]datatypes.SoftLayer_Product_Item, error) {
-	service, err := slvgs.client.GetSoftLayer_Product_Package_Service()
+func (slvgs *softLayer_Virtual_Guest_Service) GetUpgradeItemPrices(instanceId int) ([]datatypes.SoftLayer_Product_Item_Price, error) {
+	response, errorCode, err := slvgs.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/getUpgradeItemPrices.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
 	if err != nil {
-		return []datatypes.SoftLayer_Product_Item{}, err
+		return []datatypes.SoftLayer_Product_Item_Price{}, err
 	}
 
-	return service.GetItemsByType(VIRTUAL_SERVER_PACKAGE_TYPE)
-}
-
-func (slvgs *softLayer_Virtual_Guest_Service) filterProductItemPrice(packageItems []datatypes.SoftLayer_Product_Item, option string, amount int) (datatypes.SoftLayer_Item_Price, error) {
-
-	// for now use hardcoded values in the same "style" as Python client does
-	vsId := map[string]int{
-		"memory":    3,
-		"cpus":      80,
-		"nic_speed": 26,
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#getUpgradeItemPrices, HTTP error code: '%d'", errorCode)
+		return []datatypes.SoftLayer_Product_Item_Price{}, errors.New(errorMessage)
 	}
 
-	for _, packageItem := range packageItems {
-		categories := packageItem.Prices[0].Categories
-		for _, category := range categories {
-
-			// Skip package item if capacity is not set
-			if packageItem.Capacity == "" {
-				continue
-			}
-
-			capacity, err := strconv.Atoi(packageItem.Capacity)
-			if err != nil {
-				return datatypes.SoftLayer_Item_Price{}, err
-			}
-
-			// Skip package item, if VS doesn't match requested amount and ID
-			if category.Id != vsId[option] || capacity != amount {
-				continue
-			}
-
-			// Use only public elements for items
-			switch option {
-			case "cpus":
-				if !strings.Contains(packageItem.Description, "Private") {
-					return packageItem.Prices[0], nil
-				}
-			case "nic_speed":
-				if strings.Contains(packageItem.Description, "Public") {
-					return packageItem.Prices[0], nil
-				}
-			default:
-				return packageItem.Prices[0], nil
-			}
-		}
-	}
-
-	return datatypes.SoftLayer_Item_Price{}, errors.New(fmt.Sprintf("Failed to find price for '%s' (of size %d)", option, amount))
-}
-
-func (slvgs *softLayer_Virtual_Guest_Service) GetUpgradeItemPrices(instanceId int) ([]datatypes.SoftLayer_Item_Price, error) {
-	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/getUpgradeItemPrices.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
-	if err != nil {
-		return []datatypes.SoftLayer_Item_Price{}, err
-	}
-
-	itemPrices := []datatypes.SoftLayer_Item_Price{}
+	itemPrices := []datatypes.SoftLayer_Product_Item_Price{}
 	err = json.Unmarshal(response, &itemPrices)
 	if err != nil {
-		return []datatypes.SoftLayer_Item_Price{}, err
+		return []datatypes.SoftLayer_Product_Item_Price{}, err
 	}
 
 	return itemPrices, nil
@@ -647,9 +786,14 @@ func (slvgs *softLayer_Virtual_Guest_Service) SetTags(instanceId int, tags []str
 		return false, err
 	}
 
-	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/setTags.json", slvgs.GetName(), instanceId), "POST", bytes.NewBuffer(requestBody))
+	response, errorCode, err := slvgs.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/setTags.json", slvgs.GetName(), instanceId), "POST", bytes.NewBuffer(requestBody))
 	if err != nil {
 		return false, err
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#setTags, HTTP error code: '%d'", errorCode)
+		return false, errors.New(errorMessage)
 	}
 
 	if res := string(response[:]); res != "true" {
@@ -660,9 +804,14 @@ func (slvgs *softLayer_Virtual_Guest_Service) SetTags(instanceId int, tags []str
 }
 
 func (slvgs *softLayer_Virtual_Guest_Service) GetTagReferences(instanceId int) ([]datatypes.SoftLayer_Tag_Reference, error) {
-	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/getTagReferences.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+	response, errorCode, err := slvgs.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/getTagReferences.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
 	if err != nil {
 		return []datatypes.SoftLayer_Tag_Reference{}, err
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#getTagReferences, HTTP error code: '%d'", errorCode)
+		return []datatypes.SoftLayer_Tag_Reference{}, errors.New(errorMessage)
 	}
 
 	tagReferences := []datatypes.SoftLayer_Tag_Reference{}
@@ -675,8 +824,8 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetTagReferences(instanceId int) (
 }
 
 func (slvgs *softLayer_Virtual_Guest_Service) AttachDiskImage(instanceId int, imageId int) (datatypes.SoftLayer_Provisioning_Version1_Transaction, error) {
-	parameters := datatypes.SoftLayer_Virtual_GuestInitParameters{
-		Parameters: datatypes.SoftLayer_Virtual_GuestInitParameter{
+	parameters := datatypes.SoftLayer_Virtual_GuestInit_ImageId_Parameters{
+		Parameters: datatypes.ImageId_Parameter{
 			ImageId: imageId,
 		},
 	}
@@ -686,9 +835,14 @@ func (slvgs *softLayer_Virtual_Guest_Service) AttachDiskImage(instanceId int, im
 		return datatypes.SoftLayer_Provisioning_Version1_Transaction{}, err
 	}
 
-	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/attachDiskImage.json", slvgs.GetName(), instanceId), "POST", bytes.NewBuffer(requestBody))
+	response, errorCode, err := slvgs.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/attachDiskImage.json", slvgs.GetName(), instanceId), "POST", bytes.NewBuffer(requestBody))
 	if err != nil {
 		return datatypes.SoftLayer_Provisioning_Version1_Transaction{}, err
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#attachDiskImage, HTTP error code: '%d'", errorCode)
+		return datatypes.SoftLayer_Provisioning_Version1_Transaction{}, errors.New(errorMessage)
 	}
 
 	transaction := datatypes.SoftLayer_Provisioning_Version1_Transaction{}
@@ -701,8 +855,8 @@ func (slvgs *softLayer_Virtual_Guest_Service) AttachDiskImage(instanceId int, im
 }
 
 func (slvgs *softLayer_Virtual_Guest_Service) DetachDiskImage(instanceId int, imageId int) (datatypes.SoftLayer_Provisioning_Version1_Transaction, error) {
-	parameters := datatypes.SoftLayer_Virtual_GuestInitParameters{
-		Parameters: datatypes.SoftLayer_Virtual_GuestInitParameter{
+	parameters := datatypes.SoftLayer_Virtual_GuestInit_ImageId_Parameters{
+		Parameters: datatypes.ImageId_Parameter{
 			ImageId: imageId,
 		},
 	}
@@ -712,9 +866,14 @@ func (slvgs *softLayer_Virtual_Guest_Service) DetachDiskImage(instanceId int, im
 		return datatypes.SoftLayer_Provisioning_Version1_Transaction{}, err
 	}
 
-	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/detachDiskImage.json", slvgs.GetName(), instanceId), "POST", bytes.NewBuffer(requestBody))
+	response, errorCode, err := slvgs.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/detachDiskImage.json", slvgs.GetName(), instanceId), "POST", bytes.NewBuffer(requestBody))
 	if err != nil {
 		return datatypes.SoftLayer_Provisioning_Version1_Transaction{}, err
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#detachDiskImage, HTTP error code: '%d'", errorCode)
+		return datatypes.SoftLayer_Provisioning_Version1_Transaction{}, errors.New(errorMessage)
 	}
 
 	transaction := datatypes.SoftLayer_Provisioning_Version1_Transaction{}
@@ -727,9 +886,14 @@ func (slvgs *softLayer_Virtual_Guest_Service) DetachDiskImage(instanceId int, im
 }
 
 func (slvgs *softLayer_Virtual_Guest_Service) ActivatePrivatePort(instanceId int) (bool, error) {
-	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/activatePrivatePort.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+	response, errorCode, err := slvgs.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/activatePrivatePort.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
 	if err != nil {
 		return false, err
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#activatePrivatePort, HTTP error code: '%d'", errorCode)
+		return false, errors.New(errorMessage)
 	}
 
 	res := string(response)
@@ -746,9 +910,14 @@ func (slvgs *softLayer_Virtual_Guest_Service) ActivatePrivatePort(instanceId int
 }
 
 func (slvgs *softLayer_Virtual_Guest_Service) ActivatePublicPort(instanceId int) (bool, error) {
-	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/activatePublicPort.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+	response, errorCode, err := slvgs.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/activatePublicPort.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
 	if err != nil {
 		return false, err
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#activatePublicPort, HTTP error code: '%d'", errorCode)
+		return false, errors.New(errorMessage)
 	}
 
 	res := string(response)
@@ -765,9 +934,14 @@ func (slvgs *softLayer_Virtual_Guest_Service) ActivatePublicPort(instanceId int)
 }
 
 func (slvgs *softLayer_Virtual_Guest_Service) ShutdownPrivatePort(instanceId int) (bool, error) {
-	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/shutdownPrivatePort.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+	response, errorCode, err := slvgs.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/shutdownPrivatePort.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
 	if err != nil {
 		return false, err
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#shutdownPrivatePort, HTTP error code: '%d'", errorCode)
+		return false, errors.New(errorMessage)
 	}
 
 	res := string(response)
@@ -784,9 +958,14 @@ func (slvgs *softLayer_Virtual_Guest_Service) ShutdownPrivatePort(instanceId int
 }
 
 func (slvgs *softLayer_Virtual_Guest_Service) ShutdownPublicPort(instanceId int) (bool, error) {
-	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/shutdownPublicPort.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+	response, errorCode, err := slvgs.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/shutdownPublicPort.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
 	if err != nil {
 		return false, err
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#shutdownPublicPort, HTTP error code: '%d'", errorCode)
+		return false, errors.New(errorMessage)
 	}
 
 	res := string(response)
@@ -803,9 +982,14 @@ func (slvgs *softLayer_Virtual_Guest_Service) ShutdownPublicPort(instanceId int)
 }
 
 func (slvgs *softLayer_Virtual_Guest_Service) GetAllowedHost(instanceId int) (datatypes.SoftLayer_Network_Storage_Allowed_Host, error) {
-	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/getAllowedHost.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+	response, errorCode, err := slvgs.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/getAllowedHost.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
 	if err != nil {
 		return datatypes.SoftLayer_Network_Storage_Allowed_Host{}, err
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#getAllowedHost, HTTP error code: '%d'", errorCode)
+		return datatypes.SoftLayer_Network_Storage_Allowed_Host{}, errors.New(errorMessage)
 	}
 
 	allowedHost := datatypes.SoftLayer_Network_Storage_Allowed_Host{}
@@ -818,9 +1002,14 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetAllowedHost(instanceId int) (da
 }
 
 func (slvgs *softLayer_Virtual_Guest_Service) GetNetworkVlans(instanceId int) ([]datatypes.SoftLayer_Network_Vlan, error) {
-	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/getNetworkVlans.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+	response, errorCode, err := slvgs.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/getNetworkVlans.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
 	if err != nil {
 		return []datatypes.SoftLayer_Network_Vlan{}, err
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#getNetworkVlans, HTTP error code: '%d'", errorCode)
+		return []datatypes.SoftLayer_Network_Vlan{}, errors.New(errorMessage)
 	}
 
 	networkVlans := []datatypes.SoftLayer_Network_Vlan{}
@@ -833,9 +1022,14 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetNetworkVlans(instanceId int) ([
 }
 
 func (slvgs *softLayer_Virtual_Guest_Service) CheckHostDiskAvailability(instanceId int, diskCapacity int) (bool, error) {
-	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/checkHostDiskAvailability/%d", slvgs.GetName(), instanceId, diskCapacity), "GET", new(bytes.Buffer))
+	response, errorCode, err := slvgs.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/checkHostDiskAvailability/%d", slvgs.GetName(), instanceId, diskCapacity), "GET", new(bytes.Buffer))
 	if err != nil {
 		return false, err
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#checkHostDiskAvailability, HTTP error code: '%d'", errorCode)
+		return false, errors.New(errorMessage)
 	}
 
 	res := string(response)
@@ -852,9 +1046,14 @@ func (slvgs *softLayer_Virtual_Guest_Service) CheckHostDiskAvailability(instance
 }
 
 func (slvgs *softLayer_Virtual_Guest_Service) CaptureImage(instanceId int) (datatypes.SoftLayer_Container_Disk_Image_Capture_Template, error) {
-	response, err := slvgs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/captureImage.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+	response, errorCode, err := slvgs.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/captureImage.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
 	if err != nil {
 		return datatypes.SoftLayer_Container_Disk_Image_Capture_Template{}, err
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#captureImage, HTTP error code: '%d'", errorCode)
+		return datatypes.SoftLayer_Container_Disk_Image_Capture_Template{}, errors.New(errorMessage)
 	}
 
 	diskImageTemplate := datatypes.SoftLayer_Container_Disk_Image_Capture_Template{}
@@ -866,7 +1065,93 @@ func (slvgs *softLayer_Virtual_Guest_Service) CaptureImage(instanceId int) (data
 	return diskImageTemplate, nil
 }
 
+func (slvgs *softLayer_Virtual_Guest_Service) CreateArchiveTransaction(instanceId int, groupName string, blockDevices []datatypes.SoftLayer_Virtual_Guest_Block_Device, note string) (datatypes.SoftLayer_Provisioning_Version1_Transaction, error) {
+	groupName = url.QueryEscape(groupName)
+	note = url.QueryEscape(note)
+
+	parameters := datatypes.SoftLayer_Virtual_GuestInitParameters{
+		Parameters: []interface{}{groupName, blockDevices, note},
+	}
+
+	requestBody, err := json.Marshal(parameters)
+	if err != nil {
+		return datatypes.SoftLayer_Provisioning_Version1_Transaction{}, err
+	}
+
+	response, errorCode, err := slvgs.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/createArchiveTransaction.json", slvgs.GetName(), instanceId), "POST", bytes.NewBuffer(requestBody))
+	if err != nil {
+		return datatypes.SoftLayer_Provisioning_Version1_Transaction{}, err
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#createArchiveTransaction, HTTP error code: '%d'", errorCode)
+		return datatypes.SoftLayer_Provisioning_Version1_Transaction{}, errors.New(errorMessage)
+	}
+
+	transaction := datatypes.SoftLayer_Provisioning_Version1_Transaction{}
+	err = json.Unmarshal(response, &transaction)
+	if err != nil {
+		return datatypes.SoftLayer_Provisioning_Version1_Transaction{}, err
+	}
+
+	return transaction, nil
+}
+
 //Private methods
+
+func (slvgs *softLayer_Virtual_Guest_Service) getVirtualServerItems() ([]datatypes.SoftLayer_Product_Item, error) {
+	service, err := slvgs.client.GetSoftLayer_Product_Package_Service()
+	if err != nil {
+		return []datatypes.SoftLayer_Product_Item{}, err
+	}
+
+	return service.GetItemsByType(VIRTUAL_SERVER_PACKAGE_TYPE)
+}
+
+func (slvgs *softLayer_Virtual_Guest_Service) filterProductItemPrice(packageItems []datatypes.SoftLayer_Product_Item, option string, amount int) (datatypes.SoftLayer_Product_Item_Price, error) {
+	// for now use hardcoded values in the same "style" as Python client does
+	// refer to corresponding Python method #_get_item_id_for_upgrade: https://github.com/softlayer/softlayer-python/blob/master/SoftLayer/managers/vs.py
+	vsId := map[string]int{
+		"memory":    3,
+		"cpus":      80,
+		"nic_speed": 26,
+	}
+
+	for _, packageItem := range packageItems {
+		categories := packageItem.Prices[0].Categories
+		for _, category := range categories {
+
+			if packageItem.Capacity == "" {
+				continue
+			}
+
+			capacity, err := strconv.Atoi(packageItem.Capacity)
+			if err != nil {
+				return datatypes.SoftLayer_Product_Item_Price{}, err
+			}
+
+			if category.Id != vsId[option] || capacity != amount {
+				continue
+			}
+
+			switch option {
+			case "cpus":
+				if !strings.Contains(packageItem.Description, "Private") {
+					return packageItem.Prices[0], nil
+				}
+			case "nic_speed":
+				if strings.Contains(packageItem.Description, "Public") {
+					return packageItem.Prices[0], nil
+				}
+			default:
+				return packageItem.Prices[0], nil
+			}
+		}
+	}
+
+	return datatypes.SoftLayer_Product_Item_Price{}, errors.New(fmt.Sprintf("Failed to find price for '%s' (of size %d)", option, amount))
+}
+
 func (slvgs *softLayer_Virtual_Guest_Service) checkCreateObjectRequiredValues(template datatypes.SoftLayer_Virtual_Guest_Template) error {
 	var err error
 	errorMessage, errorTemplate := "", "* %s is required and cannot be empty\n"
@@ -904,18 +1189,18 @@ func (slvgs *softLayer_Virtual_Guest_Service) checkCreateObjectRequiredValues(te
 	return err
 }
 
-func (slvgs *softLayer_Virtual_Guest_Service) findUpgradeItemPriceForEphemeralDisk(instanceId int, ephemeralDiskSize int) (datatypes.SoftLayer_Item_Price, error) {
+func (slvgs *softLayer_Virtual_Guest_Service) findUpgradeItemPriceForEphemeralDisk(instanceId int, ephemeralDiskSize int) (datatypes.SoftLayer_Product_Item_Price, error) {
 	if ephemeralDiskSize <= 0 {
-		return datatypes.SoftLayer_Item_Price{}, errors.New(fmt.Sprintf("Ephemeral disk size can not be negative: %d", ephemeralDiskSize))
+		return datatypes.SoftLayer_Product_Item_Price{}, errors.New(fmt.Sprintf("Ephemeral disk size can not be negative: %d", ephemeralDiskSize))
 	}
 
 	itemPrices, err := slvgs.GetUpgradeItemPrices(instanceId)
 	if err != nil {
-		return datatypes.SoftLayer_Item_Price{}, nil
+		return datatypes.SoftLayer_Product_Item_Price{}, nil
 	}
 
 	var currentDiskCapacity int
-	var currentItemPrice datatypes.SoftLayer_Item_Price
+	var currentItemPrice datatypes.SoftLayer_Product_Item_Price
 
 	for _, itemPrice := range itemPrices {
 
@@ -941,7 +1226,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) findUpgradeItemPriceForEphemeralDi
 	}
 
 	if currentItemPrice.Id == 0 {
-		return datatypes.SoftLayer_Item_Price{}, errors.New(fmt.Sprintf("No proper local disk for size %d", ephemeralDiskSize))
+		return datatypes.SoftLayer_Product_Item_Price{}, errors.New(fmt.Sprintf("No proper local disk for size %d", ephemeralDiskSize))
 	}
 
 	return currentItemPrice, nil
