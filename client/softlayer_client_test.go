@@ -183,4 +183,13 @@ var _ = Describe("SoftLayerClient", func() {
 			Expect(hardwareService).ToNot(BeNil())
 		})
 	})
+
+	Context("#GetSoftLayer_Network_Application_Delivery_Controller_Service", func() {
+		It("returns an instance implemementing the SoftLayer_Network_Application_Delivery_Controller_Service interface", func() {
+			var nadcService softlayer.SoftLayer_Network_Application_Delivery_Controller_Service
+			nadcService, err := client.GetSoftLayer_Network_Application_Delivery_Controller_Service()
+			Expect(err).ToNot(HaveOccurred())
+			Expect(nadcService).ToNot(BeNil())
+		})
+	})
 })

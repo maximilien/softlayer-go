@@ -88,6 +88,8 @@ func (slpp *softLayer_Product_Package_Service) GetItems(packageId int) ([]dataty
 		"id",
 		"capacity",
 		"description",
+		"units",
+		"keyName",
 		"prices.id",
 		"prices.categories.id",
 		"prices.categories.name",

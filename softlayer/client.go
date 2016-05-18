@@ -20,6 +20,7 @@ type Client interface {
 	GetSoftLayer_Virtual_Guest_Block_Device_Template_Group_Service() (SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service, error)
 	GetSoftLayer_Hardware_Service() (SoftLayer_Hardware_Service, error)
 	GetSoftLayer_Dns_Domain_Service() (SoftLayer_Dns_Domain_Service, error)
+	GetSoftLayer_Network_Application_Delivery_Controller_Service() (SoftLayer_Network_Application_Delivery_Controller_Service, error)
 	GetSoftLayer_Dns_Domain_ResourceRecord_Service() (SoftLayer_Dns_Domain_ResourceRecord_Service, error)
 
 	GetHttpClient() HttpClient

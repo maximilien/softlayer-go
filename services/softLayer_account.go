@@ -235,6 +235,23 @@ func (slas *softLayer_Account_Service) GetIscsiNetworkStorageWithFilter(filter s
 	return networkStorage, nil
 }
 
+func (slas *softLayer_Account_Service) GetApplicationDeliveryControllersWithFilter(filter string) ([]datatypes.SoftLayer_Network_Application_Delivery_Controller, error) {
+	path := fmt.Sprintf("%s/%s", slas.GetName(), "getApplicationDeliveryControllers.json")
+
+	responseBytes, err := slas.client.DoRawHttpRequestWithObjectFilter(path, filter, "GET", &bytes.Buffer{})
+	if err != nil {
+		return []datatypes.SoftLayer_Network_Application_Delivery_Controller{}, fmt.Errorf("softlayer-go: could not SoftLayer_Account#getApplicationDeliveryControllers, error message '%s'", err.Error())
+	}
+
+	nadc := []datatypes.SoftLayer_Network_Application_Delivery_Controller{}
+	err = json.Unmarshal(responseBytes, &nadc)
+	if err != nil {
+		return []datatypes.SoftLayer_Network_Application_Delivery_Controller{}, fmt.Errorf("softlayer-go: failed to decode JSON response, err message '%s'", err.Error())
+	}
+
+	return nadc, nil
+}
+
 func (slas *softLayer_Account_Service) GetVirtualDiskImages() ([]datatypes.SoftLayer_Virtual_Disk_Image, error) {
 	path := fmt.Sprintf("%s/%s", slas.GetName(), "getVirtualDiskImages.json")
 	responseBytes, errorCode, err := slas.client.GetHttpClient().DoRawHttpRequest(path, "GET", &bytes.Buffer{})

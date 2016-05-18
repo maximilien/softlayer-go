@@ -182,6 +182,100 @@ func (fslc *FakeSoftLayerClient) GetSoftLayer_Dns_Domain_ResourceRecord_Service(
 		return nil, err
 	}
 
+	return slService.(softlayer.SoftLayer_Dns_Domain_Record_Service), nil
+}
+
+func (fslc *FakeSoftLayerClient) GetSoftLayer_Network_Application_Delivery_Controller_Service() (softlayer.SoftLayer_Network_Application_Delivery_Controller_Service, error) {
+	slService, err := fslc.GetService("SoftLayer_Network_Application_Delivery_Controller_Service")
+	if err != nil {
+		return nil, err
+	}
+
+	return slService.(softlayer.SoftLayer_Network_Application_Delivery_Controller_Service), nil
+}
+
+//Public methods
+func (fslc *FakeSoftLayerClient) DoRawHttpRequestWithObjectMask(path string, masks []string, requestType string, requestBody *bytes.Buffer) ([]byte, error) {
+	fslc.DoRawHttpRequestPath = path
+	fslc.DoRawHttpRequestRequestType = requestType
+
+	fslc.DoRawHttpRequestResponseCount += 1
+
+	if fslc.DoRawHttpRequestError != nil {
+		return []byte{}, fslc.DoRawHttpRequestError
+	}
+
+	if fslc.DoRawHttpRequestResponse != nil {
+		return fslc.DoRawHttpRequestResponse, fslc.DoRawHttpRequestError
+	} else {
+		fslc.DoRawHttpRequestResponsesIndex = fslc.DoRawHttpRequestResponsesIndex + 1
+		return fslc.DoRawHttpRequestResponses[fslc.DoRawHttpRequestResponsesIndex-1], fslc.DoRawHttpRequestError
+	}
+}
+
+func (fslc *FakeSoftLayerClient) DoRawHttpRequestWithObjectFilter(path string, filters string, requestType string, requestBody *bytes.Buffer) ([]byte, error) {
+	fslc.DoRawHttpRequestPath = path
+	fslc.DoRawHttpRequestRequestType = requestType
+
+	fslc.DoRawHttpRequestResponseCount += 1
+
+	if fslc.DoRawHttpRequestError != nil {
+		return []byte{}, fslc.DoRawHttpRequestError
+	}
+
+	if fslc.DoRawHttpRequestResponse != nil {
+		return fslc.DoRawHttpRequestResponse, fslc.DoRawHttpRequestError
+	} else {
+		fslc.DoRawHttpRequestResponsesIndex = fslc.DoRawHttpRequestResponsesIndex + 1
+		return fslc.DoRawHttpRequestResponses[fslc.DoRawHttpRequestResponsesIndex-1], fslc.DoRawHttpRequestError
+	}
+}
+
+func (fslc *FakeSoftLayerClient) DoRawHttpRequestWithObjectFilterAndObjectMask(path string, masks []string, filters string, requestType string, requestBody *bytes.Buffer) ([]byte, error) {
+	fslc.DoRawHttpRequestPath = path
+	fslc.DoRawHttpRequestRequestType = requestType
+
+	fslc.DoRawHttpRequestResponseCount += 1
+
+	if fslc.DoRawHttpRequestError != nil {
+		return []byte{}, fslc.DoRawHttpRequestError
+	}
+
+	if fslc.DoRawHttpRequestResponse != nil {
+		return fslc.DoRawHttpRequestResponse, fslc.DoRawHttpRequestError
+	} else {
+		fslc.DoRawHttpRequestResponsesIndex = fslc.DoRawHttpRequestResponsesIndex + 1
+		return fslc.DoRawHttpRequestResponses[fslc.DoRawHttpRequestResponsesIndex-1], fslc.DoRawHttpRequestError
+	}
+}
+
+func (fslc *FakeSoftLayerClient) DoRawHttpRequest(path string, requestType string, requestBody *bytes.Buffer) ([]byte, error) {
+	fslc.DoRawHttpRequestPath = path
+	fslc.DoRawHttpRequestRequestType = requestType
+
+	fslc.DoRawHttpRequestResponseCount += 1
+
+	if fslc.DoRawHttpRequestError != nil {
+		return []byte{}, fslc.DoRawHttpRequestError
+	}
+
+	if fslc.DoRawHttpRequestResponse != nil {
+		return fslc.DoRawHttpRequestResponse, fslc.DoRawHttpRequestError
+	} else {
+		fslc.DoRawHttpRequestResponsesIndex = fslc.DoRawHttpRequestResponsesIndex + 1
+		return fslc.DoRawHttpRequestResponses[fslc.DoRawHttpRequestResponsesIndex-1], fslc.DoRawHttpRequestError
+	}
+}
+
+func (fslc *FakeSoftLayerClient) GenerateRequestBody(templateData interface{}) (*bytes.Buffer, error) {
+	return fslc.GenerateRequestBodyBuffer, fslc.GenerateRequestBodyError
+}
+
+func (fslc *FakeSoftLayerClient) HasErrors(body map[string]interface{}) error {
+	return fslc.HasErrorsError
+}
+
+func (fslc *FakeSoftLayerClient) CheckForHttpResponseErrors(data []byte) error {
 	return slService.(softlayer.SoftLayer_Dns_Domain_ResourceRecord_Service), nil
 }
 
@@ -201,5 +295,6 @@ func (fslc *FakeSoftLayerClient) initSoftLayerServices() {
 	fslc.SoftLayerServices["SoftLayer_Virtual_Guest_Block_Device_Template_Group"] = services.NewSoftLayer_Virtual_Guest_Block_Device_Template_Group_Service(fslc)
 	fslc.SoftLayerServices["SoftLayer_Hardware"] = services.NewSoftLayer_Hardware_Service(fslc)
 	fslc.SoftLayerServices["SoftLayer_Dns_Domain"] = services.NewSoftLayer_Dns_Domain_Service(fslc)
+	fslc.SoftLayerServices["SoftLayer_Network_Application_Delivery_Controller_Service"] = services.NewSoftLayer_Network_Application_Delivery_Controller_Service(fslc)
 	fslc.SoftLayerServices["SoftLayer_Dns_Domain_ResourceRecord"] = services.NewSoftLayer_Dns_Domain_ResourceRecord_Service(fslc)
 }
