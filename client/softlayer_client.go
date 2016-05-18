@@ -21,7 +21,7 @@ type SoftLayerClient struct {
 
 func NewSoftLayerClient(username, apiKey string) *SoftLayerClient {
 	slc := &SoftLayerClient{
-		HttpClient: NewHttpClient(username, apiKey, SOFTLAYER_API_URL, TEMPLATE_ROOT_PATH),
+		HttpClient: NewHttpsClient(username, apiKey, SOFTLAYER_API_URL, TEMPLATE_ROOT_PATH),
 
 		softLayerServices: map[string]softlayer.Service{},
 	}

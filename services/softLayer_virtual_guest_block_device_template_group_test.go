@@ -41,6 +41,24 @@ var _ = Describe("SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service", 
 		Expect(vgbdtgService).ToNot(BeNil())
 
 		vgbdtGroup = datatypes.SoftLayer_Virtual_Guest_Block_Device_Template_Group{}
+
+		locations = []datatypes.SoftLayer_Location{
+			datatypes.SoftLayer_Location{
+				Id:       0,
+				Name:     "0",
+				LongName: "Location 0",
+			},
+			datatypes.SoftLayer_Location{
+				Id:       1,
+				Name:     "1",
+				LongName: "Location 1",
+			},
+			datatypes.SoftLayer_Location{
+				Id:       2,
+				Name:     "2",
+				LongName: "Location 2",
+			},
+		}
 	})
 
 	Context("#GetName", func() {
@@ -604,26 +622,6 @@ var _ = Describe("SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service", 
 	})
 
 	Context("#XyzLocations", func() {
-		BeforeEach(func() {
-			locations = []datatypes.SoftLayer_Location{
-				datatypes.SoftLayer_Location{
-					Id:       0,
-					Name:     "0",
-					LongName: "Location 0",
-				},
-				datatypes.SoftLayer_Location{
-					Id:       1,
-					Name:     "1",
-					LongName: "Location 1",
-				},
-				datatypes.SoftLayer_Location{
-					Id:       2,
-					Name:     "2",
-					LongName: "Location 2",
-				},
-			}
-		})
-
 		Context("#AddLocations", func() {
 			BeforeEach(func() {
 				vgbdtGroup.Id = 1234567
@@ -729,6 +727,50 @@ var _ = Describe("SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service", 
 						fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
 
 						_, err := vgbdtgService.SetAvailableLocations(vgbdtGroup.Id, locations)
+						Expect(err).To(HaveOccurred())
+					}
+				})
+			})
+		})
+
+		Context("#CreatePublicArchiveTransaction", func() {
+			var (
+				groupName, summary, note string
+			)
+
+			BeforeEach(func() {
+				vgbdtGroup.Id = 0
+				fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service_createPublicArchiveTransaction.json")
+				Expect(err).ToNot(HaveOccurred())
+
+				groupName = "fake-group-name"
+				summary = "fake-summary"
+				note = "fake-note"
+			})
+
+			It("successfully creates a public archive transaction", func() {
+				transactionId, err := vgbdtgService.CreatePublicArchiveTransaction(vgbdtGroup.Id, groupName, summary, note, locations)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(transactionId).To(Equal(0))
+			})
+
+			Context("when HTTP client returns error codes 40x or 50x", func() {
+				It("fails for error code 40x", func() {
+					errorCodes := []int{400, 401, 499}
+					for _, errorCode := range errorCodes {
+						fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+						_, err := vgbdtgService.CreatePublicArchiveTransaction(vgbdtGroup.Id, groupName, summary, note, locations)
+						Expect(err).To(HaveOccurred())
+					}
+				})
+
+				It("fails for error code 50x", func() {
+					errorCodes := []int{500, 501, 599}
+					for _, errorCode := range errorCodes {
+						fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+						_, err := vgbdtgService.CreatePublicArchiveTransaction(vgbdtGroup.Id, groupName, summary, note, locations)
 						Expect(err).To(HaveOccurred())
 					}
 				})

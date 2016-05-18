@@ -1868,4 +1868,92 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			})
 		})
 	})
+
+	Context("#CreateArchiveTransaction", func() {
+		var blockDevices []datatypes.SoftLayer_Virtual_Guest_Block_Device
+
+		BeforeEach(func() {
+			virtualGuest.Id = 1234567
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_createArchiveTransaction.json")
+			Expect(err).ToNot(HaveOccurred())
+
+			blockDevices = []datatypes.SoftLayer_Virtual_Guest_Block_Device{
+				datatypes.SoftLayer_Virtual_Guest_Block_Device{
+					BootableFlag: 0,
+					CreateDate:   nil,
+					Device:       "fake-device0",
+					DiskImageId:  123456,
+					GuestId:      123456,
+					HotPlugFlag:  123456,
+					Id:           0,
+					ModifyDate:   nil,
+					MountMode:    "fake-mount-mode",
+					MountType:    "fake-mount-type",
+					StatusId:     0,
+					Uuid:         "fake-uuid",
+				},
+				datatypes.SoftLayer_Virtual_Guest_Block_Device{
+					BootableFlag: 0,
+					CreateDate:   nil,
+					Device:       "fake-device1",
+					DiskImageId:  123456,
+					GuestId:      123456,
+					HotPlugFlag:  123456,
+					Id:           1,
+					ModifyDate:   nil,
+					MountMode:    "fake-mount-mode",
+					MountType:    "fake-mount-type",
+					StatusId:     0,
+					Uuid:         "fake-uuid",
+				},
+			}
+		})
+
+		It("cfreates an archive transaction", func() {
+			transaction, err := virtualGuestService.CreateArchiveTransaction(virtualGuest.Id, "fake-group-name", blockDevices, "fake-note")
+
+			Expect(err).ToNot(HaveOccurred())
+
+			Expect(transaction.CreateDate).ToNot(BeNil())
+			Expect(transaction.ElapsedSeconds).To(BeNumerically(">", 0))
+			Expect(transaction.GuestId).To(Equal(123456))
+			Expect(transaction.HardwareId).To(Equal(123456))
+			Expect(transaction.Id).To(Equal(0))
+			Expect(transaction.ModifyDate).ToNot(BeNil())
+			Expect(transaction.StatusChangeDate).ToNot(BeNil())
+
+			Expect(transaction.TransactionGroup).To(Equal(datatypes.TransactionGroup{
+				AverageTimeToComplete: ".5",
+				Name: "fake-name",
+			}))
+
+			Expect(transaction.TransactionStatus).To(Equal(datatypes.TransactionStatus{
+				AverageDuration: ".4",
+				FriendlyName:    "fake-friendly-name",
+				Name:            "fake-name",
+			}))
+		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := virtualGuestService.CreateArchiveTransaction(virtualGuest.Id, "fake-group-name", blockDevices, "fake-note")
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := virtualGuestService.CreateArchiveTransaction(virtualGuest.Id, "fake-group-name", blockDevices, "fake-note")
+					Expect(err).To(HaveOccurred())
+				}
+			})
+		})
+	})
 })
