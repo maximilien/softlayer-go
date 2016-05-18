@@ -73,7 +73,7 @@ var _ = Describe("SoftLayer_Hardware", func() {
 			Expect(hardware.Id).To(Equal(123456))
 			Expect(hardware.Hostname).To(Equal("fake.hostname"))
 			Expect(hardware.Domain).To(Equal("fake.domain.com"))
-			Expect(hardware.BareMetalInstanceFlag).To(Equal(1))
+			Expect(hardware.BareMetalInstanceFlag).To(Equal(0))
 			Expect(hardware.GlobalIdentifier).To(Equal("abcdefg"))
 		})
 
