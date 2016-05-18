@@ -19,7 +19,7 @@ var _ = Describe("SoftLayer_Hardware", func() {
 		fakeClient *slclientfakes.FakeSoftLayerClient
 
 		hardwareService softlayer.SoftLayer_Hardware_Service
-		volume 	        datatypes.SoftLayer_Network_Storage
+		volume          datatypes.SoftLayer_Network_Storage
 		err             error
 	)
 
@@ -309,7 +309,6 @@ var _ = Describe("SoftLayer_Hardware", func() {
 			})
 		})
 	})
-
 
 	Context("#GetPrimaryIpAddress", func() {
 		BeforeEach(func() {

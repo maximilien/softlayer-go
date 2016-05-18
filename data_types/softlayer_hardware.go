@@ -31,8 +31,8 @@ type SoftLayer_Hardware struct {
 
 	OperatingSystem *SoftLayer_Operating_System `json:"operatingSystem"`
 
-	Location          *SoftLayer_Location `json:"location"`
-	Datacenter        *SoftLayer_Location `json:"datacenter"`
+	Location   *SoftLayer_Location `json:"location"`
+	Datacenter *SoftLayer_Location `json:"datacenter"`
 }
 
 type SoftLayer_Hardware_String_Parameters struct {

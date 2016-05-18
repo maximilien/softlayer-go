@@ -27,9 +27,7 @@ func (slhs *softLayer_Hardware_Service) GetName() string {
 
 func (slhs *softLayer_Hardware_Service) AllowAccessToNetworkStorage(id int, storage datatypes.SoftLayer_Network_Storage) (bool, error) {
 	parameters := datatypes.SoftLayer_Hardware_NetworkStorage_Parameters{
-		Parameters: datatypes.SoftLayer_Network_Storage{
-			storage,
-		},
+		Parameters: storage,
 	}
 
 	requestBody, err := json.Marshal(parameters)
@@ -93,12 +91,12 @@ func (slhs *softLayer_Hardware_Service) CreateObject(template datatypes.SoftLaye
 func (slhs *softLayer_Hardware_Service) FindByIpAddress(ipAddress string) (datatypes.SoftLayer_Hardware, error) {
 
 	ipAddressParameters := datatypes.SoftLayer_Hardware_String_Parameters{
-		Parameters: []string{ ipAddress },
+		Parameters: []string{ipAddress},
 	}
 
 	requestBody, err := json.Marshal(ipAddressParameters)
 	if err != nil {
-		return false, err
+		return datatypes.SoftLayer_Hardware{}, err
 	}
 
 	objectMask := []string{
@@ -181,12 +179,12 @@ func (slhs *softLayer_Hardware_Service) GetObject(id int) (datatypes.SoftLayer_H
 func (slhs *softLayer_Hardware_Service) GetAttachedNetworkStorages(id int, nasType string) ([]datatypes.SoftLayer_Network_Storage, error) {
 
 	nasTypeParameters := datatypes.SoftLayer_Hardware_String_Parameters{
-		Parameters: []string{ nasType },
+		Parameters: []string{nasType},
 	}
 
 	requestBody, err := json.Marshal(nasTypeParameters)
 	if err != nil {
-		return false, err
+		return []datatypes.SoftLayer_Network_Storage{}, err
 	}
 
 	objectMask := []string{
@@ -429,9 +427,3 @@ func (slhs *softLayer_Hardware_Service) SetTags(instanceId int, tags []string) (
 
 	return true, nil
 }
-
-
-
-
-
-

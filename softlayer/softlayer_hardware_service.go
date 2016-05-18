@@ -7,7 +7,7 @@ import (
 type SoftLayer_Hardware_Service interface {
 	Service
 
-	AllowAccessToNetworkStorage(id int, storage datatypes.SoftLayer_Network_Storage)(bool, error)
+	AllowAccessToNetworkStorage(id int, storage datatypes.SoftLayer_Network_Storage) (bool, error)
 
 	CreateObject(template datatypes.SoftLayer_Hardware_Template) (datatypes.SoftLayer_Hardware, error)
 
@@ -16,8 +16,8 @@ type SoftLayer_Hardware_Service interface {
 	GetObject(id int) (datatypes.SoftLayer_Hardware, error)
 	GetAllowedHost(id int) (datatypes.SoftLayer_Network_Storage_Allowed_Host, error)
 	GetAttachedNetworkStorages(id int, nasType string) ([]datatypes.SoftLayer_Network_Storage, error)
-	GetDatacenter(id int)(datatypes.SoftLayer_Location, error)
-	GetPrimaryIpAddress(id string)(string, error)
+	GetDatacenter(id int) (datatypes.SoftLayer_Location, error)
+	GetPrimaryIpAddress(id string) (string, error)
 
 	PowerCycle(instanceId int) (bool, error)
 	PowerOff(instanceId int) (bool, error)

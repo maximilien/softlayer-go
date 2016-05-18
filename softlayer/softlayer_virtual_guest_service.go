@@ -64,5 +64,4 @@ type SoftLayer_Virtual_Guest_Service interface {
 	ReloadOperatingSystem(instanceId int, template datatypes.Image_Template_Config) error
 
 	UpgradeObject(instanceId int, upgradeOptions *UpgradeOptions) (bool, error)
-
 }
