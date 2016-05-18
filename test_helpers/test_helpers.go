@@ -662,25 +662,6 @@ func TestUserMetadata(userMetadata, sshKeyValue string) {
 	Expect(retCode).To(Equal(0))
 }
 
-func WaitForIscsiStorageToBeDeleted(storageId int) {
-	accountService, err := CreateAccountService()
-	Expect(err).ToNot(HaveOccurred())
-
-	fmt.Printf("----> waiting for created iSCSI volume to be deleted\n")
-	Eventually(func() bool {
-		storages, err := accountService.GetIscsiNetworkStorage()
-		Expect(err).ToNot(HaveOccurred())
-
-		deletedFlag := false
-		for _, storage := range storages {
-			if storage.Id == storageId && storage.BillingItem == nil {
-				deletedFlag = true
-			}
-		}
-		return deletedFlag
-	}, TIMEOUT, POLLING_INTERVAL).Should(BeTrue(), "created iSCSI volume but not deleted successfully")
-}
-
 func GetVirtualGuestPrimaryIpAddress(virtualGuestId int) string {
 	virtualGuestService, err := CreateVirtualGuestService()
 	Expect(err).ToNot(HaveOccurred())
