@@ -19,7 +19,6 @@ type SoftLayer_Hardware_Service interface {
 	GetDatacenter(id int) (datatypes.SoftLayer_Location, error)
 	GetPrimaryIpAddress(id int) (string, error)
 
-	PowerCycle(instanceId int) (bool, error)
 	PowerOff(instanceId int) (bool, error)
 	PowerOffSoft(instanceId int) (bool, error)
 	PowerOn(instanceId int) (bool, error)
