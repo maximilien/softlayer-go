@@ -17,7 +17,7 @@ type SoftLayer_Hardware_Service interface {
 	GetAllowedHost(id int) (datatypes.SoftLayer_Network_Storage_Allowed_Host, error)
 	GetAttachedNetworkStorages(id int, nasType string) ([]datatypes.SoftLayer_Network_Storage, error)
 	GetDatacenter(id int) (datatypes.SoftLayer_Location, error)
-	GetPrimaryIpAddress(id string) (string, error)
+	GetPrimaryIpAddress(id int) (string, error)
 
 	PowerCycle(instanceId int) (bool, error)
 	PowerOff(instanceId int) (bool, error)
