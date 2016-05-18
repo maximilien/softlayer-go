@@ -345,48 +345,6 @@ var _ = Describe("SoftLayer_Hardware", func() {
 		})
 	})
 
-	Context("#PowerCycle", func() {
-		It("sucessfully power cycle hardware instance", func() {
-			fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("true")
-
-			rebooted, err := hardwareService.PowerCycle(1234567)
-			Expect(err).ToNot(HaveOccurred())
-			Expect(rebooted).To(BeTrue())
-		})
-
-		It("fails to power cycle hardware instance", func() {
-			fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("false")
-
-			rebooted, err := hardwareService.PowerCycle(1234567)
-			Expect(err).To(HaveOccurred())
-			Expect(rebooted).To(BeFalse())
-		})
-
-		Context("when HTTP client returns error codes 40x or 50x", func() {
-			It("fails for error code 40x", func() {
-				errorCodes := []int{400, 401, 499}
-				for _, errorCode := range errorCodes {
-					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
-
-					fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("false")
-					_, err := hardwareService.PowerCycle(1234567)
-					Expect(err).To(HaveOccurred())
-				}
-			})
-
-			It("fails for error code 50x", func() {
-				errorCodes := []int{500, 501, 599}
-				for _, errorCode := range errorCodes {
-					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
-
-					fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("false")
-					_, err := hardwareService.PowerCycle(1234567)
-					Expect(err).To(HaveOccurred())
-				}
-			})
-		})
-	})
-
 	Context("#PowerOff", func() {
 		It("sucessfully power off hardware instance", func() {
 			fakeClient.FakeHttpClient.DoRawHttpRequestResponse = []byte("true")
