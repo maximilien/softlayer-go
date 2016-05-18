@@ -67,10 +67,10 @@ var _ = Describe("SoftLayer_Hardware", func() {
 			}
 		})
 
-		It("creates a new SoftLayer_Virtual_Guest instance", func() {
+		It("creates a new SoftLayer_Hardware instance", func() {
 			hardware, err := hardwareService.CreateObject(template)
 			Expect(err).ToNot(HaveOccurred())
-			Expect(hardware.Id).To(Equal(123))
+			Expect(hardware.Id).To(Equal(123456))
 			Expect(hardware.Hostname).To(Equal("softlayer"))
 			Expect(hardware.Domain).To(Equal("testing.com"))
 			Expect(hardware.BareMetalInstanceFlag).To(Equal(1))
