@@ -4,7 +4,7 @@ image: docker:///posijon/slci
 
 inputs:
   - name: softlayer-go
-    path: gopath/src/github.com/maximilien/softlayer-go
+    path: gopath/src/github.com/TheWeatherCompany/softlayer-go
 
 run:
-  path: gopath/src/github.com/maximilien/softlayer-go/bin/test-integration
+  path: gopath/src/github.com/TheWeatherCompany/softlayer-go/bin/test-integration

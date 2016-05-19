@@ -3,7 +3,7 @@ package test_helpers
 import (
 	"encoding/json"
 	"errors"
-	datatypes "github.com/maximilien/softlayer-go/data_types"
+	datatypes "github.com/TheWeatherCompany/softlayer-go/data_types"
 )
 
 type MockProductPackageService struct{}

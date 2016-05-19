@@ -5,8 +5,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	datatypes "github.com/maximilien/softlayer-go/data_types"
-	softlayer "github.com/maximilien/softlayer-go/softlayer"
+	"github.com/TheWeatherCompany/softlayer-go/common"
+	datatypes "github.com/TheWeatherCompany/softlayer-go/data_types"
+	softlayer "github.com/TheWeatherCompany/softlayer-go/softlayer"
 	"strconv"
 	"strings"
 )
@@ -89,9 +90,15 @@ func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) Create
 		return false, fmt.Errorf("Network application delivery controller with id '%d' is not found: %s", nadcId, err)
 	}
 
-	response, err := slnadcs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/%s.json", slnadcs.GetName(), nadcId, "createLiveLoadBalancer"), "POST", bytes.NewBuffer(requestBody))
+	response, errorCode, err := slnadcs.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/%s.json", slnadcs.GetName(), nadcId, "createLiveLoadBalancer"), "POST", bytes.NewBuffer(requestBody))
 	if err != nil {
-		return false, err
+		errorMessage := fmt.Sprintf("softlayer-go: could not perform SoftLayer_Network_Application_Delivery_Controller#createVirtualIpAddress, error message '%s'", err.Error())
+		return false, errors.New(errorMessage)
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not perform SoftLayer_Network_Application_Delivery_Controller#createVirtualIpAddress, HTTP error code: '%d'", errorCode)
+		return false, errors.New(errorMessage)
 	}
 
 	if response_value := string(response[:]); response_value != "true" {
@@ -112,7 +119,7 @@ func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) Delete
 
 	parameters := datatypes.SoftLayer_Network_LoadBalancer_VirtualIpAddress_Template_Parameters{
 		Parameters: []datatypes.SoftLayer_Network_LoadBalancer_VirtualIpAddress_Template{
-			datatypes.SoftLayer_Network_LoadBalancer_VirtualIpAddress_Template {
+			datatypes.SoftLayer_Network_LoadBalancer_VirtualIpAddress_Template{
 				Name: name,
 			},
 		},
@@ -123,9 +130,15 @@ func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) Delete
 		return false, err
 	}
 
-	response, err := slnadcs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/%s.json", slnadcs.GetName(), nadcId, "deleteLiveLoadBalancer"), "POST", bytes.NewBuffer(requestBody))
+	response, errorCode, err := slnadcs.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/%s.json", slnadcs.GetName(), nadcId, "deleteLiveLoadBalancer"), "POST", bytes.NewBuffer(requestBody))
 	if err != nil {
-		return false, err
+		errorMessage := fmt.Sprintf("softlayer-go: could not perform SoftLayer_Network_Application_Delivery_Controller#deleteVirtualIpAddress, error message '%s'", err.Error())
+		return false, errors.New(errorMessage)
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not perform SoftLayer_Network_Application_Delivery_Controller#deleteVirtualIpAddress, HTTP error code: '%d'", errorCode)
+		return false, errors.New(errorMessage)
 	}
 
 	if response_value := string(response[:]); response_value != "true" {
@@ -155,9 +168,15 @@ func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) EditVi
 		return false, err
 	}
 
-	response, err := slnadcs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/%s.json", slnadcs.GetName(), nadcId, "updateLiveLoadBalancer"), "POST", bytes.NewBuffer(requestBody))
+	response, errorCode, err := slnadcs.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/%s.json", slnadcs.GetName(), nadcId, "updateLiveLoadBalancer"), "POST", bytes.NewBuffer(requestBody))
 	if err != nil {
-		return false, err
+		errorMessage := fmt.Sprintf("softlayer-go: could not perform SoftLayer_Network_Application_Delivery_Controller#editVirtualIpAddress, error message '%s'", err.Error())
+		return false, errors.New(errorMessage)
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not perform SoftLayer_Network_Application_Delivery_Controller#editVirtualIpAddress, HTTP error code: '%d'", errorCode)
+		return false, errors.New(errorMessage)
 	}
 
 	if response_value := string(response[:]); response_value != "true" {
@@ -176,9 +195,15 @@ func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) GetVir
 		return datatypes.SoftLayer_Network_LoadBalancer_VirtualIpAddress{}, fmt.Errorf("Network application delivery controller with id '%d' is not found", nadcId)
 	}
 
-	response, err := slnadcs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d/%s.json", slnadcs.GetName(), nadcId, "getLoadBalancers"), "GET", new(bytes.Buffer))
+	response, errorCode, err := slnadcs.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/%s.json", slnadcs.GetName(), nadcId, "getLoadBalancers"), "GET", new(bytes.Buffer))
 	if err != nil {
-		return datatypes.SoftLayer_Network_LoadBalancer_VirtualIpAddress{}, err
+		errorMessage := fmt.Sprintf("softlayer-go: could not perform SoftLayer_Network_Application_Delivery_Controller#getVirtualIpAddress, error message '%s'", err.Error())
+		return datatypes.SoftLayer_Network_LoadBalancer_VirtualIpAddress{}, errors.New(errorMessage)
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not perform SoftLayer_Network_Application_Delivery_Controller#getVirtualIpAddress, HTTP error code: '%d'", errorCode)
+		return datatypes.SoftLayer_Network_LoadBalancer_VirtualIpAddress{}, errors.New(errorMessage)
 	}
 
 	addresses := datatypes.SoftLayer_Network_LoadBalancer_VirtualIpAddress_Array{}
@@ -227,9 +252,15 @@ func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) GetObj
 		"virtualIpAddresses",
 	}
 
-	response, err := slnadcs.client.DoRawHttpRequestWithObjectMask(fmt.Sprintf("%s/%d/getObject.json", slnadcs.GetName(), id), objectMask, "GET", new(bytes.Buffer))
+	response, errorCode, err := slnadcs.client.GetHttpClient().DoRawHttpRequestWithObjectMask(fmt.Sprintf("%s/%d/getObject.json", slnadcs.GetName(), id), objectMask, "GET", new(bytes.Buffer))
 	if err != nil {
-		return datatypes.SoftLayer_Network_Application_Delivery_Controller{}, err
+		errorMessage := fmt.Sprintf("softlayer-go: could not perform SoftLayer_Network_Application_Delivery_Controller#getObject, error message '%s'", err.Error())
+		return datatypes.SoftLayer_Network_Application_Delivery_Controller{}, errors.New(errorMessage)
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not perform SoftLayer_Network_Application_Delivery_Controller#getObject, HTTP error code: '%d'", errorCode)
+		return datatypes.SoftLayer_Network_Application_Delivery_Controller{}, errors.New(errorMessage)
 	}
 
 	nadc := datatypes.SoftLayer_Network_Application_Delivery_Controller{}
@@ -242,8 +273,16 @@ func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) GetObj
 }
 
 func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) DeleteObject(id int) (bool, error) {
-	response, err := slnadcs.client.DoRawHttpRequest(fmt.Sprintf("%s/%d.json", slnadcs.GetName(), id), "DELETE", new(bytes.Buffer))
+	response, errorCode, err := slnadcs.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d.json", slnadcs.GetName(), id), "DELETE", new(bytes.Buffer))
+	if err != nil {
+		errorMessage := fmt.Sprintf("softlayer-go: could not perform SoftLayer_Network_Application_Delivery_Controller#deleteObject, error message '%s'", err.Error())
+		return false, errors.New(errorMessage)
+	}
 
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not perform SoftLayer_Network_Application_Delivery_Controller#deleteObject, HTTP error code: '%d'", errorCode)
+		return false, errors.New(errorMessage)
+	}
 	if response_value := string(response[:]); response_value != "true" {
 		return false, fmt.Errorf("Failed to delete Application Delivery Controller with id '%d'. Got '%s' as response from the API", id, response_value)
 	}
@@ -251,16 +290,16 @@ func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) Delete
 	return true, err
 }
 
-func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) FindCreatePriceItems(createOptions *softlayer.NetworkApplicationDeliveryControllerCreateOptions) ([]datatypes.SoftLayer_Item_Price, error) {
+func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) FindCreatePriceItems(createOptions *softlayer.NetworkApplicationDeliveryControllerCreateOptions) ([]datatypes.SoftLayer_Product_Item_Price, error) {
 	items, err := slnadcs.getApplicationDeliveryControllerItems()
 	if err != nil {
-		return []datatypes.SoftLayer_Item_Price{}, err
+		return []datatypes.SoftLayer_Product_Item_Price{}, err
 	}
 
 	nadcKey := slnadcs.getVPXPriceItemKeyName(createOptions.Version, createOptions.Speed, createOptions.Plan)
 	ipKey := slnadcs.getPublicIpItemKeyName(createOptions.IpCount)
 
-	var nadcItemPrice, ipItemPrice datatypes.SoftLayer_Item_Price
+	var nadcItemPrice, ipItemPrice datatypes.SoftLayer_Product_Item_Price
 
 	for _, item := range items {
 		itemKey := item.Key
@@ -284,10 +323,10 @@ func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) FindCr
 
 	if len(errorMessages) > 0 {
 		err = errors.New(strings.Join(errorMessages, "\n"))
-		return []datatypes.SoftLayer_Item_Price{}, err
+		return []datatypes.SoftLayer_Product_Item_Price{}, err
 	}
 
-	return []datatypes.SoftLayer_Item_Price{nadcItemPrice, ipItemPrice}, nil
+	return []datatypes.SoftLayer_Product_Item_Price{nadcItemPrice, ipItemPrice}, nil
 }
 
 // Private methods

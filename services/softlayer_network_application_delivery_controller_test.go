@@ -6,10 +6,10 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
-	slclientfakes "github.com/maximilien/softlayer-go/client/fakes"
-	datatypes "github.com/maximilien/softlayer-go/data_types"
-	softlayer "github.com/maximilien/softlayer-go/softlayer"
-	testhelpers "github.com/maximilien/softlayer-go/test_helpers"
+	slclientfakes "github.com/TheWeatherCompany/softlayer-go/client/fakes"
+	datatypes "github.com/TheWeatherCompany/softlayer-go/data_types"
+	softlayer "github.com/TheWeatherCompany/softlayer-go/softlayer"
+	testhelpers "github.com/TheWeatherCompany/softlayer-go/test_helpers"
 )
 
 var _ = Describe("SoftLayer_Network_Application_Delivery_Controller_Service", func() {
@@ -19,7 +19,7 @@ var _ = Describe("SoftLayer_Network_Application_Delivery_Controller_Service", fu
 		fakeClient *slclientfakes.FakeSoftLayerClient
 
 		nadcService softlayer.SoftLayer_Network_Application_Delivery_Controller_Service
-		err error
+		err         error
 	)
 
 	BeforeEach(func() {
@@ -62,10 +62,10 @@ var _ = Describe("SoftLayer_Network_Application_Delivery_Controller_Service", fu
 			fakeClient.DoRawHttpRequestResponses = append(fakeClient.DoRawHttpRequestResponses, response)
 
 			createOptions := &softlayer.NetworkApplicationDeliveryControllerCreateOptions{
-				Speed: 10,
-				Version: "10.1",
-				Plan: "Standard",
-				IpCount: 2,
+				Speed:    10,
+				Version:  "10.1",
+				Plan:     "Standard",
+				IpCount:  2,
 				Location: "DALLAS06",
 			}
 
@@ -212,9 +212,9 @@ var _ = Describe("SoftLayer_Network_Application_Delivery_Controller_Service", fu
 
 		It("reports error when pricing item for provided version, speed and plan", func() {
 			createOptions := &softlayer.NetworkApplicationDeliveryControllerCreateOptions{
-				Speed    : 11,
-				Version  : "1.1",
-				Plan     : "qqqq",
+				Speed:   11,
+				Version: "1.1",
+				Plan:    "qqqq",
 			}
 
 			_, err := nadcService.FindCreatePriceItems(createOptions)

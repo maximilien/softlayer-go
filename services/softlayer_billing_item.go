@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	common "github.com/maximilien/softlayer-go/common"
-	softlayer "github.com/maximilien/softlayer-go/softlayer"
+	common "github.com/TheWeatherCompany/softlayer-go/common"
+	softlayer "github.com/TheWeatherCompany/softlayer-go/softlayer"
 )
 
 type softLayer_Billing_Item_Service struct {

@@ -2,7 +2,7 @@ resources:
 - name: softlayer-go
   type: git
   source:
-    uri: https://github.com/maximilien/softlayer-go.git
+    uri: https://github.com/TheWeatherCompany/softlayer-go.git
     branch: master
 
 jobs:

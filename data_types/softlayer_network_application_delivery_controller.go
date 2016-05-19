@@ -10,7 +10,7 @@ type SoftLayer_Network_Application_Delivery_Controller struct {
 	ManagedResourceFlag   bool                      `json:"managedResourceFlag"`
 	ManagementIpAddress   string                    `json:"managementIpAddress"`
 	PrimaryIpAddress      string                    `json:"primaryIpAddress"`
-	Password              SoftLayer_Password        `json:"password"`
+	Password              SoftLayer_Password      `json:"password"`
 	Notes                 string                    `json:"notes"`
 	Datacenter            *SoftLayer_Location       `json:"datacenter"`
 	NetworkVlan           *SoftLayer_Network_Vlan   `json:"networkVlan"`

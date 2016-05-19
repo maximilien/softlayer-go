@@ -2,17 +2,14 @@ package client
 
 import (
 	"errors"
+	"bytes"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/http/httputil"
 	"os"
-	"path/filepath"
-	"regexp"
-	"text/template"
-
-	services "github.com/maximilien/softlayer-go/services"
-	softlayer "github.com/maximilien/softlayer-go/softlayer"
+	services "github.com/TheWeatherCompany/softlayer-go/services"
+	softlayer "github.com/TheWeatherCompany/softlayer-go/softlayer"
 )
 
 const (
@@ -21,9 +18,16 @@ const (
 )
 
 type SoftLayerClient struct {
+	username string
+ 	apiKey   string
+
+	HTTPClient *http.Client
+
 	HttpClient softlayer.HttpClient
 
 	softLayerServices map[string]softlayer.Service
+
+	nonVerbose bool
 }
 
 func NewSoftLayerClient(username, apiKey string) *SoftLayerClient {
@@ -167,7 +171,16 @@ func (slc *SoftLayerClient) GetSoftLayer_Hardware_Service() (softlayer.SoftLayer
 		return nil, err
 	}
 
-	return slService.(softlayer.SoftLayer_Dns_Domain_Record_Service), nil
+	return slService.(softlayer.SoftLayer_Hardware_Service), nil
+}
+
+func (slc *SoftLayerClient) GetSoftLayer_Dns_Domain_ResourceRecord_Service() (softlayer.SoftLayer_Dns_Domain_ResourceRecord_Service, error) {
+	slService, err := slc.GetService("SoftLayer_Dns_Domain_ResourceRecord")
+	if err != nil {
+		return nil, err
+	}
+
+	return slService.(softlayer.SoftLayer_Dns_Domain_ResourceRecord_Service), nil
 }
 
 func (slc *SoftLayerClient) GetSoftLayer_Network_Application_Delivery_Controller_Service() (softlayer.SoftLayer_Network_Application_Delivery_Controller_Service, error) {
@@ -221,16 +234,7 @@ func (slc *SoftLayerClient) DoRawHttpRequestWithObjectFilterAndObjectMask(path s
 
 func (slc *SoftLayerClient) DoRawHttpRequest(path string, requestType string, requestBody *bytes.Buffer) ([]byte, error) {
 	url := fmt.Sprintf("https://%s:%s@%s/%s", slc.username, slc.apiKey, SOFTLAYER_API_URL, path)
-	return slService.(softlayer.SoftLayer_Hardware_Service), nil
-}
-
-func (slc *SoftLayerClient) GetSoftLayer_Dns_Domain_ResourceRecord_Service() (softlayer.SoftLayer_Dns_Domain_ResourceRecord_Service, error) {
-	slService, err := slc.GetService("SoftLayer_Dns_Domain_ResourceRecord")
-	if err != nil {
-		return nil, err
-	}
-
-	return slService.(softlayer.SoftLayer_Dns_Domain_ResourceRecord_Service), nil
+	return slc.makeHttpRequest(url, requestType, requestBody)
 }
 
 //Private methods
@@ -249,15 +253,8 @@ func (slc *SoftLayerClient) initSoftLayerServices() {
 	slc.softLayerServices["SoftLayer_Virtual_Guest_Block_Device_Template_Group"] = services.NewSoftLayer_Virtual_Guest_Block_Device_Template_Group_Service(slc)
 	slc.softLayerServices["SoftLayer_Hardware"] = services.NewSoftLayer_Hardware_Service(slc)
 	slc.softLayerServices["SoftLayer_Dns_Domain"] = services.NewSoftLayer_Dns_Domain_Service(slc)
-	slc.softLayerServices["SoftLayer_Dns_Domain_ResourceRecord"] = services.NewSoftLayer_Dns_Domain_Record_Service(slc)
+	slc.softLayerServices["SoftLayer_Dns_Domain_ResourceRecord"] = services.NewSoftLayer_Dns_Domain_ResourceRecord_Service(slc)
 	slc.softLayerServices["SoftLayer_Network_Application_Delivery_Controller_Service"] = services.NewSoftLayer_Network_Application_Delivery_Controller_Service(slc)
-}
-
-func hideCredentials(s string) string {
-	hiddenStr := "\"password\":\"******\""
-	r := regexp.MustCompile(`"password":"[^"]*"`)
-
-	return r.ReplaceAllString(s, hiddenStr)
 }
 
 func (slc *SoftLayerClient) makeHttpRequest(url string, requestType string, requestBody *bytes.Buffer) ([]byte, error) {
@@ -300,19 +297,3 @@ func (slc *SoftLayerClient) makeHttpRequest(url string, requestType string, requ
 }
 
 //Private helper methods
-
-func checkNonVerbose() bool {
-	slGoNonVerbose := os.Getenv(SL_GO_NON_VERBOSE)
-	switch slGoNonVerbose {
-	case "yes":
-		return true
-	case "YES":
-		return true
-	case "true":
-		return true
-	case "TRUE":
-		return true
-	}
-
-	return false
-}

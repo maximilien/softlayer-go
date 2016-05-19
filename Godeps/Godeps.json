@@ -1,5 +1,5 @@
 {
-	"ImportPath": "github.com/maximilien/softlayer-go",
+	"ImportPath": "github.com/TheWeatherCompany/softlayer-go",
 	"GoVersion": "go1.5",
 	"GodepVersion": "v60",
 	"Packages": [

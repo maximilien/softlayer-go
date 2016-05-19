@@ -6,8 +6,8 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
-	slclientfakes "github.com/maximilien/softlayer-go/client/fakes"
-	softlayer "github.com/maximilien/softlayer-go/softlayer"
+	slclientfakes "github.com/TheWeatherCompany/softlayer-go/client/fakes"
+	softlayer "github.com/TheWeatherCompany/softlayer-go/softlayer"
 )
 
 var _ = Describe("SoftLayer_Billing_Item", func() {

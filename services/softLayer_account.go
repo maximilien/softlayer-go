@@ -6,9 +6,9 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/maximilien/softlayer-go/common"
-	datatypes "github.com/maximilien/softlayer-go/data_types"
-	softlayer "github.com/maximilien/softlayer-go/softlayer"
+	"github.com/TheWeatherCompany/softlayer-go/common"
+	datatypes "github.com/TheWeatherCompany/softlayer-go/data_types"
+	softlayer "github.com/TheWeatherCompany/softlayer-go/softlayer"
 )
 
 type softLayer_Account_Service struct {
@@ -238,9 +238,15 @@ func (slas *softLayer_Account_Service) GetIscsiNetworkStorageWithFilter(filter s
 func (slas *softLayer_Account_Service) GetApplicationDeliveryControllersWithFilter(filter string) ([]datatypes.SoftLayer_Network_Application_Delivery_Controller, error) {
 	path := fmt.Sprintf("%s/%s", slas.GetName(), "getApplicationDeliveryControllers.json")
 
-	responseBytes, err := slas.client.DoRawHttpRequestWithObjectFilter(path, filter, "GET", &bytes.Buffer{})
+	responseBytes, errorCode, err := slas.client.GetHttpClient().DoRawHttpRequestWithObjectFilter(path, filter, "GET", &bytes.Buffer{})
 	if err != nil {
-		return []datatypes.SoftLayer_Network_Application_Delivery_Controller{}, fmt.Errorf("softlayer-go: could not SoftLayer_Account#getApplicationDeliveryControllers, error message '%s'", err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not get SoftLayer_Account#getApplicationDeliveryControllersWithFilter, error message '%s'", err.Error())
+		return []datatypes.SoftLayer_Network_Application_Delivery_Controller{}, errors.New(errorMessage)
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not get SoftLayer_Account#getApplicationDeliveryControllersWithFilter, HTTP error code: '%d'", errorCode)
+		return []datatypes.SoftLayer_Network_Application_Delivery_Controller{}, errors.New(errorMessage)
 	}
 
 	nadc := []datatypes.SoftLayer_Network_Application_Delivery_Controller{}
@@ -256,12 +262,12 @@ func (slas *softLayer_Account_Service) GetVirtualDiskImages() ([]datatypes.SoftL
 	path := fmt.Sprintf("%s/%s", slas.GetName(), "getVirtualDiskImages.json")
 	responseBytes, errorCode, err := slas.client.GetHttpClient().DoRawHttpRequest(path, "GET", &bytes.Buffer{})
 	if err != nil {
-		errorMessage := fmt.Sprintf("softlayer-go: could get SoftLayer_Account#getVirtualDiskImages, error message '%s'", err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not get SoftLayer_Account#getVirtualDiskImages, error message '%s'", err.Error())
 		return []datatypes.SoftLayer_Virtual_Disk_Image{}, errors.New(errorMessage)
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Account#getVirtualDiskImages, HTTP error code: '%d'", errorCode)
+		errorMessage := fmt.Sprintf("softlayer-go: could not get SoftLayer_Account#getVirtualDiskImages, HTTP error code: '%d'", errorCode)
 		return []datatypes.SoftLayer_Virtual_Disk_Image{}, errors.New(errorMessage)
 	}
 
@@ -286,12 +292,12 @@ func (slas *softLayer_Account_Service) GetVirtualDiskImagesWithFilter(filters st
 	path := fmt.Sprintf("%s/%s", slas.GetName(), "getVirtualDiskImages.json")
 	responseBytes, errorCode, err := slas.client.GetHttpClient().DoRawHttpRequestWithObjectFilter(path, filters, "GET", &bytes.Buffer{})
 	if err != nil {
-		errorMessage := fmt.Sprintf("softlayer-go: could get SoftLayer_Account#getVirtualDiskImages, error message '%s'", err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not get SoftLayer_Account#getVirtualDiskImages, error message '%s'", err.Error())
 		return []datatypes.SoftLayer_Virtual_Disk_Image{}, errors.New(errorMessage)
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Account#getVirtualDiskImages, HTTP error code: '%d'", errorCode)
+		errorMessage := fmt.Sprintf("softlayer-go: could not get SoftLayer_Account#getVirtualDiskImages, HTTP error code: '%d'", errorCode)
 		return []datatypes.SoftLayer_Virtual_Disk_Image{}, errors.New(errorMessage)
 	}
 
