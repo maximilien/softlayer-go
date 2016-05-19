@@ -30,4 +30,15 @@ type SoftLayer_Hardware struct {
 	PrimaryIpAddress      string     `json:"primaryIpAddress"`
 
 	OperatingSystem *SoftLayer_Operating_System `json:"operatingSystem"`
+
+	Location   *SoftLayer_Location `json:"location"`
+	Datacenter *SoftLayer_Location `json:"datacenter"`
+}
+
+type SoftLayer_Hardware_String_Parameters struct {
+	Parameters []string `json:"parameters"`
+}
+
+type SoftLayer_Hardware_NetworkStorage_Parameters struct {
+	Parameters SoftLayer_Network_Storage `json:"parameters"`
 }
