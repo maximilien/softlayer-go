@@ -400,17 +400,12 @@ func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) Set
 }
 
 func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) CreatePublicArchiveTransaction(id int, groupName string, summary string, note string, locations []datatypes.SoftLayer_Location) (int, error) {
-	locationIdsArray := []int{}
-	for _, location := range locations {
-		locationIdsArray = append(locationIdsArray, location.Id)
-	}
-
 	groupName = url.QueryEscape(groupName)
 	summary = url.QueryEscape(summary)
 	note = url.QueryEscape(note)
 
 	parameters := datatypes.SoftLayer_Virtual_Guest_Block_Device_Template_GroupInitParameters2{
-		Parameters: []interface{}{groupName, summary, note, locationIdsArray},
+		Parameters: []interface{}{groupName, summary, note, locations},
 	}
 
 	requestBody, err := json.Marshal(parameters)
