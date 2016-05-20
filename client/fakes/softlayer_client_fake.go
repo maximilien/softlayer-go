@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"bytes"
 
-	services "github.com/TheWeatherCompany/softlayer-go/services"
-	softlayer "github.com/TheWeatherCompany/softlayer-go/softlayer"
+	"github.com/TheWeatherCompany/softlayer-go/services"
+	"github.com/TheWeatherCompany/softlayer-go/softlayer"
 )
 
 const (
@@ -23,7 +24,7 @@ type FakeSoftLayerClient struct {
 
 	SoftLayerServices map[string]softlayer.Service
 
-	FakeHttpClient *FakeHttpClient
+	*FakeHttpClient
 }
 
 func NewFakeSoftLayerClient(username, apiKey string) *FakeSoftLayerClient {
@@ -182,7 +183,7 @@ func (fslc *FakeSoftLayerClient) GetSoftLayer_Dns_Domain_ResourceRecord_Service(
 		return nil, err
 	}
 
-	return slService.(softlayer.SoftLayer_Dns_Domain_Record_Service), nil
+	return slService.(softlayer.SoftLayer_Dns_Domain_ResourceRecord_Service), nil
 }
 
 func (fslc *FakeSoftLayerClient) GetSoftLayer_Network_Application_Delivery_Controller_Service() (softlayer.SoftLayer_Network_Application_Delivery_Controller_Service, error) {
@@ -199,7 +200,7 @@ func (fslc *FakeSoftLayerClient) DoRawHttpRequestWithObjectMask(path string, mas
 	fslc.DoRawHttpRequestPath = path
 	fslc.DoRawHttpRequestRequestType = requestType
 
-	fslc.DoRawHttpRequestResponseCount += 1
+	fslc.DoRawHttpRequestResponsesCount += 1
 
 	if fslc.DoRawHttpRequestError != nil {
 		return []byte{}, fslc.DoRawHttpRequestError
@@ -217,7 +218,7 @@ func (fslc *FakeSoftLayerClient) DoRawHttpRequestWithObjectFilter(path string, f
 	fslc.DoRawHttpRequestPath = path
 	fslc.DoRawHttpRequestRequestType = requestType
 
-	fslc.DoRawHttpRequestResponseCount += 1
+	fslc.DoRawHttpRequestResponsesCount += 1
 
 	if fslc.DoRawHttpRequestError != nil {
 		return []byte{}, fslc.DoRawHttpRequestError
@@ -235,7 +236,7 @@ func (fslc *FakeSoftLayerClient) DoRawHttpRequestWithObjectFilterAndObjectMask(p
 	fslc.DoRawHttpRequestPath = path
 	fslc.DoRawHttpRequestRequestType = requestType
 
-	fslc.DoRawHttpRequestResponseCount += 1
+	fslc.DoRawHttpRequestResponsesCount += 1
 
 	if fslc.DoRawHttpRequestError != nil {
 		return []byte{}, fslc.DoRawHttpRequestError
@@ -253,7 +254,7 @@ func (fslc *FakeSoftLayerClient) DoRawHttpRequest(path string, requestType strin
 	fslc.DoRawHttpRequestPath = path
 	fslc.DoRawHttpRequestRequestType = requestType
 
-	fslc.DoRawHttpRequestResponseCount += 1
+	fslc.DoRawHttpRequestResponsesCount += 1
 
 	if fslc.DoRawHttpRequestError != nil {
 		return []byte{}, fslc.DoRawHttpRequestError
@@ -276,7 +277,7 @@ func (fslc *FakeSoftLayerClient) HasErrors(body map[string]interface{}) error {
 }
 
 func (fslc *FakeSoftLayerClient) CheckForHttpResponseErrors(data []byte) error {
-	return slService.(softlayer.SoftLayer_Dns_Domain_ResourceRecord_Service), nil
+	return fslc.CheckForHttpResponseErrorsError
 }
 
 //Private methods
