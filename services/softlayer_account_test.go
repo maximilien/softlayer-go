@@ -549,7 +549,7 @@ var _ = Describe("SoftLayer_Account_Service", func() {
 
 	Context("#GetApplicationDeliveryControllersWithFilter", func() {
 		BeforeEach(func() {
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Account_Service_getApplicationDeliveryControllers.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Account_Service_getApplicationDeliveryControllers.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
