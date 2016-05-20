@@ -1,0 +1,58 @@
+[
+  {
+    "accountId": 123456,
+    "address1": "10 Some Street",
+    "city": "Somers",
+    "companyName": "Some Name",
+    "country": "US",
+    "createDate": "2015-09-30T08:29:43-05:00",
+    "daylightSavingsTimeFlag": true,
+    "denyAllResourceAccessOnCreateFlag": false,
+    "displayName": "JDoe",
+    "email": "jdoe@foo.bar",
+    "firstName": "Joe",
+    "forumPasswordHash": "****************",
+    "id": 123456,
+    "lastName": "Doe",
+    "localeId": 1,
+    "managedByFederationFlag": false,
+    "managedByOIDCFlag": false,
+    "modifyDate": "2016-01-29T11:34:39-05:00",
+    "officePhone": "555-555-5555",
+    "parentId": null,
+    "passwordExpireDate": null,
+    "permissionSystemVersion": 2,
+    "postalCode": "123456",
+    "pptpVpnAllowedFlag": false,
+    "savedId": "123456",
+    "secondaryLoginManagementFlag": null,
+    "secondaryLoginRequiredFlag": null,
+    "secondaryPasswordModifyDate": "2015-09-30T15:06:39-05:00",
+    "secondaryPasswordTimeoutDays": null,
+    "sslVpnAllowedFlag": false,
+    "state": "NY",
+    "statusDate": "2015-09-30T08:29:43-05:00",
+    "timezoneId": 114,
+    "userStatusId": 1001,
+    "username": "jdoe123foo",
+    "vpnManualConfig": false,
+    "locale": {
+      "friendlyName": "English",
+      "id": 1,
+      "languageTag": "en-US",
+      "name": "English"
+    },
+    "timezone": {
+      "id": 114,
+      "longName": "(GMT-06:00) America/Dallas - CST",
+      "name": "America/Chicago",
+      "offset": "-0600",
+      "shortName": "CST"
+    },
+    "userStatus": {
+      "id": 1001,
+      "keyName": "ACTIVE",
+      "name": "Active"
+    }
+  }
+]
