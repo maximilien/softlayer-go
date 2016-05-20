@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/url"
 	"strconv"
+	"strings"
 
 	common "github.com/maximilien/softlayer-go/common"
 	datatypes "github.com/maximilien/softlayer-go/data_types"
@@ -434,4 +435,15 @@ func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) Cre
 	}
 
 	return transactionId, nil
+}
+
+func (slvgbdtg *softLayer_Virtual_Guest_Block_Device_Template_Group_Service) GetGlobalIdentifier(id int) (string, error) {
+	response, errorCode, err := slvgbdtg.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/getGlobalIdentifier.json", slvgbdtg.GetName(), id), "GET", new(bytes.Buffer))
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest_Block_Device_Template_Group#getGlobalIdentifier, HTTP error code: '%d'", errorCode)
+		return "", errors.New(errorMessage)
+	}
+
+	return string(strings.TrimSpace(string(response))), err
 }
