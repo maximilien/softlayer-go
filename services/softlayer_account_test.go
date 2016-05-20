@@ -184,6 +184,41 @@ var _ = Describe("SoftLayer_Account_Service", func() {
 		})
 	})
 
+	Context("#GetHubNetworkStorage", func() {
+		BeforeEach(func() {
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Account_Service_getHubNetworkStorage.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("returns an array of datatypes.SoftLayer_Network_Storage", func() {
+			networkStorage, err := accountService.GetHubNetworkStorage()
+			Expect(err).ToNot(HaveOccurred())
+			Expect(networkStorage).ToNot(BeNil())
+		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := accountService.GetNetworkStorage()
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := accountService.GetNetworkStorage()
+					Expect(err).To(HaveOccurred())
+				}
+			})
+		})
+	})
+
 	Context("#GetIscsiNetworkStorage", func() {
 		BeforeEach(func() {
 			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Account_Service_getNetworkStorage.json")
@@ -514,7 +549,7 @@ var _ = Describe("SoftLayer_Account_Service", func() {
 
 	Context("#GetApplicationDeliveryControllersWithFilter", func() {
 		BeforeEach(func() {
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Account_Service_getApplicationDeliveryControllers.json")
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Account_Service_getApplicationDeliveryControllers.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
