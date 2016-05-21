@@ -69,6 +69,15 @@ func (fslc *FakeSoftLayerClient) GetSoftLayer_Account_Service() (softlayer.SoftL
 	return slService.(softlayer.SoftLayer_Account_Service), nil
 }
 
+func (slc *FakeSoftLayerClient) GetSoftLayer_User_Customer_Service() (softlayer.SoftLayer_User_Customer_Service, error) {
+	slService, err := slc.GetService("SoftLayer_User_Customer")
+	if err != nil {
+		return nil, err
+	}
+
+	return slService.(softlayer.SoftLayer_User_Customer_Service), nil
+}
+
 func (fslc *FakeSoftLayerClient) GetSoftLayer_Virtual_Guest_Service() (softlayer.SoftLayer_Virtual_Guest_Service, error) {
 	slService, err := fslc.GetService("SoftLayer_Virtual_Guest")
 	if err != nil {
@@ -284,6 +293,7 @@ func (fslc *FakeSoftLayerClient) CheckForHttpResponseErrors(data []byte) error {
 
 func (fslc *FakeSoftLayerClient) initSoftLayerServices() {
 	fslc.SoftLayerServices["SoftLayer_Account"] = services.NewSoftLayer_Account_Service(fslc)
+	fslc.SoftLayerServices["SoftLayer_User_Customer"] = services.NewSoftLayer_User_Customer_Service(fslc)
 	fslc.SoftLayerServices["SoftLayer_Virtual_Guest"] = services.NewSoftLayer_Virtual_Guest_Service(fslc)
 	fslc.SoftLayerServices["SoftLayer_Virtual_Disk_Image"] = services.NewSoftLayer_Virtual_Disk_Image_Service(fslc)
 	fslc.SoftLayerServices["SoftLayer_Security_Ssh_Key"] = services.NewSoftLayer_Security_Ssh_Key_Service(fslc)

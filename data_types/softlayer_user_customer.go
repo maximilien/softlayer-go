@@ -9,3 +9,9 @@ type SoftLayer_User_Customer struct {
 	LastName    string `json:"lastName"`
 	ParentId    int    `json:"parentId"`
 }
+
+type SoftLayer_User_Customer_ApiAuthentication struct {
+	Id                int    `json:"id"`
+	AuthenticationKey string `json:"authenticationKey"`
+	UserId            int    `json:"userId"`
+}
