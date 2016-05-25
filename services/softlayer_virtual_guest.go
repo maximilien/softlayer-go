@@ -300,6 +300,25 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetPrimaryIpAddress(instanceId int
 	return vgPrimaryIpAddress, nil
 }
 
+func (slvgs *softLayer_Virtual_Guest_Service) GetPrimaryBackendIpAddress(instanceId int) (string, error) {
+	response, errorCode, err := slvgs.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/getPrimaryBackendIpAddress.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+	if err != nil {
+		return "", err
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#getPrimaryBackendIpAddress, HTTP error code: '%d'", errorCode)
+		return "", errors.New(errorMessage)
+	}
+
+	vgPrimaryBackendIpAddress := strings.TrimSpace(string(response))
+	if vgPrimaryBackendIpAddress == "" {
+		return "", errors.New(fmt.Sprintf("Failed to get primary IP address for instance with id '%d', got '%s' as response from the API.", instanceId, response))
+	}
+
+	return vgPrimaryBackendIpAddress, nil
+}
+
 func (slvgs *softLayer_Virtual_Guest_Service) GetActiveTransaction(instanceId int) (datatypes.SoftLayer_Provisioning_Version1_Transaction, error) {
 	response, errorCode, err := slvgs.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/getActiveTransaction.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
 	if err != nil {

@@ -145,6 +145,7 @@ func (slhs *softLayer_Hardware_Service) GetObject(id int) (datatypes.SoftLayer_H
 		"provisionDate",
 		"globalIdentifier",
 		"primaryIpAddress",
+		"primaryBackendIpAddress",
 		"operatingSystem.passwords.password",
 		"operatingSystem.passwords.username",
 		"datacenter.name",
@@ -279,6 +280,20 @@ func (slhs *softLayer_Hardware_Service) GetPrimaryIpAddress(id int) (string, err
 
 	if common.IsHttpErrorCode(errorCode) {
 		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Hardware#getPrimaryIpAddress, HTTP error code: '%d'", errorCode)
+		return "", errors.New(errorMessage)
+	}
+
+	return string(response[:]), nil
+}
+
+func (slhs *softLayer_Hardware_Service) GetPrimaryBackendIpAddress(id int) (string, error) {
+	response, errorCode, err := slhs.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/getPrimaryBackendIpAddress.json", slhs.GetName(), id), "GET", new(bytes.Buffer))
+	if err != nil {
+		return "", err
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Hardware#getPrimaryBackendIpAddress, HTTP error code: '%d'", errorCode)
 		return "", errors.New(errorMessage)
 	}
 

@@ -20,14 +20,15 @@ type SoftLayer_Hardware_Template struct {
 }
 
 type SoftLayer_Hardware struct {
-	BareMetalInstanceFlag int        `json:"bareMetalInstanceFlag"`
-	Domain                string     `json:"domain"`
-	Hostname              string     `json:"hostname"`
-	Id                    int        `json:"id"`
-	HardwareStatusId      int        `json:"hardwareStatusId"`
-	ProvisionDate         *time.Time `json:"provisionDate"`
-	GlobalIdentifier      string     `json:"globalIdentifier"`
-	PrimaryIpAddress      string     `json:"primaryIpAddress"`
+	BareMetalInstanceFlag   int        `json:"bareMetalInstanceFlag"`
+	Domain                  string     `json:"domain"`
+	Hostname                string     `json:"hostname"`
+	Id                      int        `json:"id"`
+	HardwareStatusId        int        `json:"hardwareStatusId"`
+	ProvisionDate           *time.Time `json:"provisionDate"`
+	GlobalIdentifier        string     `json:"globalIdentifier"`
+	PrimaryIpAddress        string     `json:"primaryIpAddress"`
+	PrimaryBackendIpAddress string     `json:"primaryBackendIpAddress"`
 
 	OperatingSystem *SoftLayer_Operating_System `json:"operatingSystem"`
 
