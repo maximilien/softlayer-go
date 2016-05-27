@@ -8,6 +8,7 @@ type SoftLayer_Account_Service interface {
 	Service
 
 	GetAccountStatus() (datatypes.SoftLayer_Account_Status, error)
+	GetUsers() ([]datatypes.SoftLayer_User_Customer, error)
 	GetVirtualGuests() ([]datatypes.SoftLayer_Virtual_Guest, error)
 	GetVirtualGuestsByFilter(filters string) ([]datatypes.SoftLayer_Virtual_Guest, error)
 	GetNetworkStorage() ([]datatypes.SoftLayer_Network_Storage, error)
