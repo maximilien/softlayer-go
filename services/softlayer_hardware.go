@@ -196,6 +196,7 @@ func (slhs *softLayer_Hardware_Service) GetAttachedNetworkStorages(id int, nasTy
 		"hardwareId",
 		"hostId",
 		"id",
+		"fullyQualifiedDomainName",
 		"nasType",
 		"notes",
 		"Password",
