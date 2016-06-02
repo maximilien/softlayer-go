@@ -5,6 +5,7 @@ import (
 	"errors"
 	"net"
 	"net/http"
+	"net/url"
 	"os"
 
 	. "github.com/onsi/ginkgo"
@@ -65,7 +66,10 @@ var _ = Describe("SoftLayerClient", func() {
 
 			Expect(client.GetHttpClient()).ToNot(BeNil())
 
-			_, errorCode, err := client.GetHttpClient().DoRawHttpRequest("/foo", "application/text", bytes.NewBufferString("random text"))
+			_, errorCode, err := client.GetHttpClient().DoRawHttpRequest("/foo", "GET", bytes.NewBufferString("random text"))
+			if urlErr, ok := err.(*url.Error); ok {
+				err = urlErr.Err
+			}
 			Expect(err).To(Equal(errDialFailed))
 			Expect(errorCode).To(BeNumerically(">", 400))
 		})
