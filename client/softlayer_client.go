@@ -1,15 +1,15 @@
 package client
 
 import (
-	"errors"
 	"bytes"
+	"errors"
 	"fmt"
+	services "github.com/TheWeatherCompany/softlayer-go/services"
+	softlayer "github.com/TheWeatherCompany/softlayer-go/softlayer"
 	"io/ioutil"
 	"net/http"
 	"net/http/httputil"
 	"os"
-	services "github.com/TheWeatherCompany/softlayer-go/services"
-	softlayer "github.com/TheWeatherCompany/softlayer-go/softlayer"
 )
 
 const (
@@ -19,7 +19,7 @@ const (
 
 type SoftLayerClient struct {
 	username string
- 	apiKey   string
+	apiKey   string
 
 	HTTPClient *http.Client
 

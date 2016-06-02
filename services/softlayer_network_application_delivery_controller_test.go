@@ -192,15 +192,17 @@ var _ = Describe("SoftLayer_Network_Application_Delivery_Controller_Service", fu
 
 	Context("#DeleteObject", func() {
 		BeforeEach(func() {
-			fakeClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Network_Application_Delivery_Controller_DeleteObject.json")
+			response, err := testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Network_Application_Delivery_Controller_GetBillingItem.json")
+			fakeClient.DoRawHttpRequestResponses = append(fakeClient.DoRawHttpRequestResponses, response)
 			Expect(err).ToNot(HaveOccurred())
 		})
 
 		It("sucessfully removes SoftLayer_Network_Application_Delivery_Controller instance", func() {
+			response, err := testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Network_Application_Delivery_Controller_DeleteObject.json")
+			fakeClient.DoRawHttpRequestResponses = append(fakeClient.DoRawHttpRequestResponses, response)
 			nadcId := 15293
-			deleted, err := nadcService.DeleteObject(nadcId)
+			_, err = nadcService.DeleteObject(nadcId)
 			Expect(err).ToNot(HaveOccurred())
-			Expect(deleted).To(BeTrue())
 		})
 	})
 

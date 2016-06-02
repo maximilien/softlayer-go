@@ -1,11 +1,11 @@
 package client_fakes
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
-	"bytes"
 
 	"github.com/TheWeatherCompany/softlayer-go/services"
 	"github.com/TheWeatherCompany/softlayer-go/softlayer"
