@@ -23,6 +23,7 @@ type Client interface {
 	GetSoftLayer_Dns_Domain_Service() (SoftLayer_Dns_Domain_Service, error)
 	GetSoftLayer_Network_Application_Delivery_Controller_Service() (SoftLayer_Network_Application_Delivery_Controller_Service, error)
 	GetSoftLayer_Dns_Domain_ResourceRecord_Service() (SoftLayer_Dns_Domain_ResourceRecord_Service, error)
+	GetSoftLayer_Security_Certificate_Service() (SoftLayer_Security_Certificate_Service, error)
 
 	GetHttpClient() HttpClient
 }

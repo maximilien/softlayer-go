@@ -224,7 +224,7 @@ func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) Delete
 		return false, err
 	}
 	if vip.Name != vipId {
-		return false, fmt.Errorf("VIP with ID '%d' is not found", vipId)
+		return false, fmt.Errorf("VIP with ID '%s' is not found", vipId)
 	}
 
 	parameters := datatypes.SoftLayer_Network_LoadBalancer_Service_Parameters_Delete{
@@ -445,9 +445,7 @@ func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) Delete
 		}
 	}
 
-	fmt.Errorf("softlayer-go: could not SoftLayer_Network_Storage_Service#deleteIscsiVolume with id: '%d'", id)
-
-	return true, err
+	return true, fmt.Errorf("softlayer-go: could not SoftLayer_Network_Storage_Service#deleteIscsiVolume with id: '%d'", id)
 }
 
 func (slnadcs *softLayer_Network_Application_Delivery_Controller_Service) CancelService(billingId int) (bool, error) {
