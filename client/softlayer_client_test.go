@@ -67,7 +67,10 @@ var _ = Describe("SoftLayerClient", func() {
 			Expect(client.GetHttpClient()).ToNot(BeNil())
 
 			_, errorCode, err := client.GetHttpClient().DoRawHttpRequest("foo", http.MethodGet, bytes.NewBufferString("random text"))
-			Expect(err.(*url.Error).Err).To(Equal(errDialFailed))
+			if urlErr, ok := err.(*url.Error); ok {
+				err = urlErr.Err
+			}
+			Expect(err).To(Equal(errDialFailed))
 			Expect(errorCode).To(BeNumerically(">", 400))
 		})
 	})

@@ -18,6 +18,7 @@ type SoftLayer_Hardware_Service interface {
 	GetAttachedNetworkStorages(id int, nasType string) ([]datatypes.SoftLayer_Network_Storage, error)
 	GetDatacenter(id int) (datatypes.SoftLayer_Location, error)
 	GetPrimaryIpAddress(id int) (string, error)
+	GetPrimaryBackendIpAddress(id int) (string, error)
 
 	PowerOff(instanceId int) (bool, error)
 	PowerOffSoft(instanceId int) (bool, error)
