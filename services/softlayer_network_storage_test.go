@@ -188,6 +188,38 @@ var _ = Describe("SoftLayer_Network_Storage", func() {
 		})
 	})
 
+	Context("#HasAllowedHardware", func() {
+		It("hardware allows to access volume", func() {
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Network_Storage_Service_getAllowedHardware.json")
+			Expect(err).ToNot(HaveOccurred())
+
+			_, err := networkStorageService.HasAllowedHardware(123, 456)
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := networkStorageService.HasAllowedHardware(123, 456)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := networkStorageService.HasAllowedHardware(123, 456)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+		})
+	})
+
 	Context("#AttachIscsiVolume", func() {
 		var virtualGuest datatypes.SoftLayer_Virtual_Guest
 

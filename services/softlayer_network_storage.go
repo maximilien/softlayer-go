@@ -229,6 +229,32 @@ func (slns *softLayer_Network_Storage_Service) HasAllowedVirtualGuest(volumeId i
 	return false, nil
 }
 
+func (slns *softLayer_Network_Storage_Service) HasAllowedHardware(volumeId int, vmId int) (bool, error) {
+	filter := string(`{"allowedVirtualGuests":{"id":{"operation":"` + strconv.Itoa(vmId) + `"}}}`)
+	response, errorCode, err := slns.client.GetHttpClient().DoRawHttpRequestWithObjectFilterAndObjectMask(fmt.Sprintf("%s/%d/getAllowedHardware.json", slns.GetName(), volumeId), []string{"id"}, fmt.Sprintf(string(filter)), "GET", new(bytes.Buffer))
+
+	if err != nil {
+		return false, errors.New(fmt.Sprintf("Cannot check authentication for volume %d in vm %d", volumeId, vmId))
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Network_Storage#hasAllowedHardware, HTTP error code: '%d'", errorCode)
+		return false, errors.New(errorMessage)
+	}
+
+	hardware := []datatypes.SoftLayer_Hardware{}
+	err = json.Unmarshal(response, &hardware)
+	if err != nil {
+		return false, errors.New(fmt.Sprintf("Failed to unmarshal response of checking authentication for volume %d in vm %d", volumeId, vmId))
+	}
+
+	if len(hardware) > 0 {
+		return true, nil
+	}
+
+	return false, nil
+}
+
 func (slns *softLayer_Network_Storage_Service) AttachIscsiVolume(virtualGuest datatypes.SoftLayer_Virtual_Guest, volumeId int) (bool, error) {
 	parameters := datatypes.SoftLayer_Virtual_Guest_Parameters{
 		Parameters: []datatypes.SoftLayer_Virtual_Guest{
