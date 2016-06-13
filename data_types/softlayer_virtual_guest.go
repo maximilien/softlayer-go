@@ -8,10 +8,6 @@ type SoftLayer_Virtual_Guest_Parameters struct {
 	Parameters []SoftLayer_Virtual_Guest `json:"parameters"`
 }
 
-type SoftLayer_Hardware_Parameters struct {
-	Parameters []SoftLayer_Hardware `json:"parameters"`
-}
-
 type SoftLayer_Virtual_Guest struct {
 	AccountId                    int        `json:"accountId,omitempty"`
 	CreateDate                   *time.Time `json:"createDate,omitempty"`

@@ -8,6 +8,10 @@ type SoftLayer_Hardware_Template_Parameters struct {
 	Parameters []SoftLayer_Hardware_Template `json:"parameters"`
 }
 
+type SoftLayer_Hardware_Parameters struct {
+	Parameters []SoftLayer_Hardware `json:"parameters"`
+}
+
 type SoftLayer_Hardware_Template struct {
 	Hostname                     string `json:"hostname"`
 	Domain                       string `json:"domain"`
