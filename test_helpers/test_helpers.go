@@ -361,7 +361,7 @@ func CreateDisk(size int, location string) datatypes.SoftLayer_Network_Storage {
 	Expect(err).ToNot(HaveOccurred())
 
 	fmt.Printf("----> creating new disk\n")
-	disk, err := networkStorageService.CreateIscsiVolume(size, location)
+	disk, err := networkStorageService.CreateNetworkStorage(size, location)
 	Expect(err).ToNot(HaveOccurred())
 	fmt.Printf("----> created disk: %d\n", disk.Id)
 
@@ -445,7 +445,7 @@ func DeleteDisk(diskId int) {
 	Expect(err).ToNot(HaveOccurred())
 
 	fmt.Printf("----> deleting disk: %d\n", diskId)
-	err = networkStorageService.DeleteIscsiVolume(diskId, true)
+	err = networkStorageService.DeleteNetworkStorage(diskId, true)
 	Expect(err).ToNot(HaveOccurred())
 }
 

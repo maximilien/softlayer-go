@@ -34,7 +34,7 @@ func (slns *softLayer_Network_Storage_Service) GetName() string {
 	return "SoftLayer_Network_Storage"
 }
 
-func (slns *softLayer_Network_Storage_Service) CreateIscsiVolume(size int, location string) (datatypes.SoftLayer_Network_Storage, error) {
+func (slns *softLayer_Network_Storage_Service) CreateNetworkStorage(size int, location string) (datatypes.SoftLayer_Network_Storage, error) {
 	if size < 0 {
 		return datatypes.SoftLayer_Network_Storage{}, errors.New("Cannot create negative sized volumes")
 	}
@@ -113,7 +113,7 @@ func (slvgs *softLayer_Network_Storage_Service) DeleteObject(volumeId int) (bool
 	return true, err
 }
 
-func (slns *softLayer_Network_Storage_Service) DeleteIscsiVolume(volumeId int, immediateCancellationFlag bool) error {
+func (slns *softLayer_Network_Storage_Service) DeleteNetworkStorage(volumeId int, immediateCancellationFlag bool) error {
 
 	billingItem, err := slns.GetBillingItem(volumeId)
 	if err != nil {
@@ -141,7 +141,7 @@ func (slns *softLayer_Network_Storage_Service) DeleteIscsiVolume(volumeId int, i
 	return errors.New(errorMessage)
 }
 
-func (slns *softLayer_Network_Storage_Service) GetIscsiVolume(volumeId int) (datatypes.SoftLayer_Network_Storage, error) {
+func (slns *softLayer_Network_Storage_Service) GetNetworkStorage(volumeId int) (datatypes.SoftLayer_Network_Storage, error) {
 	objectMask := []string{
 		"accountId",
 		"capacityGb",
@@ -229,7 +229,33 @@ func (slns *softLayer_Network_Storage_Service) HasAllowedVirtualGuest(volumeId i
 	return false, nil
 }
 
-func (slns *softLayer_Network_Storage_Service) AttachIscsiVolume(virtualGuest datatypes.SoftLayer_Virtual_Guest, volumeId int) (bool, error) {
+func (slns *softLayer_Network_Storage_Service) HasAllowedHardware(volumeId int, vmId int) (bool, error) {
+	filter := string(`{"allowedVirtualGuests":{"id":{"operation":"` + strconv.Itoa(vmId) + `"}}}`)
+	response, errorCode, err := slns.client.GetHttpClient().DoRawHttpRequestWithObjectFilterAndObjectMask(fmt.Sprintf("%s/%d/getAllowedHardware.json", slns.GetName(), volumeId), []string{"id"}, fmt.Sprintf(string(filter)), "GET", new(bytes.Buffer))
+
+	if err != nil {
+		return false, errors.New(fmt.Sprintf("Cannot check authentication for volume %d in vm %d", volumeId, vmId))
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Network_Storage#hasAllowedHardware, HTTP error code: '%d'", errorCode)
+		return false, errors.New(errorMessage)
+	}
+
+	hardware := []datatypes.SoftLayer_Hardware{}
+	err = json.Unmarshal(response, &hardware)
+	if err != nil {
+		return false, errors.New(fmt.Sprintf("Failed to unmarshal response of checking authentication for volume %d in vm %d", volumeId, vmId))
+	}
+
+	if len(hardware) > 0 {
+		return true, nil
+	}
+
+	return false, nil
+}
+
+func (slns *softLayer_Network_Storage_Service) AttachNetworkStorageToVirtualGuest(virtualGuest datatypes.SoftLayer_Virtual_Guest, volumeId int) (bool, error) {
 	parameters := datatypes.SoftLayer_Virtual_Guest_Parameters{
 		Parameters: []datatypes.SoftLayer_Virtual_Guest{
 			virtualGuest,
@@ -247,7 +273,7 @@ func (slns *softLayer_Network_Storage_Service) AttachIscsiVolume(virtualGuest da
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Network_Storage#attachIscsiVolume, HTTP error code: '%d'", errorCode)
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Network_Storage#attachNetworkStorageToVirtualGuest, HTTP error code: '%d'", errorCode)
 		return false, errors.New(errorMessage)
 	}
 
@@ -259,7 +285,37 @@ func (slns *softLayer_Network_Storage_Service) AttachIscsiVolume(virtualGuest da
 	return allowable, nil
 }
 
-func (slns *softLayer_Network_Storage_Service) DetachIscsiVolume(virtualGuest datatypes.SoftLayer_Virtual_Guest, volumeId int) error {
+func (slns *softLayer_Network_Storage_Service) AttachNetworkStorageToHardware(hardware datatypes.SoftLayer_Hardware, volumeId int) (bool, error) {
+	parameters := datatypes.SoftLayer_Hardware_Parameters{
+		Parameters: []datatypes.SoftLayer_Hardware{
+			hardware,
+		},
+	}
+	requestBody, err := json.Marshal(parameters)
+	if err != nil {
+		return false, err
+	}
+
+	resp, errorCode, err := slns.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/allowAccessFromHardware.json", slns.GetName(), volumeId), "PUT", bytes.NewBuffer(requestBody))
+
+	if err != nil {
+		return false, err
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Network_Storage#attachNetworkStorageToHardware, HTTP error code: '%d'", errorCode)
+		return false, errors.New(errorMessage)
+	}
+
+	allowable, err := strconv.ParseBool(string(resp[:]))
+	if err != nil {
+		return false, nil
+	}
+
+	return allowable, nil
+}
+
+func (slns *softLayer_Network_Storage_Service) DetachNetworkStorageFromVirtualGuest(virtualGuest datatypes.SoftLayer_Virtual_Guest, volumeId int) error {
 	parameters := datatypes.SoftLayer_Virtual_Guest_Parameters{
 		Parameters: []datatypes.SoftLayer_Virtual_Guest{
 			virtualGuest,
@@ -276,7 +332,31 @@ func (slns *softLayer_Network_Storage_Service) DetachIscsiVolume(virtualGuest da
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Account#getAccountStatus, HTTP error code: '%d'", errorCode)
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Network_Storage#detachNetworkStorageToVirtualGuest, HTTP error code: '%d'", errorCode)
+		return errors.New(errorMessage)
+	}
+
+	return nil
+}
+
+func (slns *softLayer_Network_Storage_Service) DetachNetworkStorageFromHardware(hardware datatypes.SoftLayer_Hardware, volumeId int) error {
+	parameters := datatypes.SoftLayer_Hardware_Parameters{
+		Parameters: []datatypes.SoftLayer_Hardware{
+			hardware,
+		},
+	}
+	requestBody, err := json.Marshal(parameters)
+	if err != nil {
+		return err
+	}
+
+	_, errorCode, err := slns.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/removeAccessFromHardware.json", slns.GetName(), volumeId), "PUT", bytes.NewBuffer(requestBody))
+	if err != nil {
+		return err
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Network_Storage#detachNetworkStorageToHardware, HTTP error code: '%d'", errorCode)
 		return errors.New(errorMessage)
 	}
 
