@@ -1,0 +1,12 @@
+{
+  "id": 123456789,
+  "billingItem": {
+    "id": 123456789,
+    "provisionTransaction": {
+      "id": 12345678,
+      "transactionStatus": {
+        "name": "COMPLETE"
+      }
+    }
+  }
+}

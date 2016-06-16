@@ -13,6 +13,7 @@ type SoftLayer_Account_Service interface {
 	GetVirtualGuestsByFilter(filters string) ([]datatypes.SoftLayer_Virtual_Guest, error)
 	GetNetworkStorage() ([]datatypes.SoftLayer_Network_Storage, error)
 	GetHubNetworkStorage() ([]datatypes.SoftLayer_Network_Storage, error)
+	GetHubNetworkStorageByFilter(filter string) ([]datatypes.SoftLayer_Network_Storage, error)
 	GetIscsiNetworkStorage() ([]datatypes.SoftLayer_Network_Storage, error)
 	GetIscsiNetworkStorageWithFilter(filter string) ([]datatypes.SoftLayer_Network_Storage, error)
 	GetVirtualDiskImages() ([]datatypes.SoftLayer_Virtual_Disk_Image, error)

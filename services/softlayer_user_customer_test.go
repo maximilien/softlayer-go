@@ -262,7 +262,7 @@ var _ = Describe("SoftLayer_User_Customer_Service", func() {
 		})
 
 		It("sucessfully adds the given permissions to a given SoftLayer_User_Customer instance", func() {
-			var perms = []datatypes.SoftLayer_User_Customer_CustomerPermission_Permission {
+			var perms = []datatypes.SoftLayer_User_Customer_CustomerPermission_Permission{
 				datatypes.SoftLayer_User_Customer_CustomerPermission_Permission{
 					KeyName: permissions[0],
 				},
@@ -279,12 +279,12 @@ var _ = Describe("SoftLayer_User_Customer_Service", func() {
 		BeforeEach(func() {
 			userCustObj.Id = 631231
 			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err =
-			test_helpers.ReadJsonTestFixtures("services", "SoftLayer_User_Customer_removeBulkPortalPermission.json")
+				test_helpers.ReadJsonTestFixtures("services", "SoftLayer_User_Customer_removeBulkPortalPermission.json")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
 		It("sucessfully removes the specified permissions from a SoftLayer_User_Customer instance", func() {
-			var perms = []datatypes.SoftLayer_User_Customer_CustomerPermission_Permission {
+			var perms = []datatypes.SoftLayer_User_Customer_CustomerPermission_Permission{
 				datatypes.SoftLayer_User_Customer_CustomerPermission_Permission{
 					KeyName: permissions[0],
 				},

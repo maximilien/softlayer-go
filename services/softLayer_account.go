@@ -193,7 +193,15 @@ func (slas *softLayer_Account_Service) GetNetworkStorage() ([]datatypes.SoftLaye
 }
 
 func (slas *softLayer_Account_Service) GetHubNetworkStorage() ([]datatypes.SoftLayer_Network_Storage, error) {
-	path := fmt.Sprintf("%s/%s", slas.GetName(), "getHubNetworkStorage.json")
+	return slas.GetHubNetworkStorageByFilter("")
+}
+
+func (slas *softLayer_Account_Service) GetHubNetworkStorageByFilter(filter string) ([]datatypes.SoftLayer_Network_Storage, error) {
+	if filter != "" {
+		filter = fmt.Sprintf("?objectFilter=%s", filter)
+	}
+
+	path := fmt.Sprintf("%s/getHubNetworkStorage.json%s", slas.GetName(), filter)
 	responseBytes, errorCode, err := slas.client.GetHttpClient().DoRawHttpRequest(path, "GET", &bytes.Buffer{})
 	if err != nil {
 		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Account#getHubNetworkStorage, error message '%s'", err.Error())
