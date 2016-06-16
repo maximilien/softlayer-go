@@ -499,8 +499,6 @@ func (slns *softLayer_Network_Storage_Service) selectMediumIopsItemPriceIdOnSize
 		})
 		if len(candidates) > 0 {
 			sort.Sort(datatypes.SoftLayer_Product_Item_Price_Sorted_Data(candidates))
-			fmt.Printf("len of candidates: %d", len(candidates))
-			fmt.Printf("len of candidates: %v", candidates)
 			return candidates[len(candidates)/2].Id, nil
 		} else {
 			return 0, errors.New(fmt.Sprintf("No proper performance storage (iSCSI volume)for size %d", size))
