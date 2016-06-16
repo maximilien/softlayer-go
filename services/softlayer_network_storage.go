@@ -415,7 +415,6 @@ func (slns *softLayer_Network_Storage_Service) getIscsiVolumeItemIdBasedOnSize(s
 
 	if len(itemPrices) > 0 {
 		for _, itemPrice := range itemPrices {
-			fmt.Printf("Size WJQ: %d : %d", itemPrice.Id, itemPrice.LocationGroupId)
 			if itemPrice.LocationGroupId == 0 {
 				currentItemId = itemPrice.Id
 				break
@@ -426,7 +425,6 @@ func (slns *softLayer_Network_Storage_Service) getIscsiVolumeItemIdBasedOnSize(s
 	if currentItemId == 0 {
 		return 0, errors.New(fmt.Sprintf("No proper performance storage (iSCSI volume)for size %d", size))
 	}
-	fmt.Printf("currentItemId: %d", currentItemId)
 	return currentItemId, nil
 }
 
@@ -456,8 +454,6 @@ func (slns *softLayer_Network_Storage_Service) getItemPriceIdBySizeAndIops(size 
 	if currentItemId == 0 {
 		return 0, errors.New(fmt.Sprintf("No proper performance storage (iSCSI volume)for size %d", size))
 	}
-
-	fmt.Printf("currentItemId: %d", currentItemId)
 	return currentItemId, nil
 }
 
