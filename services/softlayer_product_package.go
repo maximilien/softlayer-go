@@ -75,7 +75,7 @@ func (slpp *softLayer_Product_Package_Service) GetItemPricesBySize(packageId int
 }
 
 func (slpp *softLayer_Product_Package_Service) GetItemPricesBySize2(packageId int, size int) ([]datatypes.SoftLayer_Product_Item_Price, error) {
-	filter := fmt.Sprintf(`{"itemPrices":{"item":{"capacity":{"operation":%d}},"categories":{"categoryCode":{"operation":"performance_storage_space"}},"locationGroupId":{"operation":"is null"}}}`, size)
+	filter := fmt.Sprintf(`{"itemPrices":{"item":{"capacity":{"operation":%d}},"categories":{"categoryCode":{"operation":"performance_storage_space"}}}}`, size)
 
 	response, errorCode, err := slpp.client.GetHttpClient().DoRawHttpRequestWithObjectFilterAndObjectMask(fmt.Sprintf("%s/%d/getItemPrices.json", slpp.GetName(), packageId), []string{"id", "locationGroupId", "item.id", "item.keyName", "item.units", "item.description", "item.capacity"}, filter, "GET", new(bytes.Buffer))
 	if err != nil {
