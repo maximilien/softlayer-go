@@ -443,7 +443,6 @@ func (slns *softLayer_Network_Storage_Service) getItemPriceIdBySizeAndIops(size 
 
 	if len(itemPrices) > 0 {
 		for _, itemPrice := range itemPrices {
-			fmt.Printf("Iops WJQ: %d : %d", itemPrice.Id, itemPrice.LocationGroupId)
 			if itemPrice.LocationGroupId == 0 {
 				currentItemId = itemPrice.Id
 				break
@@ -474,7 +473,7 @@ func (slns *softLayer_Network_Storage_Service) selectMaximunIopsItemPriceIdOnSiz
 		})
 		if len(candidates) > 0 {
 			sort.Sort(datatypes.SoftLayer_Product_Item_Price_Sorted_Data(candidates))
-			return candidates[len(itemPrices)-1].Id, nil
+			return candidates[len(candidates)-1].Id, nil
 		} else {
 			return 0, errors.New(fmt.Sprintf("No proper performance storage (iSCSI volume)for size %d", size))
 		}
@@ -500,7 +499,9 @@ func (slns *softLayer_Network_Storage_Service) selectMediumIopsItemPriceIdOnSize
 		})
 		if len(candidates) > 0 {
 			sort.Sort(datatypes.SoftLayer_Product_Item_Price_Sorted_Data(candidates))
-			return candidates[len(itemPrices)/2].Id, nil
+			fmt.Printf("len of candidates: %d", len(candidates))
+			fmt.Printf("len of candidates: %v", candidates)
+			return candidates[len(candidates)/2].Id, nil
 		} else {
 			return 0, errors.New(fmt.Sprintf("No proper performance storage (iSCSI volume)for size %d", size))
 		}
