@@ -9,6 +9,9 @@ type SoftLayer_Product_Package_Service interface {
 
 	GetItemPrices(packageId int) ([]datatypes.SoftLayer_Product_Item_Price, error)
 	GetItemPricesBySize(packageId int, size int) ([]datatypes.SoftLayer_Product_Item_Price, error)
+	GetItemPricesBySize2(packageId int, size int) ([]datatypes.SoftLayer_Product_Item_Price, error)
+	GetItemPricesBySizeAndIops(packageId int, size int, capacity int) ([]datatypes.SoftLayer_Product_Item_Price, error)
+	GetIopsItemPricesBySize(packageId int, size int) ([]datatypes.SoftLayer_Product_Item_Price, error)
 	GetItems(packageId int) ([]datatypes.SoftLayer_Product_Item, error)
 	GetItemsByType(packageType string) ([]datatypes.SoftLayer_Product_Item, error)
 

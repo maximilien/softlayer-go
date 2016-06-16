@@ -74,6 +74,72 @@ func (slpp *softLayer_Product_Package_Service) GetItemPricesBySize(packageId int
 	return itemPrices, nil
 }
 
+func (slpp *softLayer_Product_Package_Service) GetItemPricesBySize2(packageId int, size int) ([]datatypes.SoftLayer_Product_Item_Price, error) {
+	filter := fmt.Sprintf(`{"itemPrices":{"item":{"capacity":{"operation":%d}},"categories":{"categoryCode":{"operation":"performance_storage_space"}},"locationGroupId":{"operation": "is null"}}}`, size)
+
+	response, errorCode, err := slpp.client.GetHttpClient().DoRawHttpRequestWithObjectFilterAndObjectMask(fmt.Sprintf("%s/%d/getItemPrices.json", slpp.GetName(), packageId), []string{"id", "locationGroupId", "item.id", "item.keyName", "item.units", "item.description", "item.capacity"}, fmt.Sprintf(string(filter)), "GET", new(bytes.Buffer))
+	if err != nil {
+		return []datatypes.SoftLayer_Product_Item_Price{}, err
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Product_Package#getItemsPricesBySize, HTTP error code: '%d'", errorCode)
+		return []datatypes.SoftLayer_Product_Item_Price{}, errors.New(errorMessage)
+	}
+
+	itemPrices := []datatypes.SoftLayer_Product_Item_Price{}
+	err = json.Unmarshal(response, &itemPrices)
+	if err != nil {
+		return []datatypes.SoftLayer_Product_Item_Price{}, err
+	}
+
+	return itemPrices, nil
+}
+
+func (slpp *softLayer_Product_Package_Service) GetItemPricesBySizeAndIops(packageId int, size int, capacity int) ([]datatypes.SoftLayer_Product_Item_Price, error) {
+	filter := fmt.Sprintf(`{"itemPrices":{"item":{"capacity":{"operation":%d"}},"attributes":{"value":{"operation":%d}},"categories":{"categoryCode":{"operation":"performance_storage_iops"}},"locationGroupId":{"operation": "is null"}}}`, capacity, size)
+
+	response, errorCode, err := slpp.client.GetHttpClient().DoRawHttpRequestWithObjectFilterAndObjectMask(fmt.Sprintf("%s/%d/getItemPrices.json", slpp.GetName(), packageId), []string{"id", "locationGroupId", "item.id", "item.keyName", "item.units", "item.description", "item.capacity"}, fmt.Sprintf(string(filter)), "GET", new(bytes.Buffer))
+	if err != nil {
+		return []datatypes.SoftLayer_Product_Item_Price{}, err
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Product_Package#getItemsPricesBySizeAndIOPS, HTTP error code: '%d'", errorCode)
+		return []datatypes.SoftLayer_Product_Item_Price{}, errors.New(errorMessage)
+	}
+
+	itemPrices := []datatypes.SoftLayer_Product_Item_Price{}
+	err = json.Unmarshal(response, &itemPrices)
+	if err != nil {
+		return []datatypes.SoftLayer_Product_Item_Price{}, err
+	}
+
+	return itemPrices, nil
+}
+
+func (slpp *softLayer_Product_Package_Service) GetIopsItemPricesBySize(packageId int, size int) ([]datatypes.SoftLayer_Product_Item_Price, error) {
+	filter := fmt.Sprintf(`{"itemPrices":{"attributes":{"value":{"operation":%d}},"categories":{"categoryCode":{"operation":"performance_storage_space"}},"locationGroupId":{"operation": "is null"}}}`, size)
+
+	response, errorCode, err := slpp.client.GetHttpClient().DoRawHttpRequestWithObjectFilterAndObjectMask(fmt.Sprintf("%s/%d/getItemPrices.json", slpp.GetName(), packageId), []string{"id", "locationGroupId", "item.id", "item.keyName", "item.units", "item.description", "item.capacity"}, fmt.Sprintf(string(filter)), "GET", new(bytes.Buffer))
+	if err != nil {
+		return []datatypes.SoftLayer_Product_Item_Price{}, err
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Product_Package#getIOPSItemPricesBySize, HTTP error code: '%d'", errorCode)
+		return []datatypes.SoftLayer_Product_Item_Price{}, errors.New(errorMessage)
+	}
+
+	itemPrices := []datatypes.SoftLayer_Product_Item_Price{}
+	err = json.Unmarshal(response, &itemPrices)
+	if err != nil {
+		return []datatypes.SoftLayer_Product_Item_Price{}, err
+	}
+
+	return itemPrices, nil
+}
+
 func (slpp *softLayer_Product_Package_Service) GetItemsByType(packageType string) ([]datatypes.SoftLayer_Product_Item, error) {
 	productPackage, err := slpp.GetOnePackageByType(packageType)
 	if err != nil {

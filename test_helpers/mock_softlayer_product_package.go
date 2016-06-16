@@ -29,6 +29,18 @@ func (mock *MockProductPackageService) GetItemPricesBySize(packageId int, size i
 	return []datatypes.SoftLayer_Product_Item_Price{}, errors.New("Not supported")
 }
 
+func (mock *MockProductPackageService) GetItemPricesBySize2(packageId int, size int) ([]datatypes.SoftLayer_Product_Item_Price, error) {
+	return []datatypes.SoftLayer_Product_Item_Price{}, errors.New("Not supported")
+}
+
+func (mock *MockProductPackageService) GetItemPricesBySizeAndIops(packageId int, size int, capacity int) ([]datatypes.SoftLayer_Product_Item_Price, error) {
+	return []datatypes.SoftLayer_Product_Item_Price{}, errors.New("Not supported")
+}
+
+func (mock *MockProductPackageService) GetIopsItemPricesBySize(packageId int, size int) ([]datatypes.SoftLayer_Product_Item_Price, error) {
+	return []datatypes.SoftLayer_Product_Item_Price{}, errors.New("Not supported")
+}
+
 func (mock *MockProductPackageService) GetItems(packageId int) ([]datatypes.SoftLayer_Product_Item, error) {
 	return []datatypes.SoftLayer_Product_Item{}, errors.New("Not supported")
 }
