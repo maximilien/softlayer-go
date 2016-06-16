@@ -406,7 +406,7 @@ func (slns *softLayer_Network_Storage_Service) getIscsiVolumeItemIdBasedOnSize(s
 		return 0, err
 	}
 
-	itemPrices, err := productPackageService.GetItemPricesBySize2(NETWORK_PERFORMANCE_STORAGE_PACKAGE_ID, size)
+	itemPrices, err := productPackageService.GetItemPricesBySize(NETWORK_PERFORMANCE_STORAGE_PACKAGE_ID, size)
 	if err != nil {
 		return 0, err
 	}
