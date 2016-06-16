@@ -1,7 +1,8 @@
 package data_types
 
 type SoftLayer_Container_Product_Order_Receipt struct {
-	OrderId int `json:"orderId"`
+	OrderId     int                     `json:"orderId"`
+	PlacedOrder SoftLayer_Billing_Order `json:"placedOrder"`
 }
 
 type SoftLayer_Container_Product_Order_Parameters struct {
