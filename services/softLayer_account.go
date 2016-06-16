@@ -198,7 +198,7 @@ func (slas *softLayer_Account_Service) GetHubNetworkStorage() ([]datatypes.SoftL
 
 func (slas *softLayer_Account_Service) GetHubNetworkStorageByFilter(filter string) ([]datatypes.SoftLayer_Network_Storage, error) {
 	if filter != "" {
-		filter = fmt.Sprintf("?objectFilter=%s", filter)
+		filter = fmt.Sprintf(`?objectFilter={"hubNetworkStorage":%s}`, filter)
 	}
 
 	path := fmt.Sprintf("%s/getHubNetworkStorage.json%s", slas.GetName(), filter)
