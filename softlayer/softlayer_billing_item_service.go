@@ -6,5 +6,5 @@ type SoftLayer_Billing_Item_Service interface {
 	Service
 
 	CancelService(billingId int) (bool, error)
-	CheckOrderStatus(receipt data_types.SoftLayer_Container_Product_Order_Receipt, status string) (bool, data_types.SoftLayer_Billing_Order_Item, error)
+	CheckOrderStatus(receipt *data_types.SoftLayer_Container_Product_Order_Receipt, status string) (bool, data_types.SoftLayer_Billing_Order_Item, error)
 }

@@ -5,9 +5,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	common "github.com/TheWeatherCompany/softlayer-go/common"
+	"github.com/TheWeatherCompany/softlayer-go/common"
 	"github.com/TheWeatherCompany/softlayer-go/data_types"
-	softlayer "github.com/TheWeatherCompany/softlayer-go/softlayer"
+	"github.com/TheWeatherCompany/softlayer-go/softlayer"
 )
 
 type softLayer_Billing_Item_Service struct {
@@ -42,7 +42,7 @@ func (slbi *softLayer_Billing_Item_Service) CancelService(billingId int) (bool, 
 	return true, err
 }
 
-func (slbi *softLayer_Billing_Item_Service) CheckOrderStatus(receipt data_types.SoftLayer_Container_Product_Order_Receipt, status string) (bool, data_types.SoftLayer_Billing_Order_Item, error) {
+func (slbi *softLayer_Billing_Item_Service) CheckOrderStatus(receipt *data_types.SoftLayer_Container_Product_Order_Receipt, status string) (bool, data_types.SoftLayer_Billing_Order_Item, error) {
 	response, httpCode, err :=
 		slbi.client.GetHttpClient().DoRawHttpRequest(
 			fmt.Sprintf(
