@@ -14,7 +14,10 @@ const (
 )
 
 func GetDatacenterByName(client softlayer.Client, name string) (int, error) {
-	response, errorCode, err := client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/getDatacenters.json", DATACENTER_TYPE_NAME), "GET", new(bytes.Buffer))
+	ObjectFilter := string(`{"name":{"operation":"` + name + `"}}`)
+	ObjectMasks := []string{"id", "name"}
+
+	response, errorCode, err := client.GetHttpClient().DoRawHttpRequestWithObjectFilterAndObjectMask(fmt.Sprintf("%s/getDatacenters.json", DATACENTER_TYPE_NAME), ObjectMasks, ObjectFilter, "GET", new(bytes.Buffer))
 	if err != nil {
 		return -1, err
 	}
@@ -36,5 +39,5 @@ func GetDatacenterByName(client softlayer.Client, name string) (int, error) {
 		}
 	}
 
-	return -1, nil
+	return -1, fmt.Errorf("Datacenter %s not found", name)
 }
