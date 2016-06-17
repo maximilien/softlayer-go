@@ -15,7 +15,7 @@ type SoftLayer_Billing_Order_Item struct {
 	Description string                 `json:"description,omitempty"`
 	Id          int                    `json:"id"`
 	ItemId      int                    `json:"itemId,omitempty"`
-	ItemPriceId int                    `json:"itemPriceId,omitempty"`
+	ItemPriceId string                 `json:"itemPriceId,omitempty"`
 	BillingItem SoftLayer_Billing_Item `json:"billingItem,omitempty"`
 }
 
