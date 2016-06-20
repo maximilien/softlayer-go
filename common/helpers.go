@@ -18,7 +18,7 @@ const (
 
 type lookup func([]byte) (int, error)
 
-func GetIdByName(client softlayer.Client, nameMask string, nameType string, nameTypeGet string, name string, lookupFunc lookup) (int, error) {
+func getIdByName(client softlayer.Client, nameMask string, nameType string, nameTypeGet string, name string, lookupFunc lookup) (int, error) {
 	ObjectFilter := string(`{"name":{"operation":"` + name + `"}}`)
 	ObjectMasks := []string{"id", nameMask}
 
@@ -36,7 +36,7 @@ func GetIdByName(client softlayer.Client, nameMask string, nameType string, name
 }
 
 func GetDatacenterByName(client softlayer.Client, name string) (int, error) {
-	return GetIdByName(client, "name", DATACENTER_TYPE_NAME, "getDatacenters.json", name,
+	return getIdByName(client, "name", DATACENTER_TYPE_NAME, "getDatacenters.json", name,
 		func(response []byte) (int, error) {
 			locations := []datatypes.SoftLayer_Location{}
 
@@ -56,7 +56,7 @@ func GetDatacenterByName(client softlayer.Client, name string) (int, error) {
 }
 
 func GetRoutingTypeByName(client softlayer.Client, name string) (int, error) {
-	return GetIdByName(client, "keyname", ROUTING_TYPE_NAME, "getAllObjects.json", name,
+	return getIdByName(client, "keyname", ROUTING_TYPE_NAME, "getAllObjects.json", name,
 		func(response []byte) (int, error) {
 			routingTypes := []datatypes.SoftLayer_Routing_Type{}
 
@@ -76,7 +76,7 @@ func GetRoutingTypeByName(client softlayer.Client, name string) (int, error) {
 }
 
 func GetRoutingMethodByName(client softlayer.Client, name string) (int, error) {
-	return GetIdByName(client, "keyname", ROUTING_METHOD_NAME, "getAllObjects.json", name,
+	return getIdByName(client, "keyname", ROUTING_METHOD_NAME, "getAllObjects.json", name,
 		func(response []byte) (int, error) {
 			routingMethods := []datatypes.SoftLayer_Routing_Method{}
 
@@ -96,7 +96,7 @@ func GetRoutingMethodByName(client softlayer.Client, name string) (int, error) {
 }
 
 func GetHealthCheckTypeByName(client softlayer.Client, name string) (int, error) {
-	return GetIdByName(client, "keyname", HEALTH_CHECK_TYPE_NAME, "getAllObjects.json", name,
+	return getIdByName(client, "keyname", HEALTH_CHECK_TYPE_NAME, "getAllObjects.json", name,
 		func(response []byte) (int, error) {
 			healthCheckTypes := []datatypes.SoftLayer_Health_Check_Type{}
 
