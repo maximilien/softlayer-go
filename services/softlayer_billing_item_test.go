@@ -69,7 +69,7 @@ var _ = Describe("SoftLayer_Billing_Item", func() {
 		})
 
 		It("returns a boolean when checking an order status", func() {
-			completed, _, err := billingItemService.CheckOrderStatus(data_types.SoftLayer_Container_Product_Order_Receipt{
+			completed, _, err := billingItemService.CheckOrderStatus(&data_types.SoftLayer_Container_Product_Order_Receipt{
 				PlacedOrder: data_types.SoftLayer_Billing_Order{
 					Items: []data_types.SoftLayer_Billing_Order_Item{
 						data_types.SoftLayer_Billing_Order_Item{Id: 123456789},
