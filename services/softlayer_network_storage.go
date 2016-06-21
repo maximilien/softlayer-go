@@ -59,7 +59,7 @@ func (slns *softLayer_Network_Storage_Service) CreateNetworkStorage(size int, ca
 		}
 	}
 
-	blockStorageItemPriceId, err := slns.getIscsiVolumeItemIdBasedOnSize(size)
+	blockStorageItemPriceId, err := slns.getBlockStorageItemPriceId()
 
 	order := datatypes.SoftLayer_Container_Product_Order_Network_PerformanceStorage_Iscsi{
 		Location:    location,
