@@ -36,9 +36,6 @@ const (
 	TEST_EMAIL = "testemail@sl.com"
 	TEST_HOST  = "test.example.com"
 	TEST_TTL   = 900
-
-	MAX_WAIT_RETRIES = 10
-	WAIT_TIME        = 5
 )
 
 func ReadJsonTestFixtures(packageName, fileName string) ([]byte, error) {
@@ -65,48 +62,6 @@ func FindTestVirtualGuests() ([]datatypes.SoftLayer_Virtual_Guest, error) {
 	}
 
 	return testVirtualGuests, nil
-}
-
-func FindTestVirtualDiskImages() ([]datatypes.SoftLayer_Virtual_Disk_Image, error) {
-	accountService, err := CreateAccountService()
-	if err != nil {
-		return []datatypes.SoftLayer_Virtual_Disk_Image{}, err
-	}
-
-	virtualDiskImages, err := accountService.GetVirtualDiskImages()
-	if err != nil {
-		return []datatypes.SoftLayer_Virtual_Disk_Image{}, err
-	}
-
-	testVirtualDiskImages := []datatypes.SoftLayer_Virtual_Disk_Image{}
-	for _, vDI := range virtualDiskImages {
-		if strings.Contains(vDI.Description, TEST_NOTES_PREFIX) {
-			testVirtualDiskImages = append(testVirtualDiskImages, vDI)
-		}
-	}
-
-	return testVirtualDiskImages, nil
-}
-
-func FindTestNetworkStorage() ([]datatypes.SoftLayer_Network_Storage, error) {
-	accountService, err := CreateAccountService()
-	if err != nil {
-		return []datatypes.SoftLayer_Network_Storage{}, err
-	}
-
-	networkStorageArray, err := accountService.GetNetworkStorage()
-	if err != nil {
-		return []datatypes.SoftLayer_Network_Storage{}, err
-	}
-
-	testNetworkStorageArray := []datatypes.SoftLayer_Network_Storage{}
-	for _, storage := range networkStorageArray {
-		if strings.Contains(storage.Notes, TEST_NOTES_PREFIX) {
-			testNetworkStorageArray = append(testNetworkStorageArray, storage)
-		}
-	}
-
-	return testNetworkStorageArray, nil
 }
 
 func FindTestSshKeys() ([]datatypes.SoftLayer_Security_Ssh_Key, error) {

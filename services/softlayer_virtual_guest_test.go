@@ -8,10 +8,13 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
+	"github.com/maximilien/softlayer-go/softlayer"
+
 	slclientfakes "github.com/maximilien/softlayer-go/client/fakes"
 	datatypes "github.com/maximilien/softlayer-go/data_types"
-	softlayer "github.com/maximilien/softlayer-go/softlayer"
 	testhelpers "github.com/maximilien/softlayer-go/test_helpers"
+
+	fakeServices "github.com/maximilien/softlayer-go/services/fakes"
 )
 
 var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
@@ -39,7 +42,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 		fakeClient = slclientfakes.NewFakeSoftLayerClient(username, apiKey)
 		Expect(fakeClient).ToNot(BeNil())
 
-		fakeClient.SoftLayerServices["SoftLayer_Product_Package"] = &testhelpers.MockProductPackageService{}
+		fakeClient.SoftLayerServices["SoftLayer_Product_Package"] = &fakeServices.FakeProductPackageService{}
 
 		virtualGuestService, err = fakeClient.GetSoftLayer_Virtual_Guest_Service()
 		Expect(err).ToNot(HaveOccurred())

@@ -16,7 +16,6 @@ import (
 
 const (
 	NETWORK_PERFORMANCE_STORAGE_PACKAGE_ID = 222
-	BLOCK_ITEM_PRICE_ID                    = 40678 // file or block item price id
 	CREATE_ISCSI_VOLUME_MAX_RETRY_TIME     = 60
 	CREATE_ISCSI_VOLUME_CHECK_INTERVAL     = 5 // seconds
 )
@@ -60,6 +59,8 @@ func (slns *softLayer_Network_Storage_Service) CreateNetworkStorage(size int, ca
 		}
 	}
 
+	blockStorageItemPriceId, err := slns.getIscsiVolumeItemIdBasedOnSize(size)
+
 	order := datatypes.SoftLayer_Container_Product_Order_Network_PerformanceStorage_Iscsi{
 		Location:    location,
 		ComplexType: "SoftLayer_Container_Product_Order_Network_PerformanceStorage_Iscsi",
@@ -75,7 +76,7 @@ func (slns *softLayer_Network_Storage_Service) CreateNetworkStorage(size int, ca
 				Id: iopsItemPriceId,
 			},
 			datatypes.SoftLayer_Product_Item_Price{
-				Id: BLOCK_ITEM_PRICE_ID,
+				Id: blockStorageItemPriceId,
 			},
 		},
 		PackageId:        NETWORK_PERFORMANCE_STORAGE_PACKAGE_ID,
@@ -400,13 +401,36 @@ func (slns *softLayer_Network_Storage_Service) findIscsiVolumeId(orderId int) (d
 	return datatypes.SoftLayer_Network_Storage{}, errors.New(fmt.Sprintf("Cannot find an performance storage (iSCSI volume) with order id %d", orderId))
 }
 
+func (slns *softLayer_Network_Storage_Service) getBlockStorageItemPriceId() (int, error) {
+	productPackageService, err := slns.client.GetSoftLayer_Product_Package_Service()
+	if err != nil {
+		return 0, err
+	}
+
+	filters := string(`{"items":{"categories":{"categoryCode":{"operation":"performance_storage_iscsi"}}}}`)
+	itemPrices, err := productPackageService.GetItems(NETWORK_PERFORMANCE_STORAGE_PACKAGE_ID, filters)
+	if err != nil {
+		return 0, err
+	}
+
+	if len(itemPrices) > 0 {
+		if len(itemPrices[0].Prices) > 0 {
+			return itemPrices[0].Prices[0].Id, nil
+		}
+	}
+
+	return 0, errors.New(fmt.Sprint("No proper block performance storage item price id"))
+}
+
 func (slns *softLayer_Network_Storage_Service) getIscsiVolumeItemIdBasedOnSize(size int) (int, error) {
 	productPackageService, err := slns.client.GetSoftLayer_Product_Package_Service()
 	if err != nil {
 		return 0, err
 	}
 
-	itemPrices, err := productPackageService.GetItemPricesBySize(NETWORK_PERFORMANCE_STORAGE_PACKAGE_ID, size)
+	keyName := strconv.Itoa(size) + "_GB_PERFORMANCE_STORAGE_SPACE"
+	filters := string(`{"itemPrices":{"item":{"keyName":{"operation":"` + keyName + `"}}}}`)
+	itemPrices, err := productPackageService.GetItemPrices(NETWORK_PERFORMANCE_STORAGE_PACKAGE_ID, filters)
 	if err != nil {
 		return 0, err
 	}
@@ -434,7 +458,8 @@ func (slns *softLayer_Network_Storage_Service) getItemPriceIdBySizeAndIops(size 
 		return 0, err
 	}
 
-	itemPrices, err := productPackageService.GetItemPricesBySizeAndIops(NETWORK_PERFORMANCE_STORAGE_PACKAGE_ID, size, capacity)
+	filters := fmt.Sprintf(`{"itemPrices":{"item":{"capacity":{"operation":%d}},"attributes":{"value":{"operation":%d}},"categories":{"categoryCode":{"operation":"performance_storage_iops"}}}}`, capacity, size)
+	itemPrices, err := productPackageService.GetItemPrices(NETWORK_PERFORMANCE_STORAGE_PACKAGE_ID, filters)
 	if err != nil {
 		return 0, err
 	}
@@ -462,7 +487,8 @@ func (slns *softLayer_Network_Storage_Service) selectMaximunIopsItemPriceIdOnSiz
 		return 0, err
 	}
 
-	itemPrices, err := productPackageService.GetIopsItemPricesBySize(NETWORK_PERFORMANCE_STORAGE_PACKAGE_ID, size)
+	filters := fmt.Sprintf(`{"itemPrices":{"attributes":{"value":{"operation":%d}},"categories":{"categoryCode":{"operation":"performance_storage_iops"}}}}`, size)
+	itemPrices, err := productPackageService.GetItemPrices(NETWORK_PERFORMANCE_STORAGE_PACKAGE_ID, filters)
 	if err != nil {
 		return 0, err
 	}
@@ -488,7 +514,8 @@ func (slns *softLayer_Network_Storage_Service) selectMediumIopsItemPriceIdOnSize
 		return 0, err
 	}
 
-	itemPrices, err := productPackageService.GetIopsItemPricesBySize(NETWORK_PERFORMANCE_STORAGE_PACKAGE_ID, size)
+	filters := fmt.Sprintf(`{"itemPrices":{"attributes":{"value":{"operation":%d}},"categories":{"categoryCode":{"operation":"performance_storage_iops"}}}}`, size)
+	itemPrices, err := productPackageService.GetItemPrices(NETWORK_PERFORMANCE_STORAGE_PACKAGE_ID, filters)
 	if err != nil {
 		return 0, err
 	}
@@ -514,7 +541,8 @@ func (slns *softLayer_Network_Storage_Service) selectMinimumIopsItemPriceIdOnSiz
 		return 0, err
 	}
 
-	itemPrices, err := productPackageService.GetIopsItemPricesBySize(NETWORK_PERFORMANCE_STORAGE_PACKAGE_ID, size)
+	filters := fmt.Sprintf(`{"itemPrices":{"attributes":{"value":{"operation":%d}},"categories":{"categoryCode":{"operation":"performance_storage_iops"}}}}`, size)
+	itemPrices, err := productPackageService.GetItemPrices(NETWORK_PERFORMANCE_STORAGE_PACKAGE_ID, filters)
 	if err != nil {
 		return 0, err
 	}
