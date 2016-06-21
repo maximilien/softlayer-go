@@ -210,6 +210,15 @@ func (slc *SoftLayerClient) GetSoftLayer_Security_Certificate_Service() (softlay
 	return slService.(softlayer.SoftLayer_Security_Certificate_Service), nil
 }
 
+func (slc *SoftLayerClient) GetSoftLayer_Provisioning_Hook_Service() (softlayer.SoftLayer_Provisioning_Hook_Service, error) {
+	slService, err := slc.GetService("SoftLayer_Provisioning_Hook")
+	if err != nil {
+		return nil, err
+	}
+
+	return slService.(softlayer.SoftLayer_Provisioning_Hook_Service), nil
+}
+
 //Public methods
 
 func (slc *SoftLayerClient) DoRawHttpRequestWithObjectMask(path string, masks []string, requestType string, requestBody *bytes.Buffer) ([]byte, error) {
@@ -276,6 +285,7 @@ func (slc *SoftLayerClient) initSoftLayerServices() {
 	slc.softLayerServices["SoftLayer_Network_Application_Delivery_Controller_Service"] = services.NewSoftLayer_Network_Application_Delivery_Controller_Service(slc)
 	slc.softLayerServices["SoftLayer_Security_Certificate"] = services.NewSoftLayer_Security_Certificate_Service(slc)
 	slc.softLayerServices["SoftLayer_User_Customer"] = services.NewSoftLayer_User_Customer_Service(slc)
+	slc.softLayerServices["SoftLayer_Provisioning_Hook"] = services.NewSoftLayer_Provisioning_Hook_Service(slc)
 }
 
 func (slc *SoftLayerClient) makeHttpRequest(url string, requestType string, requestBody *bytes.Buffer) ([]byte, error) {
