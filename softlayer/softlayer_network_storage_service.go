@@ -9,7 +9,7 @@ type SoftLayer_Network_Storage_Service interface {
 
 	DeleteObject(volumeId int) (bool, error)
 
-	CreateNetworkStorage(size int, location string) (datatypes.SoftLayer_Network_Storage, error)
+	CreateNetworkStorage(size int, capacity int, location string, userHourlyPricing bool) (datatypes.SoftLayer_Network_Storage, error)
 	DeleteNetworkStorage(volumeId int, immediateCancellationFlag bool) error
 	GetNetworkStorage(volumeId int) (datatypes.SoftLayer_Network_Storage, error)
 	GetBillingItem(volumeId int) (datatypes.SoftLayer_Billing_Item, error)

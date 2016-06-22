@@ -55,7 +55,7 @@ var _ = Describe("SoftLayer_Network_Storage", func() {
 		})
 
 		It("fails with error if the volume size is negative", func() {
-			volume, err = networkStorageService.CreateNetworkStorage(-1, "fake-location")
+			volume, err = networkStorageService.CreateNetworkStorage(-1, 1000, "fake-location", true)
 			Expect(err).To(HaveOccurred())
 		})
 
@@ -65,7 +65,7 @@ var _ = Describe("SoftLayer_Network_Storage", func() {
 				for _, errorCode := range errorCodes {
 					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
 
-					_, err = networkStorageService.CreateNetworkStorage(-1, "fake-location")
+					_, err = networkStorageService.CreateNetworkStorage(-1, 1000, "fake-location", true)
 					Expect(err).To(HaveOccurred())
 				}
 			})
@@ -75,7 +75,7 @@ var _ = Describe("SoftLayer_Network_Storage", func() {
 				for _, errorCode := range errorCodes {
 					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
 
-					_, err = networkStorageService.CreateNetworkStorage(-1, "fake-location")
+					_, err = networkStorageService.CreateNetworkStorage(-1, 1000, "fake-location", true)
 					Expect(err).To(HaveOccurred())
 				}
 			})
