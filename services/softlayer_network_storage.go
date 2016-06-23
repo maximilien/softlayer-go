@@ -17,7 +17,7 @@ import (
 const (
 	NETWORK_PERFORMANCE_STORAGE_PACKAGE_ID = 222
 	CREATE_ISCSI_VOLUME_MAX_RETRY_TIME     = 60
-	CREATE_ISCSI_VOLUME_CHECK_INTERVAL     = 5 // seconds
+	CREATE_ISCSI_VOLUME_CHECK_INTERVAL     = 10 // seconds
 )
 
 type softLayer_Network_Storage_Service struct {
