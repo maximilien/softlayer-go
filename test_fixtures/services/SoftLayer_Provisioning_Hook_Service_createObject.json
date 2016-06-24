@@ -1,0 +1,9 @@
+{
+  "accountId": 123456,
+  "createDate": "2016-06-17T09:13:10-05:00",
+  "id": 12345,
+  "modifyDate": "2016-06-20T07:30:59-05:00",
+  "name": "TWC-PostInstallScript",
+  "typeId": 1,
+  "uri": "http://www.weather.com"
+}

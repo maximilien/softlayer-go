@@ -8,6 +8,7 @@ type Client interface {
 	GetService(name string) (Service, error)
 
 	GetSoftLayer_Account_Service() (SoftLayer_Account_Service, error)
+	GetSoftLayer_User_Customer_Service() (SoftLayer_User_Customer_Service, error)
 	GetSoftLayer_Virtual_Guest_Service() (SoftLayer_Virtual_Guest_Service, error)
 	GetSoftLayer_Virtual_Disk_Image_Service() (SoftLayer_Virtual_Disk_Image_Service, error)
 	GetSoftLayer_Security_Ssh_Key_Service() (SoftLayer_Security_Ssh_Key_Service, error)
@@ -20,7 +21,10 @@ type Client interface {
 	GetSoftLayer_Virtual_Guest_Block_Device_Template_Group_Service() (SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service, error)
 	GetSoftLayer_Hardware_Service() (SoftLayer_Hardware_Service, error)
 	GetSoftLayer_Dns_Domain_Service() (SoftLayer_Dns_Domain_Service, error)
+	GetSoftLayer_Network_Application_Delivery_Controller_Service() (SoftLayer_Network_Application_Delivery_Controller_Service, error)
 	GetSoftLayer_Dns_Domain_ResourceRecord_Service() (SoftLayer_Dns_Domain_ResourceRecord_Service, error)
+	GetSoftLayer_Security_Certificate_Service() (SoftLayer_Security_Certificate_Service, error)
+	GetSoftLayer_Provisioning_Hook_Service() (SoftLayer_Provisioning_Hook_Service, error)
 
 	GetHttpClient() HttpClient
 }

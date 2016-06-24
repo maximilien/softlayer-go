@@ -1,0 +1,12 @@
+[
+    {
+        "key": "ALL_1",
+        "keyName": "ACCESS_ALL_HARDWARE",
+        "name": "Access all hardware"
+    },
+    {
+        "key": "ALL_2",
+        "keyName": "ACCESS_ALL_GUEST",
+        "name": "Access all guests"
+    }
+]

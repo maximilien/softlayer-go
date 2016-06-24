@@ -10,6 +10,9 @@ tmp
 out
 .idea
 
+# Project files
+softlayer-go.iml
+
 # Architecture specific extensions/prefixes
 *.[568vq]
 [568vq].out

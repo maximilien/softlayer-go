@@ -6,9 +6,9 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/maximilien/softlayer-go/common"
-	datatypes "github.com/maximilien/softlayer-go/data_types"
-	softlayer "github.com/maximilien/softlayer-go/softlayer"
+	"github.com/TheWeatherCompany/softlayer-go/common"
+	datatypes "github.com/TheWeatherCompany/softlayer-go/data_types"
+	softlayer "github.com/TheWeatherCompany/softlayer-go/softlayer"
 )
 
 type softLayer_Account_Service struct {
@@ -47,6 +47,31 @@ func (slas *softLayer_Account_Service) GetAccountStatus() (datatypes.SoftLayer_A
 	}
 
 	return accountStatus, nil
+}
+
+func (slas *softLayer_Account_Service) GetUsers() ([]datatypes.SoftLayer_User_Customer, error) {
+	path := fmt.Sprintf("%s/%s", slas.GetName(), "getUsers.json")
+	responseBytes, errorCode, err := slas.client.GetHttpClient().DoRawHttpRequest(path, "GET", &bytes.Buffer{})
+	if err != nil {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Account#getUsers, error message '%s'", err.Error())
+		return nil, errors.New(errorMessage)
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Account#getUsers, HTTP error code: '%d'", errorCode)
+		return nil, errors.New(errorMessage)
+	}
+
+	users := []datatypes.SoftLayer_User_Customer{}
+	if err = json.Unmarshal(responseBytes, &users); err != nil {
+		errorMessage := fmt.Sprintf(
+			"softlayer-go: failed to decode SoftLayer_Account#getUsers JSON response, error message: '%s'",
+			err.Error(),
+		)
+		return nil, errors.New(errorMessage)
+	}
+
+	return users, nil
 }
 
 func (slas *softLayer_Account_Service) GetVirtualGuests() ([]datatypes.SoftLayer_Virtual_Guest, error) {
@@ -167,6 +192,38 @@ func (slas *softLayer_Account_Service) GetNetworkStorage() ([]datatypes.SoftLaye
 	return networkStorage, nil
 }
 
+func (slas *softLayer_Account_Service) GetHubNetworkStorage() ([]datatypes.SoftLayer_Network_Storage, error) {
+	return slas.GetHubNetworkStorageByFilter("")
+}
+
+func (slas *softLayer_Account_Service) GetHubNetworkStorageByFilter(filter string) ([]datatypes.SoftLayer_Network_Storage, error) {
+	if filter != "" {
+		filter = fmt.Sprintf(`?objectFilter={"hubNetworkStorage":%s}`, filter)
+	}
+
+	path := fmt.Sprintf("%s/getHubNetworkStorage.json%s", slas.GetName(), filter)
+	responseBytes, errorCode, err := slas.client.GetHttpClient().DoRawHttpRequest(path, "GET", &bytes.Buffer{})
+	if err != nil {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Account#getHubNetworkStorage, error message '%s'", err.Error())
+		return []datatypes.SoftLayer_Network_Storage{}, errors.New(errorMessage)
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Account#getHubNetworkStorage, HTTP error code: '%d'", errorCode)
+		return []datatypes.SoftLayer_Network_Storage{}, errors.New(errorMessage)
+	}
+
+	networkStorage := []datatypes.SoftLayer_Network_Storage{}
+	err = json.Unmarshal(responseBytes, &networkStorage)
+	if err != nil {
+		errorMessage := fmt.Sprintf("softlayer-go: failed to decode JSON response, err message '%s'", err.Error())
+		err := errors.New(errorMessage)
+		return []datatypes.SoftLayer_Network_Storage{}, err
+	}
+
+	return networkStorage, nil
+}
+
 func (slas *softLayer_Account_Service) GetIscsiNetworkStorage() ([]datatypes.SoftLayer_Network_Storage, error) {
 	path := fmt.Sprintf("%s/%s", slas.GetName(), "getIscsiNetworkStorage.json")
 
@@ -235,16 +292,39 @@ func (slas *softLayer_Account_Service) GetIscsiNetworkStorageWithFilter(filter s
 	return networkStorage, nil
 }
 
+func (slas *softLayer_Account_Service) GetApplicationDeliveryControllersWithFilter(filter string) ([]datatypes.SoftLayer_Network_Application_Delivery_Controller, error) {
+	path := fmt.Sprintf("%s/%s", slas.GetName(), "getApplicationDeliveryControllers.json")
+
+	responseBytes, errorCode, err := slas.client.GetHttpClient().DoRawHttpRequestWithObjectFilter(path, filter, "GET", &bytes.Buffer{})
+	if err != nil {
+		errorMessage := fmt.Sprintf("softlayer-go: could not get SoftLayer_Account#getApplicationDeliveryControllersWithFilter, error message '%s'", err.Error())
+		return []datatypes.SoftLayer_Network_Application_Delivery_Controller{}, errors.New(errorMessage)
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not get SoftLayer_Account#getApplicationDeliveryControllersWithFilter, HTTP error code: '%d'", errorCode)
+		return []datatypes.SoftLayer_Network_Application_Delivery_Controller{}, errors.New(errorMessage)
+	}
+
+	nadc := []datatypes.SoftLayer_Network_Application_Delivery_Controller{}
+	err = json.Unmarshal(responseBytes, &nadc)
+	if err != nil {
+		return []datatypes.SoftLayer_Network_Application_Delivery_Controller{}, fmt.Errorf("softlayer-go: failed to decode JSON response, err message '%s'", err.Error())
+	}
+
+	return nadc, nil
+}
+
 func (slas *softLayer_Account_Service) GetVirtualDiskImages() ([]datatypes.SoftLayer_Virtual_Disk_Image, error) {
 	path := fmt.Sprintf("%s/%s", slas.GetName(), "getVirtualDiskImages.json")
 	responseBytes, errorCode, err := slas.client.GetHttpClient().DoRawHttpRequest(path, "GET", &bytes.Buffer{})
 	if err != nil {
-		errorMessage := fmt.Sprintf("softlayer-go: could get SoftLayer_Account#getVirtualDiskImages, error message '%s'", err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not get SoftLayer_Account#getVirtualDiskImages, error message '%s'", err.Error())
 		return []datatypes.SoftLayer_Virtual_Disk_Image{}, errors.New(errorMessage)
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Account#getVirtualDiskImages, HTTP error code: '%d'", errorCode)
+		errorMessage := fmt.Sprintf("softlayer-go: could not get SoftLayer_Account#getVirtualDiskImages, HTTP error code: '%d'", errorCode)
 		return []datatypes.SoftLayer_Virtual_Disk_Image{}, errors.New(errorMessage)
 	}
 
@@ -269,12 +349,12 @@ func (slas *softLayer_Account_Service) GetVirtualDiskImagesWithFilter(filters st
 	path := fmt.Sprintf("%s/%s", slas.GetName(), "getVirtualDiskImages.json")
 	responseBytes, errorCode, err := slas.client.GetHttpClient().DoRawHttpRequestWithObjectFilter(path, filters, "GET", &bytes.Buffer{})
 	if err != nil {
-		errorMessage := fmt.Sprintf("softlayer-go: could get SoftLayer_Account#getVirtualDiskImages, error message '%s'", err.Error())
+		errorMessage := fmt.Sprintf("softlayer-go: could not get SoftLayer_Account#getVirtualDiskImages, error message '%s'", err.Error())
 		return []datatypes.SoftLayer_Virtual_Disk_Image{}, errors.New(errorMessage)
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Account#getVirtualDiskImages, HTTP error code: '%d'", errorCode)
+		errorMessage := fmt.Sprintf("softlayer-go: could not get SoftLayer_Account#getVirtualDiskImages, HTTP error code: '%d'", errorCode)
 		return []datatypes.SoftLayer_Virtual_Disk_Image{}, errors.New(errorMessage)
 	}
 

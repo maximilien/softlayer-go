@@ -22,6 +22,8 @@ type HttpClient struct {
 	username string
 	password string
 
+	useHttps bool
+
 	apiUrl string
 
 	nonVerbose bool
@@ -29,7 +31,11 @@ type HttpClient struct {
 	templatePath string
 }
 
-func NewHttpClient(username, password, apiUrl, templatePath string) *HttpClient {
+func NewHttpsClient(username, password, apiUrl, templatePath string) *HttpClient {
+	return NewHttpClient(username, password, apiUrl, templatePath, true)
+}
+
+func NewHttpClient(username, password, apiUrl, templatePath string, useHttps bool) *HttpClient {
 	pwd, err := os.Getwd()
 	if err != nil {
 		panic(err)
@@ -38,6 +44,8 @@ func NewHttpClient(username, password, apiUrl, templatePath string) *HttpClient 
 	hClient := &HttpClient{
 		username: username,
 		password: password,
+
+		useHttps: useHttps,
 
 		apiUrl: apiUrl,
 
@@ -54,7 +62,7 @@ func NewHttpClient(username, password, apiUrl, templatePath string) *HttpClient 
 // Public methods
 
 func (slc *HttpClient) DoRawHttpRequestWithObjectMask(path string, masks []string, requestType string, requestBody *bytes.Buffer) ([]byte, int, error) {
-	url := fmt.Sprintf("https://%s:%s@%s/%s", slc.username, slc.password, slc.apiUrl, path)
+	url := fmt.Sprintf("%s://%s:%s@%s/%s", slc.scheme(), slc.username, slc.password, slc.apiUrl, path)
 
 	url += "?objectMask="
 	for i := 0; i < len(masks); i++ {
@@ -68,14 +76,14 @@ func (slc *HttpClient) DoRawHttpRequestWithObjectMask(path string, masks []strin
 }
 
 func (slc *HttpClient) DoRawHttpRequestWithObjectFilter(path string, filters string, requestType string, requestBody *bytes.Buffer) ([]byte, int, error) {
-	url := fmt.Sprintf("https://%s:%s@%s/%s", slc.username, slc.password, slc.apiUrl, path)
+	url := fmt.Sprintf("%s://%s:%s@%s/%s", slc.scheme(), slc.username, slc.password, slc.apiUrl, path)
 	url += "?objectFilter=" + filters
 
 	return slc.makeHttpRequest(url, requestType, requestBody)
 }
 
 func (slc *HttpClient) DoRawHttpRequestWithObjectFilterAndObjectMask(path string, masks []string, filters string, requestType string, requestBody *bytes.Buffer) ([]byte, int, error) {
-	url := fmt.Sprintf("https://%s:%s@%s/%s", slc.username, slc.password, slc.apiUrl, path)
+	url := fmt.Sprintf("%s://%s:%s@%s/%s", slc.scheme(), slc.username, slc.password, slc.apiUrl, path)
 
 	url += "?objectFilter=" + filters
 
@@ -92,7 +100,7 @@ func (slc *HttpClient) DoRawHttpRequestWithObjectFilterAndObjectMask(path string
 }
 
 func (slc *HttpClient) DoRawHttpRequest(path string, requestType string, requestBody *bytes.Buffer) ([]byte, int, error) {
-	url := fmt.Sprintf("https://%s:%s@%s/%s", slc.username, slc.password, slc.apiUrl, path)
+	url := fmt.Sprintf("%s://%s:%s@%s/%s", slc.scheme(), slc.username, slc.password, slc.apiUrl, path)
 	return slc.makeHttpRequest(url, requestType, requestBody)
 }
 
@@ -132,6 +140,14 @@ func (slc *HttpClient) CheckForHttpResponseErrors(data []byte) error {
 }
 
 // Private methods
+
+func (slc *HttpClient) scheme() string {
+	if !slc.useHttps {
+		return "http"
+	}
+
+	return "https"
+}
 
 func (slc *HttpClient) makeHttpRequest(url string, requestType string, requestBody *bytes.Buffer) ([]byte, int, error) {
 	req, err := http.NewRequest(requestType, url, requestBody)

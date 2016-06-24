@@ -6,8 +6,10 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
-	slclientfakes "github.com/maximilien/softlayer-go/client/fakes"
-	softlayer "github.com/maximilien/softlayer-go/softlayer"
+	slclientfakes "github.com/TheWeatherCompany/softlayer-go/client/fakes"
+	"github.com/TheWeatherCompany/softlayer-go/data_types"
+	"github.com/TheWeatherCompany/softlayer-go/softlayer"
+	"github.com/TheWeatherCompany/softlayer-go/test_helpers"
 )
 
 var _ = Describe("SoftLayer_Billing_Item", func() {
@@ -56,6 +58,26 @@ var _ = Describe("SoftLayer_Billing_Item", func() {
 			deleted, err := billingItemService.CancelService(1234567)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(deleted).To(BeFalse())
+		})
+	})
+
+	Context("#CheckOrderStatus", func() {
+		BeforeEach(func() {
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err =
+				test_helpers.ReadJsonTestFixtures("services", "SoftLayer_Billing_Item_Check_Order_Status.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("returns a boolean when checking an order status", func() {
+			completed, _, err := billingItemService.CheckOrderStatus(&data_types.SoftLayer_Container_Product_Order_Receipt{
+				PlacedOrder: data_types.SoftLayer_Billing_Order{
+					Items: []data_types.SoftLayer_Billing_Order_Item{
+						data_types.SoftLayer_Billing_Order_Item{Id: 123456789},
+					},
+				},
+			}, "COMPLETE")
+			Expect(err).ToNot(HaveOccurred())
+			Expect(completed).To(BeTrue())
 		})
 	})
 })

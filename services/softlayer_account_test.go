@@ -6,9 +6,9 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
-	slclientfakes "github.com/maximilien/softlayer-go/client/fakes"
-	softlayer "github.com/maximilien/softlayer-go/softlayer"
-	testhelpers "github.com/maximilien/softlayer-go/test_helpers"
+	slclientfakes "github.com/TheWeatherCompany/softlayer-go/client/fakes"
+	softlayer "github.com/TheWeatherCompany/softlayer-go/softlayer"
+	testhelpers "github.com/TheWeatherCompany/softlayer-go/test_helpers"
 )
 
 var _ = Describe("SoftLayer_Account_Service", func() {
@@ -73,6 +73,43 @@ var _ = Describe("SoftLayer_Account_Service", func() {
 					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
 
 					_, err := accountService.GetAccountStatus()
+					Expect(err).To(HaveOccurred())
+				}
+			})
+		})
+	})
+
+	Context("#GetUsers", func() {
+		BeforeEach(func() {
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err =
+				testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Account_Service_getUsers.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("returns an array of datatypes.SoftLayer_User_Customer", func() {
+			users, err := accountService.GetUsers()
+			Expect(err).ToNot(HaveOccurred())
+			Expect(users[0].Id).ToNot(Equal(0))
+			Expect(users[0].FirstName).To(Equal("Joe"))
+		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := accountService.GetUsers()
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := accountService.GetUsers()
 					Expect(err).To(HaveOccurred())
 				}
 			})
@@ -157,6 +194,41 @@ var _ = Describe("SoftLayer_Account_Service", func() {
 
 		It("returns an array of datatypes.SoftLayer_Network_Storage", func() {
 			networkStorage, err := accountService.GetNetworkStorage()
+			Expect(err).ToNot(HaveOccurred())
+			Expect(networkStorage).ToNot(BeNil())
+		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := accountService.GetNetworkStorage()
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := accountService.GetNetworkStorage()
+					Expect(err).To(HaveOccurred())
+				}
+			})
+		})
+	})
+
+	Context("#GetHubNetworkStorage", func() {
+		BeforeEach(func() {
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Account_Service_getHubNetworkStorage.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("returns an array of datatypes.SoftLayer_Network_Storage", func() {
+			networkStorage, err := accountService.GetHubNetworkStorage()
 			Expect(err).ToNot(HaveOccurred())
 			Expect(networkStorage).ToNot(BeNil())
 		})
@@ -509,6 +581,20 @@ var _ = Describe("SoftLayer_Account_Service", func() {
 					Expect(err).To(HaveOccurred())
 				}
 			})
+		})
+	})
+
+	Context("#GetApplicationDeliveryControllersWithFilter", func() {
+		BeforeEach(func() {
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Account_Service_getApplicationDeliveryControllers.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("returns an array of datatypes.SoftLayer_Network_Application_Delivery_Controller", func() {
+			ObjectFilter := string(`{"iscsiNetworkStorage":{"billingItem":{"orderItem":{"order":{"id":{"operation":123}}}}}}`)
+			applicationDeliveryControllers, err := accountService.GetApplicationDeliveryControllersWithFilter(ObjectFilter)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(applicationDeliveryControllers).ToNot(BeNil())
 		})
 	})
 })

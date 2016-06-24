@@ -6,9 +6,9 @@ import (
 	"errors"
 	"fmt"
 
-	common "github.com/maximilien/softlayer-go/common"
-	datatypes "github.com/maximilien/softlayer-go/data_types"
-	softlayer "github.com/maximilien/softlayer-go/softlayer"
+	common "github.com/TheWeatherCompany/softlayer-go/common"
+	datatypes "github.com/TheWeatherCompany/softlayer-go/data_types"
+	softlayer "github.com/TheWeatherCompany/softlayer-go/softlayer"
 )
 
 type softLayer_Product_Order_Service struct {
@@ -93,7 +93,21 @@ func (slpo *softLayer_Product_Order_Service) PlaceContainerOrderVirtualGuestUpgr
 			order,
 		},
 	}
+	return slpo.placeOrder(parameters)
+}
 
+func (slpo *softLayer_Product_Order_Service) PlaceContainerOrderApplicationDeliveryController(order datatypes.SoftLayer_Container_Product_Order_Network_Application_Delivery_Controller) (datatypes.SoftLayer_Container_Product_Order_Receipt, error) {
+	parameters := datatypes.SoftLayer_Container_Product_Order_Network_Application_Delivery_Controller_Parameters{
+		Parameters: []datatypes.SoftLayer_Container_Product_Order_Network_Application_Delivery_Controller{
+			order,
+		},
+	}
+	return slpo.placeOrder(parameters)
+}
+
+// Private methods
+
+func (slpo *softLayer_Product_Order_Service) placeOrder(parameters interface{}) (datatypes.SoftLayer_Container_Product_Order_Receipt, error) {
 	requestBody, err := json.Marshal(parameters)
 	if err != nil {
 		return datatypes.SoftLayer_Container_Product_Order_Receipt{}, err
@@ -110,6 +124,7 @@ func (slpo *softLayer_Product_Order_Service) PlaceContainerOrderVirtualGuestUpgr
 	}
 
 	receipt := datatypes.SoftLayer_Container_Product_Order_Receipt{}
+
 	err = json.Unmarshal(responseBytes, &receipt)
 	if err != nil {
 		return datatypes.SoftLayer_Container_Product_Order_Receipt{}, err

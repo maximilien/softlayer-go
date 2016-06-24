@@ -1,0 +1,28 @@
+{
+    "address1"                  : "555 Bailey Ave",
+    "city"                      : "San Jose",
+    "companyName"               : "TWC an IBM company",
+    "country"                   : "US",
+    "displayName"               : "user4 testing",
+    "email"                     : "user4testing@twc.ibm.com",
+    "firstName"                 : "TestUserFirstName",
+    "id"                        : 631231,
+    "lastName"                  : "TestUserLastName",
+    "parentId"                  : 620499,
+    "state"                     : "CA",
+    "timezoneId"                : 107,
+    "userStatusId"              : 1001,
+    "username"                  : "user4testing_01",
+    "permissions"               : [
+        {
+            "key"     : "ALL_1",
+            "keyName" : "ACCESS_ALL_HARDWARE",
+            "name"    : "Access all hardware"
+        },
+        {
+            "key"     : "ALL_2",
+            "keyName" : "ACCESS_ALL_GUEST",
+            "name"    : "Access all guests"
+        }
+    ]
+}

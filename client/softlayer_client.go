@@ -1,11 +1,15 @@
 package client
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
-
-	services "github.com/maximilien/softlayer-go/services"
-	softlayer "github.com/maximilien/softlayer-go/softlayer"
+	services "github.com/TheWeatherCompany/softlayer-go/services"
+	softlayer "github.com/TheWeatherCompany/softlayer-go/softlayer"
+	"io/ioutil"
+	"net/http"
+	"net/http/httputil"
+	"os"
 )
 
 const (
@@ -14,14 +18,21 @@ const (
 )
 
 type SoftLayerClient struct {
+	username string
+	apiKey   string
+
+	HTTPClient *http.Client
+
 	HttpClient softlayer.HttpClient
 
 	softLayerServices map[string]softlayer.Service
+
+	nonVerbose bool
 }
 
 func NewSoftLayerClient(username, apiKey string) *SoftLayerClient {
 	slc := &SoftLayerClient{
-		HttpClient: NewHttpClient(username, apiKey, SOFTLAYER_API_URL, TEMPLATE_ROOT_PATH),
+		HttpClient: NewHttpsClient(username, apiKey, SOFTLAYER_API_URL, TEMPLATE_ROOT_PATH),
 
 		softLayerServices: map[string]softlayer.Service{},
 	}
@@ -53,6 +64,15 @@ func (slc *SoftLayerClient) GetSoftLayer_Account_Service() (softlayer.SoftLayer_
 	}
 
 	return slService.(softlayer.SoftLayer_Account_Service), nil
+}
+
+func (slc *SoftLayerClient) GetSoftLayer_User_Customer_Service() (softlayer.SoftLayer_User_Customer_Service, error) {
+	slService, err := slc.GetService("SoftLayer_User_Customer")
+	if err != nil {
+		return nil, err
+	}
+
+	return slService.(softlayer.SoftLayer_User_Customer_Service), nil
 }
 
 func (slc *SoftLayerClient) GetSoftLayer_Virtual_Guest_Service() (softlayer.SoftLayer_Virtual_Guest_Service, error) {
@@ -172,10 +192,83 @@ func (slc *SoftLayerClient) GetSoftLayer_Dns_Domain_ResourceRecord_Service() (so
 	return slService.(softlayer.SoftLayer_Dns_Domain_ResourceRecord_Service), nil
 }
 
+func (slc *SoftLayerClient) GetSoftLayer_Network_Application_Delivery_Controller_Service() (softlayer.SoftLayer_Network_Application_Delivery_Controller_Service, error) {
+	slService, err := slc.GetService("SoftLayer_Network_Application_Delivery_Controller_Service")
+	if err != nil {
+		return nil, err
+	}
+
+	return slService.(softlayer.SoftLayer_Network_Application_Delivery_Controller_Service), nil
+}
+
+func (slc *SoftLayerClient) GetSoftLayer_Security_Certificate_Service() (softlayer.SoftLayer_Security_Certificate_Service, error) {
+	slService, err := slc.GetService("SoftLayer_Security_Certificate")
+	if err != nil {
+		return nil, err
+	}
+
+	return slService.(softlayer.SoftLayer_Security_Certificate_Service), nil
+}
+
+func (slc *SoftLayerClient) GetSoftLayer_Provisioning_Hook_Service() (softlayer.SoftLayer_Provisioning_Hook_Service, error) {
+	slService, err := slc.GetService("SoftLayer_Provisioning_Hook")
+	if err != nil {
+		return nil, err
+	}
+
+	return slService.(softlayer.SoftLayer_Provisioning_Hook_Service), nil
+}
+
+//Public methods
+
+func (slc *SoftLayerClient) DoRawHttpRequestWithObjectMask(path string, masks []string, requestType string, requestBody *bytes.Buffer) ([]byte, error) {
+	url := fmt.Sprintf("https://%s:%s@%s/%s", slc.username, slc.apiKey, SOFTLAYER_API_URL, path)
+
+	url += "?objectMask="
+	for i := 0; i < len(masks); i++ {
+		url += masks[i]
+		if i != len(masks)-1 {
+			url += ";"
+		}
+	}
+
+	return slc.makeHttpRequest(url, requestType, requestBody)
+}
+
+func (slc *SoftLayerClient) DoRawHttpRequestWithObjectFilter(path string, filters string, requestType string, requestBody *bytes.Buffer) ([]byte, error) {
+	url := fmt.Sprintf("https://%s:%s@%s/%s", slc.username, slc.apiKey, SOFTLAYER_API_URL, path)
+	url += "?objectFilter=" + filters
+
+	return slc.makeHttpRequest(url, requestType, requestBody)
+}
+
+func (slc *SoftLayerClient) DoRawHttpRequestWithObjectFilterAndObjectMask(path string, masks []string, filters string, requestType string, requestBody *bytes.Buffer) ([]byte, error) {
+	url := fmt.Sprintf("https://%s:%s@%s/%s", slc.username, slc.apiKey, SOFTLAYER_API_URL, path)
+
+	url += "?objectFilter=" + filters
+
+	url += "&objectMask=filteredMask["
+	for i := 0; i < len(masks); i++ {
+		url += masks[i]
+		if i != len(masks)-1 {
+			url += ";"
+		}
+	}
+	url += "]"
+
+	return slc.makeHttpRequest(url, requestType, requestBody)
+}
+
+func (slc *SoftLayerClient) DoRawHttpRequest(path string, requestType string, requestBody *bytes.Buffer) ([]byte, error) {
+	url := fmt.Sprintf("https://%s:%s@%s/%s", slc.username, slc.apiKey, SOFTLAYER_API_URL, path)
+	return slc.makeHttpRequest(url, requestType, requestBody)
+}
+
 //Private methods
 
 func (slc *SoftLayerClient) initSoftLayerServices() {
 	slc.softLayerServices["SoftLayer_Account"] = services.NewSoftLayer_Account_Service(slc)
+	slc.softLayerServices["SoftLayer_User_Customer"] = services.NewSoftLayer_User_Customer_Service(slc)
 	slc.softLayerServices["SoftLayer_Virtual_Guest"] = services.NewSoftLayer_Virtual_Guest_Service(slc)
 	slc.softLayerServices["SoftLayer_Virtual_Disk_Image"] = services.NewSoftLayer_Virtual_Disk_Image_Service(slc)
 	slc.softLayerServices["SoftLayer_Security_Ssh_Key"] = services.NewSoftLayer_Security_Ssh_Key_Service(slc)
@@ -189,4 +282,49 @@ func (slc *SoftLayerClient) initSoftLayerServices() {
 	slc.softLayerServices["SoftLayer_Hardware"] = services.NewSoftLayer_Hardware_Service(slc)
 	slc.softLayerServices["SoftLayer_Dns_Domain"] = services.NewSoftLayer_Dns_Domain_Service(slc)
 	slc.softLayerServices["SoftLayer_Dns_Domain_ResourceRecord"] = services.NewSoftLayer_Dns_Domain_ResourceRecord_Service(slc)
+	slc.softLayerServices["SoftLayer_Network_Application_Delivery_Controller_Service"] = services.NewSoftLayer_Network_Application_Delivery_Controller_Service(slc)
+	slc.softLayerServices["SoftLayer_Security_Certificate"] = services.NewSoftLayer_Security_Certificate_Service(slc)
+	slc.softLayerServices["SoftLayer_User_Customer"] = services.NewSoftLayer_User_Customer_Service(slc)
+	slc.softLayerServices["SoftLayer_Provisioning_Hook"] = services.NewSoftLayer_Provisioning_Hook_Service(slc)
 }
+
+func (slc *SoftLayerClient) makeHttpRequest(url string, requestType string, requestBody *bytes.Buffer) ([]byte, error) {
+	req, err := http.NewRequest(requestType, url, requestBody)
+	if err != nil {
+		return nil, err
+	}
+
+	bs, err := httputil.DumpRequest(req, true)
+	if err != nil {
+		return nil, err
+	}
+
+	if !slc.nonVerbose {
+		fmt.Fprintf(os.Stderr, "\n---\n[softlayer-go] Request:\n%s\n", hideCredentials(string(bs)))
+	}
+
+	resp, err := slc.HTTPClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	defer resp.Body.Close()
+
+	bs, err = httputil.DumpResponse(resp, true)
+	if err != nil {
+		return nil, err
+	}
+
+	if !slc.nonVerbose {
+		fmt.Fprintf(os.Stderr, "[softlayer-go] Response:\n%s\n", hideCredentials(string(bs)))
+	}
+
+	responseBody, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	return responseBody, nil
+}
+
+//Private helper methods

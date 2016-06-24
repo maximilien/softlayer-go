@@ -5,13 +5,14 @@ import (
 	"errors"
 	"net"
 	"net/http"
+	"net/url"
 	"os"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
-	slclient "github.com/maximilien/softlayer-go/client"
-	softlayer "github.com/maximilien/softlayer-go/softlayer"
+	slclient "github.com/TheWeatherCompany/softlayer-go/client"
+	softlayer "github.com/TheWeatherCompany/softlayer-go/softlayer"
 )
 
 var _ = Describe("SoftLayerClient", func() {
@@ -65,7 +66,10 @@ var _ = Describe("SoftLayerClient", func() {
 
 			Expect(client.GetHttpClient()).ToNot(BeNil())
 
-			_, errorCode, err := client.GetHttpClient().DoRawHttpRequest("/foo", "application/text", bytes.NewBufferString("random text"))
+			_, errorCode, err := client.GetHttpClient().DoRawHttpRequest("foo", http.MethodGet, bytes.NewBufferString("random text"))
+			if urlErr, ok := err.(*url.Error); ok {
+				err = urlErr.Err
+			}
 			Expect(err).To(Equal(errDialFailed))
 			Expect(errorCode).To(BeNumerically(">", 400))
 		})
@@ -181,6 +185,15 @@ var _ = Describe("SoftLayerClient", func() {
 			hardwareService, err := client.GetSoftLayer_Hardware_Service()
 			Expect(err).ToNot(HaveOccurred())
 			Expect(hardwareService).ToNot(BeNil())
+		})
+	})
+
+	Context("#GetSoftLayer_Network_Application_Delivery_Controller_Service", func() {
+		It("returns an instance implemementing the SoftLayer_Network_Application_Delivery_Controller_Service interface", func() {
+			var nadcService softlayer.SoftLayer_Network_Application_Delivery_Controller_Service
+			nadcService, err := client.GetSoftLayer_Network_Application_Delivery_Controller_Service()
+			Expect(err).ToNot(HaveOccurred())
+			Expect(nadcService).ToNot(BeNil())
 		})
 	})
 })
