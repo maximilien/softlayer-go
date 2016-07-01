@@ -2,15 +2,19 @@ package services_test
 
 import (
 	"errors"
+	"fmt"
 	"os"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
+	"github.com/maximilien/softlayer-go/softlayer"
+
 	slclientfakes "github.com/maximilien/softlayer-go/client/fakes"
 	datatypes "github.com/maximilien/softlayer-go/data_types"
-	softlayer "github.com/maximilien/softlayer-go/softlayer"
 	testhelpers "github.com/maximilien/softlayer-go/test_helpers"
+
+	fakeServices "github.com/maximilien/softlayer-go/services/fakes"
 )
 
 var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
@@ -38,7 +42,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 		fakeClient = slclientfakes.NewFakeSoftLayerClient(username, apiKey)
 		Expect(fakeClient).ToNot(BeNil())
 
-		fakeClient.SoftLayerServices["SoftLayer_Product_Package"] = &testhelpers.MockProductPackageService{}
+		fakeClient.SoftLayerServices["SoftLayer_Product_Package"] = &fakeServices.FakeProductPackageService{}
 
 		virtualGuestService, err = fakeClient.GetSoftLayer_Virtual_Guest_Service()
 		Expect(err).ToNot(HaveOccurred())
@@ -1784,6 +1788,173 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 
 					_, err := virtualGuestService.GetNetworkVlans(virtualGuest.Id)
 					Expect(err).To(HaveOccurred())
+				}
+			})
+		})
+	})
+
+	Context("#GetNetworkComponents", func() {
+		BeforeEach(func() {
+			virtualGuest.Id = 1234567
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_getNetworkComponents.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("gets network components for virtual guest", func() {
+			networkComponents, err := virtualGuestService.GetNetworkComponents(virtualGuest.Id)
+			Expect(err).NotTo(HaveOccurred())
+
+			Expect(networkComponents).To(HaveLen(2))
+			Expect(networkComponents).To(ConsistOf([]datatypes.SoftLayer_Virtual_Guest_Network_Component{{
+				GuestId:          1234567,
+				Id:               8888888,
+				MacAddress:       "00:11:22:33:44:55",
+				MaxSpeed:         1000,
+				Name:             "eth",
+				NetworkId:        1111111,
+				Port:             0,
+				PrimaryIpAddress: "10.10.10.10",
+				Speed:            1000,
+				Status:           "ACTIVE",
+				Uuid:             "some-eth0-guid",
+			}, {
+				GuestId:          1234567,
+				Id:               9999999,
+				MacAddress:       "11:22:33:44:55:66",
+				MaxSpeed:         1000,
+				Name:             "eth",
+				NetworkId:        2222222,
+				Port:             1,
+				PrimaryIpAddress: "1.2.3.4",
+				Speed:            1000,
+				Status:           "ACTIVE",
+				Uuid:             "some-eth1-guid",
+			},
+			}))
+		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := virtualGuestService.GetNetworkComponents(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+					Expect(err).To(MatchError(fmt.Sprintf("softlayer-go: SoftLayer_Virtual_Guest#getNetworkComponents failed, HTTP error code: '%d'", errorCode)))
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := virtualGuestService.GetNetworkComponents(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+					Expect(err).To(MatchError(fmt.Sprintf("softlayer-go: SoftLayer_Virtual_Guest#getNetworkComponents failed, HTTP error code: '%d'", errorCode)))
+				}
+			})
+		})
+	})
+
+	Context("#GetPrimaryNetworkComponent", func() {
+		BeforeEach(func() {
+			virtualGuest.Id = 1234567
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_getPrimaryNetworkComponent.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("gets the primary network component for a virtual guest", func() {
+			networkComponent, err := virtualGuestService.GetPrimaryNetworkComponent(virtualGuest.Id)
+			Expect(err).NotTo(HaveOccurred())
+
+			Expect(networkComponent).To(Equal(datatypes.SoftLayer_Virtual_Guest_Network_Component{
+				GuestId:          1234567,
+				Id:               9999999,
+				MacAddress:       "11:22:33:44:55:66",
+				MaxSpeed:         1000,
+				Name:             "eth",
+				NetworkId:        2222222,
+				Port:             1,
+				PrimaryIpAddress: "1.2.3.4",
+				Speed:            1000,
+				Status:           "ACTIVE",
+				Uuid:             "some-eth1-guid",
+			}))
+		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := virtualGuestService.GetPrimaryNetworkComponent(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+					Expect(err).To(MatchError(fmt.Sprintf("softlayer-go: SoftLayer_Virtual_Guest#getPrimaryNetworkComponent failed, HTTP error code: '%d'", errorCode)))
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := virtualGuestService.GetPrimaryNetworkComponent(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+					Expect(err).To(MatchError(fmt.Sprintf("softlayer-go: SoftLayer_Virtual_Guest#getPrimaryNetworkComponent failed, HTTP error code: '%d'", errorCode)))
+				}
+			})
+		})
+	})
+
+	Context("#GetPrimaryBackendNetworkComponent", func() {
+		BeforeEach(func() {
+			virtualGuest.Id = 1234567
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_getPrimaryBackendNetworkComponent.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("gets the primary network component for a virtual guest", func() {
+			networkComponent, err := virtualGuestService.GetPrimaryBackendNetworkComponent(virtualGuest.Id)
+			Expect(err).NotTo(HaveOccurred())
+
+			Expect(networkComponent).To(Equal(datatypes.SoftLayer_Virtual_Guest_Network_Component{
+				GuestId:          1234567,
+				Id:               8888888,
+				MacAddress:       "00:11:22:33:44:55",
+				MaxSpeed:         1000,
+				Name:             "eth",
+				NetworkId:        1111111,
+				Port:             0,
+				PrimaryIpAddress: "10.10.10.10",
+				Speed:            1000,
+				Status:           "ACTIVE",
+				Uuid:             "some-eth0-guid",
+			}))
+		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := virtualGuestService.GetPrimaryBackendNetworkComponent(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+					Expect(err).To(MatchError(fmt.Sprintf("softlayer-go: SoftLayer_Virtual_Guest#getPrimaryBackendNetworkComponent failed, HTTP error code: '%d'", errorCode)))
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := virtualGuestService.GetPrimaryBackendNetworkComponent(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+					Expect(err).To(MatchError(fmt.Sprintf("softlayer-go: SoftLayer_Virtual_Guest#getPrimaryBackendNetworkComponent failed, HTTP error code: '%d'", errorCode)))
 				}
 			})
 		})
