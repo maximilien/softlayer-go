@@ -3,15 +3,17 @@ package client
 import (
 	"errors"
 	"fmt"
+	"os"
 
 	services "github.com/maximilien/softlayer-go/services"
 	softlayer "github.com/maximilien/softlayer-go/softlayer"
 )
 
 const (
-	SOFTLAYER_API_URL  = "api.softlayer.com/rest/v3"
 	TEMPLATE_ROOT_PATH = "templates"
 )
+
+var SOFTLAYER_API_URL = getSLAPIUrl()
 
 type SoftLayerClient struct {
 	HttpClient softlayer.HttpClient
@@ -189,4 +191,14 @@ func (slc *SoftLayerClient) initSoftLayerServices() {
 	slc.softLayerServices["SoftLayer_Hardware"] = services.NewSoftLayer_Hardware_Service(slc)
 	slc.softLayerServices["SoftLayer_Dns_Domain"] = services.NewSoftLayer_Dns_Domain_Service(slc)
 	slc.softLayerServices["SoftLayer_Dns_Domain_ResourceRecord"] = services.NewSoftLayer_Dns_Domain_ResourceRecord_Service(slc)
+}
+
+func getSLAPIUrl() string {
+	sl_api_endpoint := os.Getenv("SL_API_ENDPOINT")
+	if sl_api_endpoint == "" {
+		sl_api_endpoint = "api.softlayer.com"
+	}
+	softlayer_api_url := fmt.Sprintf("%s/rest/v3", sl_api_endpoint)
+
+	return softlayer_api_url
 }
