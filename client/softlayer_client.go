@@ -5,15 +5,15 @@ import (
 	"fmt"
 	"os"
 
-	services "github.com/maximilien/softlayer-go/services"
-	softlayer "github.com/maximilien/softlayer-go/softlayer"
+	"github.com/maximilien/softlayer-go/services"
+	"github.com/maximilien/softlayer-go/softlayer"
 )
 
 const (
 	TEMPLATE_ROOT_PATH = "templates"
 )
 
-var SOFTLAYER_API_URL = getSLAPIUrl()
+var sl_endpoint_servers = [4]string{"api.softlayer.com", "api.service.softlayer.com", "66.228.119.120", "10.0.80.88"}
 
 type SoftLayerClient struct {
 	HttpClient softlayer.HttpClient
@@ -23,7 +23,7 @@ type SoftLayerClient struct {
 
 func NewSoftLayerClient(username, apiKey string) *SoftLayerClient {
 	slc := &SoftLayerClient{
-		HttpClient: NewHttpsClient(username, apiKey, SOFTLAYER_API_URL, TEMPLATE_ROOT_PATH),
+		HttpClient: NewHttpsClient(username, apiKey, GetSLApiEndpoint(), TEMPLATE_ROOT_PATH),
 
 		softLayerServices: map[string]softlayer.Service{},
 	}
@@ -176,6 +176,24 @@ func (slc *SoftLayerClient) GetSoftLayer_Dns_Domain_ResourceRecord_Service() (so
 
 //Private methods
 
+func GetSLApiEndpoint() string {
+	sl_api_endpoint := os.Getenv("SL_API_ENDPOINT")
+	var included bool = false
+
+	for _, server := range sl_endpoint_servers {
+		if server == sl_api_endpoint {
+			included = true
+			break
+		}
+	}
+	if !included {
+		sl_api_endpoint = "api.softlayer.com"
+	}
+	softlayer_api_url := fmt.Sprintf("%s/rest/v3", sl_api_endpoint)
+
+	return softlayer_api_url
+}
+
 func (slc *SoftLayerClient) initSoftLayerServices() {
 	slc.softLayerServices["SoftLayer_Account"] = services.NewSoftLayer_Account_Service(slc)
 	slc.softLayerServices["SoftLayer_Virtual_Guest"] = services.NewSoftLayer_Virtual_Guest_Service(slc)
@@ -191,14 +209,4 @@ func (slc *SoftLayerClient) initSoftLayerServices() {
 	slc.softLayerServices["SoftLayer_Hardware"] = services.NewSoftLayer_Hardware_Service(slc)
 	slc.softLayerServices["SoftLayer_Dns_Domain"] = services.NewSoftLayer_Dns_Domain_Service(slc)
 	slc.softLayerServices["SoftLayer_Dns_Domain_ResourceRecord"] = services.NewSoftLayer_Dns_Domain_ResourceRecord_Service(slc)
-}
-
-func getSLAPIUrl() string {
-	sl_api_endpoint := os.Getenv("SL_API_ENDPOINT")
-	if sl_api_endpoint == "" {
-		sl_api_endpoint = "api.softlayer.com"
-	}
-	softlayer_api_url := fmt.Sprintf("%s/rest/v3", sl_api_endpoint)
-
-	return softlayer_api_url
 }
