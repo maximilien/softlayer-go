@@ -188,19 +188,21 @@ var _ = Describe("SoftLayerClient", func() {
 		})
 	})
 
-	Context("#getApiEndpoint, when SL_API_ENDPOINT is set correctly", func() {
-		It("returns the correct SL api endpoint url", func() {
-			os.Setenv("SL_API_ENDPOINT", "api.service.softlayer.com")
-			slApiEndPointUrl := slclient.GetSLApiEndpoint()
-			Expect(slApiEndPointUrl).To(Equal("api.service.softlayer.com/rest/v3"))
+	Context("#GetApiEndpoint", func() {
+		Context("#when SL_API_ENDPOINT is set correctly", func() {
+			It("returns the correct SL api endpoint url", func() {
+				os.Setenv("SL_API_ENDPOINT", "api.service.softlayer.com")
+				slApiEndPointUrl := slclient.GetSLApiEndpoint()
+				Expect(slApiEndPointUrl).To(Equal("api.service.softlayer.com/rest/v3"))
+			})
 		})
-	})
-
-	Context("#getApiEndpoint, when SL_API_ENDPOINT is NOT set correctly", func() {
-		It("returns the correct SL api endpoint url", func() {
-			os.Setenv("SL_API_ENDPOINT", "xxxxxx.softlayer.com")
-			slApiEndPointUrl := slclient.GetSLApiEndpoint()
-			Expect(slApiEndPointUrl).To(Equal("api.softlayer.com/rest/v3"))
+	
+		Context("#when SL_API_ENDPOINT is NOT set correctly", func() {
+			It("returns the correct SL api endpoint url", func() {
+				os.Setenv("SL_API_ENDPOINT", "xxxxxx.softlayer.com")
+				slApiEndPointUrl := slclient.GetSLApiEndpoint()
+				Expect(slApiEndPointUrl).To(Equal("api.softlayer.com/rest/v3"))
+			})
 		})
 	})
 })
