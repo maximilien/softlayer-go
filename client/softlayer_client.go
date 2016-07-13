@@ -174,8 +174,6 @@ func (slc *SoftLayerClient) GetSoftLayer_Dns_Domain_ResourceRecord_Service() (so
 	return slService.(softlayer.SoftLayer_Dns_Domain_ResourceRecord_Service), nil
 }
 
-//Private methods
-
 func GetSLApiEndpoint() string {
 	sl_api_endpoint := os.Getenv("SL_API_ENDPOINT")
 	var included bool = false
@@ -193,6 +191,8 @@ func GetSLApiEndpoint() string {
 
 	return softlayer_api_url
 }
+
+//Private methods
 
 func (slc *SoftLayerClient) initSoftLayerServices() {
 	slc.softLayerServices["SoftLayer_Account"] = services.NewSoftLayer_Account_Service(slc)
