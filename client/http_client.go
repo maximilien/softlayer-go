@@ -12,6 +12,8 @@ import (
 	"path/filepath"
 	"regexp"
 	"text/template"
+	"strings"
+	"time"
 )
 
 const NON_VERBOSE = "NON_VERBOSE"
@@ -164,11 +166,25 @@ func (slc *HttpClient) makeHttpRequest(url string, requestType string, requestBo
 		fmt.Fprintf(os.Stderr, "\n---\n[softlayer-go] Request:\n%s\n", hideCredentials(string(bs)))
 	}
 
-	resp, err := slc.HTTPClient.Do(req)
+	var resp *http.Response
+	for i:=1; i<=5; i++ {
+		resp, err = slc.HTTPClient.Do(req)
+		if err != nil {
+			if !strings.Contains(err.Error(), "i/o timeout") {
+				return nil, 520, err
+			} else {
+				fmt.Fprintf(os.Stderr, "[softlayer-go] Error: %s, retrying %d time(s)\n", err.Error(), i)
+			}
+		} else {
+			break
+		}
+
+		time.Sleep(5 * time.Second)
+	}
+
 	if err != nil {
 		return nil, 520, err
 	}
-
 	defer resp.Body.Close()
 
 	bs, err = httputil.DumpResponse(resp, true)
