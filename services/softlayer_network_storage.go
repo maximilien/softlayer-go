@@ -11,13 +11,14 @@ import (
 
 	"github.com/maximilien/softlayer-go/common"
 	datatypes "github.com/maximilien/softlayer-go/data_types"
+	boshretry "github.com/cloudfoundry/bosh-utils/retrystrategy"
 	"github.com/maximilien/softlayer-go/softlayer"
+	"github.com/pivotal-golang/clock"
+	"os"
 )
 
 const (
 	NETWORK_PERFORMANCE_STORAGE_PACKAGE_ID = 222
-	CREATE_ISCSI_VOLUME_MAX_RETRY_TIME     = 60
-	CREATE_ISCSI_VOLUME_CHECK_INTERVAL     = 10 // seconds
 )
 
 type softLayer_Network_Storage_Service struct {
@@ -96,15 +97,29 @@ func (slns *softLayer_Network_Storage_Service) CreateNetworkStorage(size int, ca
 
 	var iscsiStorage datatypes.SoftLayer_Network_Storage
 
-	for i := 0; i < CREATE_ISCSI_VOLUME_MAX_RETRY_TIME; i++ {
-		iscsiStorage, err = slns.findIscsiVolumeId(receipt.OrderId)
-		if err == nil {
-			break
-		} else if i == CREATE_ISCSI_VOLUME_MAX_RETRY_TIME-1 {
-			return datatypes.SoftLayer_Network_Storage{}, err
-		}
+	SL_CREATE_ISCSI_VOLUME_TIMEOUT, err := strconv.Atoi(os.Getenv("SL_CREATE_ISCSI_VOLUME_TIMEOUT"))
+	if err != nil || SL_CREATE_ISCSI_VOLUME_TIMEOUT == 0 {
+		SL_CREATE_ISCSI_VOLUME_TIMEOUT = 600
+	}
+	SL_CREATE_ISCSI_VOLUME_POLLING_INTERVAL, err := strconv.Atoi(os.Getenv("SL_CREATE_ISCSI_VOLUME_POLLING_INTERVAL"))
+	if err != nil || SL_CREATE_ISCSI_VOLUME_POLLING_INTERVAL == 0 {
+		SL_CREATE_ISCSI_VOLUME_POLLING_INTERVAL = 10
+	}
 
-		time.Sleep(CREATE_ISCSI_VOLUME_CHECK_INTERVAL * time.Second)
+	execStmtRetryable := boshretry.NewRetryable(
+		func() (bool, error) {
+			iscsiStorage, err = slns.findIscsiVolumeId(receipt.OrderId)
+			if err != nil {
+				return true, errors.New(fmt.Sprintf("Failed to find iSCSI volume with id `%d` due to `%s`, retrying...", receipt.OrderId, err.Error()))
+			}
+
+			return false, nil
+		})
+	timeService := clock.NewClock()
+	timeoutRetryStrategy := boshretry.NewTimeoutRetryStrategy(SL_CREATE_ISCSI_VOLUME_TIMEOUT * time.Second, SL_CREATE_ISCSI_VOLUME_POLLING_INTERVAL * time.Second, execStmtRetryable, timeService, nil)
+	err = timeoutRetryStrategy.Try()
+	if err != nil {
+		return datatypes.SoftLayer_Network_Storage{}, errors.New(fmt.Sprintf("Failed to find iSCSI volume with id `%d` after retry within `%d` seconds", receipt.OrderId, SL_CREATE_ISCSI_VOLUME_TIMEOUT))
 	}
 
 	return iscsiStorage, nil

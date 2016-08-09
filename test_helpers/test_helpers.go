@@ -20,7 +20,8 @@ import (
 
 	slclient "github.com/maximilien/softlayer-go/client"
 	datatypes "github.com/maximilien/softlayer-go/data_types"
-	softlayer "github.com/maximilien/softlayer-go/softlayer"
+	"github.com/maximilien/softlayer-go/softlayer"
+	fakesslclient "github.com/maximilien/softlayer-go/client/fakes"
 )
 
 var (
@@ -41,6 +42,15 @@ const (
 func ReadJsonTestFixtures(packageName, fileName string) ([]byte, error) {
 	wd, _ := os.Getwd()
 	return ioutil.ReadFile(filepath.Join(wd, "..", "test_fixtures", packageName, fileName))
+}
+
+func SetTestFixturesForFakeSoftLayerClient(fakeSoftLayerClient *fakesslclient.FakeSoftLayerClient, fileNames []string) {
+	for _, fileName := range fileNames {
+		fileContents, err := ReadJsonTestFixtures("softlayer", fileName)
+		Expect(err).ToNot(HaveOccurred())
+
+		fakeSoftLayerClient.FakeHttpClient.DoRawHttpRequestResponses = append(fakeSoftLayerClient.FakeHttpClient.DoRawHttpRequestResponses, fileContents)
+	}
 }
 
 func FindTestVirtualGuests() ([]datatypes.SoftLayer_Virtual_Guest, error) {
