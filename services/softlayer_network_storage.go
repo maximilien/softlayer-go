@@ -9,9 +9,9 @@ import (
 	"strconv"
 	"time"
 
+	boshretry "github.com/cloudfoundry/bosh-utils/retrystrategy"
 	"github.com/maximilien/softlayer-go/common"
 	datatypes "github.com/maximilien/softlayer-go/data_types"
-	boshretry "github.com/cloudfoundry/bosh-utils/retrystrategy"
 	"github.com/maximilien/softlayer-go/softlayer"
 	"github.com/pivotal-golang/clock"
 	"os"
@@ -116,7 +116,7 @@ func (slns *softLayer_Network_Storage_Service) CreateNetworkStorage(size int, ca
 			return false, nil
 		})
 	timeService := clock.NewClock()
-	timeoutRetryStrategy := boshretry.NewTimeoutRetryStrategy(SL_CREATE_ISCSI_VOLUME_TIMEOUT * time.Second, SL_CREATE_ISCSI_VOLUME_POLLING_INTERVAL * time.Second, execStmtRetryable, timeService, nil)
+	timeoutRetryStrategy := boshretry.NewTimeoutRetryStrategy(SL_CREATE_ISCSI_VOLUME_TIMEOUT*time.Second, SL_CREATE_ISCSI_VOLUME_POLLING_INTERVAL*time.Second, execStmtRetryable, timeService, nil)
 	err = timeoutRetryStrategy.Try()
 	if err != nil {
 		return datatypes.SoftLayer_Network_Storage{}, errors.New(fmt.Sprintf("Failed to find iSCSI volume with id `%d` after retry within `%d` seconds", receipt.OrderId, SL_CREATE_ISCSI_VOLUME_TIMEOUT))

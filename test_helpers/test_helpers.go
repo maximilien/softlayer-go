@@ -19,9 +19,9 @@ import (
 	. "github.com/onsi/gomega/gexec"
 
 	slclient "github.com/maximilien/softlayer-go/client"
+	fakesslclient "github.com/maximilien/softlayer-go/client/fakes"
 	datatypes "github.com/maximilien/softlayer-go/data_types"
 	"github.com/maximilien/softlayer-go/softlayer"
-	fakesslclient "github.com/maximilien/softlayer-go/client/fakes"
 )
 
 var (
