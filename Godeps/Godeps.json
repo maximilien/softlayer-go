@@ -2,7 +2,30 @@
 	"ImportPath": "github.com/maximilien/softlayer-go",
 	"GoVersion": "go1.6.3",
 	"Packages": [
-		"github.com/onsi/ginkgo"
+		"./..."
 	],
-	"Deps": []
+	"Deps": [
+		{
+			"ImportPath": "github.com/cloudfoundry/bosh-utils/logger",
+			"Rev": "10859874f8970516e7891f49fc285829d07d9722"
+		},
+		{
+			"ImportPath": "github.com/cloudfoundry/bosh-utils/retrystrategy",
+			"Rev": "10859874f8970516e7891f49fc285829d07d9722"
+		},
+		{
+			"ImportPath": "github.com/onsi/ginkgo",
+			"Comment": "v1.2.0-6-gd981d36",
+			"Rev": "d981d36e9884231afa909627b9c275e4ba678f90"
+		},
+		{
+			"ImportPath": "github.com/onsi/gomega",
+			"Comment": "v1.0-91-g7ce781e",
+			"Rev": "7ce781ea776b2fd506491011353bded2e40c8467"
+		},
+		{
+			"ImportPath": "github.com/pivotal-golang/clock",
+			"Rev": "3fd3c1944c59d9742e1cd333672181cd1a6f9fa0"
+		}
+	]
 }
