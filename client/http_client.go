@@ -180,11 +180,10 @@ func (slc *HttpClient) makeHttpRequest(url string, requestType string, requestBo
 	for i := 1; i <= SL_API_RETRY_COUNT; i++ {
 		resp, err = slc.HTTPClient.Do(req)
 		if err != nil {
-			if !strings.Contains(err.Error(), "i/o timeout") || i > SL_API_RETRY_COUNT {
+			fmt.Fprintf(os.Stderr, "[softlayer-go] Error: %s, retrying %d time(s)\n", err.Error(), i)
+			if !strings.Contains(err.Error(), "i/o timeout") || i >= SL_API_RETRY_COUNT {
 				return nil, 520, err
-			} else {
-				fmt.Fprintf(os.Stderr, "[softlayer-go] Error: %s, retrying %d time(s)\n", err.Error(), i)
-			}
+			} 
 		} else {
 			break
 		}
