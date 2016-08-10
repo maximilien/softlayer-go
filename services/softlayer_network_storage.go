@@ -116,7 +116,7 @@ func (slns *softLayer_Network_Storage_Service) CreateNetworkStorage(size int, ca
 			return false, nil
 		})
 	timeService := clock.NewClock()
-	timeoutRetryStrategy := boshretry.NewTimeoutRetryStrategy(SL_CREATE_ISCSI_VOLUME_TIMEOUT*time.Second, SL_CREATE_ISCSI_VOLUME_POLLING_INTERVAL*time.Second, execStmtRetryable, timeService, nil)
+	timeoutRetryStrategy := boshretry.NewTimeoutRetryStrategy(time.Duration(SL_CREATE_ISCSI_VOLUME_TIMEOUT)*time.Second, time.Duration(SL_CREATE_ISCSI_VOLUME_POLLING_INTERVAL)*time.Second, execStmtRetryable, timeService, nil)
 	err = timeoutRetryStrategy.Try()
 	if err != nil {
 		return datatypes.SoftLayer_Network_Storage{}, errors.New(fmt.Sprintf("Failed to find iSCSI volume with id `%d` after retry within `%d` seconds", receipt.OrderId, SL_CREATE_ISCSI_VOLUME_TIMEOUT))

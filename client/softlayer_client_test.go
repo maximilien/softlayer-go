@@ -196,7 +196,7 @@ var _ = Describe("SoftLayerClient", func() {
 				Expect(slApiEndPointUrl).To(Equal("api.service.softlayer.com/rest/v3"))
 			})
 		})
-	
+
 		Context("#when SL_API_ENDPOINT is NOT set correctly", func() {
 			It("returns the correct SL api endpoint url", func() {
 				os.Setenv("SL_API_ENDPOINT", "xxxxxx.softlayer.com")
