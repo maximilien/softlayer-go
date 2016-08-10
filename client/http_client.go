@@ -11,10 +11,10 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
-	"text/template"
-	"strings"
-	"time"
 	"strconv"
+	"strings"
+	"text/template"
+	"time"
 )
 
 const NON_VERBOSE = "NON_VERBOSE"
@@ -177,7 +177,7 @@ func (slc *HttpClient) makeHttpRequest(url string, requestType string, requestBo
 		SL_API_RETRY_COUNT = 5
 	}
 
-	for i:=1; i<=SL_API_RETRY_COUNT; i++ {
+	for i := 1; i <= SL_API_RETRY_COUNT; i++ {
 		resp, err = slc.HTTPClient.Do(req)
 		if err != nil {
 			if !strings.Contains(err.Error(), "i/o timeout") || i > SL_API_RETRY_COUNT {
@@ -189,7 +189,7 @@ func (slc *HttpClient) makeHttpRequest(url string, requestType string, requestBo
 			break
 		}
 
-		time.Sleep(SL_API_WAIT_TIME * time.Second)
+		time.Sleep(time.Duration(SL_API_WAIT_TIME) * time.Second)
 	}
 	defer resp.Body.Close()
 
