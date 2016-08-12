@@ -511,4 +511,40 @@ var _ = Describe("SoftLayer_Account_Service", func() {
 			})
 		})
 	})
+
+	Context("#GetDomains", func() {
+		BeforeEach(func() {
+			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Account_Service_getDomains.json")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("returns an array of datatypes.SoftLayer_Dns_Domain", func() {
+			dns_domains, err := accountService.GetDomains()
+			Expect(err).ToNot(HaveOccurred())
+			Expect(dns_domains).ToNot(BeNil())
+			Expect(len(dns_domains)).To(BeNumerically(">", 0))
+		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := accountService.GetDomains()
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := accountService.GetDomains()
+					Expect(err).To(HaveOccurred())
+				}
+			})
+		})
+	})
 })
