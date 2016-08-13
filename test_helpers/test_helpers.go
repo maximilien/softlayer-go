@@ -698,7 +698,7 @@ func WaitForDeletedDnsDomainToNoLongerBePresent(dnsDomainId int) {
 	fmt.Printf("----> waiting for deleted dns domain to no longer be present\n")
 	Eventually(func() bool {
 		dnsDomain, err := dnsDomainService.GetObject(dnsDomainId)
-		Expect(err).ToNot(HaveOccurred())
+		Expect(err).To(HaveOccurred())
 
 		if dnsDomain.Id == dnsDomainId {
 			return false
