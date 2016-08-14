@@ -5,6 +5,7 @@ import (
 	"errors"
 	"net"
 	"net/http"
+	"net/url"
 	"os"
 
 	. "github.com/onsi/ginkgo"
@@ -65,7 +66,10 @@ var _ = Describe("SoftLayerClient", func() {
 
 			Expect(client.GetHttpClient()).ToNot(BeNil())
 
-			_, errorCode, err := client.GetHttpClient().DoRawHttpRequest("/foo", "application/text", bytes.NewBufferString("random text"))
+			_, errorCode, err := client.GetHttpClient().DoRawHttpRequest("/foo", "GET", bytes.NewBufferString("random text"))
+			if urlErr, ok := err.(*url.Error); ok {
+				err = urlErr.Err
+			}
 			Expect(err).To(Equal(errDialFailed))
 			Expect(errorCode).To(BeNumerically(">", 400))
 		})
@@ -181,6 +185,24 @@ var _ = Describe("SoftLayerClient", func() {
 			hardwareService, err := client.GetSoftLayer_Hardware_Service()
 			Expect(err).ToNot(HaveOccurred())
 			Expect(hardwareService).ToNot(BeNil())
+		})
+	})
+
+	Context("#GetApiEndpoint", func() {
+		Context("#when SL_API_ENDPOINT is set correctly", func() {
+			It("returns the correct SL api endpoint url", func() {
+				os.Setenv("SL_API_ENDPOINT", "api.service.softlayer.com")
+				slApiEndPointUrl := slclient.GetSLApiEndpoint()
+				Expect(slApiEndPointUrl).To(Equal("api.service.softlayer.com/rest/v3"))
+			})
+		})
+
+		Context("#when SL_API_ENDPOINT is NOT set correctly", func() {
+			It("returns the correct SL api endpoint url", func() {
+				os.Setenv("SL_API_ENDPOINT", "xxxxxx.softlayer.com")
+				slApiEndPointUrl := slclient.GetSLApiEndpoint()
+				Expect(slApiEndPointUrl).To(Equal("api.softlayer.com/rest/v3"))
+			})
 		})
 	})
 })

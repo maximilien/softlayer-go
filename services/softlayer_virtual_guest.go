@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/url"
 	"strconv"
 	"strings"
 	"time"
@@ -196,7 +197,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetObjectByPrimaryIpAddress(ipAddr
 
 func (slvgs *softLayer_Virtual_Guest_Service) GetObjectByPrimaryBackendIpAddress(ipAddress string) (datatypes.SoftLayer_Virtual_Guest, error) {
 
-	ObjectFilter := string(`{"virtualGuests":{"primaryBackendIpAddress":{"operation":` + ipAddress + `}}}`)
+	ObjectFilter := string(`{"virtualGuests":{"primaryBackendIpAddress":{"operation":"` + ipAddress + `"}}}`)
 
 	accountService, err := slvgs.client.GetSoftLayer_Account_Service()
 	if err != nil {
@@ -297,6 +298,25 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetPrimaryIpAddress(instanceId int
 	}
 
 	return vgPrimaryIpAddress, nil
+}
+
+func (slvgs *softLayer_Virtual_Guest_Service) GetPrimaryBackendIpAddress(instanceId int) (string, error) {
+	response, errorCode, err := slvgs.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/getPrimaryBackendIpAddress.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+	if err != nil {
+		return "", err
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#getPrimaryBackendIpAddress, HTTP error code: '%d'", errorCode)
+		return "", errors.New(errorMessage)
+	}
+
+	vgPrimaryBackendIpAddress := strings.TrimSpace(string(response))
+	if vgPrimaryBackendIpAddress == "" {
+		return "", errors.New(fmt.Sprintf("Failed to get primary IP address for instance with id '%d', got '%s' as response from the API.", instanceId, response))
+	}
+
+	return vgPrimaryBackendIpAddress, nil
 }
 
 func (slvgs *softLayer_Virtual_Guest_Service) GetActiveTransaction(instanceId int) (datatypes.SoftLayer_Provisioning_Version1_Transaction, error) {
@@ -502,7 +522,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) RebootHard(instanceId int) (bool, 
 	}
 
 	if common.IsHttpErrorCode(errorCode) {
-		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Security_Ssh_Key#rebootHard, HTTP error code: '%d'", errorCode)
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#rebootHard, HTTP error code: '%d'", errorCode)
 		return false, errors.New(errorMessage)
 	}
 
@@ -823,8 +843,8 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetTagReferences(instanceId int) (
 }
 
 func (slvgs *softLayer_Virtual_Guest_Service) AttachDiskImage(instanceId int, imageId int) (datatypes.SoftLayer_Provisioning_Version1_Transaction, error) {
-	parameters := datatypes.SoftLayer_Virtual_GuestInitParameters{
-		Parameters: datatypes.SoftLayer_Virtual_GuestInitParameter{
+	parameters := datatypes.SoftLayer_Virtual_GuestInit_ImageId_Parameters{
+		Parameters: datatypes.ImageId_Parameter{
 			ImageId: imageId,
 		},
 	}
@@ -854,8 +874,8 @@ func (slvgs *softLayer_Virtual_Guest_Service) AttachDiskImage(instanceId int, im
 }
 
 func (slvgs *softLayer_Virtual_Guest_Service) DetachDiskImage(instanceId int, imageId int) (datatypes.SoftLayer_Provisioning_Version1_Transaction, error) {
-	parameters := datatypes.SoftLayer_Virtual_GuestInitParameters{
-		Parameters: datatypes.SoftLayer_Virtual_GuestInitParameter{
+	parameters := datatypes.SoftLayer_Virtual_GuestInit_ImageId_Parameters{
+		Parameters: datatypes.ImageId_Parameter{
 			ImageId: imageId,
 		},
 	}
@@ -1020,6 +1040,66 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetNetworkVlans(instanceId int) ([
 	return networkVlans, nil
 }
 
+func (slvgs *softLayer_Virtual_Guest_Service) GetNetworkComponents(instanceId int) ([]datatypes.SoftLayer_Virtual_Guest_Network_Component, error) {
+	response, errorCode, err := slvgs.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/getNetworkComponents.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+	if err != nil {
+		return []datatypes.SoftLayer_Virtual_Guest_Network_Component{}, err
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: SoftLayer_Virtual_Guest#getNetworkComponents failed, HTTP error code: '%d'", errorCode)
+		return []datatypes.SoftLayer_Virtual_Guest_Network_Component{}, errors.New(errorMessage)
+	}
+
+	networkComponents := []datatypes.SoftLayer_Virtual_Guest_Network_Component{}
+	err = json.Unmarshal(response, &networkComponents)
+	if err != nil {
+		return []datatypes.SoftLayer_Virtual_Guest_Network_Component{}, err
+	}
+
+	return networkComponents, nil
+}
+
+func (slvgs *softLayer_Virtual_Guest_Service) GetPrimaryBackendNetworkComponent(instanceId int) (datatypes.SoftLayer_Virtual_Guest_Network_Component, error) {
+	response, errorCode, err := slvgs.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/getPrimaryBackendNetworkComponent.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+	if err != nil {
+		return datatypes.SoftLayer_Virtual_Guest_Network_Component{}, err
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: SoftLayer_Virtual_Guest#getPrimaryBackendNetworkComponent failed, HTTP error code: '%d'", errorCode)
+		return datatypes.SoftLayer_Virtual_Guest_Network_Component{}, errors.New(errorMessage)
+	}
+
+	networkComponent := datatypes.SoftLayer_Virtual_Guest_Network_Component{}
+	err = json.Unmarshal(response, &networkComponent)
+	if err != nil {
+		return datatypes.SoftLayer_Virtual_Guest_Network_Component{}, err
+	}
+
+	return networkComponent, nil
+}
+
+func (slvgs *softLayer_Virtual_Guest_Service) GetPrimaryNetworkComponent(instanceId int) (datatypes.SoftLayer_Virtual_Guest_Network_Component, error) {
+	response, errorCode, err := slvgs.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/getPrimaryNetworkComponent.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+	if err != nil {
+		return datatypes.SoftLayer_Virtual_Guest_Network_Component{}, err
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: SoftLayer_Virtual_Guest#getPrimaryNetworkComponent failed, HTTP error code: '%d'", errorCode)
+		return datatypes.SoftLayer_Virtual_Guest_Network_Component{}, errors.New(errorMessage)
+	}
+
+	networkComponent := datatypes.SoftLayer_Virtual_Guest_Network_Component{}
+	err = json.Unmarshal(response, &networkComponent)
+	if err != nil {
+		return datatypes.SoftLayer_Virtual_Guest_Network_Component{}, err
+	}
+
+	return networkComponent, nil
+}
+
 func (slvgs *softLayer_Virtual_Guest_Service) CheckHostDiskAvailability(instanceId int, diskCapacity int) (bool, error) {
 	response, errorCode, err := slvgs.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/checkHostDiskAvailability/%d", slvgs.GetName(), instanceId, diskCapacity), "GET", new(bytes.Buffer))
 	if err != nil {
@@ -1062,6 +1142,38 @@ func (slvgs *softLayer_Virtual_Guest_Service) CaptureImage(instanceId int) (data
 	}
 
 	return diskImageTemplate, nil
+}
+
+func (slvgs *softLayer_Virtual_Guest_Service) CreateArchiveTransaction(instanceId int, groupName string, blockDevices []datatypes.SoftLayer_Virtual_Guest_Block_Device, note string) (datatypes.SoftLayer_Provisioning_Version1_Transaction, error) {
+	groupName = url.QueryEscape(groupName)
+	note = url.QueryEscape(note)
+
+	parameters := datatypes.SoftLayer_Virtual_GuestInitParameters{
+		Parameters: []interface{}{groupName, blockDevices, note},
+	}
+
+	requestBody, err := json.Marshal(parameters)
+	if err != nil {
+		return datatypes.SoftLayer_Provisioning_Version1_Transaction{}, err
+	}
+
+	response, errorCode, err := slvgs.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/createArchiveTransaction.json", slvgs.GetName(), instanceId), "POST", bytes.NewBuffer(requestBody))
+	if err != nil {
+		return datatypes.SoftLayer_Provisioning_Version1_Transaction{}, err
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#createArchiveTransaction, HTTP error code: '%d'", errorCode)
+		return datatypes.SoftLayer_Provisioning_Version1_Transaction{}, errors.New(errorMessage)
+	}
+
+	transaction := datatypes.SoftLayer_Provisioning_Version1_Transaction{}
+	err = json.Unmarshal(response, &transaction)
+	if err != nil {
+		return datatypes.SoftLayer_Provisioning_Version1_Transaction{}, err
+	}
+
+	return transaction, nil
 }
 
 //Private methods
