@@ -7,6 +7,14 @@
 	],
 	"Deps": [
 		{
+			"ImportPath": "github.com/cloudfoundry/bosh-utils/logger",
+			"Rev": "e8fa5b9023522d58de0db477db1acbc3894e1a5f"
+		},
+		{
+			"ImportPath": "github.com/cloudfoundry/bosh-utils/retrystrategy",
+			"Rev": "e8fa5b9023522d58de0db477db1acbc3894e1a5f"
+		},
+		{
 			"ImportPath": "github.com/onsi/ginkgo",
 			"Comment": "v1.2.0-52-g2c2e9bb",
 			"Rev": "2c2e9bb47b4e44067024f29339588cac8b34dd12"
@@ -150,6 +158,10 @@
 			"ImportPath": "github.com/onsi/gomega/types",
 			"Comment": "v1.0-91-g7ce781e",
 			"Rev": "7ce781ea776b2fd506491011353bded2e40c8467"
+		},
+		{
+			"ImportPath": "github.com/pivotal-golang/clock",
+			"Rev": "e0835a7d46f9ea781e764f0dc9325110e32a97dd"
 		}
 	]
 }
