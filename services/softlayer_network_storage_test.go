@@ -6,6 +6,7 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
+	"errors"
 	slclientfakes "github.com/maximilien/softlayer-go/client/fakes"
 	datatypes "github.com/maximilien/softlayer-go/data_types"
 	softlayer "github.com/maximilien/softlayer-go/softlayer"
@@ -83,12 +84,10 @@ var _ = Describe("SoftLayer_Network_Storage", func() {
 	})
 
 	Context("#GetIscsiVolume", func() {
-		BeforeEach(func() {
+		It("returns the iSCSI volume object based on volume id", func() {
 			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Network_Storage_Service_getIscsiVolume.json")
 			Expect(err).ToNot(HaveOccurred())
-		})
 
-		It("returns the iSCSI volume object based on volume id", func() {
 			volume, err = networkStorageService.GetNetworkStorage(1)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(volume.Id).To(Equal(1))
@@ -99,6 +98,11 @@ var _ = Describe("SoftLayer_Network_Storage", func() {
 		})
 
 		Context("when HTTP client returns error codes 40x or 50x", func() {
+			BeforeEach(func() {
+				fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Network_Storage_Service_getIscsiVolume.json")
+				Expect(err).ToNot(HaveOccurred())
+			})
+
 			It("fails for error code 40x", func() {
 				errorCodes := []int{400, 401, 499}
 				for _, errorCode := range errorCodes {
@@ -117,6 +121,49 @@ var _ = Describe("SoftLayer_Network_Storage", func() {
 					_, err = networkStorageService.GetNetworkStorage(1)
 					Expect(err).To(HaveOccurred())
 				}
+			})
+		})
+
+		Context("when SL API endpoint is stable, no need to retry", func() {
+			BeforeEach(func() {
+				fileNames := []string{
+					"SoftLayer_Product_Package_getItemPrices.json",
+					"SoftLayer_Product_Package_getItemPricesBySizeAndIops.json",
+					"SoftLayer_Product_Package_getItems.json",
+					"SoftLayer_Product_Order_PlaceContainerOrderNetworkPerformanceStorageIscsi.json",
+					"SoftLayer_Account_Service_getIscsiNetworkStorage.json",
+				}
+				testhelpers.SetTestFixturesForFakeSoftLayerClient(fakeClient, fileNames)
+			})
+
+			It("orders an iSCSI volume successfully", func() {
+				volume, err = networkStorageService.CreateNetworkStorage(20, 1000, "fake-location", true)
+				Expect(err).ToNot(HaveOccurred())
+			})
+		})
+
+		Context("when SL API endpoint is unstable, timeout after several times of retries", func() {
+			BeforeEach(func() {
+				fileNames := []string{
+					"SoftLayer_Product_Package_getItemPrices.json",
+					"SoftLayer_Product_Package_getItemPricesBySizeAndIops.json",
+					"SoftLayer_Product_Package_getItems.json",
+					"SoftLayer_Product_Order_PlaceContainerOrderNetworkPerformanceStorageIscsi.json",
+					"SoftLayer_Account_Service_getIscsiNetworkStorage.json",
+					"SoftLayer_Account_Service_getIscsiNetworkStorage.json",
+					"SoftLayer_Account_Service_getIscsiNetworkStorage.json",
+					"SoftLayer_Account_Service_getIscsiNetworkStorage.json",
+					"SoftLayer_Account_Service_getIscsiNetworkStorage.json",
+				}
+				testhelpers.SetTestFixturesForFakeSoftLayerClient(fakeClient, fileNames)
+				fakeClient.FakeHttpClient.DoRawHttpRequestError = errors.New("Timeout due to unstable Softalyer endpoint")
+				os.Setenv("SL_CREATE_ISCSI_VOLUME_TIMEOUT", "3")
+				os.Setenv("SL_CREATE_ISCSI_VOLUME_POLLING_INTERVAL", "1")
+			})
+
+			It("fails to order an iSCSI volume", func() {
+				volume, err = networkStorageService.CreateNetworkStorage(20, 1000, "fake-location", true)
+				Expect(err).To(HaveOccurred())
 			})
 		})
 	})
