@@ -98,6 +98,21 @@ var _ = Describe("SoftLayer Virtual Guest Lifecycle", func() {
 			Expect(err).ToNot(HaveOccurred())
 			Expect(available).To(BeTrue())
 		})
+
+		It("creates the virtual guest and waits for it to be active and checks if the disk type is local", func() {
+			virtualGuest := testhelpers.CreateVirtualGuestAndMarkItTest([]datatypes.SoftLayer_Security_Ssh_Key{})
+			defer testhelpers.CleanUpVirtualGuest(virtualGuest.Id)
+
+			testhelpers.WaitForVirtualGuestToBeRunning(virtualGuest.Id)
+			testhelpers.WaitForVirtualGuestToHaveNoActiveTransactions(virtualGuest.Id)
+
+			virtualGuestService, err := testhelpers.CreateVirtualGuestService()
+			Expect(err).ToNot(HaveOccurred())
+
+			disktype, err := virtualGuestService.GetLocalDiskFlag(virtualGuest.Id)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(disktype).To(BeTrue())
+		})
 	})
 
 	Context("SoftLayer_VirtualGuest#CreateObject, SoftLayer_VirtualGuest#rebootSoft, wait for reboot to complete, and SoftLayer_VirtualGuest#DeleteObject", func() {

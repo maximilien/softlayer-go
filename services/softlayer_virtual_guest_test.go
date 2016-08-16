@@ -2127,4 +2127,72 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			})
 		})
 	})
+
+	Context("#GetLocalDiskFlag", func() {
+		BeforeEach(func() {
+			virtualGuest.Id = 1234567
+		})
+
+		Context("when there retrieves the disk type with no error", func() {
+			It("finds local disk flag is true if the system disk is lcoal disk", func() {
+				fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_getLocalDiskFlag_local.json")
+				Expect(err).ToNot(HaveOccurred())
+
+				localdisk, err := virtualGuestService.GetLocalDiskFlag(virtualGuest.Id)
+
+				Expect(err).ToNot(HaveOccurred())
+				Expect(localdisk).To(BeTrue())
+			})
+
+			It("finds local disk flag is false if the system disk is SAN disk", func() {
+				fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_getLocalDiskFlag_san.json")
+				Expect(err).ToNot(HaveOccurred())
+
+				localdisk, err := virtualGuestService.GetLocalDiskFlag(virtualGuest.Id)
+
+				Expect(err).ToNot(HaveOccurred())
+				Expect(localdisk).To(BeFalse())
+			})
+		})
+
+		Context("when HTTP client returns error", func() {
+			It("failed due to http client error", func() {
+				fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_getLocalDiskFlag_san.json")
+				Expect(err).ToNot(HaveOccurred())
+
+				fakeClient.FakeHttpClient.DoRawHttpRequestError = errors.New("fake-error")
+				localdisk, err := virtualGuestService.GetLocalDiskFlag(virtualGuest.Id)
+
+				Expect(err).To(HaveOccurred())
+				Expect(localdisk).To(BeFalse())
+			})
+		})
+
+		Context("when HTTP client returns error codes 40x or 50x", func() {
+			BeforeEach(func() {
+				fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_getLocalDiskFlag_local.json")
+				Expect(err).ToNot(HaveOccurred())
+			})
+
+			It("fails for error code 40x", func() {
+				errorCodes := []int{400, 401, 499}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := virtualGuestService.GetLocalDiskFlag(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+
+			It("fails for error code 50x", func() {
+				errorCodes := []int{500, 501, 599}
+				for _, errorCode := range errorCodes {
+					fakeClient.FakeHttpClient.DoRawHttpRequestInt = errorCode
+
+					_, err := virtualGuestService.GetLocalDiskFlag(virtualGuest.Id)
+					Expect(err).To(HaveOccurred())
+				}
+			})
+		})
+	})
 })
