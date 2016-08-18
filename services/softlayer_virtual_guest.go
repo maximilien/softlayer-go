@@ -1304,9 +1304,9 @@ func (slvgs *softLayer_Virtual_Guest_Service) findUpgradeItemPriceForEphemeralDi
 
 	var currentDiskCapacity int
 	var currentItemPrice datatypes.SoftLayer_Product_Item_Price
+	var diskType string
 
 	for _, itemPrice := range itemPrices {
-
 		flag := false
 		for _, category := range itemPrice.Categories {
 			if category.CategoryCode == EPHEMERAL_DISK_CATEGORY_CODE {
@@ -1314,9 +1314,18 @@ func (slvgs *softLayer_Virtual_Guest_Service) findUpgradeItemPriceForEphemeralDi
 				break
 			}
 		}
+		
+		diskTypeBool, err := slvgs.GetLocalDiskFlag(instanceId)
+		if err != nil {
+			return datatypes.SoftLayer_Product_Item_Price{}, err
+		}
+		if diskTypeBool {
+			diskType = "(LOCAL)"
+		} else {
+			diskType = "(SAN)"
+		}
 
-		if flag && strings.Contains(itemPrice.Item.Description, "(LOCAL)") {
-
+		if flag && strings.Contains(itemPrice.Item.Description, diskType) {
 			capacity, _ := strconv.Atoi(itemPrice.Item.Capacity)
 
 			if capacity >= ephemeralDiskSize {
