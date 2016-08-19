@@ -347,24 +347,67 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 	})
 
 	Context("#AttachEphemeralDisk", func() {
-		BeforeEach(func() {
-			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Product_Order_placeOrder.json")
-			Expect(err).ToNot(HaveOccurred())
-		})
-
 		It("reports error when providing a wrong disk size", func() {
 			_, err := virtualGuestService.AttachEphemeralDisk(123, -1)
 			Expect(err).To(HaveOccurred())
 			Expect(err.Error()).To(Equal("Ephemeral disk size can not be negative: -1"))
 		})
 
-		It("can attach a local disk without error", func() {
-			receipt, err := virtualGuestService.AttachEphemeralDisk(123, 25)
-			Expect(err).ToNot(HaveOccurred())
-			Expect(receipt.OrderId).NotTo(Equal(0))
+		Context("When attach a local disk", func() {
+			BeforeEach(func() {
+				fileNames := []string{
+					"SoftLayer_Virtual_Guest_Service_getUpgradeItemPrices.json",
+					"SoftLayer_Virtual_Guest_Service_getLocalDiskFlag_local.json",
+					"SoftLayer_Product_Order_placeOrder.json",
+				}
+				testhelpers.SetTestFixturesForFakeSoftLayerClient(fakeClient, fileNames)
+			})
+
+			It("can attach a local disk without error", func() {
+				receipt, err := virtualGuestService.AttachEphemeralDisk(123, 25)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(receipt.OrderId).NotTo(Equal(0))
+			})
+		})
+
+		Context("When attach a SAN disk", func() {
+			BeforeEach(func() {
+				fileNames := []string{
+					"SoftLayer_Virtual_Guest_Service_getUpgradeItemPrices_san.json",
+					"SoftLayer_Virtual_Guest_Service_getLocalDiskFlag_san.json",
+					"SoftLayer_Product_Order_placeOrder.json",
+				}
+				testhelpers.SetTestFixturesForFakeSoftLayerClient(fakeClient, fileNames)
+			})
+
+			It("can attach a SAN disk without error", func() {
+				receipt, err := virtualGuestService.AttachEphemeralDisk(123, 25)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(receipt.OrderId).NotTo(Equal(0))
+			})
+		})
+
+		Context("When all found disks are all mismatched", func() {
+			BeforeEach(func() {
+				fileNames := []string{
+					"SoftLayer_Virtual_Guest_Service_getUpgradeItemPrices_mismatch.json",
+					"SoftLayer_Virtual_Guest_Service_getLocalDiskFlag_local.json",
+				}
+				testhelpers.SetTestFixturesForFakeSoftLayerClient(fakeClient, fileNames)
+			})
+
+			It("fails to find a matched disk to attach", func() {
+				_, err := virtualGuestService.AttachEphemeralDisk(123, 25)
+				Expect(err).To(HaveOccurred())
+			})
 		})
 
 		Context("when HTTP client returns error codes 40x or 50x", func() {
+			BeforeEach(func() {
+				fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Product_Order_placeOrder.json")
+				Expect(err).ToNot(HaveOccurred())
+			})
+
 			It("fails for error code 40x", func() {
 				errorCodes := []int{400, 401, 499}
 				for _, errorCode := range errorCodes {

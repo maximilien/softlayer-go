@@ -1294,17 +1294,27 @@ func (slvgs *softLayer_Virtual_Guest_Service) checkCreateObjectRequiredValues(te
 
 func (slvgs *softLayer_Virtual_Guest_Service) findUpgradeItemPriceForEphemeralDisk(instanceId int, ephemeralDiskSize int) (datatypes.SoftLayer_Product_Item_Price, error) {
 	if ephemeralDiskSize <= 0 {
-		return datatypes.SoftLayer_Product_Item_Price{}, errors.New(fmt.Sprintf("Ephemeral disk size can not be negative: %d", ephemeralDiskSize))
+		return datatypes.SoftLayer_Product_Item_Price{}, fmt.Errorf("Ephemeral disk size can not be negative: %d", ephemeralDiskSize)
 	}
 
 	itemPrices, err := slvgs.GetUpgradeItemPrices(instanceId)
 	if err != nil {
-		return datatypes.SoftLayer_Product_Item_Price{}, nil
+		return datatypes.SoftLayer_Product_Item_Price{}, err
 	}
 
 	var currentDiskCapacity int
 	var currentItemPrice datatypes.SoftLayer_Product_Item_Price
 	var diskType string
+
+	diskTypeBool, err := slvgs.GetLocalDiskFlag(instanceId)
+	if err != nil {
+		return datatypes.SoftLayer_Product_Item_Price{}, err
+	}
+	if diskTypeBool {
+		diskType = "(LOCAL)"
+	} else {
+		diskType = "(SAN)"
+	}
 
 	for _, itemPrice := range itemPrices {
 		flag := false
@@ -1313,16 +1323,6 @@ func (slvgs *softLayer_Virtual_Guest_Service) findUpgradeItemPriceForEphemeralDi
 				flag = true
 				break
 			}
-		}
-		
-		diskTypeBool, err := slvgs.GetLocalDiskFlag(instanceId)
-		if err != nil {
-			return datatypes.SoftLayer_Product_Item_Price{}, err
-		}
-		if diskTypeBool {
-			diskType = "(LOCAL)"
-		} else {
-			diskType = "(SAN)"
 		}
 
 		if flag && strings.Contains(itemPrice.Item.Description, diskType) {
@@ -1338,7 +1338,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) findUpgradeItemPriceForEphemeralDi
 	}
 
 	if currentItemPrice.Id == 0 {
-		return datatypes.SoftLayer_Product_Item_Price{}, errors.New(fmt.Sprintf("No proper local disk for size %d", ephemeralDiskSize))
+		return datatypes.SoftLayer_Product_Item_Price{}, fmt.Errorf("No proper local disk for size %d", ephemeralDiskSize)
 	}
 
 	return currentItemPrice, nil
