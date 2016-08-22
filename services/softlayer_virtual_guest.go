@@ -1176,6 +1176,30 @@ func (slvgs *softLayer_Virtual_Guest_Service) CreateArchiveTransaction(instanceI
 	return transaction, nil
 }
 
+func (slvgs *softLayer_Virtual_Guest_Service) GetLocalDiskFlag(instanceId int) (bool, error) {
+	response, errorCode, err := slvgs.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/getLocalDiskFlag.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+	if err != nil {
+		return false, err
+	}
+
+	if common.IsHttpErrorCode(errorCode) {
+		errorMessage := fmt.Sprintf("softlayer-go: could not SoftLayer_Virtual_Guest#getLocalDiskFlag, HTTP error code: '%d'", errorCode)
+		return false, errors.New(errorMessage)
+	}
+
+	res := string(response)
+
+	if res == "true" {
+		return true, nil
+	}
+
+	if res == "false" {
+		return false, nil
+	}
+
+	return false, errors.New(fmt.Sprintf("Failed to check the disk type (local or SAN) of that virtual guest with id '%d', got '%s' as response from the API.", instanceId, res))
+}
+
 //Private methods
 
 func (slvgs *softLayer_Virtual_Guest_Service) getVirtualServerItems() ([]datatypes.SoftLayer_Product_Item, error) {
@@ -1270,19 +1294,29 @@ func (slvgs *softLayer_Virtual_Guest_Service) checkCreateObjectRequiredValues(te
 
 func (slvgs *softLayer_Virtual_Guest_Service) findUpgradeItemPriceForEphemeralDisk(instanceId int, ephemeralDiskSize int) (datatypes.SoftLayer_Product_Item_Price, error) {
 	if ephemeralDiskSize <= 0 {
-		return datatypes.SoftLayer_Product_Item_Price{}, errors.New(fmt.Sprintf("Ephemeral disk size can not be negative: %d", ephemeralDiskSize))
+		return datatypes.SoftLayer_Product_Item_Price{}, fmt.Errorf("Ephemeral disk size can not be negative: %d", ephemeralDiskSize)
 	}
 
 	itemPrices, err := slvgs.GetUpgradeItemPrices(instanceId)
 	if err != nil {
-		return datatypes.SoftLayer_Product_Item_Price{}, nil
+		return datatypes.SoftLayer_Product_Item_Price{}, err
 	}
 
 	var currentDiskCapacity int
 	var currentItemPrice datatypes.SoftLayer_Product_Item_Price
+	var diskType string
+
+	diskTypeBool, err := slvgs.GetLocalDiskFlag(instanceId)
+	if err != nil {
+		return datatypes.SoftLayer_Product_Item_Price{}, err
+	}
+	if diskTypeBool {
+		diskType = "(LOCAL)"
+	} else {
+		diskType = "(SAN)"
+	}
 
 	for _, itemPrice := range itemPrices {
-
 		flag := false
 		for _, category := range itemPrice.Categories {
 			if category.CategoryCode == EPHEMERAL_DISK_CATEGORY_CODE {
@@ -1291,8 +1325,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) findUpgradeItemPriceForEphemeralDi
 			}
 		}
 
-		if flag && strings.Contains(itemPrice.Item.Description, "(LOCAL)") {
-
+		if flag && strings.Contains(itemPrice.Item.Description, diskType) {
 			capacity, _ := strconv.Atoi(itemPrice.Item.Capacity)
 
 			if capacity >= ephemeralDiskSize {
@@ -1305,7 +1338,7 @@ func (slvgs *softLayer_Virtual_Guest_Service) findUpgradeItemPriceForEphemeralDi
 	}
 
 	if currentItemPrice.Id == 0 {
-		return datatypes.SoftLayer_Product_Item_Price{}, errors.New(fmt.Sprintf("No proper local disk for size %d", ephemeralDiskSize))
+		return datatypes.SoftLayer_Product_Item_Price{}, fmt.Errorf("No proper local disk for size %d", ephemeralDiskSize)
 	}
 
 	return currentItemPrice, nil
