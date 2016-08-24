@@ -62,9 +62,9 @@ var _ = Describe("A HTTP Client", func() {
 			})
 		})
 
-		Context("when getting i/o time error", func() {
+		Context("when getting i/o timeout error", func() {
 			BeforeEach(func() {
-				os.Setenv("SL_API_RETRY_COUNT", "2")
+				os.Setenv("SL_API_RETRY_COUNT", "1")
 				os.Setenv("SL_API_WAIT_TIME", "1")
 			})
 
