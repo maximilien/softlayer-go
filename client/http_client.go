@@ -104,6 +104,7 @@ func (slc *HttpClient) DoRawHttpRequestWithObjectFilterAndObjectMask(path string
 
 func (slc *HttpClient) DoRawHttpRequest(path string, requestType string, requestBody *bytes.Buffer) ([]byte, int, error) {
 	url := fmt.Sprintf("%s://%s:%s@%s/%s", slc.scheme(), slc.username, slc.password, slc.apiUrl, path)
+	fmt.Fprintf(os.Stdout, "server url is: %s", url)
 	return slc.makeHttpRequest(url, requestType, requestBody)
 }
 
@@ -152,6 +153,10 @@ func (slc *HttpClient) scheme() string {
 	return "https"
 }
 
+/*func (slc *HttpClient) MakeHttpRequest(url string, requestType string, requestBody *bytes.Buffer) ([]byte, int, error) {
+	return slc.makeHttpRequest(url, requestType, requestBody)
+}*/
+
 func (slc *HttpClient) makeHttpRequest(url string, requestType string, requestBody *bytes.Buffer) ([]byte, int, error) {
 	req, err := http.NewRequest(requestType, url, requestBody)
 	if err != nil {
@@ -183,7 +188,7 @@ func (slc *HttpClient) makeHttpRequest(url string, requestType string, requestBo
 			fmt.Fprintf(os.Stderr, "[softlayer-go] Error: %s, retrying %d time(s)\n", err.Error(), i)
 			if !strings.Contains(err.Error(), "i/o timeout") || i >= SL_API_RETRY_COUNT {
 				return nil, 520, err
-			} 
+			}
 		} else {
 			break
 		}
