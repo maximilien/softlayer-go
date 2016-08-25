@@ -25,7 +25,6 @@ import (
 
 var _ = Describe("A HTTP Client", func() {
 	var (
-		//username, apiKey string
 		server               *ghttp.Server
 		client, wrongClient  *slclient.HttpClient
 		err                  error
