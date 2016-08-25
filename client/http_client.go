@@ -153,10 +153,6 @@ func (slc *HttpClient) scheme() string {
 	return "https"
 }
 
-/*func (slc *HttpClient) MakeHttpRequest(url string, requestType string, requestBody *bytes.Buffer) ([]byte, int, error) {
-	return slc.makeHttpRequest(url, requestType, requestBody)
-}*/
-
 func (slc *HttpClient) makeHttpRequest(url string, requestType string, requestBody *bytes.Buffer) ([]byte, int, error) {
 	req, err := http.NewRequest(requestType, url, requestBody)
 	if err != nil {
