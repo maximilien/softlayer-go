@@ -174,7 +174,7 @@ func (slc *HttpClient) makeHttpRequest(url string, requestType string, requestBo
 	}
 	SL_API_RETRY_COUNT, err := strconv.Atoi(os.Getenv("SL_API_RETRY_COUNT"))
 	if err != nil || SL_API_RETRY_COUNT == 0 {
-		SL_API_RETRY_COUNT = 1
+		SL_API_RETRY_COUNT = 3
 	}
 
 	for i := 1; i <= SL_API_RETRY_COUNT; i++ {
