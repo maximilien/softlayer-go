@@ -104,7 +104,6 @@ func (slc *HttpClient) DoRawHttpRequestWithObjectFilterAndObjectMask(path string
 
 func (slc *HttpClient) DoRawHttpRequest(path string, requestType string, requestBody *bytes.Buffer) ([]byte, int, error) {
 	url := fmt.Sprintf("%s://%s:%s@%s/%s", slc.scheme(), slc.username, slc.password, slc.apiUrl, path)
-	fmt.Fprintf(os.Stdout, "server url is: %s", url)
 	return slc.makeHttpRequest(url, requestType, requestBody)
 }
 
