@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/maximilien/softlayer-go/common"
 	"io/ioutil"
 	"net/http"
 	"net/http/httputil"
@@ -206,10 +207,28 @@ func (slc *HttpClient) makeHttpRequest(url string, requestType string, requestBo
 		return nil, resp.StatusCode, err
 	}
 
+	if common.IsHttpErrorCode(resp.StatusCode) {
+		//Try to parse response body since SoftLayer could return meaningful error message
+		err = slc.CheckForHttpResponseErrorsSilently(responseBody)
+		if err != nil {
+			return nil, resp.StatusCode, err
+		}
+	}
+
 	return responseBody, resp.StatusCode, nil
 }
 
 // Private functions
+
+func (slc *HttpClient) CheckForHttpResponseErrorsSilently(data []byte) error {
+	var decodedResponse map[string]interface{}
+	parseErr := json.Unmarshal(data, &decodedResponse)
+	if parseErr == nil {
+		return slc.HasErrors(decodedResponse)
+	}
+
+	return nil
+}
 
 func hideCredentials(s string) string {
 	hiddenStr := "\"password\":\"******\""
