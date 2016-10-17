@@ -2,8 +2,8 @@ resources:
 - name: softlayer-go
   type: git
   source:
-    uri: https://github.com/maximilien/softlayer-go.git
-    branch: master
+    uri: https://github.com/zhanggbj/softlayer-go.git
+    branch: fix
 
 jobs:
 - name: sl-go-unit
