@@ -178,7 +178,7 @@ func (slc *HttpClient) makeHttpRequest(url string, requestType string, requestBo
 		SL_API_RETRY_COUNT = 3
 	}
 
-	for i := 1; i <= 3; i++ {
+	for i := 1; i <= SL_API_RETRY_COUNT; i++ {
 		resp, err = slc.HTTPClient.Do(req)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "[softlayer-go] Error: %s, retrying %d time(s)\n", err.Error(), i)
