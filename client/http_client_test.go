@@ -37,17 +37,18 @@ var _ = Describe("A HTTP Client", func() {
 		port                 = 9999
 	)
 
+	BeforeEach(func() {
+		server = ghttp.NewServer()
+	})
+	AfterEach(func() {
+		server.Close()
+	})
 	Context("when the target HTTP server is stable", func() {
 		BeforeEach(func() {
-			server = ghttp.NewServer()
 			fmt.Fprintf(os.Stdout, "server addr is: "+server.Addr())
 			slUsername = os.Getenv("SL_USERNAME")
 			slAPIKey = os.Getenv("SL_API_KEY")
 			client = slclient.NewHttpClient(slUsername, slAPIKey, server.Addr(), "templates", false)
-		})
-
-		AfterEach(func() {
-			server.Close()
 		})
 
 		Context("#DoRawHttpRequest", func() {
