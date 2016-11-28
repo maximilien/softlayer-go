@@ -69,15 +69,14 @@ $ git clone https://github.com/maximilien/softlayer-go.git
 $ cd softlayer-go
 $ export SL_USERNAME=your-username@your-org.com
 $ export SL_API_KEY=your-softlayer-api-key
-$ godep restore
 $ ./bin/build
 $ ./bin/test-unit
 $ ./bin/test-integration
 ```
 
-NOTE: you may need to install [godep](https://github.com/tools/godep) on your system, if you have not already. You can with this one line command: `$ go get github.com/tools/godep`
+NOTE: you may need to install [govendor](https://github.com/kardianos/govendor) on your system, if you have not already. You can with this one line command: `$ go get github.com/kardianos/govendor`
 
-NOTE2: if you get any dependency errors, then use `go get path/to/dependency` to get it, e.g., `go get github.com/onsi/ginkgo` and `go get github.com/onsi/gomega`. You also need to do `godep save ./...` in order for any new or updated depencies to be reflected into the `Godeps` directory.
+NOTE2: if you get any dependency errors, then use `go get path/to/dependency` to get it, e.g., `go get github.com/onsi/ginkgo` and `go get github.com/onsi/gomega`. You also need to do `govendor fetch package` in order for any new or updated dependencies to be reflected into the `vendor` directory.
 
 The executable output should now be located in: `out/slgo`. It does not do anything currently, expect printing a version number. In time this may change. For now, this project is intended to be a set of useful and reusable Golang libraries to access SoftLayer.
 
@@ -142,14 +141,10 @@ SWEET SUITE SUCCESS
 ### Managing dependencies
 -------------------------
 
-* All dependencies managed via [Godep](https://github.com/tools/godep). See [Godeps/_workspace](https://github.com/maximilien/softlayer-go/tree/master/Godeps/_workspace) directory on master
+* All dependencies managed via [govendor](https://github.com/tools/govendor). See [vendor/](https://github.com/maximilien/softlayer-go/tree/master/vendor) directory on master
 
-#### Short `godep` Guide
-* If you ever import a new package `foo/bar` (after you `go get foo/bar`, so that foo/bar is in `$GOPATH`), you can type `godep save ./...` to add it to the `Godeps` directory.
-* To restore dependencies from the `Godeps` directory, simply use `godep restore`. `restore` is the opposite of `save`.
-* If you ever remove a dependency or a link becomes deprecated, the easiest way is probably to remove your entire `Godeps` directory and run `godep save ./...` again, after making sure all your dependencies are in your `$GOPATH`. Don't manually edit `Godeps.json`!
-* To update an existing dependency, you can use `godep update foo/bar` or `godep update foo/...` (where `...` is a wildcard)
-* The godep project [readme](https://github.com/tools/godep/README.md) is a pretty good resource: [https://github.com/tools/godep](https://github.com/tools/godep)
+#### `govendor` Guide
+Please find govendor FAQ in [govendor FAQ](https://github.com/kardianos/govendor/blob/master/doc/faq.md)
 
 ### Current conventions
 -----------------------
