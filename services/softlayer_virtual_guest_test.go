@@ -2238,4 +2238,36 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 			})
 		})
 	})
+
+	Context("#GetBlockDevices", func() {
+		BeforeEach(func() {
+			virtualGuest.Id = 1234567
+		})
+
+		Context("when retrieving block deivces with no error", func() {
+			It("returns a array of all block devices of a virtual guest", func() {
+				fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_getBlockDevices.json")
+				Expect(err).ToNot(HaveOccurred())
+
+				blockDevices, err := virtualGuestService.GetBlockDevices(virtualGuest.Id)
+
+				Expect(err).ToNot(HaveOccurred())
+				Expect(blockDevices).ToNot(BeNil())
+				Expect(len(blockDevices)).To(Equal(3))
+			})
+		})
+
+		Context("when failing to retrieve block devices due to some error", func() {
+			It("returns an empty block device array and the error", func() {
+				fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_getLocalDiskFlag_san.json")
+				Expect(err).ToNot(HaveOccurred())
+
+				fakeClient.FakeHttpClient.DoRawHttpRequestError = errors.New("fake-error")
+				blockDevices, err := virtualGuestService.GetBlockDevices(virtualGuest.Id)
+
+				Expect(err).To(HaveOccurred())
+				Expect(blockDevices).To(Equal([]datatypes.SoftLayer_Virtual_Guest_Block_Device{}))
+			})
+		})
+	})
 })

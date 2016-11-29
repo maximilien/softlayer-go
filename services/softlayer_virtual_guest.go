@@ -1200,6 +1200,21 @@ func (slvgs *softLayer_Virtual_Guest_Service) GetLocalDiskFlag(instanceId int) (
 	return false, errors.New(fmt.Sprintf("Failed to check the disk type (local or SAN) of that virtual guest with id '%d', got '%s' as response from the API.", instanceId, res))
 }
 
+func (slvgs *softLayer_Virtual_Guest_Service) GetBlockDevices(instanceId int) ([]datatypes.SoftLayer_Virtual_Guest_Block_Device, error) {
+	response, _, err := slvgs.client.GetHttpClient().DoRawHttpRequest(fmt.Sprintf("%s/%d/getBlockDevices.json", slvgs.GetName(), instanceId), "GET", new(bytes.Buffer))
+	if err != nil {
+		return []datatypes.SoftLayer_Virtual_Guest_Block_Device{}, err
+	}
+
+	vgBlockDevices := []datatypes.SoftLayer_Virtual_Guest_Block_Device{}
+	err = json.Unmarshal(response, &vgBlockDevices)
+	if err != nil {
+		return []datatypes.SoftLayer_Virtual_Guest_Block_Device{}, err
+	}
+
+	return vgBlockDevices, nil
+}
+
 //Private methods
 
 func (slvgs *softLayer_Virtual_Guest_Service) getVirtualServerItems() ([]datatypes.SoftLayer_Product_Item, error) {
