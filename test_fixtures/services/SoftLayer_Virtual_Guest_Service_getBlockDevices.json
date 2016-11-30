@@ -1,0 +1,44 @@
+[
+	{
+		"bootableFlag": 1,
+		"createDate": "2016-09-20T22:28:26+08:00",
+		"device": "0",
+		"diskImageId": 21909999,
+		"guestId": 24439999,
+		"hotPlugFlag": 0,
+		"id": 36239999,
+		"modifyDate": "2016-11-11T23:13:25+08:00",
+		"mountMode": "RW",
+		"mountType": "Disk",
+		"statusId": 1,
+		"uuid": "88be5e4b-bc5e-32d8-49fb-8c164b6b9999"
+	},
+	{
+		"bootableFlag": 0,
+		"createDate": "2016-11-11T23:13:34+08:00",
+		"device": "1",
+		"diskImageId": 23759999,
+		"guestId": 24439999,
+		"hotPlugFlag": 0,
+		"id": 38829999,
+		"modifyDate": null,
+		"mountMode": "RW",
+		"mountType": "Disk",
+		"statusId": 1,
+		"uuid": "3d01e38c-563b-edda-b5b0-5a4dda819999"
+	},
+	{
+		"bootableFlag": 0,
+		"createDate": "2016-09-20T22:32:24+08:00",
+		"device": "2",
+		"diskImageId": 21909999,
+		"guestId": 24439999,
+		"hotPlugFlag": 0,
+		"id": 36239999,
+		"modifyDate": "2016-11-11T23:13:27+08:00",
+		"mountMode": "RW",
+		"mountType": "Disk",
+		"statusId": 1,
+		"uuid": "0a3847e3-093b-6d2c-9a90-5801aae99999"
+	}
+]

@@ -28,7 +28,7 @@
   cd $base
 
   echo -e "\n Unit Testing packages:"
-  ginkgo -r -p -v --noisyPendings client data_types main services softlayer
+  ginkgo -r -p -v --noisyPendings --skipPackage=integration client data_types main services softlayer common
 
   echo -e "\n Vetting packages for potential issues..."
   go tool vet services data_types main client common test_helpers integration
