@@ -154,21 +154,12 @@ func (slc *HttpClient) scheme() string {
 }
 
 func (slc *HttpClient) makeHttpRequest(url string, requestType string, requestBody *bytes.Buffer) ([]byte, int, error) {
-	req, err := http.NewRequest(requestType, url, requestBody)
-	if err != nil {
-		return nil, 0, err
-	}
+	var (
+		resp *http.Response
+		bs []byte
+	)
+	body, _ := ioutil.ReadAll(requestBody)
 
-	bs, err := httputil.DumpRequest(req, true)
-	if err != nil {
-		return nil, 0, err
-	}
-
-	if !slc.nonVerbose {
-		fmt.Fprintf(os.Stderr, "\n---\n[softlayer-go] Request:\n%s\n", hideCredentials(string(bs)))
-	}
-
-	var resp *http.Response
 	SL_API_WAIT_TIME, err := strconv.Atoi(os.Getenv("SL_API_WAIT_TIME"))
 	if err != nil || SL_API_WAIT_TIME == 0 {
 		SL_API_WAIT_TIME = 1
@@ -179,10 +170,28 @@ func (slc *HttpClient) makeHttpRequest(url string, requestType string, requestBo
 	}
 
 	for i := 1; i <= SL_API_RETRY_COUNT; i++ {
+		req, err := http.NewRequest(requestType, url, bytes.NewReader(body))
+		if err != nil {
+			return nil, 0, err
+		}
+
+		bs, err = httputil.DumpRequest(req, true)
+		if err != nil {
+			return nil, 0, err
+		}
+
+		if !slc.nonVerbose {
+			fmt.Fprintf(os.Stderr, "\n---\n[softlayer-go] Request:\n%s\n", hideCredentials(string(bs)))
+		}
+
 		resp, err = slc.HTTPClient.Do(req)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "[softlayer-go] Error: %s, retrying %d time(s)\n", err.Error(), i)
-			if !strings.Contains(err.Error(), "i/o timeout") && !strings.Contains(err.Error(), "connection refused") || i >= SL_API_RETRY_COUNT {
+
+			b, _ := ioutil.ReadAll(req.Body)
+			fmt.Fprintf(os.Stderr, "[softlayer-go] request body is : %s", b)
+
+			if !strings.Contains(err.Error(), "i/o timeout") && !strings.Contains(err.Error(), "connection refused") && !strings.Contains(err.Error(), "connection reset by peer") || i >= SL_API_RETRY_COUNT {
 				return nil, 520, err
 			}
 		} else {
