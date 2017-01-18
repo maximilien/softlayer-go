@@ -156,7 +156,7 @@ func (slc *HttpClient) scheme() string {
 func (slc *HttpClient) makeHttpRequest(url string, requestType string, requestBody *bytes.Buffer) ([]byte, int, error) {
 	var (
 		resp *http.Response
-		bs []byte
+		bs   []byte
 	)
 	body, _ := ioutil.ReadAll(requestBody)
 
