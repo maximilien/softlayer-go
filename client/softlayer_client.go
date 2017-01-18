@@ -111,6 +111,15 @@ func (slc *SoftLayerClient) GetSoftLayer_Virtual_Guest_Block_Device_Template_Gro
 	return slService.(softlayer.SoftLayer_Virtual_Guest_Block_Device_Template_Group_Service), nil
 }
 
+func (slc *SoftLayerClient) GetSoftLayer_Network_Vlan_Service() (softlayer.SoftLayer_Network_Vlan_Service, error) {
+	slService, err := slc.GetService("SoftLayer_Network_Vlan")
+	if err != nil {
+		return nil, err
+	}
+
+	return slService.(softlayer.SoftLayer_Network_Vlan_Service), nil
+}
+
 func (slc *SoftLayerClient) GetSoftLayer_Network_Storage_Service() (softlayer.SoftLayer_Network_Storage_Service, error) {
 	slService, err := slc.GetService("SoftLayer_Network_Storage")
 	if err != nil {
@@ -201,6 +210,7 @@ func (slc *SoftLayerClient) initSoftLayerServices() {
 	slc.softLayerServices["SoftLayer_Security_Ssh_Key"] = services.NewSoftLayer_Security_Ssh_Key_Service(slc)
 	slc.softLayerServices["SoftLayer_Product_Package"] = services.NewSoftLayer_Product_Package_Service(slc)
 	slc.softLayerServices["SoftLayer_Network_Storage"] = services.NewSoftLayer_Network_Storage_Service(slc)
+	slc.softLayerServices["SoftLayer_Network_Vlan"] = services.NewSoftLayer_Network_Vlan_Service(slc)
 	slc.softLayerServices["SoftLayer_Network_Storage_Allowed_Host"] = services.NewSoftLayer_Network_Storage_Allowed_Host_Service(slc)
 	slc.softLayerServices["SoftLayer_Product_Order"] = services.NewSoftLayer_Product_Order_Service(slc)
 	slc.softLayerServices["SoftLayer_Billing_Item_Cancellation_Request"] = services.NewSoftLayer_Billing_Item_Cancellation_Request_Service(slc)
