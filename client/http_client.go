@@ -154,11 +154,13 @@ func (slc *HttpClient) scheme() string {
 }
 
 func (slc *HttpClient) makeHttpRequest(url string, requestType string, requestBody *bytes.Buffer) ([]byte, int, error) {
-	var (
-		resp *http.Response
-		bs   []byte
-	)
-	body, _ := ioutil.ReadAll(requestBody)
+	var resp *http.Response
+	var bs []byte
+
+	body, err := ioutil.ReadAll(requestBody)
+	if err != nil {
+		return nil, 520, err
+	}
 
 	SL_API_WAIT_TIME, err := strconv.Atoi(os.Getenv("SL_API_WAIT_TIME"))
 	if err != nil || SL_API_WAIT_TIME == 0 {
@@ -187,10 +189,6 @@ func (slc *HttpClient) makeHttpRequest(url string, requestType string, requestBo
 		resp, err = slc.HTTPClient.Do(req)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "[softlayer-go] Error: %s, retrying %d time(s)\n", err.Error(), i)
-
-			b, _ := ioutil.ReadAll(req.Body)
-			fmt.Fprintf(os.Stderr, "[softlayer-go] request body is : %s", b)
-
 			if !strings.Contains(err.Error(), "i/o timeout") && !strings.Contains(err.Error(), "connection refused") && !strings.Contains(err.Error(), "connection reset by peer") || i >= SL_API_RETRY_COUNT {
 				return nil, 520, err
 			}
