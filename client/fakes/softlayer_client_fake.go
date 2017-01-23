@@ -104,6 +104,15 @@ func (fslc *FakeSoftLayerClient) GetSoftLayer_Security_Ssh_Key_Service() (softla
 	return slService.(softlayer.SoftLayer_Security_Ssh_Key_Service), nil
 }
 
+func (fslc *FakeSoftLayerClient) GetSoftLayer_Network_Vlan_Service() (softlayer.SoftLayer_Network_Vlan_Service, error) {
+	slService, err := fslc.GetService("SoftLayer_Network_Vlan")
+	if err != nil {
+		return nil, err
+	}
+
+	return slService.(softlayer.SoftLayer_Network_Vlan_Service), nil
+}
+
 func (fslc *FakeSoftLayerClient) GetSoftLayer_Network_Storage_Service() (softlayer.SoftLayer_Network_Storage_Service, error) {
 	slService, err := fslc.GetService("SoftLayer_Network_Storage")
 	if err != nil {
@@ -192,6 +201,7 @@ func (fslc *FakeSoftLayerClient) initSoftLayerServices() {
 	fslc.SoftLayerServices["SoftLayer_Virtual_Guest"] = services.NewSoftLayer_Virtual_Guest_Service(fslc)
 	fslc.SoftLayerServices["SoftLayer_Virtual_Disk_Image"] = services.NewSoftLayer_Virtual_Disk_Image_Service(fslc)
 	fslc.SoftLayerServices["SoftLayer_Security_Ssh_Key"] = services.NewSoftLayer_Security_Ssh_Key_Service(fslc)
+	fslc.SoftLayerServices["SoftLayer_Network_Vlan"] = services.NewSoftLayer_Network_Vlan_Service(fslc)
 	fslc.SoftLayerServices["SoftLayer_Network_Storage"] = services.NewSoftLayer_Network_Storage_Service(fslc)
 	fslc.SoftLayerServices["SoftLayer_Network_Storage_Allowed_Host"] = services.NewSoftLayer_Network_Storage_Allowed_Host_Service(fslc)
 	fslc.SoftLayerServices["SoftLayer_Product_Order"] = services.NewSoftLayer_Product_Order_Service(fslc)

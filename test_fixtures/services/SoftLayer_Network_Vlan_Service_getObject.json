@@ -1,0 +1,9 @@
+{
+  "accountId": 123456,
+  "id": 1234567,
+  "modifyDate": "2014-07-28T09:46:29+08:00",
+  "name": "Env4 LON02 Fab Pub",
+  "primarySubnetId": 123456,
+  "vlanNumber": 887,
+  "networkSpace": "PUBLIC"
+}
