@@ -70,7 +70,7 @@ var _ = Describe("SoftLayerClient", func() {
 			if urlErr, ok := err.(*url.Error); ok {
 				err = urlErr.Err
 			}
-			Expect(err).To(Equal(errDialFailed))
+			Expect(err.Error()).To(ContainSubstring("dial failed"))
 			Expect(errorCode).To(BeNumerically(">", 400))
 		})
 	})
