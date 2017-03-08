@@ -71,6 +71,7 @@ var _ = Describe("SoftLayerClient", func() {
 				err = urlErr.Err
 			}
 			Expect(err.Error()).To(ContainSubstring("dial failed"))
+			Expect(err.Error()).To(ContainSubstring("************@api.softlayer.com"))
 			Expect(errorCode).To(BeNumerically(">", 400))
 		})
 	})

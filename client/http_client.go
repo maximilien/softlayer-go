@@ -247,7 +247,7 @@ func hideCredentials(s string) string {
 
 func hideAPIKey(s string) string {
 	hiddenStr := ":************@api.softlayer.com/"
-	r := regexp.MustCompile(":[a-zA-Z0-9]*@api.softlayer.com/")
+	r := regexp.MustCompile(":[a-zA-Z0-9-_]*@api.softlayer.com/")
 
 	return r.ReplaceAllString(s, hiddenStr)
 }
