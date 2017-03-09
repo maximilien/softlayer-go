@@ -26,6 +26,7 @@ import (
 	"github.com/onsi/gomega/ghttp"
 
 	slclient "github.com/maximilien/softlayer-go/client"
+	"io/ioutil"
 )
 
 var _ = Describe("A HTTP Client", func() {
@@ -81,10 +82,19 @@ var _ = Describe("A HTTP Client", func() {
 			}
 		})
 
-		It("send a request to an instable HTTP server", func() {
+		It("send a GET request to an instable HTTP server", func() {
 			go delayStartHTTPServer(4, port)
 			_, _, err := client.DoRawHttpRequest("timeoutTest", "GET", bytes.NewBufferString("test"))
 			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("send a POST request to an instable HTTP server", func() {
+			body := "post-request-test"
+			go delayStartHTTPServer(4, port)
+			rep, _, err := client.DoRawHttpRequest("postRequest", "POST", bytes.NewBufferString(body))
+			Expect(err).ToNot(HaveOccurred())
+			Ω(rep).Should(ContainSubstring(body))
+
 		})
 	})
 })
@@ -105,5 +115,6 @@ func delayStartHTTPServer(waitTime int, port int) error {
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "%s", r.URL.Path[1:])
+	b, _ := ioutil.ReadAll(r.Body)
+	fmt.Fprintf(w, "%s", string(b))
 }

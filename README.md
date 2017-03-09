@@ -144,7 +144,7 @@ SWEET SUITE SUCCESS
 * All dependencies managed via [govendor](https://github.com/tools/govendor). See [vendor/](https://github.com/maximilien/softlayer-go/tree/master/vendor) directory on master
 
 #### `govendor` Guide
-Please find govendor FAQ in [govendor FAQ](https://github.com/kardianos/govendor/blob/master/doc/faq.md)
+Please find govendor FAQ in [govendor FAQ](https://github.com/kardianos/govendor/blob/master/doc/faq.md) and [developer guide](govendor/doc/dev-guide.md)
 
 ### Current conventions
 -----------------------
