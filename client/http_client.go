@@ -188,9 +188,10 @@ func (slc *HttpClient) makeHttpRequest(url string, requestType string, requestBo
 
 		resp, err = slc.HTTPClient.Do(req)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "[softlayer-go] Error: %s, retrying %d time(s)\n", err.Error(), i)
-			if !strings.Contains(err.Error(), "i/o timeout") && !strings.Contains(err.Error(), "connection refused") && !strings.Contains(err.Error(), "connection reset by peer") || i >= SL_API_RETRY_COUNT {
-				return nil, 520, err
+			errMsg := hideAPIKey(err.Error())
+			fmt.Fprintf(os.Stderr, "[softlayer-go] Error: %s, retrying %d time(s)\n", errMsg, i)
+			if !strings.Contains(errMsg, "i/o timeout") && !strings.Contains(errMsg, "connection refused") && !strings.Contains(errMsg, "connection reset by peer") || i >= SL_API_RETRY_COUNT {
+				return nil, 520, errors.New(errMsg)
 			}
 		} else {
 			break
@@ -240,6 +241,13 @@ func (slc *HttpClient) CheckForHttpResponseErrorsSilently(data []byte) error {
 func hideCredentials(s string) string {
 	hiddenStr := "\"password\":\"******\""
 	r := regexp.MustCompile(`"password":"[^"]*"`)
+
+	return r.ReplaceAllString(s, hiddenStr)
+}
+
+func hideAPIKey(s string) string {
+	hiddenStr := ":************@api.softlayer.com/"
+	r := regexp.MustCompile(":[a-zA-Z0-9-_]*@api.softlayer.com/")
 
 	return r.ReplaceAllString(s, hiddenStr)
 }
