@@ -9,7 +9,8 @@ import (
 	"errors"
 	slclientfakes "github.com/maximilien/softlayer-go/client/fakes"
 	datatypes "github.com/maximilien/softlayer-go/data_types"
-	softlayer "github.com/maximilien/softlayer-go/softlayer"
+	fakeServices "github.com/maximilien/softlayer-go/services/fakes"
+	"github.com/maximilien/softlayer-go/softlayer"
 	testhelpers "github.com/maximilien/softlayer-go/test_helpers"
 )
 
@@ -164,6 +165,30 @@ var _ = Describe("SoftLayer_Network_Storage", func() {
 			It("fails to order an iSCSI volume", func() {
 				volume, err = networkStorageService.CreateNetworkStorage(20, 1000, "fake-location", true)
 				Expect(err).To(HaveOccurred())
+			})
+		})
+
+		Context("when ordering diffrent size of iSCSI disks without specifying IOPS", func() {
+			BeforeEach(func() {
+				fakeClient.SoftLayerServices["SoftLayer_Product_Package"] = &fakeServices.FakeProductPackageService{}
+
+				fileNames := []string{
+					"SoftLayer_Product_Order_PlaceContainerOrderNetworkPerformanceStorageIscsi.json",
+					"SoftLayer_Account_Service_getIscsiNetworkStorage.json",
+				}
+				testhelpers.SetTestFixturesForFakeSoftLayerClient(fakeClient, fileNames)
+			})
+			It("retrieve IOPS of 100G disk", func() {
+				volume, err = networkStorageService.CreateNetworkStorage(100, 0, "fake-location", true)
+				Expect(err).ToNot(HaveOccurred())
+			})
+			It("retrieve IOPS of 250G disk", func() {
+				volume, err = networkStorageService.CreateNetworkStorage(250, 0, "fake-location", true)
+				Expect(err).ToNot(HaveOccurred())
+			})
+			It("retrieve IOPS of 2000G disk", func() {
+				volume, err = networkStorageService.CreateNetworkStorage(2000, 0, "fake-location", true)
+				Expect(err).ToNot(HaveOccurred())
 			})
 		})
 	})

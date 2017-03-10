@@ -3,9 +3,11 @@ package test_helpers
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 
 	datatypes "github.com/maximilien/softlayer-go/data_types"
 	testhelpers "github.com/maximilien/softlayer-go/test_helpers"
+	"strings"
 )
 
 type FakeProductPackageService struct{}
@@ -24,7 +26,24 @@ func (fps *FakeProductPackageService) GetItemsByType(packageType string) ([]data
 }
 
 func (fps *FakeProductPackageService) GetItemPrices(packageId int, filters string) ([]datatypes.SoftLayer_Product_Item_Price, error) {
-	return []datatypes.SoftLayer_Product_Item_Price{}, errors.New("Not supported")
+	var textFixtrue = ""
+
+	switch {
+	case strings.Contains(filters, "keyName"):
+		textFixtrue = "SoftLayer_Product_Package_getItemPrices.json"
+	case strings.Contains(filters, "100") || strings.Contains(filters, "1000") || strings.Contains(filters, "2000"):
+		textFixtrue = "SoftLayer_Product_Package_getItemPricesBySizeAndIops.json"
+	}
+
+	if textFixtrue == "" {
+		return []datatypes.SoftLayer_Product_Item_Price{}, errors.New(fmt.Sprintf("No matched IOPS found for filters %s", filters))
+	}
+
+	response, _ := testhelpers.ReadJsonTestFixtures("services", textFixtrue)
+	itemPrices := []datatypes.SoftLayer_Product_Item_Price{}
+	json.Unmarshal(response, &itemPrices)
+
+	return itemPrices, nil
 }
 
 func (fps *FakeProductPackageService) GetItems(packageId int, filters string) ([]datatypes.SoftLayer_Product_Item, error) {
