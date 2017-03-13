@@ -3,7 +3,6 @@ package softlayerfakes
 
 import (
 	"errors"
-	"fmt"
 	"strings"
 	"sync"
 
