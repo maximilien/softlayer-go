@@ -9,8 +9,8 @@ import (
 	"errors"
 	slclientfakes "github.com/maximilien/softlayer-go/client/fakes"
 	datatypes "github.com/maximilien/softlayer-go/data_types"
-	fakeServices "github.com/maximilien/softlayer-go/services/fakes"
 	"github.com/maximilien/softlayer-go/softlayer"
+	fakeServices "github.com/maximilien/softlayer-go/softlayer/fakes"
 	testhelpers "github.com/maximilien/softlayer-go/test_helpers"
 )
 
@@ -20,10 +20,11 @@ var _ = Describe("SoftLayer_Network_Storage", func() {
 
 		fakeClient *slclientfakes.FakeSoftLayerClient
 
-		volume                datatypes.SoftLayer_Network_Storage
-		billingItem           datatypes.SoftLayer_Billing_Item
-		networkStorageService softlayer.SoftLayer_Network_Storage_Service
-		err                   error
+		volume                                 datatypes.SoftLayer_Network_Storage
+		billingItem                            datatypes.SoftLayer_Billing_Item
+		networkStorageService                  softlayer.SoftLayer_Network_Storage_Service
+		err                                    error
+		fake_softlayer_product_package_service fakeServices.FakeSoftLayer_Product_Package_Service
 	)
 
 	BeforeEach(func() {
@@ -169,8 +170,29 @@ var _ = Describe("SoftLayer_Network_Storage", func() {
 		})
 
 		Context("when ordering diffrent size of iSCSI disks without specifying IOPS", func() {
+			var (
+				itemPrices []datatypes.SoftLayer_Product_Item_Price
+			)
+
 			BeforeEach(func() {
-				fakeClient.SoftLayerServices["SoftLayer_Product_Package"] = &fakeServices.FakeProductPackageService{}
+				fakeClient.SoftLayerServices["SoftLayer_Product_Package"] = &fake_softlayer_product_package_service
+				itemPrices = []datatypes.SoftLayer_Product_Item_Price{
+					datatypes.SoftLayer_Product_Item_Price{
+						Id:              1233,
+						LocationGroupId: 0,
+						Categories: []datatypes.Category{
+							datatypes.Category{
+								Id:           1233,
+								CategoryCode: "1",
+							},
+						},
+						Item: &datatypes.Item{
+							Id:       5298,
+							Capacity: "800",
+						},
+					},
+				}
+				fake_softlayer_product_package_service.GetItemPricesReturns(itemPrices, nil)
 
 				fileNames := []string{
 					"SoftLayer_Product_Order_PlaceContainerOrderNetworkPerformanceStorageIscsi.json",
@@ -181,6 +203,7 @@ var _ = Describe("SoftLayer_Network_Storage", func() {
 			It("retrieve IOPS of 100G disk", func() {
 				volume, err = networkStorageService.CreateNetworkStorage(100, 0, "fake-location", true)
 				Expect(err).ToNot(HaveOccurred())
+				Expect(fake_softlayer_product_package_service.GetItemPricesCallCount()).To(Equal(2))
 			})
 			It("retrieve IOPS of 250G disk", func() {
 				volume, err = networkStorageService.CreateNetworkStorage(250, 0, "fake-location", true)

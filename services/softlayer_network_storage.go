@@ -502,7 +502,7 @@ func (slns *softLayer_Network_Storage_Service) selectIopsItemPriceIdOnSizebyLeve
 	// May need to add more conditions after getting confirmation from SL
 	// SL ticket -> https://control.softlayer.com/support/tickets/37888681
 	switch {
-	case size>100 && size<1000:
+	case size > 100 && size < 1000:
 		size = 1000
 	}
 
