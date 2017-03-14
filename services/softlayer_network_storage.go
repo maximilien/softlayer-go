@@ -51,7 +51,7 @@ func (slns *softLayer_Network_Storage_Service) CreateNetworkStorage(size int, ca
 	var iopsItemPriceId int
 
 	if capacity == 0 {
-		iopsItemPriceId, err = slns.selectMediumIopsItemPriceIdOnSize(size)
+		iopsItemPriceId, err = slns.selectIopsItemPriceIdOnSizebyLevel(size, "")
 		if err != nil {
 			return datatypes.SoftLayer_Network_Storage{}, err
 		}
@@ -498,7 +498,14 @@ func (slns *softLayer_Network_Storage_Service) getItemPriceIdBySizeAndIops(size 
 	return currentItemId, nil
 }
 
-func (slns *softLayer_Network_Storage_Service) selectMaximunIopsItemPriceIdOnSize(size int) (int, error) {
+func (slns *softLayer_Network_Storage_Service) selectIopsItemPriceIdOnSizebyLevel(size int, level string) (int, error) {
+	// May need to add more conditions after getting confirmation from SL
+	// SL ticket -> https://control.softlayer.com/support/tickets/37888681
+	switch {
+	case size > 100 && size < 1000:
+		size = 1000
+	}
+
 	productPackageService, err := slns.client.GetSoftLayer_Product_Package_Service()
 	if err != nil {
 		return 0, err
@@ -516,61 +523,14 @@ func (slns *softLayer_Network_Storage_Service) selectMaximunIopsItemPriceIdOnSiz
 		})
 		if len(candidates) > 0 {
 			sort.Sort(datatypes.SoftLayer_Product_Item_Price_Sorted_Data(candidates))
-			return candidates[len(candidates)-1].Id, nil
-		} else {
-			return 0, errors.New(fmt.Sprintf("No proper performance storage (iSCSI volume)for size %d", size))
-		}
-	}
-
-	return 0, errors.New(fmt.Sprintf("No proper performance storage (iSCSI volume)for size %d", size))
-}
-
-func (slns *softLayer_Network_Storage_Service) selectMediumIopsItemPriceIdOnSize(size int) (int, error) {
-	productPackageService, err := slns.client.GetSoftLayer_Product_Package_Service()
-	if err != nil {
-		return 0, err
-	}
-
-	filters := fmt.Sprintf(`{"itemPrices":{"attributes":{"value":{"operation":%d}},"categories":{"categoryCode":{"operation":"performance_storage_iops"}}}}`, size)
-	itemPrices, err := productPackageService.GetItemPrices(NETWORK_PERFORMANCE_STORAGE_PACKAGE_ID, filters)
-	if err != nil {
-		return 0, err
-	}
-
-	if len(itemPrices) > 0 {
-		candidates := filter(itemPrices, func(itemPrice datatypes.SoftLayer_Product_Item_Price) bool {
-			return itemPrice.LocationGroupId == 0
-		})
-		if len(candidates) > 0 {
-			sort.Sort(datatypes.SoftLayer_Product_Item_Price_Sorted_Data(candidates))
-			return candidates[len(candidates)/2].Id, nil
-		} else {
-			return 0, errors.New(fmt.Sprintf("No proper performance storage (iSCSI volume)for size %d", size))
-		}
-	}
-
-	return 0, errors.New(fmt.Sprintf("No proper performance storage (iSCSI volume)for size %d", size))
-}
-
-func (slns *softLayer_Network_Storage_Service) selectMinimumIopsItemPriceIdOnSize(size int) (int, error) {
-	productPackageService, err := slns.client.GetSoftLayer_Product_Package_Service()
-	if err != nil {
-		return 0, err
-	}
-
-	filters := fmt.Sprintf(`{"itemPrices":{"attributes":{"value":{"operation":%d}},"categories":{"categoryCode":{"operation":"performance_storage_iops"}}}}`, size)
-	itemPrices, err := productPackageService.GetItemPrices(NETWORK_PERFORMANCE_STORAGE_PACKAGE_ID, filters)
-	if err != nil {
-		return 0, err
-	}
-
-	if len(itemPrices) > 0 {
-		candidates := filter(itemPrices, func(itemPrice datatypes.SoftLayer_Product_Item_Price) bool {
-			return itemPrice.LocationGroupId == 0
-		})
-		if len(candidates) > 0 {
-			sort.Sort(datatypes.SoftLayer_Product_Item_Price_Sorted_Data(candidates))
-			return candidates[0].Id, nil
+			switch level {
+			case "max":
+				return candidates[len(candidates)-1].Id, nil
+			case "min":
+				return candidates[0].Id, nil
+			default:
+				return candidates[len(candidates)/2].Id, nil
+			}
 		} else {
 			return 0, errors.New(fmt.Sprintf("No proper performance storage (iSCSI volume)for size %d", size))
 		}
