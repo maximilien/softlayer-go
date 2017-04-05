@@ -97,7 +97,8 @@ type Datacenter struct {
 
 type NetworkVlan struct {
 	//Required
-	Id int `json:"id,omitempty"`
+	Id              int `json:"id,omitempty"`
+	PrimarySubnetId int `json:"primarySubnetId,omitempty"`
 }
 
 type PrimaryNetworkComponent struct {
