@@ -63,6 +63,8 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 		BeforeEach(func() {
 			fakeClient.FakeHttpClient.DoRawHttpRequestResponse, err = testhelpers.ReadJsonTestFixtures("services", "SoftLayer_Virtual_Guest_Service_createObject.json")
 			Expect(err).ToNot(HaveOccurred())
+			f := new(bool)
+			*f = false
 
 			virtualGuestTemplate = datatypes.SoftLayer_Virtual_Guest_Template{
 				Hostname:  "fake-hostname",
@@ -73,7 +75,7 @@ var _ = Describe("SoftLayer_Virtual_Guest_Service", func() {
 					Name: "fake-datacenter-name",
 				},
 				HourlyBillingFlag:            true,
-				LocalDiskFlag:                false,
+				LocalDiskFlag:                f,
 				DedicatedAccountHostOnlyFlag: false,
 				NetworkComponents: []datatypes.NetworkComponents{datatypes.NetworkComponents{
 					MaxSpeed: 10,

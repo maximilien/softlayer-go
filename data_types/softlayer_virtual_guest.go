@@ -29,7 +29,7 @@ type SoftLayer_Virtual_Guest struct {
 	StartCpus                    int        `json:"startCpus,omitempty"`
 	StatusId                     int        `json:"statusId,omitempty"`
 	Uuid                         string     `json:"uuid,omitempty"`
-	LocalDiskFlag                bool       `json:"localDiskFlag,omitempty"`
+	LocalDiskFlag                *bool      `json:"localDiskFlag,omitempty"`
 	HourlyBillingFlag            bool       `json:"hourlyBillingFlag,omitempty"`
 
 	GlobalIdentifier        string `json:"globalIdentifier,omitempty"`
@@ -71,7 +71,7 @@ type SoftLayer_Virtual_Guest_Template struct {
 	MaxMemory         int        `json:"maxMemory"`
 	Datacenter        Datacenter `json:"datacenter"`
 	HourlyBillingFlag bool       `json:"hourlyBillingFlag"`
-	LocalDiskFlag     bool       `json:"localDiskFlag"`
+	LocalDiskFlag     *bool      `json:"localDiskFlag"`
 
 	//Conditionally required
 	OperatingSystemReferenceCode string                    `json:"operatingSystemReferenceCode,omitempty"`
