@@ -185,7 +185,7 @@ func (slns *softLayer_Network_Storage_Service) GetNetworkStorage(volumeId int) (
 		"id",
 		"nasType",
 		"notes",
-		"Password",
+		"password",
 		"serviceProviderId",
 		"upgradableFlag",
 		"username",
