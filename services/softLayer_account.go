@@ -171,12 +171,23 @@ func (slas *softLayer_Account_Service) GetIscsiNetworkStorage() ([]datatypes.Sof
 	path := fmt.Sprintf("%s/%s", slas.GetName(), "getIscsiNetworkStorage.json")
 
 	objectMasks := []string{
-		"username",
 		"accountId",
 		"capacityGb",
+		"createDate",
+		"guestId",
+		"hardwareId",
+		"hostId",
 		"id",
+		"nasType",
+		"notes",
+		"Password",
+		"serviceProviderId",
+		"upgradableFlag",
+		"username",
 		"billingItem.id",
 		"billingItem.orderItem.order.id",
+		"lunId",
+		"serviceResourceBackendIpAddress",
 	}
 
 	responseBytes, errorCode, err := slas.client.GetHttpClient().DoRawHttpRequestWithObjectMask(path, objectMasks, "GET", &bytes.Buffer{})
@@ -205,12 +216,23 @@ func (slas *softLayer_Account_Service) GetIscsiNetworkStorageWithFilter(filter s
 	path := fmt.Sprintf("%s/%s", slas.GetName(), "getIscsiNetworkStorage.json")
 
 	objectMasks := []string{
-		"username",
 		"accountId",
 		"capacityGb",
+		"createDate",
+		"guestId",
+		"hardwareId",
+		"hostId",
 		"id",
+		"nasType",
+		"notes",
+		"Password",
+		"serviceProviderId",
+		"upgradableFlag",
+		"username",
 		"billingItem.id",
 		"billingItem.orderItem.order.id",
+		"lunId",
+		"serviceResourceBackendIpAddress",
 	}
 
 	responseBytes, errorCode, err := slas.client.GetHttpClient().DoRawHttpRequestWithObjectFilterAndObjectMask(path, objectMasks, filter, "GET", &bytes.Buffer{})
