@@ -3,17 +3,17 @@ package data_types
 import "strconv"
 
 type SoftLayer_Product_Item_Price struct {
-	Id              int         `json:"id"`
-	LocationGroupId int         `json:"locationGroupId"`
-	Categories      []Category  `json:"categories,omitempty"`
-	Item            *Item       `json:"item,omitempty"`
-	Attributes      *Attributes `json:"attributes,omitempty"`
+	Id              int        `json:"id"`
+	LocationGroupId int        `json:"locationGroupId"`
+	Categories      []Category `json:"categories,omitempty"`
+	Item            *Item      `json:"item,omitempty"`
 }
 
 type Item struct {
-	Id          int    `json:"id"`
-	Description string `json:"description"`
-	Capacity    string `json:"capacity"`
+	Id          int           `json:"id"`
+	Description string        `json:"description"`
+	Capacity    string        `json:"capacity"`
+	Attributes  []*Attributes `json:"attributes,omitempty"`
 }
 
 type Category struct {
