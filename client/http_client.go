@@ -190,7 +190,7 @@ func (slc *HttpClient) makeHttpRequest(url string, requestType string, requestBo
 		if err != nil {
 			errMsg := hideAPIKey(err.Error())
 			fmt.Fprintf(os.Stderr, "[softlayer-go] Error: %s, retrying %d time(s)\n", errMsg, i)
-			if !strings.Contains(errMsg, "i/o timeout") && !strings.Contains(errMsg, "connection refused") && !strings.Contains(errMsg, "connection reset by peer") && !strings.Contains(errMsg, "Rate limit") || i >= SL_API_RETRY_COUNT {
+			if !strings.Contains(errMsg, "timeout") && !strings.Contains(errMsg, "connection refused") && !strings.Contains(errMsg, "connection reset by peer") && !strings.Contains(errMsg, "Rate limit") || i >= SL_API_RETRY_COUNT {
 				return nil, 520, errors.New(errMsg)
 			}
 		} else {
